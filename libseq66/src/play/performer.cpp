@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-12
+ * \updates       2026-06-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -636,14 +636,15 @@ performer::notify_automation_change (automation::slot s)
 }
 
 void
-performer::last_automation_slot (automation::slot s)
+performer::last_automation_slot (automation::slot s, bool notify)
 {
 #if defined SEQ66_PLATFORM_DEBUG
     std::string msg { slot_to_string(s) };
     debug_message("automation slot", msg);
 #endif
     m_last_automation_slot = s;
-    notify_automation_change(s);
+    if (notify)
+        notify_automation_change(s);
 }
 
 /*
@@ -3167,6 +3168,7 @@ performer::reset_playset ()
     if (rc().is_setsmode_autoarm())
         set_song_mute(mutegroups::action::off);     /* unmute them all      */
 
+    last_automation_slot(automation::slot::reset_sets);
     announce_playscreen();                          /* inform control-out   */
 }
 
@@ -8120,6 +8122,7 @@ performer::clear_mutes ()
                 change::yes : change::no ;
 
             notify_mutes_change(mutegroup::unassigned(), c);
+            last_automation_slot(automation::slot::mutes_clear);
         }
     }
     return result;
@@ -8261,9 +8264,10 @@ performer::next_record_style ()
      * notify_automation_change(automation::slot::record_style);
      *
      * ca 2026-06-12
+     *
+     * last_automation_slot(automation::slot::record_style);
      */
 
-    last_automation_slot(automation::slot::record_style);
     set_record_style(rs);
 }
 
@@ -8280,10 +8284,56 @@ performer::previous_record_style ()
      * notify_automation_change(automation::slot::record_style);
      *
      * ca 2026-06-12
+     *
+     * last_automation_slot(automation::slot::record_style);
      */
 
-    last_automation_slot(automation::slot::record_style);
     set_record_style(rs);
+}
+
+static automation::slot
+qrid_quant_to_automation_slot (alteration q)
+{
+    automation::slot result;
+    switch (q)
+    {
+    case alteration::none:
+        result = automation::slot::grid_quant_none;
+        break;
+
+    case alteration::tighten:
+        result = automation::slot::grid_quant_tighten;
+        break;
+
+    case alteration::quantize:
+        result = automation::slot::grid_quant_full;
+        break;
+
+    case alteration::jitter:
+        result = automation::slot::grid_quant_jitter;
+        break;
+
+    case alteration::random:
+        result = automation::slot::grid_quant_random;
+        break;
+
+    case alteration::random_pitch:
+        result = automation::slot::grid_quant_random;           /* hmmmmmmm */
+        break;
+
+    case alteration::notemap:
+        result = automation::slot::grid_quant_notemap;
+        break;
+
+    case alteration::rev_notemap:
+        result = automation::slot::grid_quant_notemap;          /* hmmmmmmm */
+        break;
+
+    default:
+        result = automation::slot::none;
+        break;
+    }
+    return result;
 }
 
 void
@@ -8297,7 +8347,8 @@ performer::next_record_alteration ()
      * notify_automation_change(automation::slot::quan_record);
      */
 
-    last_automation_slot(automation::slot::quan_record);
+    automation::slot s { qrid_quant_to_automation_slot(m_record_alteration) };
+    last_automation_slot(s);
 }
 
 void
@@ -8311,7 +8362,8 @@ performer::previous_record_alteration ()
      * notify_automation_change(automation::slot::quan_record);
      */
 
-    last_automation_slot(automation::slot::quan_record);
+    automation::slot s { qrid_quant_to_automation_slot(m_record_alteration) };
+    last_automation_slot(s);
 }
 
 void
@@ -8325,7 +8377,8 @@ performer::set_record_alteration (alteration rm)
      * notify_automation_change(automation::slot::quan_record);
      */
 
-    last_automation_slot(automation::slot::quan_record);
+    automation::slot s { qrid_quant_to_automation_slot(rm) };
+    last_automation_slot(s);
 }
 
 /**
@@ -9198,11 +9251,11 @@ performer::automation_record_style
         else if (a == automation::action::off)
             previous_record_style();
 
-        last_automation_slot(automation::slot::record_style);
 
         /*
          *  Done in the functions called above:
          *
+         *      last_automation_slot(automation::slot::record_style);
          *      notify_automation_change(automation::slot::record_style);
          */
     }
@@ -9230,11 +9283,12 @@ performer::automation_quan_record
             previous_record_alteration();
 
         /*
-         * ca 2026-06-12
-         *  notify_automation_change(automation::slot::quan_record);
+         * ca 2026-06-12. Done by the functions above.
+         *
+         *      last_automation_slot(automation::slot::quan_record);
+         *      notify_automation_change(automation::slot::quan_record);
          */
 
-        last_automation_slot(automation::slot::quan_record);
     }
     return true;
 }
@@ -9256,7 +9310,6 @@ performer::automation_reset_sets
     {
         reset_sequences();
         reset_playset();
-        last_automation_slot(automation::slot::reset_sets);
     }
     return true;
 }
@@ -9294,8 +9347,11 @@ performer::automation_FF
 {
     std::string name = auto_name(automation::slot::FF);
     print_parameters(name, a, d0, d1, index, inverse);
-    move_tick(m_fast_ticks, true);
-    last_automation_slot(automation::slot::FF);
+    if (! inverse)
+    {
+        move_tick(m_fast_ticks, true);
+        last_automation_slot(automation::slot::FF);
+    }
     return true;
 }
 
@@ -9308,8 +9364,11 @@ performer::automation_rewind
 {
     std::string name = auto_name(automation::slot::rewind);
     print_parameters(name, a, d0, d1, index, inverse);
-    move_tick(-m_fast_ticks, true);
-    last_automation_slot(automation::slot::rewind);
+    if (! inverse)
+    {
+        move_tick(-m_fast_ticks, true);
+        last_automation_slot(automation::slot::rewind);
+    }
     return true;
 }
 
@@ -9327,8 +9386,11 @@ performer::automation_top
 {
     std::string name = auto_name(automation::slot::top);
     print_parameters(name, a, d0, d1, index, inverse);
-    move_tick(0, true);                                 /* slighly tricky   */
-    last_automation_slot(automation::slot::top);
+    if (! inverse)
+    {
+        move_tick(0, true);                             /* slighly tricky   */
+        last_automation_slot(automation::slot::top);
+    }
     return true;
 }
 
@@ -9359,6 +9421,7 @@ performer::automation_playlist
         if (a == automation::action::toggle)            /* select-by-value  */
         {
             result = open_select_list_by_midi(d1);
+            last_automation_slot(automation::slot::playlist);
         }
         else if (a == automation::action::on)           /* select-next      */
         {
@@ -9557,8 +9620,10 @@ performer::open_next_list (bool opensong, bool loading)
 
     bool result = m_play_list->open_next_list(opensong, loading);
     if (result)
+    {
         handle_list_change(opensong);
-
+        last_automation_slot(automation::slot::playlist);
+    }
     return result;
 }
 
@@ -9573,8 +9638,10 @@ performer::open_previous_list (bool opensong)
 
     bool result = m_play_list->open_previous_list(opensong);
     if (result)
+    {
         handle_list_change(opensong);
-
+        last_automation_slot(automation::slot::playlist);
+    }
     return result;
 }
 
@@ -9674,7 +9741,10 @@ performer::open_next_song (bool opensong)
     {
         result = m_play_list->open_next_song(opensong);
         if (result)
+        {
             handle_song_change(opensong);
+            last_automation_slot(automation::slot::playlist_song);
+        }
     }
     return result;
 }
@@ -9693,7 +9763,10 @@ performer::open_previous_song (bool opensong)
     {
         result = m_play_list->open_previous_song(opensong);
         if (result)
+        {
             handle_song_change(opensong);
+            last_automation_slot(automation::slot::playlist_song);
+        }
     }
     return result;
 }
@@ -10110,7 +10183,9 @@ performer::automation_toggle_mutes
     if (a == automation::action::toggle)
     {
         if (! inverse)
+        {
             set_song_mute(mutegroups::action::toggle);
+        }
     }
     else if (a == automation::action::on)
     {
@@ -10126,7 +10201,9 @@ performer::automation_toggle_mutes
         else
             set_song_mute(mutegroups::action::off);
     }
-    last_automation_slot(automation::slot::toggle_mutes);
+    if (! inverse)
+        last_automation_slot(automation::slot::toggle_mutes);
+
     return true;
 }
 
@@ -10139,12 +10216,14 @@ performer::automation_song_pointer
 {
     std::string name = auto_name(automation::slot::song_pointer);
     print_parameters(name, a, d0, d1, index, inverse);
-    last_automation_slot(automation::slot::song_pointer);
+    if (! inverse)
+    {
+        last_automation_slot(automation::slot::song_pointer);
 
-    /*
-     * TO BE DETERMINED TODO
-     */
-
+        /*
+         * TO BE DETERMINED TODO
+         */
+    }
     return true;
 }
 
@@ -10160,17 +10239,19 @@ performer::automation_keep_queue
     int index, bool inverse
 )
 {
-    std::string name = auto_name(automation::slot::keep_queue);
+    std::string name { auto_name(automation::slot::keep_queue) };
     print_parameters(name, a, d0, d1, index, inverse);
     if (opcontrol::allowed(d0, inverse))
     {
-        automation::ctrlstatus cs = automation::ctrlstatus::keep_queue;
+        bool result { false };
+        automation::ctrlstatus cs { automation::ctrlstatus::keep_queue };
         if (a == automation::action::toggle)
-            return toggle_ctrl_status(cs);
+            result = toggle_ctrl_status(cs);
         else
-            return set_ctrl_status(a, cs);
+            result = set_ctrl_status(a, cs);
 
         last_automation_slot(automation::slot::keep_queue);
+        return result;
     }
     else
         return true;
@@ -10475,8 +10556,6 @@ performer::automation_record_toggle
     return true;
 }
 
-// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
 /**
  *  Values are in the recordstyle enumeration in the usersettings module:
  *
@@ -10504,10 +10583,34 @@ performer::set_record_style (recordstyle rs)
 
         /*
          * ca 2026-06-12
-         * notify_automation_change(automation::slot::record_style);
+         *      notify_automation_change(automation::slot::record_style);
+         *      last_automation_slot(automation::slot::record_style);
          */
 
-        last_automation_slot(automation::slot::record_style);
+        automation::slot s;
+        switch (rs)
+        {
+        case recordstyle::merge:
+            s = automation::slot::record_overdub;
+            break;
+
+        case recordstyle::overwrite:
+            s = automation::slot::record_overwrite;
+            break;
+
+        case recordstyle::expand:
+            s = automation::slot::record_expand;
+            break;
+
+        case recordstyle::oneshot:
+            s = automation::slot::record_oneshot;
+            break;
+
+        default:
+            s = automation::slot::record_style;
+            break;
+        }
+        last_automation_slot(s);
     }
 }
 
@@ -10600,7 +10703,58 @@ performer::set_grid_mode (gridmode gm)
          * notify_automation_change(automation::slot::grid_loop);
          */
 
-        last_automation_slot(automation::slot::grid_loop);
+        automation::slot s;
+        switch (gm)
+        {
+            case gridmode::loop:
+                s = automation::slot::grid_loop;
+                break;
+
+            case gridmode::mutes:
+                s = automation::slot::grid_mutes;
+                break;
+
+            case gridmode::record:
+                s = automation::slot::grid_record;
+                break;
+
+            case gridmode::copy:
+                s = automation::slot::grid_copy;
+                break;
+
+            case gridmode::paste:
+                s = automation::slot::grid_paste;
+                break;
+
+            case gridmode::clear:
+                s = automation::slot::grid_clear;
+                break;
+
+            case gridmode::remove:
+                s = automation::slot::grid_delete;
+                break;
+
+            case gridmode::thru:
+                s = automation::slot::grid_thru;
+                break;
+
+            case gridmode::solo:
+                s = automation::slot::grid_solo;
+                break;
+
+            case gridmode::cut:
+                s = automation::slot::grid_cut;
+                break;
+
+            case gridmode::double_length:
+                s = automation::slot::grid_double;
+                break;
+
+            default:
+                s = automation::slot::illegal;
+                break;
+        }
+        last_automation_slot(s);
     }
 }
 
@@ -10619,68 +10773,60 @@ performer::automation_grid_mode
         gridmode gm;
         name += auto_name(s);
         print_parameters(name, a, d0, d1, index, inverse);
-        switch (s)
+        if (! inverse)
         {
-            case automation::slot::grid_mutes:
-                gm = gridmode::mutes;
-                last_automation_slot(automation::slot::grid_mutes);
-                break;
+            switch (s)
+            {
+                case automation::slot::grid_mutes:
+                    gm = gridmode::mutes;
+                    break;
 
-            case automation::slot::grid_loop:
-                gm = gridmode::loop;
-                last_automation_slot(automation::slot::grid_loop);
-                break;
+                case automation::slot::grid_loop:
+                    gm = gridmode::loop;
+                    break;
 
-            case automation::slot::grid_record:
-                gm = gridmode::record;
-                last_automation_slot(automation::slot::grid_record);
-                break;
+                case automation::slot::grid_record:
+                    gm = gridmode::record;
+                    break;
 
-            case automation::slot::grid_copy:
-                gm = gridmode::copy;
-                last_automation_slot(automation::slot::grid_copy);
-                break;
+                case automation::slot::grid_copy:
+                    gm = gridmode::copy;
+                    break;
 
-            case automation::slot::grid_paste:
-                gm = gridmode::paste;
-                last_automation_slot(automation::slot::grid_paste);
-                break;
+                case automation::slot::grid_paste:
+                    gm = gridmode::paste;
+                    break;
 
-            case automation::slot::grid_clear:
-                gm = gridmode::clear;
-                last_automation_slot(automation::slot::grid_clear);
-                break;
+                case automation::slot::grid_clear:
+                    gm = gridmode::clear;
+                    break;
 
-            case automation::slot::grid_delete:
-                gm = gridmode::remove;
-                last_automation_slot(automation::slot::grid_delete);
-                break;
+                case automation::slot::grid_delete:
+                    gm = gridmode::remove;
+                    break;
 
-            case automation::slot::grid_thru:
-                gm = gridmode::thru;
-                last_automation_slot(automation::slot::grid_thru);
-                break;
+                case automation::slot::grid_thru:
+                    gm = gridmode::thru;
+                    break;
 
-            case automation::slot::grid_solo:
-                gm = gridmode::solo;
-                last_automation_slot(automation::slot::grid_solo);
-                break;
+                case automation::slot::grid_solo:
+                    gm = gridmode::solo;
+                    break;
 
-            case automation::slot::grid_cut:
-                gm = gridmode::cut;
-                last_automation_slot(automation::slot::grid_cut);
-                break;
+                case automation::slot::grid_cut:
+                    gm = gridmode::cut;
+                    break;
 
-            case automation::slot::grid_double:
-                gm = gridmode::double_length;
-                last_automation_slot(automation::slot::grid_double);
-                break;
+                case automation::slot::grid_double:
+                    gm = gridmode::double_length;
+                    break;
 
-            default:
-                gm = gridmode::max;
-                break;
+                default:
+                    gm = gridmode::max;
+                    break;
+            }
+            set_grid_mode(gm);
         }
-        set_grid_mode(gm);
     }
     return result;
 }
@@ -11140,11 +11286,14 @@ performer::sm_auto_func_list [] =
      *  Transpose song... what does this even mean? We forget!
      */
 
-    { automation::slot::mod_transpose_song, &performer::automation_no_op },
+    {
+        automation::slot::mod_transpose_song,
+        &performer::automation_no_op
+    },
     {
         automation::slot::mod_copy_set,
         &performer::automation_copy_set
-        },
+    },
     {
         automation::slot::mod_paste_set,
         &performer::automation_paste_set

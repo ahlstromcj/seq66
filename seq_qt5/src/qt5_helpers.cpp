@@ -775,6 +775,7 @@ new_qmenu
             QFont f { result->font() };
             f.setPointSize(fontsize);
             result->setFont(f);
+            result->setEnabled(true);
         }
         return result;
     }

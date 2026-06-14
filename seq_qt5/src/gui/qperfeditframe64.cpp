@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2026-05-09
+ * \updates       2026-06-14
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -56,6 +56,7 @@
 #include "pixmaps/follow.xpm"
 #include "pixmaps/loop.xpm"
 #include "pixmaps/redo.xpm"
+#include "pixmaps/snap.xpm"
 #include "pixmaps/transpose.xpm"
 #include "pixmaps/undo.xpm"
 #include "pixmaps/zoom_in.xpm"
@@ -395,6 +396,7 @@ qperfeditframe64::qperfeditframe64
      * Song-record snap button
      */
 
+    qt_set_icon(snap_xpm, ui->btnSnap);
     ui->btnSnap->setCheckable(true);
     ui->btnSnap->setChecked(perf().song_record_snap());
     connect

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-10
+ * \updates       2026-06-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -543,14 +543,14 @@ keycontainer::keys_automation ()
          * A few more likely candidates.
          */
 
-        { "0xe8",      automation::action::off     }, // 69 mod_bbt_hms
-        { "0xe9",      automation::action::off     }, // 70 mod_LR_loop
-        { "0xea",      automation::action::off     }, // 71 mod_undo
-        { "0xeb",      automation::action::off     }, // 72 mod_redo
-        { "0xec",      automation::action::off     }, // 73 mod_transpose_song
-        { "0xed",      automation::action::off     }, // 74 mod_copy_set
-        { "0xee",      automation::action::off     }, // 75 mod_paste_set
-        { "0xef",      automation::action::off     }, // 76 mod_toggle_tracks
+        { "0xe8",      automation::action::toggle  }, // 69 mod_bbt_hms
+        { "0xe9",      automation::action::toggle  }, // 70 mod_LR_loop
+        { "0xea",      automation::action::toggle  }, // 71 mod_undo
+        { "0xeb",      automation::action::toggle  }, // 72 mod_redo
+        { "0xec",      automation::action::toggle  }, // 73 mod_transpose_song
+        { "0xed",      automation::action::toggle  }, // 74 mod_copy_set
+        { "0xee",      automation::action::toggle  }, // 75 mod_paste_set
+        { "0xef",      automation::action::toggle  }, // 76 mod_toggle_tracks
 
         /*
          * Set playing modes.

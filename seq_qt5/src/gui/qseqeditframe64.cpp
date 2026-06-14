@@ -2720,11 +2720,15 @@ qseqeditframe64::undo ()
 {
     track().pop_undo();
     set_dirty();                                    /* for issue #110       */
+    perf().last_automation_slot(automation::slot::mod_undo, false);
 }
 
 /**
  *  Does a pop-redo on the sequence object and then sets the dirty flag.
  *  We can't reliably call this a track change, however.
+ *
+ *  The "false" parameter in last_automation_slot() stops a notify
+ *  loop leading to a segfault.
  */
 
 void
@@ -2732,6 +2736,7 @@ qseqeditframe64::redo ()
 {
     track().pop_redo();
     set_dirty();
+    perf().last_automation_slot(automation::slot::mod_redo, false);
 }
 
 /**
@@ -2971,6 +2976,7 @@ qseqeditframe64::popup_tool_menu ()
         }
         if (macrosactive)
             m_tools_popup->addMenu(menumacros);
+
         m_tools_popup->addMenu(menuselect);
         m_tools_popup->addMenu(menutiming);
         m_tools_popup->addMenu(menupitch);

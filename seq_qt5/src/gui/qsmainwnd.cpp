@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-12
+ * \updates       2026-06-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -81,6 +81,7 @@
 #endif
 
 #include <iomanip>                      /* std::hex, std::setw()            */
+#include <cmath>                        /* std::fabs()                      */
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
@@ -1365,14 +1366,20 @@ qsmainwnd::update_record_by_status ()
 
 /**
  *  There is a button with the same functionality in the Song editor.
+ *
+ *  The "false" parameter in last_automation_slot() stops a notify
+ *  loop leading to a segfault.
  */
 
 void
 qsmainwnd::set_loop (bool looping)
 {
     cb_perf().looping(looping);
+    cb_perf().last_automation_slot(automation::slot::mod_LR_loop, false);
     if (not_nullptr(m_perfedit))
+    {
         m_perfedit->set_loop_button(looping);
+    }
 }
 
 void
@@ -1380,6 +1387,7 @@ qsmainwnd::toggle_loop ()
 {
     bool looping = ! cb_perf().looping();
     set_loop(looping);
+    cb_perf().last_automation_slot(automation::slot::mod_LR_loop, false);
 }
 
 /**
@@ -1431,6 +1439,7 @@ qsmainwnd::song_recording (bool record)
     qt_set_icon(pixmap , ui->btnRecord);
     cb_perf().song_record_snap(dosnap);
     cb_perf().song_recording(record, atstart);
+    cb_perf().last_automation_slot(automation::slot::song_record);
 }
 
 void
@@ -1573,6 +1582,12 @@ qsmainwnd::update_bpm (double bp)
                 automation::slot::bpm_up :
                 automation::slot::bpm_dn
         };
+        if (std::fabs(bp - bpold) > 1.5)                /* was Ctrl active? */
+        {
+            s = bp > bpold ?
+                automation::slot::bpm_page_up :
+                automation::slot::bpm_page_dn ;
+        }
         if (cb_perf().set_beats_per_minute(midibpm(bp), true))
         {
             m_main_bpm = bp;
@@ -2203,6 +2218,11 @@ qsmainwnd::toggle_time_format (bool /*on*/)
     QString label = m_tick_time_as_bbt ? "B:B:T" : "H:M:S" ;
     ui->btnBBTHMS->setText(label);
     update_time(cb_perf().get_tick());
+
+    /*
+     * Leads to a segfault.
+     */
+     cb_perf().last_automation_slot(automation::slot::mod_bbt_hms, false);
 }
 
 void
@@ -3758,30 +3778,25 @@ qsmainwnd::enable_reload_button (bool flag)
 void
 qsmainwnd::quit ()
 {
-    if (use_nsm())
+    cb_perf().last_automation_slot(automation::slot::quit);
+    if (! cb_perf().in_midi_learn())
     {
-        cb_perf().hidden(true);
-        hide();
-        m_session_mgr->send_visibility(false);
-    }
-    else
-    {
-        if (check())
+        if (use_nsm())
         {
-            remove_everything();                    /* remove_all_editors() */
-            QCoreApplication::exit();
+            cb_perf().hidden(true);
+            hide();
+            m_session_mgr->send_visibility(false);
+        }
+        else
+        {
+            if (check())
+            {
+                remove_everything();                /* remove_all_editors() */
+                QCoreApplication::exit();
+            }
         }
     }
 }
-
-/* EXPERIMENTAL
- *
-void
-qsmainwnd::mouseMoveEvent (QMouseEvent * // event)
-{
-    printf("qsmainwnd::mouseMoveEvent\n");
-}
- */
 
 /**
  *  By experimenting, we see that the live frame gets all of the keystrokes.
@@ -3849,21 +3864,25 @@ qsmainwnd::handle_key_press (const keystroke & k)
         if (k.is_right())
         {
             act = playlist::action::next_song;
+            cb_perf().last_automation_slot(automation::slot::playlist_song);
             done = true;
         }
         else if (k.is_left())
         {
             act = playlist::action::previous_song;
+            cb_perf().last_automation_slot(automation::slot::playlist_song);
             done = true;
         }
         else if (k.is_down())
         {
             act = playlist::action::next_list;
+            cb_perf().last_automation_slot(automation::slot::playlist);
             done = true;
         }
         else if (k.is_up())
         {
             act = playlist::action::previous_list;
+            cb_perf().last_automation_slot(automation::slot::playlist);
             done = true;
         }
 
@@ -4372,6 +4391,7 @@ void
 qsmainwnd::set_song_mute_toggle ()
 {
     cb_perf().set_song_mute(mutegroups::action::toggle);
+    cb_perf().last_automation_slot(automation::slot::toggle_mutes);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }
@@ -4468,6 +4488,7 @@ qsmainwnd::queue_it ()
 {
     bool is_active = ui->button_keep_queue->isChecked();
     cb_perf().set_keep_queue(is_active);
+    cb_perf().last_automation_slot(automation::slot::keep_queue);
 }
 
 /**

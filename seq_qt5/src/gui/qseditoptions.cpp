@@ -2348,14 +2348,25 @@ qseditoptions::slot_sets_mode (int buttonno)
 {
     rcsettings::setsmode previous = rc().sets_mode();
     if (buttonno == setsmode_button_autoarm)
+    {
         rc().sets_mode(rcsettings::setsmode::autoarm);
+        perf().last_automation_slot(automation::slot::set_mode_auto);
+    }
     else if (buttonno == setsmode_button_additive)
+    {
         rc().sets_mode(rcsettings::setsmode::additive);
+        perf().last_automation_slot(automation::slot::set_mode_additive);
+    }
     else if (buttonno == setsmode_button_allsets)
+    {
         rc().sets_mode(rcsettings::setsmode::allsets);
+        perf().last_automation_slot(automation::slot::set_mode_all_sets);
+    }
     else
+    {
         rc().sets_mode(rcsettings::setsmode::normal);
-
+        perf().last_automation_slot(automation::slot::set_mode_normal);
+    }
     if (rc().sets_mode() != previous)
         modify_rc();
 }

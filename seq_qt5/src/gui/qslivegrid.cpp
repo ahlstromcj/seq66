@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-05-10
+ * \updates       2026-06-13
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1605,6 +1605,7 @@ void
 qslivegrid::slot_activate_bank (bool /*clicked*/)
 {
     (void) perf().set_playing_screenset(bank_id());
+    perf().last_automation_slot(automation::slot::ss_set);
 }
 
 /**

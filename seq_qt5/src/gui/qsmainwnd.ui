@@ -1305,7 +1305,7 @@ no matter what sets-mode is in force. </string>
            </font>
           </property>
           <property name="toolTip">
-           <string>Activates either the &quot;current&quot; pattern, all
+           <string>Activates recording on the current pattern, all
 input-buss patterns, or all channel patterns.</string>
           </property>
           <property name="text">
@@ -1798,8 +1798,8 @@ beats/minute.</string>
     <widget class="QMenu" name="menuExport">
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
-       <bold>true</bold>
+       <pointsize>12</pointsize>
+       <bold>false</bold>
        <stylestrategy>PreferDefault</stylestrategy>
       </font>
      </property>
@@ -1814,8 +1814,8 @@ beats/minute.</string>
     <widget class="QMenu" name="menuImport">
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
-       <bold>true</bold>
+       <pointsize>12</pointsize>
+       <bold>false</bold>
        <stylestrategy>PreferDefault</stylestrategy>
       </font>
      </property>
@@ -1926,7 +1926,7 @@ beats/minute.</string>
     <font/>
    </property>
    <property name="shortcut">
-    <string>Ctrl+J</string>
+    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionOpen">

@@ -1,9 +1,9 @@
-TO DO for Seq66 0.99.25
+TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-06-11
+2019-04-13 to 2026-06-14
 
     -   Make an issue for MIDI Learn.
-    -   Should we have new global SeqSpecs:
+    -   Should we have new global SeqSpecs?
         -   Overrides the file setting for recording by buss.
         -   Overrides the file setting for recording by channel.
         -   Overrides the current settings for

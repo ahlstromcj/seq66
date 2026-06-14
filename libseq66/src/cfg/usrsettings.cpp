@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2025-07-19
+ * \updates       2026-06-14
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -672,19 +672,22 @@ usrsettings::next_record_alteration ()
     alteration result;
     switch (record_alteration())
     {
-#if defined SEQ66_USE_ADDED_ALTERATIONS
     case alteration::none:          result = alteration::tighten;   break;
     case alteration::tighten:       result = alteration::quantize;  break;
     case alteration::quantize:      result = alteration::jitter;    break;
     case alteration::jitter:        result = alteration::random;    break;
-    case alteration::random:        result = alteration::notemap    break;
+    case alteration::random:        result = alteration::notemap;   break;
+
+    /*
+     * alteration::random_pitch skipped
+     */
+
     case alteration::notemap:       result = alteration::none;      break;
-#else
-    case alteration::none:          result = alteration::tighten;   break;
-    case alteration::tighten:       result = alteration::quantize;  break;
-    case alteration::quantize:      result = alteration::notemap;   break;
-    case alteration::notemap:       result = alteration::none;      break;
-#endif
+
+    /*
+     * alteration::rev_notemap skipped
+     */
+
     default:                        result = alteration::none;      break;
     }
     m_record_alteration = result;

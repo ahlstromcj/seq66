@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-06-12
+2015-07-10 to 2026-06-14
 
 # Change Log
 
-## [0.99.26] - 2026-06-12
+## [0.99.26] - 2026-06-14
 
 "MIDI Learn Perhaps"
 
@@ -17,6 +17,7 @@ Starting to work out the feasibility of MIDI Learn....
 -   More tool-tips.
 -   Control actions via keys and buttons have been added
     in preparation for MIDI Learn.
+-   Added "Jitter" to the sequence of recording modes.
 
 ### Changed
 
@@ -24,6 +25,9 @@ Starting to work out the feasibility of MIDI Learn....
 -   Updated the creation of menus and actions to specify font size.
 -   The --investigate option turns off the log file for easier
     debugging.
+-   Changed the shortcut (accelerator key) for Project Configuration
+    from Ctrl-J ("LF") to Ctrl-G ("BEL") so that Ctrl-J can be used
+    to active automation::slot::thru.
 
 ### Fixed
 
