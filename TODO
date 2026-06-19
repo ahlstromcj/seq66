@@ -1,8 +1,11 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-06-14
+2019-04-13 to 2026-06-16
 
     -   Make an issue for MIDI Learn.
+    -   The LaunchPad lights for the patterns come on, then go dark.
+        Toggling the patterns (Ctrl-U, Ctrl-M, Ctrl-T) brings them back.
+        Fixed, but beware of any issues.
     -   Should we have new global SeqSpecs?
         -   Overrides the file setting for recording by buss.
         -   Overrides the file setting for recording by channel.

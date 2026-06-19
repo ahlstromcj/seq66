@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-06-14
+ * \updates       2026-06-19
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -59,10 +59,6 @@
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition/synchronizer    */
 
-#if SEQ66_MIDI_LEARN_SUPPORT
-#include "ctrl/midilearn.hpp"           /* class seq66::midilearn           */
-#endif
-
 #if defined USE_SONG_BOX_SELECT
 #include <set>                          /* std::set, arbitary selection     */
 #endif
@@ -85,6 +81,7 @@ const int c_transpose_up_limit   =  60; /* -c_transpose_down_limit          */
  */
 
 class keystroke;
+class midilearn;
 class notemapper;
 class rcsettings;
 class usrsettings;
@@ -240,7 +237,8 @@ public:
             ui_change,              /**< Indicates a user-interface action. */
             trigger_change,         /**< A trigger changed pattern muting.  */
             resolution_change,      /**< A change in PPQN or BPM.           */
-            song_change             /**< A different MIDI tune was loaded.  */
+            song_change,            /**< A different MIDI tune was loaded.  */
+            midi_learn              /**< The MIDI event to be learned       */
         };
 
     public:
@@ -316,6 +314,11 @@ public:
         }
 
         virtual bool on_song_action (bool, playlist::action)
+        {
+            return false;
+        }
+
+        virtual bool on_midi_learn (event)
         {
             return false;
         }
@@ -591,8 +594,6 @@ private:                            /* key, midi, and op container section  */
 
     midicontrolout m_midi_control_out;
 
-#if SEQ66_MIDI_LEARN_SUPPORT
-
     /**
      *  Provides support for MIDI Learn.
      *
@@ -600,8 +601,6 @@ private:                            /* key, midi, and op container section  */
      */
 
     midilearn * m_midi_learn;
-
-#endif
 
     /**
      *  Provides a default-filled mutegroups container.  It is a copy of the
@@ -3072,17 +3071,24 @@ public:
         m_last_automation_slot = automation::slot::none;
     }
 
+    midilearn * midi_learn ()
+    {
+        return m_midi_learn;
+    }
+
+    const midilearn * midi_learn () const
+    {
+        return m_midi_learn;
+    }
+
 #if SEQ66_MIDI_LEARN_SUPPORT
 
     bool create_midi_learn ();
     bool delete_midi_learn ();
     bool save_midi_learn (const midicontrolin & mci);
+#if 0
     bool learn_control (const event & ev);
-
-    midilearn * midi_learn ()
-    {
-        return m_midi_learn;
-    }
+#endif
 
     bool in_midi_learn () const
     {

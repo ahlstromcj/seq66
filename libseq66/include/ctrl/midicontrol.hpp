@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-11-27
+ * \updates       2026-06-18
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -262,7 +262,15 @@ public:
         );
     }
 
-    bool set (int values [automation::SUBCOUNT]);
+    bool set (int values [automation::SUBCOUNT]);           /* 5 elements   */
+    bool set
+    (
+        bool isinverse,
+        midibyte statusbyte,
+        midibyte d0,
+        midibyte d1min,
+        midibyte d1max
+    );
 
     /**
      *  Handles a common check in the perform module.

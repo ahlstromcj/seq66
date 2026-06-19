@@ -165,7 +165,7 @@ qseqdata::~qseqdata ()
     if (not_nullptr(m_timer))
         m_timer->stop();
 
-    cb_perf().unregister(this);
+    cb_perf().unregister(this);         /* should this come first?          */
 }
 
 /**

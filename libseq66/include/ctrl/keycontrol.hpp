@@ -86,7 +86,8 @@ private:
      *  keys supported, say 96 to 127.  For a pattern control, this is the
      *  pattern number.  For a mute-group control, this is the group number.
      *  For an automation control, this COULD BE the number of the performer
-     *  operation to call, of type automation::slot.
+     *  operation to call, of type automation::slot, converted to an
+     *  integer.
      */
 
     int m_control_code;       // pattern or mute-group number

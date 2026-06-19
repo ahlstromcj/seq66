@@ -1859,8 +1859,11 @@ midifile::finalize_sequence
 )
 {
     int preferred_seqnum = seqnum + screenset * p.screenset_size();
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     if (rc().investigate())
         s.show_events();
+#endif
 
     return p.install_sequence(&s, preferred_seqnum, true);
 }

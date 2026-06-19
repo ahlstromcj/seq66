@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-11
+ * \updates       2026-06-19
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -525,11 +525,8 @@ extern std::string action_to_string (action c);
 extern action string_to_action (const std::string & s);
 extern bool actionable (action a);
 extern std::string ctrlstatus_to_string (ctrlstatus cs);
-
-#if defined SEQ66_PLATFORM_DEBUG
 extern std::string slot_to_string (slot s);
 extern slot string_to_slot (const std::string & s);
-#endif
 
 }               // namespace automation
 
@@ -580,4 +577,3 @@ automation_action (bool flag)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

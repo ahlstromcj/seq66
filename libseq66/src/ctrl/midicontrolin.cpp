@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2023-11-18
+ * \updates       2026-06-18
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -140,6 +140,83 @@ midicontrolin::add (const midicontrol & mc)
             << " Slot " << mc.automation_slot_name()
             << std::endl
             ;
+    }
+    return result;
+}
+
+bool
+midicontrolin::replace (const midicontrol & mc)
+{
+    bool result { false };
+    for (auto it = m_container.begin(); it != m_container.end(); /* ++it */)
+    {
+        midicontrol & src { it->second };
+        bool match
+        {
+            src.category_code() == mc.category_code() &&
+            src.action_code() == mc.action_code() &&
+            src.slot_control() == mc.slot_control()
+        };
+        if (match)
+        {
+            it = m_container.erase(it);
+            result = true;
+            break;
+        }
+        else
+            ++it;
+    }
+    if (result)
+        result = add(mc);
+
+    return result;
+}
+
+bool
+midicontrolin::active_counts
+(
+    int & loopcount,
+    int & mutescount,
+    int & autocount
+) const
+{
+    bool result { false };
+    int lc { 0 };
+    int mc { 0 };
+    int ac { 0 };
+    loopcount = mutescount = autocount = 0;
+    for (const auto & mpair : m_container)
+    {
+        const midicontrol & mctrl { mpair.second };
+        if (mctrl.active())
+        {
+            automation::category opcat { mctrl.category_code() };
+            switch (opcat)
+            {
+                case automation::category::loop:
+                    ++lc;
+                    break;
+
+                case automation::category::mute_group:
+                    ++mc;
+                    break;
+
+                case automation::category::automation:
+                    ++ac;
+                    break;
+
+                default:
+                    return false;
+                    break;
+            }
+        }
+        result = true;
+    }
+    if (result)
+    {
+        loopcount = lc;
+        mutescount = mc;
+        autocount = ac;
     }
     return result;
 }

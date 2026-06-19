@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-06-14
+2015-07-10 to 2026-06-16
 
 # Change Log
 
-## [0.99.26] - 2026-06-14
+## [0.99.26] - 2026-06-16
 
 "MIDI Learn Perhaps"
 
@@ -23,6 +23,7 @@ Starting to work out the feasibility of MIDI Learn....
 
 -   Most of the 'qss' files have been tweaked.
 -   Updated the creation of menus and actions to specify font size.
+    However, currently disabled.
 -   The --investigate option turns off the log file for easier
     debugging.
 -   Changed the shortcut (accelerator key) for Project Configuration

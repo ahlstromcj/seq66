@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-14
+ * \updates       2026-06-16
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -4722,6 +4722,25 @@ qsmainwnd::on_automation_change (automation::slot s)
         bool hide = ! ui->btnShowHide->isChecked();
         ui->btnShowHide->setChecked(hide);
         slot_show_hide();
+    }
+    else if
+    (
+        s == automation::slot::ss_dn || s == automation::slot::ss_up
+    )
+    {
+        /*
+         * The big question here is why performer is not notifying for
+         * on_set_change(). Here, we get:
+         *
+         * QObject::killTimer: Timers cannot be stopped from another thread
+         * QObject::startTimer: Timers cannot be started from another thread
+         *
+         * So we just do what on_set_change() purportedly does.
+         */
+
+        int setno { cb_perf().playscreen_number() };
+        emit signal_set_change(int(setno));
+        m_is_title_dirty = true;
     }
     if (result)
         m_live_frame->set_needs_update();           /* brute force          */

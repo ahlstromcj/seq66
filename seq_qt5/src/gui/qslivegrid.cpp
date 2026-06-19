@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-06-13
+ * \updates       2026-06-16
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1825,7 +1825,12 @@ qslivegrid::changeEvent (QEvent * ev)
 void
 qslivegrid::popup_menu ()
 {
-    m_popup = new_qmenu("", this);
+    /*
+     * It turns out a non-empty name is needed, so the font-size of the
+     * top-level menu will also be applicable to the sub-menus. Strange.
+     */
+
+    m_popup = new_qmenu("Slot", this);
 
     QAction * ns = new_qaction("&New pattern", m_popup);
     QObject::connect(ns, SIGNAL(triggered(bool)), this, SLOT(new_sequence()));

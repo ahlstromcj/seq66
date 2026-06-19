@@ -336,12 +336,19 @@ private:
     midipulse m_timestamp;
 
     /**
-     *  This is the status byte without the channel. The channel is included
-     *  when recording MIDI, but, once a sequence with a matching channel is
+     *  This is the status byte *with* the channel. The channel is included
+     *  when recording MIDI, but, ...
+     *
+     *  No longer true:
+     *
+     *  ... once a sequence with a matching channel is
      *  found, the channel nybble is cleared for storage.  The channel will be
      *  added back on the MIDI bus upon playback.  The high nybble = type of
      *  event; The low nybble = channel.  Bit 7 is present in all status
      *  bytes.
+     *
+     *  Note that we have ensured that status ranges from 0x80 to 0xFF.
+     *  And recently, the status now holds the channel, redundantly.
      *
      *  Note that, for status values of 0xF0 (Sysex) or 0xFF (Meta), special
      *  handling of the event can occur.  We would like to eventually use

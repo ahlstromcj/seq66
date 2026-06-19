@@ -84,10 +84,12 @@ const bool NormalFile { false };
 /**
  *  Sets the default size for QActions and QMenus. Here, it is set
  *  to match what Qt specifies by default. This is the font size in
- *  points (pt).
+ *  points (pt). Actually, after some consideration, set it to
+ *  zero to avoid changing the font size, but keep the feature around
+ *  just in case.
  */
 
-const int c_menu_action_font_size { 12 };
+const int c_menu_action_font_size { 0 };
 
 /*
  * Free functions in the seq66 namespace.

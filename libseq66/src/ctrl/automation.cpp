@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-11
+ * \updates       2026-06-17
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -253,10 +253,8 @@ ctrlstatus_to_string (ctrlstatus cs)
  *  slots string name, and use performer::print_parameters() on a
  *  hardwired name.
  *
- *  Oops, now used in debugging.
+ *  Oops, now used in debugging and in qlearnframe.
  */
-
-#if defined SEQ66_PLATFORM_DEBUG
 
 using slot_pair = struct
 {
@@ -273,133 +271,133 @@ using slot_pair = struct
  */
 
 static slot_pair
-s_slotnamelist [] =
+s_slotnamelist []
 {
     /*
      * { slot::none,             "none"                 },
      */
 
-    { slot::bpm_up,           "bpm_up"                  },
-    { slot::bpm_dn,           "bpm_dn"                  },
-    { slot::ss_up,            "ss_up"                   },
-    { slot::ss_dn,            "ss_dn"                   },
-    { slot::mod_replace,      "mod_replace"             },
-    { slot::mod_snapshot,     "mod_snapshot"            },
-    { slot::mod_queue,        "mod_queue"               },
-    { slot::mod_gmute,        "mod_gmute"               },
-    { slot::mod_glearn,       "mod_glearn"              },
-    { slot::play_ss,          "play_ss"                 },
-    { slot::playback,         "playback"                },
-    { slot::song_record,      "song_record"             },
-    { slot::solo,             "solo"                    },
-    { slot::thru,             "thru"                    },
-    { slot::bpm_page_up,      "bpm_page_up"             },
-    { slot::bpm_page_dn,      "bpm_page_dn"             },
-    { slot::ss_set,           "ss_set"                  },
-    { slot::record_style,     "record_style"            },
-    { slot::quan_record,      "quan_record"             },
-    { slot::reset_sets,       "reset_sets"              },
-    { slot::mod_oneshot,      "mod_oneshot"             },
-    { slot::FF,               "FF"                      },
-    { slot::rewind,           "rewind"                  },
-    { slot::top,              "top"                     },
-    { slot::playlist,         "playlist"                },
-    { slot::playlist_song,    "playlist_song"           },
-    { slot::tap_bpm,          "tap_bpm"                 },
-    { slot::start,            "start"                   },
-    { slot::stop,             "stop"                    },
-    { slot::loop_LR,            "loop_LR"               },
-    { slot::toggle_mutes,     "toggle_mutes"            },
-    { slot::song_pointer,     "song_pointer"            },
+    { slot::bpm_up,           "bpm_up"                  },  //  0
+    { slot::bpm_dn,           "bpm_dn"                  },  //  1
+    { slot::ss_up,            "ss_up"                   },  //  2
+    { slot::ss_dn,            "ss_dn"                   },  //  3
+    { slot::mod_replace,      "mod_replace"             },  //  4
+    { slot::mod_snapshot,     "mod_snapshot"            },  //  5
+    { slot::mod_queue,        "mod_queue"               },  //  6
+    { slot::mod_gmute,        "mod_gmute"               },  //  7
+    { slot::mod_glearn,       "mod_glearn"              },  //  8
+    { slot::play_ss,          "play_ss"                 },  //  9
+    { slot::playback,         "playback"                },  // 10
+    { slot::song_record,      "song_record"             },  // 11
+    { slot::solo,             "solo"                    },  // 12
+    { slot::thru,             "thru"                    },  // 13
+    { slot::bpm_page_up,      "bpm_page_up"             },  // 14
+    { slot::bpm_page_dn,      "bpm_page_dn"             },  // 15
+    { slot::ss_set,           "ss_set"                  },  // 16
+    { slot::record_style,     "record_style"            },  // 17
+    { slot::quan_record,      "quan_record"             },  // 18
+    { slot::reset_sets,       "reset_sets"              },  // 19
+    { slot::mod_oneshot,      "mod_oneshot"             },  // 20
+    { slot::FF,               "FF"                      },  // 21
+    { slot::rewind,           "rewind"                  },  // 22
+    { slot::top,              "top"                     },  // 23
+    { slot::playlist,         "playlist"                },  // 24
+    { slot::playlist_song,    "playlist_song"           },  // 25
+    { slot::tap_bpm,          "tap_bpm"                 },  // 26
+    { slot::start,            "start"                   },  // 27
+    { slot::stop,             "stop"                    },  // 28
+    { slot::loop_LR,            "loop_LR"               },  // 29
+    { slot::toggle_mutes,     "toggle_mutes"            },  // 30
+    { slot::song_pointer,     "song_pointer"            },  // 31
 
     /*
      * The following add to what Seq64 supports.
      */
 
-    { slot::keep_queue,       "keep_queue"              },
-    { slot::slot_shift,       "slot_shift"              },
-    { slot::mutes_clear,      "mutes_clear"             },
-    { slot::quit,             "quit"                    },
-    { slot::pattern_edit,     "pattern_edit"            },
-    { slot::event_edit,       "event_edit"              },
-    { slot::song_mode,        "song_mode"               },
-    { slot::toggle_jack,      "toggle_jack"             },
-    { slot::menu_mode,        "menu_mode"               },
-    { slot::follow_transport, "follow_transport"        },
-    { slot::panic,            "panic"                   },
-    { slot::visibility,       "visibility"              },
-    { slot::save_session,     "save_session"            },
-    { slot::record_toggle,    "record_toggle"           },
-    { slot::grid_mutes,       "grid_mutes"              },
-    { slot::reserved_47,      "reserved_47"             },
-    { slot::reserved_48,      "reserved_48"             },
+    { slot::keep_queue,       "keep_queue"              },  // 32
+    { slot::slot_shift,       "slot_shift"              },  // 33
+    { slot::mutes_clear,      "mutes_clear"             },  // 34
+    { slot::quit,             "quit"                    },  // 35
+    { slot::pattern_edit,     "pattern_edit"            },  // 36
+    { slot::event_edit,       "event_edit"              },  // 37
+    { slot::song_mode,        "song_mode"               },  // 38
+    { slot::toggle_jack,      "toggle_jack"             },  // 39
+    { slot::menu_mode,        "menu_mode"               },  // 40
+    { slot::follow_transport, "follow_transport"        },  // 41
+    { slot::panic,            "panic"                   },  // 42
+    { slot::visibility,       "visibility"              },  // 43
+    { slot::save_session,     "save_session"            },  // 44
+    { slot::record_toggle,    "record_toggle"           },  // 45
+    { slot::grid_mutes,       "grid_mutes"              },  // 46
+    { slot::reserved_47,      "reserved_47"             },  // 47
+    { slot::reserved_48,      "reserved_48"             },  // 48
 
     /*
      * Proposed massive expansion in automation. Grid mode selection.
      */
 
-    { slot::record_overdub,     "record_overdub"        },
-    { slot::record_overwrite,   "record_overwrite"      },
-    { slot::record_expand,      "record_expand"         },
-    { slot::record_oneshot,     "record_oneshot"        },
-    { slot::grid_loop,          "grid_loop"             },
-    { slot::grid_record,        "grid_record"           },
-    { slot::grid_copy,          "grid_copy"             },
-    { slot::grid_paste,         "grid_paste"            },
-    { slot::grid_clear,         "grid_clear"            },
-    { slot::grid_delete,        "grid_delete"           },
-    { slot::grid_thru,          "grid_thru"             },
-    { slot::grid_solo,          "grid_solo"             },
-    { slot::grid_cut,           "grid_cut"              },
-    { slot::grid_double,        "grid_double"           },
+    { slot::record_overdub,     "record_overdub"        },  // 49
+    { slot::record_overwrite,   "record_overwrite"      },  // 50
+    { slot::record_expand,      "record_expand"         },  // 51
+    { slot::record_oneshot,     "record_oneshot"        },  // 52
+    { slot::grid_loop,          "grid_loop"             },  // 53
+    { slot::grid_record,        "grid_record"           },  // 54
+    { slot::grid_copy,          "grid_copy"             },  // 55
+    { slot::grid_paste,         "grid_paste"            },  // 56
+    { slot::grid_clear,         "grid_clear"            },  // 57
+    { slot::grid_delete,        "grid_delete"           },  // 58
+    { slot::grid_thru,          "grid_thru"             },  // 59
+    { slot::grid_solo,          "grid_solo"             },  // 50
+    { slot::grid_cut,           "grid_cut"              },  // 61
+    { slot::grid_double,        "grid_double"           },  // 62
 
     /*
      * Grid quantization type selection.
      */
 
-    { slot::grid_quant_none,    "grid_quant_none"       },
-    { slot::grid_quant_full,    "grid_quant_full"       },
-    { slot::grid_quant_tighten, "grid_quant_tighten"    },
-    { slot::grid_quant_random,  "grid_quant_random"     },
-    { slot::grid_quant_jitter,  "grid_quant_jitter"     },
-    { slot::grid_quant_notemap, "grid_quant_notemap",   },
+    { slot::grid_quant_none,    "grid_quant_none"       },  // 63
+    { slot::grid_quant_full,    "grid_quant_full"       },  // 64
+    { slot::grid_quant_tighten, "grid_quant_tighten"    },  // 65
+    { slot::grid_quant_random,  "grid_quant_random"     },  // 66
+    { slot::grid_quant_jitter,  "grid_quant_jitter"     },  // 67
+    { slot::grid_quant_notemap, "grid_quant_notemap",   },  // 68
 
     /*
      * A few more likely candidates.
      */
 
-    { slot::mod_bbt_hms,        "mod_bbt_hms"           },
-    { slot::mod_LR_loop,        "mod_LR_loop"           },
-    { slot::mod_undo,           "mod_undo"              },
-    { slot::mod_redo,           "mod_redo"              },
-    { slot::mod_transpose_song, "mod_transpose_song"    },
-    { slot::mod_copy_set,       "mod_copy_set"          },
-    { slot::mod_paste_set,      "mod_paste_set"         },
-    { slot::mod_toggle_tracks,  "mod_toggle_tracks"     },
+    { slot::mod_bbt_hms,        "mod_bbt_hms"           },  // 69
+    { slot::mod_LR_loop,        "mod_LR_loop"           },  // 70
+    { slot::mod_undo,           "mod_undo"              },  // 71
+    { slot::mod_redo,           "mod_redo"              },  // 72
+    { slot::mod_transpose_song, "mod_transpose_song"    },  // 73
+    { slot::mod_copy_set,       "mod_copy_set"          },  // 74
+    { slot::mod_paste_set,      "mod_paste_set"         },  // 75
+    { slot::mod_toggle_tracks,  "mod_toggle_tracks"     },  // 76
 
     /*
      * Set playing modes.
      */
 
-    { slot::set_mode_normal,    "set_mode_normal"       },
-    { slot::set_mode_auto,      "set_mode_auto"         },
-    { slot::set_mode_additive,  "set_mode_additive"     },
-    { slot::set_mode_all_sets,  "set_mode_all_sets"     },
+    { slot::set_mode_normal,    "set_mode_normal"       },  // 77
+    { slot::set_mode_auto,      "set_mode_auto"         },  // 78
+    { slot::set_mode_additive,  "set_mode_additive"     },  // 79
+    { slot::set_mode_all_sets,  "set_mode_all_sets"     },  // 80
 
     /*
      * Tricky ending.
      */
 
-    { slot::max,              "maximum"                 },
-    { slot::loop,             "loop"                    },
-    { slot::mute_group,       "mute_group"              },
-    { slot::automation,       "automation"              },
-    { slot::illegal,          "illegal"                 }
+    { slot::max,              "maximum"                 },  // 81
+    { slot::loop,             "loop"                    },  // 82
+    { slot::mute_group,       "mute_group"              },  // 83
+    { slot::automation,       "automation"              },  // 84
+    { slot::illegal,          "illegal"                 }   // 85
 };
 
 /*
- * This function is not used.  And the slotname field is basically the same as
- * the std::string returned by opcontrol::slot_name(slot s).
+ * The slotname field is basically the same as the std::string returned by
+ * opcontrol::slot_name(slot s).
  */
 
 std::string
@@ -418,10 +416,13 @@ slot
 string_to_slot (const std::string & s)
 {
     slot result = slot::illegal;
-    slot_pair * sptr = &s_slotnamelist[0];
-    for (int i = 0; ; ++i)
+    for
+    (
+        slot_pair * sptr = &s_slotnamelist[0];
+        sptr->slotcode != slot::illegal; ++sptr
+    )
     {
-        if (sptr->slotname == s || sptr->slotcode == slot::illegal)
+        if (sptr->slotname == s)
         {
             result = sptr->slotcode;
             break;
@@ -429,8 +430,6 @@ string_to_slot (const std::string & s)
     }
     return result;
 }
-
-#endif      // defined SEQ66_PLATFORM_DEBUG
 
 }           // namespace automation
 

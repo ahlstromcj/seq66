@@ -442,7 +442,6 @@ qt_get_string
     return qtext.toStdString();
 }
 
-
 /**
  *  Creates a QTimer in a consistent manner.
  */
@@ -712,7 +711,7 @@ new_qaction
 #else
     QAction * result = new (std::nothrow) QAction(micon, mlabel);
 #endif
-    if (not_nullptr(result))
+    if (fontsize > 0 && not_nullptr(result))
     {
         QFont f { result->font() };
         f.setPointSize(fontsize);
@@ -744,7 +743,7 @@ new_qaction
     {
         QString mlabel(qt(text));
         QAction * result = new (std::nothrow) QAction(mlabel, parent);
-        if (not_nullptr(result))
+        if (fontsize > 0 && not_nullptr(result))
         {
             QFont f { result->font() };
             f.setPointSize(fontsize);
@@ -770,7 +769,7 @@ new_qmenu
     {
         QString mlabel(qt(text));
         QMenu * result = new (std::nothrow) QMenu(mlabel, parent);
-        if (not_nullptr(result))
+        if (fontsize > 0 && not_nullptr(result))
         {
             QFont f { result->font() };
             f.setPointSize(fontsize);

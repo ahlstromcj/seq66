@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2024-01-01
+ * \updates       2026-06-18
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -153,9 +153,16 @@ public:
     }
 
     bool add (const midicontrol & mc);
+    bool replace (const midicontrol & mc);
     void add_blank_controls (const keycontainer & kc);
     const midicontrol & control (const midicontrol::key & k) const;
     std::string status_string () const;
+    bool active_counts
+    (
+        int & loopcount,
+        int & mutescount,
+        int & autocount
+    ) const;
 
     bool inactive_allowed () const
     {

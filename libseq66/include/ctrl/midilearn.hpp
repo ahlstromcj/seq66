@@ -28,13 +28,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-10
+ * \updates       2026-06-18
  * \license       GNU GPLv2 or above
  *
  */
-
-#include <map>                          /* std::map<> and multimap<>        */
-#include <string>                       /* std::string                      */
 
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin             */
 
@@ -63,6 +60,14 @@ private:
     performer & m_perf;
 
     /**
+     *  Hold the current control settings. This object is used to replace
+     *  a control in the current-controls container.
+     *  Might not have a use for this.
+
+    midicontrol m_current_control;
+     */
+
+    /**
      *  Holds the original or saved state of the controls. This is grabbed
      *  from the performer's copy of rc().midi_control_in().
      */
@@ -86,9 +91,14 @@ private:
      *  A count on non-zero controls for each set of control values.
      */
 
-    int m_loops_ctrl_count { 0 };
-    int m_mutes_ctrl_count { 0 };
-    int m_automation_ctrl_count { 0 };
+    mutable int m_loops_ctrl_count { 0 };
+    mutable int m_mutes_ctrl_count { 0 };
+    mutable int m_automation_ctrl_count { 0 };
+
+    /**
+     *  Indicates a change has been made.
+     */
+
     bool m_is_dirty { false };
 
     /**
@@ -112,9 +122,9 @@ public:
         bool clearcontrols = false
     );
     midilearn (const midilearn &) = default;
-    midilearn & operator = (const midilearn &) = default;
+    midilearn & operator = (const midilearn &) = delete;
     midilearn (midilearn &&) = default;
-    midilearn & operator = (midilearn &&) = default;
+    midilearn & operator = (midilearn &&) = delete;
     ~midilearn () = default;
 
     performer & perf ()
@@ -152,7 +162,33 @@ public:
     void start ();
     bool save ();
 
-    bool learn_control (const event & ev);
+    bool learn_control
+    (
+        const event & ev,
+        const std::string & keyname,
+        automation::slot opslot,
+        automation::category opcat,
+        automation::action opact,
+        int opcode,
+        bool isinverse,
+        int d1min,
+        int d1max
+    );
+
+    bool active_counts () const
+    {
+        return  m_current_controls.active_counts
+        (
+            m_loops_ctrl_count, m_mutes_ctrl_count, m_automation_ctrl_count
+        );
+    }
+
+    bool active_counts
+    (
+        int & loopcount,
+        int & mutescount,
+        int & autocount
+    ) const;
 
 private:
 

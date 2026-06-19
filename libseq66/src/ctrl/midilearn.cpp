@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-10
+ * \updates       2026-06-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -50,12 +50,33 @@ midilearn::midilearn
     bool clearcontrols
 ) :
     m_perf              (p),
+//  m_current_control   (),
     m_original_controls (p.midi_control_in()),
     m_current_controls  (p.midi_control_in()),
     m_control_status    (automation::ctrlstatus::none)
 {
     if (clearcontrols)
         clear();
+
+    (void) active_counts();
+}
+
+bool
+midilearn::active_counts
+(
+    int & loopcount,
+    int & mutescount,
+    int & autocount
+) const
+{
+    bool result = active_counts();
+    if (result)
+    {
+        loopcount = m_loops_ctrl_count;
+        mutescount = m_mutes_ctrl_count;
+        autocount = m_automation_ctrl_count;
+    }
+    return result;
 }
 
 /*
@@ -113,10 +134,30 @@ midilearn::save ()
 }
 
 bool
-midilearn::learn_control (const event & ev)
+midilearn::learn_control
+(
+    const event & ev,
+    const std::string & keyname,
+    automation::slot opslot,
+    automation::category opcat,
+    automation::action opact,
+    int opcode,
+    bool isinverse,
+    int d1min,
+    int d1max
+)
 {
-    (void) ev;
-    return false;   // TO DO
+    midicontrol mc(keyname, opcat, opact, opslot, opcode);
+    mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
+
+    /*
+     * Might not have a use for this.
+     * m_current_control = mc;
+     */
+
+
+    bool result { m_current_controls.replace(mc) };
+    return result;
 }
 
 }           // namespace seq66

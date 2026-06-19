@@ -412,7 +412,6 @@ signals:
 public slots:
 
     void conditional_update ();
-//  void update_edit_mode (sequence::editmode mode);
 
 };          // class qseqroll
 

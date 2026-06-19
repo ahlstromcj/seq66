@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-11-27
+ * \updates       2026-06-18
  * \license       GNU GPLv2 or above
  *
  *  The idea behind the MIDI control automation setup is that an incoming
@@ -153,6 +153,25 @@ midicontrol::set (int values [automation::SUBCOUNT])
     return m_active;
 }
 
+bool
+midicontrol::set
+(
+    bool isinverse,
+    midibyte statusbyte,
+    midibyte d0,
+    midibyte d1min,
+    midibyte d1max
+)
+{
+    m_inverse_active = isinverse;
+    m_status = statusbyte;
+    m_d0 = d0;
+    m_min_d1 = d1min;
+    m_max_d1 = d1max;
+    m_active = m_status > 0x00;
+    return m_active;
+}
+
 /**
  *  Checks to see if this control matches the given category and slot.
  *  For the pattern category, the slot should be the pattern number. For the
@@ -206,4 +225,3 @@ midicontrol::show (bool add_newline) const
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

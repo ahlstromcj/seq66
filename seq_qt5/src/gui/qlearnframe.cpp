@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-09
+ * \updates       2026-06-19
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -41,9 +41,12 @@
  */
 
 #include <QButtonGroup>
+#include <QTimer>
 
-#include "play/performer.hpp"           /* seq66::performer class           */
-#include "qlearnframe.hpp"
+#include "ctrl/automation.hpp"          /* seq66::slot_to_string()          */
+#include "ctrl/midilearn.hpp"           /* seq66::midilearn class           */
+#include "qlearnframe.hpp"              /* seq66::qlearnframe gui           */
+#include "qt5_helpers.hpp"              /* seq66::qt_timer() and qt()       */
 #include "ui_qlearnframe.h"
 
 namespace seq66
@@ -61,6 +64,17 @@ enum learn_mode_button_t
     learn_mode_button_automation
 };
 
+/**
+ *  Button numbering for Action radio buttons.
+ */
+
+enum action_mode_button_t
+{
+    action_mode_button_toggle,
+    action_mode_button_on,
+    action_mode_button_off
+};
+
 /*
  *  To be beefed up.
  */
@@ -72,10 +86,20 @@ qlearnframe::qlearnframe
     QWidget * parent
 ) :
     QFrame                  (parent),
+    performer::callbacks    (p),
     ui                      (new Ui::qlearnframe),
     m_perf                  (p),
+    m_timer                 (nullptr),
+    m_learn_button_group    (nullptr),
+    m_action_button_group   (nullptr),
+    m_current_keyname       (),
     m_automation_category   (opcat),
-    m_learn_button_group    (nullptr)
+    m_automation_action     (automation::action::toggle),
+    m_automation_slot       (automation::slot::none),
+    m_control_index         (-1),
+    m_inverse               (false),
+    m_d1min                 (0),
+    m_d1max                 (127)
 {
     ui->setupUi(this);
 
@@ -109,7 +133,7 @@ qlearnframe::qlearnframe
      * Mode buttons.
      */
 
-    m_learn_button_group = new QButtonGroup(this);
+    m_learn_button_group = new (std::nothrow) QButtonGroup(this);
     if (not_nullptr(m_learn_button_group))
     {
         m_learn_button_group->addButton
@@ -125,32 +149,194 @@ qlearnframe::qlearnframe
             ui->automation_button, learn_mode_button_automation
         );
         select_category(opcat);
-    }
 
 #if defined QT_VERSION_5
 
-    connect
-    (
-        learn_button_group, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_learn_mode(int))
-    );
+        connect
+        (
+            m_learn_button_group, SIGNAL(buttonClicked(int)),
+            this, SLOT(slot_select_category(int))
+        );
 
 #elif defined QT_VERSION_6 || defined QT_VERSION_7
 
-    auto lambdafunc = [this] (QAbstractButton * abutton)
-    {
-        slot_learn_mode(learn_button_group->id(abutton));
-    };
-    connect(learn_button_group, &QButtonGroup::buttonClicked, lambdafunc);
+        auto lambdafunc = [this] (QAbstractButton * abutton)
+        {
+            slot_select_category(m_learn_button_group->id(abutton));
+        };
+        connect
+        (
+            m_learn_button_group, &QButtonGroup::buttonClicked, lambdafunc
+        );
 
 #endif
 
-    // TODO: show and process the category
+    }
+    ui->loops_line_edit->setReadOnly(true);
+    ui->loops_line_edit->setText("0");
+    ui->mutes_line_edit->setReadOnly(true);
+    ui->mutes_line_edit->setText("0");
+    ui->automation_line_edit->setReadOnly(true);
+    ui->automation_line_edit->setText("0");
+
+    /*
+     * Create a button group to manage the mutual status of the Action
+     * buttons.
+     */
+
+    m_action_button_group = new (std::nothrow) QButtonGroup(this);
+    if (not_nullptr(m_action_button_group))
+    {
+        m_action_button_group->addButton
+        (
+            ui->radio_action_toggle, action_mode_button_toggle
+        );
+        m_action_button_group->addButton
+        (
+            ui->radio_action_on, action_mode_button_on
+        );
+        m_action_button_group->addButton
+        (
+            ui->radio_action_off, action_mode_button_off
+        );
+        select_action(m_automation_action);
+
+#if defined QT_VERSION_5
+
+        connect
+        (
+            m_action_button_group, SIGNAL(buttonClicked(int)),
+            this, SLOT(slot_select_action(int))
+        );
+
+#elif defined QT_VERSION_6 || defined QT_VERSION_7
+
+        auto actionfunc = [this] (QAbstractButton * abutton)
+        {
+            slot_select_action(m_action_button_group->id(abutton));
+        };
+        connect(m_action_button_group, &QButtonGroup::buttonClicked, actionfunc);
+
+#endif
+
+    }
+    connect
+    (
+        ui->inverse_check_box, SIGNAL(clicked(bool)),
+        this, SLOT(slot_inverse())
+    );
+    connect
+    (
+        ui->d1min_line_edit, SIGNAL(editingFinished()),
+        this, SLOT(slot_d1min())
+    );
+
+    ui->reserved_push_button->hide();
+    ui->current_logged_control_line_edit->setReadOnly(true);
+    ui->current_logged_control_line_edit->setText("None");
+
+    /*
+     * Set up the performer's midilearn object. Then count the
+     * number of MIDI control events that are active.
+     */
+
+    if (perf().create_midi_learn())
+        update_active_counts();
+
+    perf().enregister(this);                    /* set for notification     */
+
+    /*
+     * Check for a pending automation-control every 5 x 40 milliseconds.
+     */
+
+    m_timer = qt_timer(this, "qlearnframe", 5, SLOT(slot_poll_update()));
 }
 
 qlearnframe::~qlearnframe()
 {
+    perf().unregister(this);
+    if (not_nullptr(m_timer))
+        m_timer->stop();
+
     delete ui;
+}
+
+bool
+qlearnframe::on_midi_learn (seq66::event ev)
+{
+    bool result
+    {
+        perf().midi_learn()->learn_control
+        (
+            ev, "keyname",
+            m_automation_slot,
+            m_automation_category,
+            m_automation_action,
+            m_control_index,
+            m_inverse,
+            m_d1min,
+            m_d1max
+        )
+    };
+    return result;
+}
+
+/**
+ *  Here, we poll for the current last-automation value to be able to
+ *  display it in the user-interface.
+ *
+ *  This value will be cleared once a MIDI controller event comes in.
+ */
+
+void
+qlearnframe::slot_poll_update ()
+{
+    automation::slot last { perf().last_automation_slot() };
+    if (last != m_automation_slot)
+    {
+        std::string eventname;
+        if (m_automation_category == automation::category::loop)
+        {
+            if (m_control_index >= 0)
+                eventname = "Loop " + std::to_string(m_control_index);
+        }
+        else if (m_automation_category == automation::category::mute_group)
+        {
+            if (m_control_index >= 0)
+                eventname = "Mute Group " + std::to_string(m_control_index);
+        }
+        else if (m_automation_category == automation::category::automation)
+        {
+            eventname = "Automation " + automation::slot_to_string(last);
+        }
+        if (! eventname.empty())
+        {
+            QString txt { qt(eventname) };
+            ui->current_logged_control_line_edit->setText(txt);
+        }
+        m_automation_slot = last;
+    }
+}
+
+void
+qlearnframe::update_active_counts ()
+{
+    if (not_nullptr(perf().midi_learn()))
+    {
+        int lcount;
+        int mcount;
+        int acount;
+        midilearn & ml { *perf().midi_learn() };
+        if (ml.active_counts(lcount, mcount, acount))
+        {
+            QString lcqs { QString::number(lcount) };
+            QString mcqs { QString::number(mcount) };
+            QString acqs { QString::number(acount) };
+            ui->loops_line_edit->setText(lcqs);
+            ui->mutes_line_edit->setText(mcqs);
+            ui->automation_line_edit->setText(acqs);
+        }
+    }
 }
 
 void
@@ -164,28 +350,16 @@ qlearnframe::select_category (automation::category opcat)
     if (ok)
     {
         int targetid;
-        m_automation_category = opcat;
+//      m_automation_category = opcat;
         if (opcat == automation::category::loop)
             targetid = learn_mode_button_loops;
         else if (opcat == automation::category::mute_group)
             targetid = learn_mode_button_mutes;
-        else if (opcat == automation::category::automation)
+        else
             targetid = learn_mode_button_automation;
 
         m_learn_button_group->button(targetid)->setChecked(true);
-        handle_select_category(opcat);
-
-        // Emits toggled/clicked signals
-        //
-        // m_learn_button_group->button(targetid)->click();
-
     }
-}
-
-void
-qlearnframe::handle_select_category (automation::category opcat)
-{
-    // TODO
 }
 
 void
@@ -200,7 +374,43 @@ qlearnframe::slot_select_category (int buttonno)
         opcat = automation::category::automation;
 
     m_automation_category = opcat;
-    handle_select_category(opcat);
+}
+
+void
+qlearnframe::select_action (automation::action opact)
+{
+    bool ok
+    {
+        opact != automation::action::none &&
+        opact != automation::action::max
+    };
+    if (ok)
+    {
+        int targetid;
+//      m_automation_action = opact;
+        if (opact == automation::action::toggle)
+            targetid = action_mode_button_toggle;
+        else if (opact == automation::action::on)
+            targetid = action_mode_button_on;
+        else
+            targetid = action_mode_button_off;
+
+        m_action_button_group->button(targetid)->setChecked(true);
+    }
+}
+
+void
+qlearnframe::slot_select_action (int buttonno)
+{
+    automation::action opact { automation::action::none };
+    if (buttonno == action_mode_button_toggle)
+        opact = automation::action::toggle;
+    else if (buttonno == action_mode_button_on)
+        opact = automation::action::on;
+    else if (buttonno == action_mode_button_off)
+        opact = automation::action::off;
+
+    m_automation_action = opact;
 }
 
 void
@@ -234,6 +444,36 @@ qlearnframe::slot_ok ()
 {
     // TODO
     close();
+}
+
+void
+qlearnframe::slot_inverse ()
+{
+    m_inverse = ui->inverse_check_box->isChecked();
+}
+
+void
+qlearnframe::slot_d1min ()
+{
+    QString text { ui->d1min_line_edit->text() };
+    std::string t { text.toStdString() };
+    if (! t.empty())
+    {
+        int d1min { std::stoi(t, nullptr, 0) };
+        m_d1min = d1min;
+    }
+}
+
+void
+qlearnframe::slot_d1max ()
+{
+    QString text { ui->d1max_line_edit->text() };
+    std::string t { text.toStdString() };
+    if (! t.empty())
+    {
+        int d1max { std::stoi(t, nullptr, 0) };
+        m_d1max = d1max;
+    }
 }
 
 }               // namespace seq66
