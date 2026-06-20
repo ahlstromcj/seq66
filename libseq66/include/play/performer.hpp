@@ -3086,9 +3086,6 @@ public:
     bool create_midi_learn ();
     bool delete_midi_learn ();
     bool save_midi_learn (const midicontrolin & mci);
-#if 0
-    bool learn_control (const event & ev);
-#endif
 
     bool in_midi_learn () const
     {
@@ -3096,6 +3093,23 @@ public:
     }
 
 #else
+
+    bool create_midi_learn ()
+    {
+        return false;
+    }
+
+    bool delete_midi_learn ()
+    {
+        return false;
+    }
+
+    bool save_midi_learn (const midicontrolin & mci)
+    {
+        (void) mci;
+        return false;
+    }
+
 
     bool in_midi_learn () const
     {

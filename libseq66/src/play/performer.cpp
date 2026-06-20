@@ -3617,17 +3617,6 @@ performer::save_midi_learn (const midicontrolin & mci)
     return result;
 }
 
-#if 0
-bool
-performer::learn_control (const event & ev)
-{
-    midicontrol::key k(ev);
-    const midicontrol & incoming = m_midi_control_in.control(k);
-
-    return true;    // TODO
-}
-#endif
-
 #endif  // SEQ66_MIDI_LEARN_SUPPORT
 
 /**
