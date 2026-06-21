@@ -1132,9 +1132,12 @@ private:                            /* key, midi, and op container section  */
      *
      *  This does not count actions of loop/mute keys, which are
      *  handled serially as a group, without clicking.
+     *
+     *  This value is also set into the midilearn object, but we need
+     *  it here when there is no midilearn object.
      */
 
-    automation::slot m_last_automation_slot;
+     automation::slot m_last_automation_slot;
 
     /**
      *  Indicates if the graphical user-interface is visible.  Currently
@@ -3059,16 +3062,11 @@ public:
         return m_midi_control_out;
     }
 
+    void last_automation_slot (automation::slot s, bool notify = true);
+
     automation::slot last_automation_slot () const
     {
         return m_last_automation_slot;
-    }
-
-    void last_automation_slot (automation::slot s, bool notify = true);
-
-    void clear_automation_slot ()
-    {
-        m_last_automation_slot = automation::slot::none;
     }
 
     midilearn * midi_learn ()
@@ -3083,7 +3081,7 @@ public:
 
 #if SEQ66_MIDI_LEARN_SUPPORT
 
-    bool create_midi_learn ();
+    midilearn * create_midi_learn ();
     bool delete_midi_learn ();
     bool save_midi_learn (const midicontrolin & mci);
 

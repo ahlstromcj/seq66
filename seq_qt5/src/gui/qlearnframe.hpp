@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-19
+ * \updates       2026-06-20
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -73,19 +73,33 @@ public:
 
 private:
 
-    const performer & perf () const
-    {
-        return m_perf;
-    }
-
     performer & perf ()
     {
         return m_perf;
     }
 
+    const performer & perf () const
+    {
+        return m_perf;
+    }
+
+    midilearn & midi_learn ()
+    {
+        return m_midi_learn;
+    }
+
+    const midilearn & midi_learn () const
+    {
+        return m_midi_learn;
+    }
+
     void select_category (automation::category opcat);
     void select_action (automation::action opact);
     void update_active_counts ();
+    void set_buttons (bool enable);
+    void setup_loop_process ();
+    void setup_mutes_process ();
+    void setup_automation_process ();
 
 private:        // performer::callback override
 
@@ -110,14 +124,15 @@ private:
 
     Ui::qlearnframe * ui;
     performer & m_perf;
+    midilearn & m_midi_learn;
     QTimer * m_timer;
     QButtonGroup * m_learn_button_group;
     QButtonGroup * m_action_button_group;
     std::string m_current_keyname;
-    automation::category m_automation_category;
-    automation::action m_automation_action;
-    automation::slot m_automation_slot;
-    int m_control_index;
+//  automation::category m_automation_category;
+//  automation::action m_automation_action;
+//  automation::slot m_automation_slot;
+//  int m_control_index;
     bool m_inverse;
     int m_d1min;
     int m_d1max;

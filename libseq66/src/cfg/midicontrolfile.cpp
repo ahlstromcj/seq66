@@ -1264,7 +1264,6 @@ midicontrolfile::parse_control_stanza (automation::category opcat, int index)
         }
         if (ok)
         {
-            opslot = automation::slot::none;
             if (opcat == automation::category::loop)
                 opslot = automation::slot::loop;
             else if (opcat == automation::category::mute_group)

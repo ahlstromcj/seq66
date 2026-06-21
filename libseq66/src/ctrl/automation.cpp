@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-17
+ * \updates       2026-06-20
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -409,6 +409,9 @@ slot_to_string (slot s)
         int index = static_cast<int>(s);
         result = s_slotnamelist[index].slotname;
     }
+    else if (s == slot::none)
+        result = "none";
+
     return result;
 }
 

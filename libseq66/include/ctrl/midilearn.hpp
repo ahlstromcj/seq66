@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-18
+ * \updates       2026-06-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,14 +60,6 @@ private:
     performer & m_perf;
 
     /**
-     *  Hold the current control settings. This object is used to replace
-     *  a control in the current-controls container.
-     *  Might not have a use for this.
-
-    midicontrol m_current_control;
-     */
-
-    /**
      *  Holds the original or saved state of the controls. This is grabbed
      *  from the performer's copy of rc().midi_control_in().
      */
@@ -82,10 +74,24 @@ private:
     midicontrolin m_current_controls;
 
     /**
-     *  Mirrors the Learn selection in qlearnframe.
+     *  Mirrors the Learn selection in qlearnframe: loop, mute_group, or
+     *  automation.
      */
 
-    automation::category m_current_opcat;
+    automation::category m_automation_category { automation::category::none };
+
+    /**
+     *  Mirrors the Action selection in qlearnframe: toggle, on, or off.
+     */
+
+    automation::action m_automation_action { automation::action::toggle };
+
+    /**
+     *  This is set when processing automation controls. For the loop
+     *  and mute_group category, see m_current_index.
+     */
+
+    automation::slot m_automation_slot { automation::slot::none };
 
     /**
      *  A count on non-zero controls for each set of control values.
@@ -94,6 +100,13 @@ private:
     mutable int m_loops_ctrl_count { 0 };
     mutable int m_mutes_ctrl_count { 0 };
     mutable int m_automation_ctrl_count { 0 };
+
+    /**
+     *  Indicates an event has been received (i.e. a button pressed),
+     *  so that the next event, the release event, should be ignored.
+     */
+
+    bool m_is_pressed { false };
 
     /**
      *  Indicates a change has been made.
@@ -105,13 +118,7 @@ private:
      *  Indicates the index of the current button in the loops or mutes grid.
      */
 
-    int m_index { 0 };
-
-    /**
-     *  Holds the current control statuses ...
-     */
-
-    automation::ctrlstatus m_control_status;
+    int m_current_index { 0 };
 
 public:
 
@@ -137,6 +144,52 @@ public:
         return m_perf;
     }
 
+    automation::category automation_category () const
+    {
+        return m_automation_category;
+    }
+
+    void automation_category (automation::category c)
+    {
+        m_automation_category = c;
+        clear_current_index();
+    }
+
+    bool is_loop () const
+    {
+        return m_automation_category == automation::category::loop;
+    }
+
+    bool is_mute_group () const
+    {
+        return m_automation_category == automation::category::mute_group;
+    }
+
+    bool is_automation () const
+    {
+        return m_automation_category == automation::category::automation;
+    }
+
+    automation::action automation_action () const
+    {
+        return m_automation_action;
+    }
+
+    void automation_action (automation::action a)
+    {
+        m_automation_action = a;
+    }
+
+    automation::slot automation_slot () const
+    {
+        return m_automation_slot;
+    }
+
+    void automation_slot (automation::slot s)
+    {
+        m_automation_slot = s;
+    }
+
     int loops_ctrl_count () const
     {
         return m_loops_ctrl_count;
@@ -152,24 +205,40 @@ public:
         return m_automation_ctrl_count;
     }
 
+    bool automation_slot_active () const
+    {
+        return m_automation_slot != automation::slot::none;
+    }
+
+    void clear_automation_slot ()
+    {
+        m_automation_slot = automation::slot::none;
+    }
+
     bool is_dirty () const
     {
         return m_is_dirty;
     }
 
-    void clear ();
-    void reset ();
-    void start ();
+    bool current_index () const
+    {
+        return m_current_index;
+    }
+
+    void clear_current_index ()
+    {
+        m_current_index = 0;
+    }
+
+    bool clear ();
+    bool reset ();
+    bool start ();
     bool save ();
 
     bool learn_control
     (
         const event & ev,
         const std::string & keyname,
-        automation::slot opslot,
-        automation::category opcat,
-        automation::action opact,
-        int opcode,
         bool isinverse,
         int d1min,
         int d1max

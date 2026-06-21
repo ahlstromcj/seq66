@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-18
+ * \updates       2026-06-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,6 +33,7 @@
 #include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cerr                        */
 
+#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/midilearn.hpp"           /* seq66::midilearn class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
 
@@ -40,8 +41,8 @@ namespace seq66
 {
 
 /**
- *  This constructor assigns the basic values of control name, number, and
- *  action code.  The rest of the members can be set via the set() function.
+ *  This constructor assigns members based on information from the
+ *  performer object. The rest are initialized in the class declaration.
  */
 
 midilearn::midilearn
@@ -50,10 +51,8 @@ midilearn::midilearn
     bool clearcontrols
 ) :
     m_perf              (p),
-//  m_current_control   (),
     m_original_controls (p.midi_control_in()),
-    m_current_controls  (p.midi_control_in()),
-    m_control_status    (automation::ctrlstatus::none)
+    m_current_controls  (p.midi_control_in())
 {
     if (clearcontrols)
         clear();
@@ -83,22 +82,24 @@ midilearn::active_counts
  * const midicontrolin & mci { perf().midi_control_in() };
  */
 
-void
+bool
 midilearn::clear ()
 {
     const keycontainer & kc { perf().key_controls() };
     m_current_controls.clear();
     m_current_controls.add_blank_controls(kc);
+    return true;
 }
 
 /**
  *  Copies the original controls into the current controls.
  */
 
-void
+bool
 midilearn::reset ()
 {
     m_current_controls = m_original_controls;
+    return true;
 }
 
 /**
@@ -106,10 +107,10 @@ midilearn::reset ()
  *  midilearn object.
  */
 
-void
+bool
 midilearn::start ()
 {
-    // TODO
+    return false; // TODO
 }
 
 /**
@@ -138,25 +139,69 @@ midilearn::learn_control
 (
     const event & ev,
     const std::string & keyname,
-    automation::slot opslot,
-    automation::category opcat,
-    automation::action opact,
-    int opcode,
     bool isinverse,
     int d1min,
     int d1max
 )
 {
-    midicontrol mc(keyname, opcat, opact, opslot, opcode);
-    mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
+    bool result { automation_slot_active() };
+    if (result)
+    {
+        /*
+         * Code similar to parse_control_stanza() in the midicontrolfile
+         * module.
+         */
 
-    /*
-     * Might not have a use for this.
-     * m_current_control = mc;
-     */
+        automation::category opcat { automation_category() };
+        automation::slot opslot { automation::slot::none };
+        if (opcat == automation::category::loop)
+            opslot = automation::slot::loop;
+        else if (opcat == automation::category::mute_group)
+            opslot = automation::slot::mute_group;
+        else if (opcat == automation::category::automation)
+            opslot = opcontrol::set_slot(current_index());
 
+        /*
+         * Prevent next event (e.g. a Note Off) from being used
+         * until another slot is selected in the user-interface.
+         */
 
-    bool result { m_current_controls.replace(mc) };
+        clear_automation_slot();
+        if (m_is_pressed)
+        {
+            m_is_pressed = false;
+        }
+        else
+        {
+            m_is_pressed = true;
+
+            midicontrol mc
+            (
+                keyname, opcat, automation_action(),
+                opslot, current_index()
+            );
+            mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
+
+            bool result { m_current_controls.replace(mc) };
+            if (result)
+            {
+                set_dirty(true);
+                if (m_automation_category != automation::category::automation)
+                    ++m_current_index;
+
+#if defined SEQ66_PLATFORM_DEBUG
+                if (rc().investigate())
+                {
+                    printf
+                    (
+                        "Learned event[%2d] = 0x%02x %d...\n",
+                        m_current_index, unsigned(ev.get_status()), int(ev.d0())
+                    );
+                }
+#endif
+            }
+        }
+    }
     return result;
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-19
+ * \updates       2026-06-21
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -641,7 +641,14 @@ performer::last_automation_slot (automation::slot s, bool notify)
     std::string msg { slot_to_string(s) };
     debug_message("automation slot", msg);
 #endif
+
     m_last_automation_slot = s;
+
+#if SEQ66_MIDI_LEARN_SUPPORT
+    if (not_nullptr(midi_learn()))
+        midi_learn()->automation_slot(s);
+#endif
+
     if (notify)
         notify_automation_change(s);
 }
@@ -1645,8 +1652,6 @@ performer::sequence_title (seq::cref seq) const
     return result;
 }
 
-// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
 /**
  *  Creates a sequence ("seqedit") window title, a longer version of
  *  sequence_title().
@@ -1664,11 +1669,11 @@ performer::sequence_title (seq::cref seq) const
 std::string
 performer::sequence_window_title (seq::cref seq) const
 {
-    std::string result = seq_app_name();
-    int sn = seq.seq_number();
+    std::string result { seq_app_name() };
+    int sn { seq.seq_number() };
     if (is_seq_active(sn))
     {
-        int ppq = seq.get_ppqn();
+        int ppq { seq.get_ppqn() };
         char temp[32];
         snprintf(temp, sizeof temp, " (%d ppqn)", ppq);
         result += " #";
@@ -1697,11 +1702,11 @@ performer::sequence_window_title (seq::cref seq) const
 std::string
 performer::main_window_title (const std::string & filename) const
 {
-    std::string result = seq_package_name() + std::string(" ");
-    std::string itemname = rc().no_name();
+    std::string result { seq_package_name() + std::string(" ") };
+    std::string itemname { rc().no_name() };
     if (filename.empty())
     {
-        std::string fn = rc().midi_filename();
+        std::string fn { rc().midi_filename() };
         if (! fn.empty())
         {
 
@@ -1736,7 +1741,7 @@ performer::pulses_to_time_string (midipulse tick) const
 std::string
 performer::client_id_string () const
 {
-    std::string result = seq_client_name();
+    std::string result { seq_client_name() };
     result += ':';
     if (rc().with_jack_midi() && ! rc().jack_session().empty())
         result += rc().jack_session();
@@ -3580,15 +3585,20 @@ performer::create_master_bus ()
 
 #if SEQ66_MIDI_LEARN_SUPPORT
 
-bool
+/**
+ *  Creates a midilearn object and returns the pointer. This makes
+ *  it easier to create it in the qlearnframe member initializer
+ *  list. There is a danger of the assignment to a reference throwing,
+ *  but let's see how that plays off.
+ */
+
+midilearn *
 performer::create_midi_learn ()
 {
-    m_midi_learn = new (std::nothrow) midilearn(*this);
-
-    bool result { not_nullptr(m_midi_learn) };
-    if (result)
+    midilearn * result { new (std::nothrow) midilearn(*this) };
+    if (not_nullptr(result))
     {
-        // any work to do here?
+        m_midi_learn = result;  // any other work to do here?
     }
     return result;
 }
@@ -3612,7 +3622,7 @@ performer::save_midi_learn (const midicontrolin & mci)
     if (result)
     {
         midi_control_in() = mci;
-        rc().auto_rc_save(result);
+        rc().auto_ctrl_save(result);
     }
     return result;
 }
@@ -7841,7 +7851,7 @@ performer::midi_control_event (const event & ev, bool recording)
     if (result)
     {
 #if SEQ66_MIDI_LEARN_SUPPORT
-        bool mlearn { not_nullptr(m_midi_learn) };
+        bool mlearn { not_nullptr(midi_learn()) };
 #else
         bool mlearn { false };
 #endif
@@ -7851,11 +7861,14 @@ performer::midi_control_event (const event & ev, bool recording)
 #if SEQ66_MIDI_LEARN_SUPPORT
 
             /*
-             * Current only qlearnframe is a callbacks client.
+             * Current only qlearnframe is this callback's active client.
              */
 
-            for (auto notify : m_notify)
-                (void) notify->on_midi_learn(ev);
+            if (midi_learn()->automation_slot_active())
+            {
+                for (auto notify : m_notify)
+                    (void) notify->on_midi_learn(ev);
+            }
 #endif
         }
         else
@@ -8686,7 +8699,7 @@ performer::automation_no_op
 {
     std::string name = "No-op";
     print_parameters(name, a, d0, d1, index, inverse);
-    clear_automation_slot();
+    midi_learn()->clear_automation_slot();
     return false;
 }
 
