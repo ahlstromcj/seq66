@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-21
+ * \updates       2026-06-22
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -102,10 +102,6 @@ qlearnframe::qlearnframe
     connect
     (
         ui->cancel_push_button, SIGNAL(clicked()), this, SLOT(slot_cancel())
-    );
-    connect
-    (
-        ui->start_push_button, SIGNAL(clicked()), this, SLOT(slot_start())
     );
     connect
     (
@@ -304,7 +300,6 @@ qlearnframe::on_midi_learn (seq66::event ev)
 void
 qlearnframe::set_buttons (bool enable)
 {
-    ui->start_push_button->setEnabled(enable);
     ui->save_push_button->setEnabled(enable);
     ui->reset_push_button->setEnabled(enable);
     ui->clear_push_button->setEnabled(enable);
@@ -489,14 +484,8 @@ qlearnframe::slot_cancel ()
  *  Using more direct access than the following:
  *
  *      if (not_nullptr(perf().midi_learn()))
- *          perf().midi_learn()->start();
+ *          perf().midi_learn()->save();
  */
-
-void
-qlearnframe::slot_start ()
-{
-    (void) midi_learn().start();
-}
 
 void
 qlearnframe::slot_save ()

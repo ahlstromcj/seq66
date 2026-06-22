@@ -28,10 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-21
+ * \updates       2026-06-22
  * \license       GNU GPLv2 or above
  *
  */
+
+#include <atomic>                       /* std::atomic<bool>                */
 
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin             */
 
@@ -106,7 +108,7 @@ private:
      *  so that the next event, the release event, should be ignored.
      */
 
-    bool m_is_pressed { false };
+    std::atomic<bool> m_pressed { false };
 
     /**
      *  Indicates a change has been made.
@@ -220,7 +222,7 @@ public:
         return m_is_dirty;
     }
 
-    bool current_index () const
+    int current_index () const
     {
         return m_current_index;
     }
@@ -258,6 +260,16 @@ public:
         int & mutescount,
         int & autocount
     ) const;
+
+    bool pressed () const
+    {
+        return m_pressed;
+    }
+
+    void pressed (bool on)
+    {
+        m_pressed = on;
+    }
 
 private:
 

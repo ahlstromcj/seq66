@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-06-08
+# \update         2026-06-22
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-06-08"
+export SEQ66_SCRIPT_EDIT_DATE="2026-06-22"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -192,7 +192,7 @@ get_options () {
                shift
                ;;
 
-            --help)
+            --help | -h)
                DOHELP="yes"
                DOMAKE="no"
                DOSETUP="no"
@@ -290,7 +290,7 @@ get_options () {
                shift
                ;;
 
-            --debug)
+            --debug | -ed)
                if test "$DOCLEAN" = "no" ; then
                   DOMAKE="yes"
                fi
@@ -302,7 +302,7 @@ get_options () {
                shift
                ;;
 
-            --release)
+            --release | -er)
                DOMAKE="yes"
                DORELEASE="yes"
                DODEBUG="no"
@@ -379,8 +379,8 @@ Usage: ./work.sh [options] ($SEQ66_LIBRARY_VERSION-$SEQ66_SCRIPT_EDIT_DATE)
 
 'work.sh' encapsulates common operations involving Meson, builds,
 packing, and version information.  Some options might not work on Windows.
-Many of these commands are best used when setting up the build
-(i.e. do a --clean option first).
+Many of these commands are best used when setting up the build (do a --clean
+option first).
 
  --make              Set up and build the code in 'build'. Default operation.
  --build [dir]       Same as --make, but if given, the build directory is

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2025-05-31
+% \update      2026-06-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -442,6 +442,51 @@
    Also note that the set clipboard can be pasted after a
    \textbf{File / New} or \textbf{File / Open},
    to copy it into another file.
+
+\subsection{Menu / Learn}
+\label{subsec:menu_learn}
+
+   If MIDI Learn has been enabled (and it should be), this menu is available.
+   It provides for a rudimentary MIDI Learn feature.
+   After reading below, a deeper explanation can be found
+   in \sectionref{sec:midi_import_export}.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-window/learn-manager-menu.png}
+   \caption{Seq66 Learn Menu}
+   \label{fig:menu_learn_manager_menu}
+\end{figure}
+
+   \begin{enumber}
+      \item \textbf{Loops}
+      \item \textbf{Mute Groups}
+      \item \textbf{Automation}
+      \item \textbf{Mute ("L")}
+   \end{enumber}
+
+   The first three of these entries bring up a
+   \textbf{Learn Manager} dialog, where
+   that entry is the active one.
+   The last entry is equivalent to the "L" button used to take a snapshot
+   of a mute-group.
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Learn / Loops}{edit!learn loops}
+   The \textbf{Learn Manager} comes up with this item selected.
+   At this point, the control event for the first loop,
+   loop 0, is ready to be recorded.
+   The user should then serially click all the desired loop event until
+   up to 32 loop events are recorded.
+
+   \itempar{Learn / Mute Groups}{edit!learn mute groups}
+   The \textbf{Learn Manager} comes up with this item selected.
+   It works like the loop learning noted above, but maps the buttons
+   for the mute-group settings in a serial fashion.
+
+   \itempar{Learn / Loops}{edit!learn loops}
+   The \textbf{Learn Manager} comes up with this item selected.
 
 \subsection{Menu / Help}
 \label{subsec:menu_help}

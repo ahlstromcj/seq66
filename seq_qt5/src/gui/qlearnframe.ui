@@ -14,7 +14,7 @@
    <string>MIDI Learn Manager</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::Shape::StyledPanel</enum>
+   <enum>QFrame::StyledPanel</enum>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -297,22 +297,6 @@ last Save.</string>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QPushButton" name="start_push_button">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>Start the learn process. This creates a
-midilearn object to manage learning.</string>
-      </property>
-      <property name="text">
-       <string>&amp;Start</string>
-      </property>
-     </widget>
-    </item>
     <item>
      <widget class="QPushButton" name="save_push_button">
       <property name="font">

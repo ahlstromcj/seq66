@@ -1,8 +1,16 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-06-16
+2019-04-13 to 2026-06-22
 
     -   Make an issue for MIDI Learn.
+        -   Make sure that existing controls are bypassed and appended to.
+        -   Add an On/Off option if practical.
+        -   Enable the Clear button if any active events are present.
+        -   Perhaps make the Clear button work only on the active
+            category?
+        -   Makes sure the Clear button resets the current-index
+            to 0.
+        -   More coordination of statuses is needed.
     -   The LaunchPad lights for the patterns come on, then go dark.
         Toggling the patterns (Ctrl-U, Ctrl-M, Ctrl-T) brings them back.
         Fixed, but beware of any issues.

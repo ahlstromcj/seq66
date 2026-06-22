@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-21
+ * \updates       2026-06-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3650,11 +3650,11 @@ bool
 performer::launch (int ppqn)
 {
 #if defined SEQ66_PLATFORM_WINDOWS
-    bool allow_unavailable_devices = true;
+    bool allow_unavailable_devices { true };
 #else
-    bool allow_unavailable_devices = false;
+    bool allow_unavailable_devices { false };
 #endif
-    bool result = create_master_bus();      /* calls set_port_statuses()    */
+    bool result { create_master_bus() };    /* calls set_port_statuses()    */
     if (result)
     {
         if (init_jack_transport())
@@ -3700,7 +3700,7 @@ performer::launch (int ppqn)
 #if defined SEQ66_USE_DEFAULT_PORT_MAPPING
             if (! rc().portmaps_present())  /* don't mung existing port-map */
             {
-                bool ok = store_io_maps();  /* auto-rc-save if not 1st run  */
+                bool ok { store_io_maps() };    /* auto-rc-save 1st run     */
                 if (ok)
                 {
                     rc().portmaps_active(true);
@@ -3722,14 +3722,14 @@ performer::launch (int ppqn)
 
             if (midi_control_in().is_enabled())
             {
-                bussbyte namedbus = m_midi_control_in.nominal_buss();
-                bussbyte truebus = true_input_bus(namedbus);
+                bussbyte namedbus { m_midi_control_in.nominal_buss() };
+                bussbyte truebus { true_input_bus(namedbus) };
                 m_midi_control_in.true_buss(truebus);
             }
             if (midi_control_out().is_enabled())
             {
-                bussbyte namedbus = m_midi_control_out.nominal_buss();
-                bussbyte truebus = true_output_bus(namedbus);
+                bussbyte namedbus { m_midi_control_out.nominal_buss() };
+                bussbyte truebus { true_output_bus(namedbus) };
                 m_midi_control_out.true_buss(truebus);
             }
             m_io_active = true;                     /* set done()           */
@@ -3742,14 +3742,15 @@ performer::launch (int ppqn)
             (void) set_playing_screenset(screenset::number(0));
             if (any_ports_unavailable())
             {
-                static bool s_already_added = false;
+                static bool s_already_added { false };
                 if (! s_already_added)
                 {
-                    std::string msg =
-                        "Remap if needed. "
-                        "OK preserves the map. "
-                        "Suppress this message in Preferences / Display."
-                        ;
+                    std::string msg
+                    {
+                "Remap if needed. "
+                "OK preserves the map, with missing ports disabled. "
+                "Suppress this startup message in Preferences / Display."
+                    };
 
                     m_port_map_error = true;        /* mutable boolean      */
                     append_error_message(msg);
@@ -7864,10 +7865,18 @@ performer::midi_control_event (const event & ev, bool recording)
              * Current only qlearnframe is this callback's active client.
              */
 
-            if (midi_learn()->automation_slot_active())
+            if (midi_learn()->pressed())
             {
-                for (auto notify : m_notify)
-                    (void) notify->on_midi_learn(ev);
+                midi_learn()->pressed(false);
+            }
+            else
+            {
+                midi_learn()->pressed(true);
+                if (midi_learn()->automation_slot_active())
+                {
+                    for (auto notify : m_notify)
+                        (void) notify->on_midi_learn(ev);
+                }
             }
 #endif
         }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-21
+ * \updates       2026-06-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -167,39 +167,31 @@ midilearn::learn_control
          */
 
         clear_automation_slot();
-        if (m_is_pressed)
-        {
-            m_is_pressed = false;
-        }
-        else
-        {
-            m_is_pressed = true;
 
-            midicontrol mc
-            (
-                keyname, opcat, automation_action(),
-                opslot, current_index()
-            );
-            mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
+        midicontrol mc
+        (
+            keyname, opcat, automation_action(),
+            opslot, current_index()
+        );
+        mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
 
-            bool result { m_current_controls.replace(mc) };
-            if (result)
-            {
-                set_dirty(true);
-                if (m_automation_category != automation::category::automation)
-                    ++m_current_index;
+        bool result { m_current_controls.replace(mc) };
+        if (result)
+        {
+            set_dirty(true);
+            if (m_automation_category != automation::category::automation)
+                ++m_current_index;
 
 #if defined SEQ66_PLATFORM_DEBUG
-                if (rc().investigate())
-                {
-                    printf
-                    (
-                        "Learned event[%2d] = 0x%02x %d...\n",
-                        m_current_index, unsigned(ev.get_status()), int(ev.d0())
-                    );
-                }
-#endif
+            if (rc().investigate())
+            {
+                printf
+                (
+                    "Learned event %2d: 0x%02x %d\n",
+                    m_current_index, unsigned(ev.get_status()), int(ev.d0())
+                );
             }
+#endif
         }
     }
     return result;
