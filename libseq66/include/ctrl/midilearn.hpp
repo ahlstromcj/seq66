@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-22
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,6 +52,7 @@ class midilearn final
 
     friend class midicontrolfile;
     friend class performer;
+    friend class qlearnframe;
 
 private:
 
@@ -122,6 +123,14 @@ private:
 
     int m_current_index { 0 };
 
+    /**
+     *  Values from the qlearnframe user-interface.
+     */
+
+    bool m_inverse;
+    int m_d1min;
+    int m_d1max;
+
 public:
 
     midilearn () = delete;
@@ -172,6 +181,11 @@ public:
         return m_automation_category == automation::category::automation;
     }
 
+    bool is_hold_active () const
+    {
+        return m_automation_action == automation::action::hold;
+    }
+
     automation::action automation_action () const
     {
         return m_automation_action;
@@ -190,6 +204,7 @@ public:
     void automation_slot (automation::slot s)
     {
         m_automation_slot = s;
+        m_current_index = slot_to_int_cast(s);
     }
 
     int loops_ctrl_count () const
@@ -243,7 +258,8 @@ public:
         const std::string & keyname,
         bool isinverse,
         int d1min,
-        int d1max
+        int d1max,
+        automation::action altaction = automation::action::none
     );
 
     bool active_counts () const
@@ -271,11 +287,41 @@ public:
         m_pressed = on;
     }
 
+    bool inverse () const
+    {
+        return m_inverse;
+    }
+
+    int d1min () const
+    {
+        return m_d1min;
+    }
+
+    int d1max () const
+    {
+        return m_d1max;
+    }
+
 private:
 
     void set_dirty (bool f)
     {
         m_is_dirty = f;
+    }
+
+    void inverse (bool inv)
+    {
+        m_inverse = inv;
+    }
+
+    void d1min (int d1)
+    {
+        m_d1min = d1;
+    }
+
+    void d1max (int d1)
+    {
+        m_d1max = d1;
     }
 
 };              // class midilearn

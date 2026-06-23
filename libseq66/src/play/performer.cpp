@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-22
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -643,11 +643,8 @@ performer::last_automation_slot (automation::slot s, bool notify)
 #endif
 
     m_last_automation_slot = s;
-
-#if SEQ66_MIDI_LEARN_SUPPORT
     if (not_nullptr(midi_learn()))
         midi_learn()->automation_slot(s);
-#endif
 
     if (notify)
         notify_automation_change(s);
@@ -3583,8 +3580,6 @@ performer::create_master_bus ()
     return result;
 }
 
-#if SEQ66_MIDI_LEARN_SUPPORT
-
 /**
  *  Creates a midilearn object and returns the pointer. This makes
  *  it easier to create it in the qlearnframe member initializer
@@ -3626,8 +3621,6 @@ performer::save_midi_learn (const midicontrolin & mci)
     }
     return result;
 }
-
-#endif  // SEQ66_MIDI_LEARN_SUPPORT
 
 /**
  *  Calls the MIDI buss and JACK initialization functions and the input/output
@@ -7851,34 +7844,57 @@ performer::midi_control_event (const event & ev, bool recording)
 
     if (result)
     {
-#if SEQ66_MIDI_LEARN_SUPPORT
         bool mlearn { not_nullptr(midi_learn()) };
-#else
-        bool mlearn { false };
-#endif
-
         if (mlearn)
         {
-#if SEQ66_MIDI_LEARN_SUPPORT
+            bool ok { false };
+            if (midi_learn()->is_hold_active())
+            {
+                automation::action a
+                {
+                    midi_learn()->pressed() ?
+                        automation::action::off : automation::action::on
+                };
+                if (midi_learn()->pressed())
+                    midi_learn()->pressed(false);
+                else
+                    midi_learn()->pressed(true);
+
+                ok = midi_learn()->learn_control
+                (
+                    ev, "keyname",
+                    midi_learn()->inverse(),
+                    midi_learn()->d1min(),
+                    midi_learn()->d1max(),
+                    a
+                );
+            }
+            else
+            {
+                if (midi_learn()->pressed())
+                    midi_learn()->pressed(false);
+                else
+                {
+                    midi_learn()->pressed(true);
+                    ok = midi_learn()->learn_control
+                    (
+                        ev, "keyname",
+                        midi_learn()->inverse(),
+                        midi_learn()->d1min(),
+                        midi_learn()->d1max()
+                    );
+                }
+            }
 
             /*
              * Current only qlearnframe is this callback's active client.
              */
 
-            if (midi_learn()->pressed())
+            if (ok && midi_learn()->automation_slot_active())
             {
-                midi_learn()->pressed(false);
+                for (auto notify : m_notify)
+                    (void) notify->on_midi_learn(ev);
             }
-            else
-            {
-                midi_learn()->pressed(true);
-                if (midi_learn()->automation_slot_active())
-                {
-                    for (auto notify : m_notify)
-                        (void) notify->on_midi_learn(ev);
-                }
-            }
-#endif
         }
         else
         {
@@ -10380,14 +10396,9 @@ performer::automation_quit
     if (automation::actionable(a) && ! inverse)
     {
         last_automation_slot(automation::slot::quit);
-#if SEQ66_MIDI_LEARN_SUPPORT
         if (is_nullptr(m_midi_learn))
             signal_quit();
-#else
-        signal_quit();
-#endif
     }
-
     return true;
 }
 

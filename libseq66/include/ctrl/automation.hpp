@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-19
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -130,6 +130,12 @@ enum class category
  *      -   For the "playlist" and "playlist-song" status, indicates the
  *          "select-previous" functionality.
  *
+ * \var hold
+ *      -   Supports a control that sets "on" while held, and "off" once
+ *          released.
+ *      -   Not represented in a 'ctrl' stanza directly, but has an
+ *          event in both the "on" and "off" stanzas.
+ *
  * \var max
  *      -   Simply a limit number.
  */
@@ -140,6 +146,7 @@ enum class action
     toggle,
     on,
     off,
+    hold,
     max
 };
 

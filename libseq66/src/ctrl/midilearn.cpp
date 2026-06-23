@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-22
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -122,16 +122,12 @@ midilearn::start ()
 bool
 midilearn::save ()
 {
-#if SEQ66_MIDI_LEARN_SUPPORT
     bool result { perf().save_midi_learn(m_current_controls) };
     if (result)
     {
         // TODO ?
     }
     return result;
-#else
-    return false;
-#endif
 }
 
 bool
@@ -141,7 +137,8 @@ midilearn::learn_control
     const std::string & keyname,
     bool isinverse,
     int d1min,
-    int d1max
+    int d1max,
+    automation::action altaction
 )
 {
     bool result { automation_slot_active() };
@@ -164,15 +161,19 @@ midilearn::learn_control
         /*
          * Prevent next event (e.g. a Note Off) from being used
          * until another slot is selected in the user-interface.
+         *
+         * We're in the middle of some refactoring, and this
+         * breaks the process:
+         *
+         *      clear_automation_slot();
          */
 
-        clear_automation_slot();
-
-        midicontrol mc
-        (
-            keyname, opcat, automation_action(),
-            opslot, current_index()
-        );
+        automation::action a
+        {
+            altaction == automation::action::none ?
+                automation_action() : altaction
+        };
+        midicontrol mc(keyname, opcat, a, opslot, current_index());
         mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
 
         bool result { m_current_controls.replace(mc) };

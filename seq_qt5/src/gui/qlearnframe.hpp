@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-22
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -128,10 +128,6 @@ private:
     QButtonGroup * m_learn_button_group;
     QButtonGroup * m_action_button_group;
     std::string m_current_keyname;
-//  automation::category m_automation_category;
-//  automation::action m_automation_action;
-//  automation::slot m_automation_slot;
-//  int m_control_index;
     bool m_inverse;
     int m_d1min;
     int m_d1max;

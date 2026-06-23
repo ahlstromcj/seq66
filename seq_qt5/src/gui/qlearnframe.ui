@@ -6,57 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>619</width>
-    <height>194</height>
+    <width>628</width>
+    <height>223</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MIDI Learn Manager</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::StyledPanel</enum>
+   <enum>QFrame::Shape::StyledPanel</enum>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>13</y>
-     <width>301</width>
-     <height>129</height>
+     <width>321</width>
+     <height>158</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="learn_grid_layout" columnstretch="2,1,3">
     <property name="horizontalSpacing">
      <number>12</number>
     </property>
+    <item row="3" column="0">
+     <widget class="QRadioButton" name="automation_button">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>If checked, map the incoming MIDI event
+to the last GUI or keystroke element clicked.</string>
+      </property>
+      <property name="text">
+       <string>&amp;Automation</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="1">
      <widget class="QLineEdit" name="loops_line_edit"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="active_events_label">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Active Events</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="learn_label">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Learn</string>
-      </property>
-     </widget>
     </item>
     <item row="1" column="0">
      <widget class="QRadioButton" name="loops_button">
@@ -90,27 +80,15 @@ number when a control device button is clicked.</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QLineEdit" name="automation_line_edit"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QRadioButton" name="automation_button">
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
+    <item row="2" column="2">
+     <widget class="QRadioButton" name="radio_action_on">
       <property name="toolTip">
-       <string>If checked, map the incoming MIDI event
-to the last GUI or keystroke element clicked.</string>
+       <string>All recorded actions will be &quot;on&quot; actions.</string>
       </property>
       <property name="text">
-       <string>&amp;Automation</string>
+       <string>On</string>
       </property>
      </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLineEdit" name="mutes_line_edit"/>
     </item>
     <item row="0" column="2">
      <widget class="QLabel" name="label">
@@ -124,6 +102,9 @@ to the last GUI or keystroke element clicked.</string>
       </property>
      </widget>
     </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="automation_line_edit"/>
+    </item>
     <item row="1" column="2">
      <widget class="QRadioButton" name="radio_action_toggle">
       <property name="toolTip">
@@ -134,13 +115,32 @@ to the last GUI or keystroke element clicked.</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
-     <widget class="QRadioButton" name="radio_action_on">
-      <property name="toolTip">
-       <string>All recorded actions will be &quot;on&quot; actions.</string>
+    <item row="0" column="0">
+     <widget class="QLabel" name="learn_label">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
-       <string>On</string>
+       <string>Learn</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="mutes_line_edit"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="active_events_label">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Active Events</string>
       </property>
      </widget>
     </item>
@@ -154,12 +154,23 @@ to the last GUI or keystroke element clicked.</string>
       </property>
      </widget>
     </item>
+    <item row="4" column="2">
+     <widget class="QRadioButton" name="radio_action_hold">
+      <property name="toolTip">
+       <string>A control pressed will be logged as an &quot;on&quot; action,
+while the release will be logged as an &quot;off&quot; action.</string>
+      </property>
+      <property name="text">
+       <string>Hold</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetNextControl">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>340</x>
      <y>10</y>
      <width>271</width>
      <height>34</height>
@@ -184,10 +195,10 @@ to the last GUI or keystroke element clicked.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetGrid">
    <property name="geometry">
     <rect>
-     <x>331</x>
+     <x>340</x>
      <y>45</y>
      <width>178</width>
      <height>104</height>
@@ -245,7 +256,7 @@ control. Generally not needed, though.</string>
   <widget class="QPushButton" name="ok_push_button">
    <property name="geometry">
     <rect>
-     <x>520</x>
+     <x>530</x>
      <y>77</y>
      <width>80</width>
      <height>26</height>
@@ -268,7 +279,7 @@ at exit.</string>
   <widget class="QPushButton" name="cancel_push_button">
    <property name="geometry">
     <rect>
-     <x>520</x>
+     <x>530</x>
      <y>110</y>
      <width>80</width>
      <height>26</height>
@@ -280,18 +291,18 @@ at exit.</string>
     </font>
    </property>
    <property name="toolTip">
-    <string>Exit without any changes since the
+    <string>Exit without any saving changes made since the
 last Save.</string>
    </property>
    <property name="text">
     <string>Ca&amp;ncel</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetButtons">
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>150</y>
+     <y>180</y>
      <width>581</width>
      <height>30</height>
     </rect>

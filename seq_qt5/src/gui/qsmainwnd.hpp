@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-09
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -98,10 +98,6 @@ namespace seq66
     class qsmaintime;
     class qt5nsmanager;
     class qlearnframe;
-
-#if SEQ66_MIDI_LEARN_SUPPORT
-    class smanager;
-#endif
 
 /**
  * The main window of Kepler34... er, I mean Seq66.

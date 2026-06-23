@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-06-19
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3079,8 +3079,6 @@ public:
         return m_midi_learn;
     }
 
-#if SEQ66_MIDI_LEARN_SUPPORT
-
     midilearn * create_midi_learn ();
     bool delete_midi_learn ();
     bool save_midi_learn (const midicontrolin & mci);
@@ -3089,32 +3087,6 @@ public:
     {
         return not_nullptr(m_midi_learn);
     }
-
-#else
-
-    bool create_midi_learn ()
-    {
-        return false;
-    }
-
-    bool delete_midi_learn ()
-    {
-        return false;
-    }
-
-    bool save_midi_learn (const midicontrolin & mci)
-    {
-        (void) mci;
-        return false;
-    }
-
-
-    bool in_midi_learn () const
-    {
-        return false;
-    }
-
-#endif
 
     void set_needs_update (bool flag = true)
     {

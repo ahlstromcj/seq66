@@ -1,10 +1,10 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-06-22
+2019-04-13 to 2026-06-23
 
     -   Make an issue for MIDI Learn.
         -   Make sure that existing controls are bypassed and appended to.
-        -   Add an On/Off option if practical.
+        -   Add an On/Off ("Hold") option if practical.
         -   Enable the Clear button if any active events are present.
         -   Perhaps make the Clear button work only on the active
             category?

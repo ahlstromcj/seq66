@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-20
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -183,6 +183,9 @@ action_to_string (action c)
     case action::off:
         return std::string("off");
 
+    case action::hold:
+        return std::string("hold");
+
     default:
         return std::string("unknown");
     }
@@ -199,6 +202,8 @@ string_to_action (const std::string & s)
         return action::on;
     else if (s == "off")
         return action::off;
+    else if (s == "hold")               /* used only in MIDI Learn mode     */
+        return action::hold;
     else
         return action::none;
 }

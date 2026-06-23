@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-22
+ * \updates       2026-06-23
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -72,7 +72,8 @@ enum action_mode_button_t
 {
     action_mode_button_toggle,
     action_mode_button_on,
-    action_mode_button_off
+    action_mode_button_off,
+    action_mode_button_hold
 };
 
 /*
@@ -192,6 +193,10 @@ qlearnframe::qlearnframe
         (
             ui->radio_action_off, action_mode_button_off
         );
+        m_action_button_group->addButton
+        (
+            ui->radio_action_hold, action_mode_button_hold
+        );
         select_action(midi_learn().automation_action());
 
 #if defined QT_VERSION_5
@@ -218,6 +223,15 @@ qlearnframe::qlearnframe
         ui->inverse_check_box, SIGNAL(clicked(bool)),
         this, SLOT(slot_inverse())
     );
+
+    /*
+     * Store some value in the midilearn object.
+     */
+
+    midi_learn().inverse(m_inverse);
+    midi_learn().d1min(m_d1min);
+    midi_learn().d1max(m_d1max);
+
     connect
     (
         ui->d1min_line_edit, SIGNAL(editingFinished()),
@@ -269,6 +283,7 @@ qlearnframe::on_midi_learn (seq66::event ev)
      * "none".
      */
 
+#if 0
     bool result
     {
         midi_learn().learn_control
@@ -276,6 +291,10 @@ qlearnframe::on_midi_learn (seq66::event ev)
             ev, "keyname", m_inverse, m_d1min, m_d1max
         )
     };
+#else
+    bool result { ev.get_status() > 0x00 };
+#endif
+
     if (result)
     {
         set_buttons(true);
@@ -469,6 +488,8 @@ qlearnframe::slot_select_action (int buttonno)
         opact = automation::action::on;
     else if (buttonno == action_mode_button_off)
         opact = automation::action::off;
+    else if (buttonno == action_mode_button_hold)
+        opact = automation::action::hold;
 
     midi_learn().automation_action(opact);
 }
@@ -522,6 +543,7 @@ void
 qlearnframe::slot_inverse ()
 {
     m_inverse = ui->inverse_check_box->isChecked();
+    midi_learn().inverse(m_inverse);
 }
 
 void
@@ -533,6 +555,7 @@ qlearnframe::slot_d1min ()
     {
         int d1min { std::stoi(t, nullptr, 0) };
         m_d1min = d1min;
+        midi_learn().d1min(m_d1min);
     }
 }
 
@@ -545,6 +568,7 @@ qlearnframe::slot_d1max ()
     {
         int d1max { std::stoi(t, nullptr, 0) };
         m_d1max = d1max;
+        midi_learn().d1max(m_d1max);
     }
 }
 
