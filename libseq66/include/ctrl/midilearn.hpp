@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-23
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -97,6 +97,21 @@ private:
     automation::slot m_automation_slot { automation::slot::none };
 
     /**
+     *  Provides the maximum number of loop controls. Usually 32,
+     *  this can be configured to be less or more. Might change in
+     *  the constructor.
+     */
+
+    int m_loop_count_max { 32 };
+
+    /**
+     *  Provides the maximum number of mute-group controls, always
+     *  32. See mutegroups::c_mute_groups_max's definition.
+     */
+
+    int m_mute_count_max { 32 };
+
+    /**
      *  A count on non-zero controls for each set of control values.
      */
 
@@ -139,9 +154,9 @@ public:
         performer & p,
         bool clearcontrols = false
     );
-    midilearn (const midilearn &) = default;
+    midilearn (const midilearn &) = delete;
     midilearn & operator = (const midilearn &) = delete;
-    midilearn (midilearn &&) = default;
+    midilearn (midilearn &&) = delete;
     midilearn & operator = (midilearn &&) = delete;
     ~midilearn () = default;
 
@@ -242,16 +257,23 @@ public:
         return m_current_index;
     }
 
+    void initialize_current_index ();
+
     void clear_current_index ()
     {
         m_current_index = 0;
     }
 
-    bool clear ();
+    bool clear_all ();
+
+    bool clear (automation::category c)
+    {
+        return m_current_controls.clear(c);
+    }
+
     bool reset ();
     bool start ();
     bool save ();
-
     bool learn_control
     (
         const event & ev,

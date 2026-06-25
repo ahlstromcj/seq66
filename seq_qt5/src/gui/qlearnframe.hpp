@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-23
+ * \updates       2026-06-24
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -96,6 +96,7 @@ private:
     void select_category (automation::category opcat);
     void select_action (automation::action opact);
     void update_active_counts ();
+    void set_clear_text (automation::category opcat);
     void set_buttons (bool enable);
     void setup_loop_process ();
     void setup_mutes_process ();
@@ -103,6 +104,7 @@ private:
 
 private:        // performer::callback override
 
+    virtual bool on_automation_change (automation::slot);
     virtual bool on_midi_learn (seq66::event) override;
 
 private slots:
@@ -114,6 +116,7 @@ private slots:
     void slot_save ();
     void slot_reset ();
     void slot_clear ();
+    void slot_clear_all ();
     void slot_ok ();
     void slot_inverse ();
     void slot_d1min ();
@@ -124,6 +127,7 @@ private:
     Ui::qlearnframe * ui;
     performer & m_perf;
     midilearn & m_midi_learn;
+    bool m_refresh;
     QTimer * m_timer;
     QButtonGroup * m_learn_button_group;
     QButtonGroup * m_action_button_group;

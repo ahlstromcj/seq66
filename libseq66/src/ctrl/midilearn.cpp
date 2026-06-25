@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-23
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,10 +52,11 @@ midilearn::midilearn
 ) :
     m_perf              (p),
     m_original_controls (p.midi_control_in()),
-    m_current_controls  (p.midi_control_in())
+    m_current_controls  (p.midi_control_in()),
+    m_loop_count_max    (usr().set_size())
 {
     if (clearcontrols)
-        clear();
+        clear_all();
 
     (void) active_counts();
 }
@@ -83,12 +84,35 @@ midilearn::active_counts
  */
 
 bool
-midilearn::clear ()
+midilearn::clear_all ()
 {
     const keycontainer & kc { perf().key_controls() };
-    m_current_controls.clear();
+    m_current_controls.clear_all();
     m_current_controls.add_blank_controls(kc);
+    clear_current_index();
     return true;
+}
+
+/**
+ *  Initializes the index, used when selecting an automation
+ *  category.
+ */
+
+void
+midilearn::initialize_current_index ()
+{
+    automation::category opcat { automation_category() };
+    clear_current_index();
+    if (opcat == automation::category::loop)
+    {
+        if (m_loops_ctrl_count < m_loop_count_max)
+            m_current_index = m_loops_ctrl_count;
+    }
+    else if (opcat == automation::category::mute_group)
+    {
+        if (m_mutes_ctrl_count < m_mute_count_max)
+            m_current_index = m_mutes_ctrl_count;
+    }
 }
 
 /**
@@ -141,23 +165,30 @@ midilearn::learn_control
     automation::action altaction
 )
 {
-    bool result { automation_slot_active() };
+    bool result { true };
+
+    /*
+     * Code similar to parse_control_stanza() in the midicontrolfile
+     * module.
+     */
+
+    automation::category opcat { automation_category() };
+    automation::slot opslot { automation::slot::none };
+    if (opcat == automation::category::loop)
+    {
+        opslot = automation::slot::loop;
+    }
+    else if (opcat == automation::category::mute_group)
+    {
+        opslot = automation::slot::mute_group;
+    }
+    else if (opcat == automation::category::automation)
+    {
+        result = automation_slot_active();
+        opslot = opcontrol::set_slot(current_index());
+    }
     if (result)
     {
-        /*
-         * Code similar to parse_control_stanza() in the midicontrolfile
-         * module.
-         */
-
-        automation::category opcat { automation_category() };
-        automation::slot opslot { automation::slot::none };
-        if (opcat == automation::category::loop)
-            opslot = automation::slot::loop;
-        else if (opcat == automation::category::mute_group)
-            opslot = automation::slot::mute_group;
-        else if (opcat == automation::category::automation)
-            opslot = opcontrol::set_slot(current_index());
-
         /*
          * Prevent next event (e.g. a Note Off) from being used
          * until another slot is selected in the user-interface.
@@ -176,13 +207,9 @@ midilearn::learn_control
         midicontrol mc(keyname, opcat, a, opslot, current_index());
         mc.set(isinverse, ev.get_status(), ev.d0(), d1min, d1max);
 
-        bool result { m_current_controls.replace(mc) };
+        result = m_current_controls.replace(mc);
         if (result)
         {
-            set_dirty(true);
-            if (m_automation_category != automation::category::automation)
-                ++m_current_index;
-
 #if defined SEQ66_PLATFORM_DEBUG
             if (rc().investigate())
             {
@@ -193,6 +220,9 @@ midilearn::learn_control
                 );
             }
 #endif
+            set_dirty(true);
+            if (m_automation_category != automation::category::automation)
+                ++m_current_index;
         }
     }
     return result;

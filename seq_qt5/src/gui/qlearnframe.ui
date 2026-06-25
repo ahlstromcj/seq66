@@ -14,7 +14,7 @@
    <string>MIDI Learn Manager</string>
   </property>
   <property name="frameShape">
-   <enum>QFrame::Shape::StyledPanel</enum>
+   <enum>QFrame::StyledPanel</enum>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -60,7 +60,7 @@ to the last GUI or keystroke element clicked.</string>
 number when a control device button is clicked.</string>
       </property>
       <property name="text">
-       <string>&amp;Loops</string>
+       <string>&amp;Loop</string>
       </property>
      </widget>
     </item>
@@ -76,7 +76,7 @@ number when a control device button is clicked.</string>
 number when a control device button is clicked.</string>
       </property>
       <property name="text">
-       <string>&amp;Mutes</string>
+       <string>&amp;Mute Groups</string>
       </property>
      </widget>
     </item>
@@ -86,7 +86,7 @@ number when a control device button is clicked.</string>
        <string>All recorded actions will be &quot;on&quot; actions.</string>
       </property>
       <property name="text">
-       <string>On</string>
+       <string>O&amp;n</string>
       </property>
      </widget>
     </item>
@@ -111,7 +111,7 @@ number when a control device button is clicked.</string>
        <string>All recorded actions will be &quot;toggle&quot; actions.</string>
       </property>
       <property name="text">
-       <string>Toggle</string>
+       <string>&amp;Toggle</string>
       </property>
      </widget>
     </item>
@@ -150,7 +150,7 @@ number when a control device button is clicked.</string>
        <string>All recorded actions will be &quot;off&quot; actions.</string>
       </property>
       <property name="text">
-       <string>Off</string>
+       <string>O&amp;ff</string>
       </property>
      </widget>
     </item>
@@ -161,7 +161,7 @@ number when a control device button is clicked.</string>
 while the release will be logged as an &quot;off&quot; action.</string>
       </property>
       <property name="text">
-       <string>Hold</string>
+       <string>&amp;Hold</string>
       </property>
      </widget>
     </item>
@@ -186,7 +186,7 @@ while the release will be logged as an &quot;off&quot; action.</string>
        </font>
       </property>
       <property name="text">
-       <string>Next Control</string>
+       <string>Control</string>
       </property>
      </widget>
     </item>
@@ -219,7 +219,7 @@ while the release will be logged as an &quot;off&quot; action.</string>
 control. Generally not needed, though.</string>
       </property>
       <property name="text">
-       <string>Inverse</string>
+       <string>&amp;Inverse</string>
       </property>
      </widget>
     </item>
@@ -295,7 +295,7 @@ at exit.</string>
 last Save.</string>
    </property>
    <property name="text">
-    <string>Ca&amp;ncel</string>
+    <string>Cancel</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidgetButtons">
@@ -304,7 +304,7 @@ last Save.</string>
      <x>21</x>
      <y>180</y>
      <width>581</width>
-     <height>30</height>
+     <height>34</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -342,6 +342,13 @@ the current control set. An &quot;undo&quot; function.</string>
     </item>
     <item>
      <widget class="QPushButton" name="clear_push_button">
+      <property name="text">
+       <string>Clear Automation</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="clear_all_push_button">
       <property name="font">
        <font>
         <pointsize>10</pointsize>
@@ -353,7 +360,7 @@ the current control set. An &quot;undo&quot; function.</string>
 blank MIDI control values.</string>
       </property>
       <property name="text">
-       <string>&amp;Clear</string>
+       <string>&amp;Clear All</string>
       </property>
      </widget>
     </item>

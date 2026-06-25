@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-11
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -286,9 +286,13 @@ qseditoptions::setup_input_combo_box (int buses)
      *  due to the "Midi Through" issue.
      *
      *      bool active = perf().midi_control_in().configure_enabled();
+     *
+     *  ca 2026-06-25: This was wrong for a lonnnng time!
+     *
+     *      bool active = perf().midi_control_out().is_enabled();
      */
 
-    bool active = perf().midi_control_out().is_enabled();
+    bool active = perf().midi_control_in().is_enabled();
     in->clear();
     for (int bus = 0; bus < buses; ++bus)
     {

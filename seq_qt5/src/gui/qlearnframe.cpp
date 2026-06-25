@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-23
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -91,6 +91,7 @@ qlearnframe::qlearnframe
     ui                      (new Ui::qlearnframe),
     m_perf                  (p),
     m_midi_learn            (*p.create_midi_learn()),   /* fingers crossed! */
+    m_refresh               (true),
     m_timer                 (nullptr),
     m_learn_button_group    (nullptr),
     m_action_button_group   (nullptr),
@@ -112,9 +113,16 @@ qlearnframe::qlearnframe
     (
         ui->reset_push_button, SIGNAL(clicked()), this, SLOT(slot_reset())
     );
+    set_clear_text(opcat);
     connect
     (
-        ui->clear_push_button, SIGNAL(clicked()), this, SLOT(slot_clear())
+        ui->clear_push_button, SIGNAL(clicked()),
+        this, SLOT(slot_clear())
+    );
+    connect
+    (
+        ui->clear_all_push_button, SIGNAL(clicked()),
+        this, SLOT(slot_clear_all())
     );
     connect
     (
@@ -231,7 +239,6 @@ qlearnframe::qlearnframe
     midi_learn().inverse(m_inverse);
     midi_learn().d1min(m_d1min);
     midi_learn().d1max(m_d1max);
-
     connect
     (
         ui->d1min_line_edit, SIGNAL(editingFinished()),
@@ -253,6 +260,12 @@ qlearnframe::qlearnframe
 
     update_active_counts();
 
+    /**
+     * Could set it to "last index"
+     */
+
+    midi_learn().clear_current_index();
+
     /*
      * Check for a pending automation-control every 5 x 40 milliseconds.
      */
@@ -270,6 +283,20 @@ qlearnframe::~qlearnframe()
 }
 
 bool
+qlearnframe::on_automation_change (automation::slot s)
+{
+    if (midi_learn().is_automation())
+    {
+        std::string eventname
+        {
+            "Automation " + automation::slot_to_string(s)
+        };
+        ui->current_logged_control_line_edit->setText(qt(eventname));
+    }
+    return true;
+}
+
+bool
 qlearnframe::on_midi_learn (seq66::event ev)
 {
     /*
@@ -281,36 +308,49 @@ qlearnframe::on_midi_learn (seq66::event ev)
      *
      * The learn_control() function also sets the current slot to
      * "none".
+     *
+     * on_automation_change() handles showing the last automation item
+     * clicked in the user interface.
      */
 
-#if 0
-    bool result
-    {
-        midi_learn().learn_control
-        (
-            ev, "keyname", m_inverse, m_d1min, m_d1max
-        )
-    };
-#else
     bool result { ev.get_status() > 0x00 };
-#endif
-
     if (result)
     {
         set_buttons(true);
-        update_active_counts();
 
-        /*
-         * Moved to midilearn:
-         *
-         * if (m_automation_category != automation::category::automation)
-         *     ++m_control_index;
-         */
+        std::string eventname;
+        int index { midi_learn().current_index() };
+        if (midi_learn().is_loop())
+        {
+            eventname = "Loop " + std::to_string(index);
+        }
+        else if (midi_learn().is_mute_group())
+        {
+            eventname = "Mute Group " + std::to_string(index);
+        }
+        if (! eventname.empty())
+        {
+            QString txt { qt(eventname) };
+            ui->current_logged_control_line_edit->setText(txt);
+        }
+        update_active_counts();
     }
     return result;
 }
 
 // ALSO NEED TO MODIFY, SET DIRTY, and ALSO IGNORE follow-on events.
+
+/**
+ *  Set the text of the Clear button to the current category.
+ */
+
+void
+qlearnframe::set_clear_text (automation::category c)
+{
+    std::string text { "Clear " };
+    text += category_to_string(c);
+    ui->clear_push_button->setText(qt(text));
+}
 
 /**
  *  Handles enabling and disabling of the controls.
@@ -322,6 +362,7 @@ qlearnframe::set_buttons (bool enable)
     ui->save_push_button->setEnabled(enable);
     ui->reset_push_button->setEnabled(enable);
     ui->clear_push_button->setEnabled(enable);
+    ui->clear_all_push_button->setEnabled(enable);
     ui->ok_push_button->setEnabled(enable);
 }
 
@@ -336,29 +377,36 @@ void
 qlearnframe::slot_poll_update ()
 {
     automation::slot last { perf().last_automation_slot() };
-    if (last != midi_learn().automation_slot())
+    if (last != midi_learn().automation_slot() || m_refresh)
     {
+        int index { midi_learn().current_index() };
         std::string eventname;
         if (midi_learn().is_loop())
         {
-            eventname = "Loop " +
-                std::to_string(midi_learn().current_index());
+            ui->current_logged_control_label->setText("Loop Control");
+            eventname = "Loop " + std::to_string(index);
         }
         else if (midi_learn().is_mute_group())
         {
-            eventname = "Mute Group " +
-                std::to_string(midi_learn().current_index());
+            ui->current_logged_control_label->setText("Mute Control");
+            eventname = "Mute Group " + std::to_string(index);
         }
         else if (midi_learn().is_automation())
         {
+            ui->current_logged_control_label->setText("Next Control");
             eventname = "Automation " + automation::slot_to_string(last);
+            midi_learn().automation_slot(last);
         }
-        if (! eventname.empty())
+        if (eventname.empty())
+        {
+            // No code
+        }
+        else
         {
             QString txt { qt(eventname) };
             ui->current_logged_control_line_edit->setText(txt);
         }
-        midi_learn().automation_slot(last);
+        m_refresh = false;
     }
 }
 
@@ -376,6 +424,28 @@ qlearnframe::update_active_counts ()
         ui->loops_line_edit->setText(lcqs);
         ui->mutes_line_edit->setText(mcqs);
         ui->automation_line_edit->setText(acqs);
+
+        bool gotsome { lcount > 0 || mcount > 0 || acount > 0 };
+        ui->clear_all_push_button->setEnabled(gotsome);
+
+        automation::category c { midi_learn().automation_category() };
+        gotsome = false;
+        if (c == automation::category::loop)
+        {
+            if (lcount > 0)
+                gotsome = true;
+        }
+        else if (c == automation::category::mute_group)
+        {
+            if ( mcount > 0)
+                gotsome = true;
+        }
+        else if (c == automation::category::automation)
+        {
+            if ( acount > 0)
+                gotsome = true;
+        }
+        ui->clear_push_button->setEnabled(gotsome);
     }
 }
 
@@ -406,28 +476,28 @@ qlearnframe::select_category (automation::category opcat)
             setup_automation_process();
         }
         m_learn_button_group->button(targetid)->setChecked(true);
+        midi_learn().initialize_current_index();
+        m_refresh = true;
     }
 }
 
 void
 qlearnframe::slot_select_category (int buttonno)
 {
-    automation::category opcat { automation::category::none };
     if (buttonno == learn_mode_button_loops)
     {
-        opcat = automation::category::loop;
         setup_loop_process();
     }
     else if (buttonno == learn_mode_button_mutes)
     {
-        opcat = automation::category::mute_group;
         setup_mutes_process();
     }
     else if (buttonno == learn_mode_button_automation)
     {
-        opcat = automation::category::automation;
         setup_automation_process();
     }
+    midi_learn().initialize_current_index();
+    m_refresh = true;
 }
 
 /*
@@ -438,18 +508,21 @@ void
 qlearnframe::setup_loop_process ()
 {
     midi_learn().automation_category(automation::category::loop);
+    set_clear_text(automation::category::loop);
 }
 
 void
 qlearnframe::setup_mutes_process ()
 {
     midi_learn().automation_category(automation::category::mute_group);
+    set_clear_text(automation::category::mute_group);
 }
 
 void
 qlearnframe::setup_automation_process ()
 {
     midi_learn().automation_category(automation::category::automation);
+    set_clear_text(automation::category::automation);
 }
 
 void
@@ -528,7 +601,15 @@ qlearnframe::slot_reset ()
 void
 qlearnframe::slot_clear ()
 {
-    (void) midi_learn().clear();
+    automation::category c { midi_learn().automation_category() };
+    midi_learn().clear(c);
+    update_active_counts();
+}
+
+void
+qlearnframe::slot_clear_all ()
+{
+    (void) midi_learn().clear_all();
     update_active_counts();
 }
 

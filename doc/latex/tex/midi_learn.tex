@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2026-06-22
-% \update      2026-06-22
+% \update      2026-06-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -92,10 +92,13 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{main-window/learn-manager.png}
+   \includegraphics[scale=0.65]{main-window/learn-manager-2.png}
    \caption{Seq66 Learn Manager}
    \label{fig:menu_learn_manager}
 \end{figure}
+
+   While this dialog is open, the MIDI Learn functionality is available,
+   and it goes away when the dialog closes.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -104,16 +107,18 @@
    click is sent. Whenever one of the learn categories is selected,
    that starts the process of mapping MIDI events to actions.
 
-   \itempar{Learn Active Event}{learn!active event}
+   \itempar{Active Events}{learn!active events}
    These boxes show the number of \textsl{active} MIDI control input events.
    These are events that have a non-zero MIDI status byte.
 
    \itempar{Learn Action}{learn!action}
    This item selects which action the MIDI event will trigger.
-   The default is "toggle", which is the most common trigger needed.
-   (All hot-keys act as toggles.)
-   But "on" or "off" can also be selected.
-   In the future, we will better support the "on" and "off" actions.
+   The default is "Toggle", which is the most common trigger needed.
+   (Most hot-keys act as toggles, as an example.)
+   But "On" or "Off" can also be selected to determine what a control
+   press will do.
+   If "Hold" is selected, then a control press will be mapped as an "On"
+   event, and a control release will be mapped as an "Off" event.
 
    \itempar{Learn Values}{learn!values}
    The first value is \textbf{Inverse}, which reverses the action of the
@@ -130,8 +135,14 @@
    When clicked, this copies the original or last-saved events into
    the current container.
 
-   \itempar{Learn Clear}{learn!clear}
+   \itempar{Learn Clear All}{learn!clear all}
    When clicked, all events are cleared from the current container.
+   This includes the loop, mute-group, and automation events.
+
+   \itempar{Learn Clear}{learn!clear selected}
+   When clicked, all events in the selected category \textsl{only}
+   are cleared from the current container.
+   The text of the button indicates what will be cleared.
 
    \itempar{Learn OK}{learn!OK}
    When clicked, acts like the \textbf{Save} button, then closes

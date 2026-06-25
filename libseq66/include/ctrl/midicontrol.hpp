@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2026-06-18
+ * \updates       2026-06-24
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -249,6 +249,16 @@ public:
         return m_max_d1;
     }
 
+    void clear ()
+    {
+        m_active = false;
+        m_status = 0;
+        m_d0 = 0;
+        m_d1 = 0;
+        m_min_d1 = 0;
+        m_max_d1 = 0;
+    }
+
     /*
      *  This test does not include "inverse".
      */
@@ -320,4 +330,3 @@ public:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

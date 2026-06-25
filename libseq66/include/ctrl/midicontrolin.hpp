@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-06-18
+ * \updates       2026-06-24
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -132,9 +132,12 @@ public:
         return m_comments_block;
     }
 
-    void clear ()
+    bool clear (automation::category c);
+
+    bool clear_all ()
     {
         m_container.clear();
+        return true;
     }
 
     int count () const

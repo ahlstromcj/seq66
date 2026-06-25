@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-06-16
+2015-07-10 to 2026-06-25
 
 # Change Log
 
-## [0.99.26] - 2026-06-16
+## [0.99.26] - 2026-06-25
 
 "MIDI Learn Perhaps"
 
@@ -34,6 +34,9 @@ Starting to work out the feasibility of MIDI Learn....
 
 -   A missing NSIS application ("makensis") no longer causes a build
     error.
+-   In Edit / Preferences / MIDI Input for control, the output buss
+    being enabled was checked instead of the input buss, causing no
+    input port to be enabled.
 
 ### Removed
 

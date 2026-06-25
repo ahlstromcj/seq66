@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-23
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7890,7 +7890,7 @@ performer::midi_control_event (const event & ev, bool recording)
              * Current only qlearnframe is this callback's active client.
              */
 
-            if (ok && midi_learn()->automation_slot_active())
+            if (ok)     /* && midi_learn()->automation_slot_active())   */
             {
                 for (auto notify : m_notify)
                     (void) notify->on_midi_learn(ev);

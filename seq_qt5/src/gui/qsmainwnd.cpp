@@ -1048,7 +1048,9 @@ qsmainwnd::qsmainwnd
 
 #if SEQ66_MIDI_LEARN_SUPPORT
 
-// CONNECT the menu actions to show_midi_learn_frame
+    /*
+     * CONNECT the menu actions to show_midi_learn_frame
+     */
 
 #if defined QT_VERSION_5
 

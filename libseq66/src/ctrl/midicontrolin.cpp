@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-06-18
+ * \updates       2026-06-24
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -172,6 +172,55 @@ midicontrolin::replace (const midicontrol & mc)
     return result;
 }
 
+/**
+ *  This function zeroes out the values of entries matching the given
+ *  category (loop, mute_group, and automation).
+ */
+
+bool
+midicontrolin::clear (automation::category c)
+{
+    bool result { false };
+    for (auto & mc : m_container)
+    {
+        midicontrol & mctl { mc.second };
+        bool match { mctl.category_code() == c };
+        if (match)
+        {
+            result = true;
+            mctl.clear();               /* sets the status, etc. to zeroes  */
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function is needed for running the application for the first time,
+ *  when there is no "rc" or "ctrl" file.  We want to be able to write out the
+ *  full set of stanzas, with the keystrokes, even if the MIDI controls are
+ *  all zero.  Controls are written only for defined keystrokes in the
+ *  keycontainer.
+ *
+ * \param kc
+ *      Provides the key setup, so that the keystroke can be added to the
+ *      output.
+ */
+
+void
+midicontrolin::add_blank_controls (const keycontainer & kc)
+{
+    for (const auto & kpair : kc.container())
+    {
+        const keycontrol & k = kpair.second;
+        midicontrol blank
+        (
+            k.key_name(), k.category_code(), k.action_code(),
+            k.slot_number(), k.control_code()
+        );
+        (void) add(blank);
+    }
+}
+
 bool
 midicontrolin::active_counts
 (
@@ -219,33 +268,6 @@ midicontrolin::active_counts
         autocount = ac;
     }
     return result;
-}
-
-/**
- *  This function is needed for running the application for the first time,
- *  when there is no "rc" or "ctrl" file.  We want to be able to write out the
- *  full set of stanzas, with the keystrokes, even if the MIDI controls are
- *  all zero.  Controls are written only for defined keystrokes in the
- *  keycontainer.
- *
- * \param kc
- *      Provides the key setup, so that the keystroke can be added to the
- *      output.
- */
-
-void
-midicontrolin::add_blank_controls (const keycontainer & kc)
-{
-    for (const auto & kpair : kc.container())
-    {
-        const keycontrol & k = kpair.second;
-        midicontrol blank
-        (
-            k.key_name(), k.category_code(), k.action_code(),
-            k.slot_number(), k.control_code()
-        );
-        (void) add(blank);
-    }
 }
 
 /**

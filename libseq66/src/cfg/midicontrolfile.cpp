@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-05-03
+ * \updates       2025-06-24
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -340,7 +340,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
     }
     if (m_temp_midi_ctrl_in.count() > 0)
     {
-        rc_ref().midi_control_in().clear();
+        rc_ref().midi_control_in().clear_all();
         rc_ref().midi_control_in() = m_temp_midi_ctrl_in;
         rc_ref().midi_control_in().inactive_allowed(true);  /* always true  */
     }
