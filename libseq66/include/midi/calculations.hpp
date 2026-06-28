@@ -240,7 +240,8 @@ extern std::string pulses_to_time_string
 );
 extern std::string pulses_to_time_string
 (
-    midipulse pulses, midibpm bp, int ppq, bool showus = true
+    midipulse pulses, midibpm bp, int ppq,
+    bool showus = true
 );
 extern int pulses_to_hours (midipulse pulses, midibpm bp, int ppq);
 extern double trunc_measures (double measures);
@@ -715,20 +716,20 @@ INTTYPE snapped (snapper snaptype, int S, INTTYPE p)
 /**
  *  The absolute pitchbend range is 0 to 16383, which is 14 bits.
  *
- *         Bend down    Center      Bend up
- *      0 |<-----------  8192  ----------->| 16384
- *  -8192                 0                   8191
+ *  Bend down                Center              Bend up
+ *          0 |<-----------  8192  ----------->| 16384
+ *      -8192                 0                   8191
  *
  *      14 bits resolution (MSB, LSB). Value = 128 * MSB + LSB, where,
  *      in Seq66, d0 is the LSB and d1 is the MSB.
  *
- *  minimum : The maximum negative swing is achieved with data bytes of
+ *  Minimum : The maximum negative swing is achieved with data bytes of
  *            00, 00. Value = 0.
  *
- *  center:   The center (no effect) position is achieved with data bytes of
+ *  Center:   The center (no effect) position is achieved with data bytes of
  *            00, 64 (00H, 40H). Value = 8192.
  *
- *  maximum : The maximum positive swing is achieved with data bytes of
+ *  Maximum : The maximum positive swing is achieved with data bytes of
  *            127, 127 (7FH, 7FH). Value = 16384.
  *
  *  There are 2 ways to make the calculation:

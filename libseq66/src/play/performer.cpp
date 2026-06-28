@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-25
+ * \updates       2026-06-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3619,6 +3619,9 @@ performer::save_midi_learn (const midicontrolin & mci)
         midi_control_in() = mci;
         rc().auto_ctrl_save(result);
     }
+    else
+        warn_message("MIDI Learn container empty, not saved");
+
     return result;
 }
 
@@ -6136,6 +6139,7 @@ performer::panic ()
 
         int displaybuss = int(midi_control_out().true_buss());
         m_master_bus->panic(displaybuss);           /* flush the MIDI buss  */
+        last_automation_slot(automation::slot::panic);
     }
     set_tick(0);
     return result;

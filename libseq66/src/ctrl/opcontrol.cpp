@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2023-09-30
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -140,6 +140,7 @@ opcontrol::action_name (action a)
     case action::toggle:            result = "Toggle";          break;
     case action::on:                result = "On";              break;
     case action::off:               result = "Off";             break;
+    case action::hold:              result = "Hold";             break;
     case action::max:               result = "Max";             break;
     }
     return result;

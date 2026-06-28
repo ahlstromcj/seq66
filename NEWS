@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-06-25
+2015-07-10 to 2026-06-27
 
 # Change Log
 
-## [0.99.26] - 2026-06-25
+## [0.99.26] - 2026-06-27
 
 "MIDI Learn Perhaps"
 
@@ -37,6 +37,9 @@ Starting to work out the feasibility of MIDI Learn....
 -   In Edit / Preferences / MIDI Input for control, the output buss
     being enabled was checked instead of the input buss, causing no
     input port to be enabled.
+-   Event editor.
+    -   Fixes to some event handling, such as pitch-wheel.
+    -   Added filling in of some data depending on the event selected.
 
 ### Removed
 

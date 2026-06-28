@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-06-05
+ * \updates       2026-06-27
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -264,6 +264,8 @@ qseqeventframe::qseqeventframe
 
     /*
      *  Plain-text edit control for Meta messages involving text.
+     *  Also used to display status/d0/d1 combinations of the selected
+     *  even as text
      */
 
     ui->data_text_edit->clear();
@@ -277,9 +279,11 @@ qseqeventframe::qseqeventframe
     /*
      * We need to evaluate the time-stamp to make sure it is within
      * the current length of the patter.
+     *
+     *      m_current_timestamp = pulses_to_string(0);  // ts;
      */
 
-    m_current_timestamp = pulses_to_string(0);  // ts;
+    m_current_timestamp = cb_perf().pulses_to_measure_string(0);
     ui->entry_ev_timestamp->setText(qt(m_current_timestamp));
     connect
     (
@@ -576,27 +580,56 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 void
 qseqeventframe::check_channel_msg_index (int index)
 {
-    if (index == control_change)                // 3
+    QString d0 { "64" };
+    QString d1 { "64" };
+    bool enable_d1 { true };
+    if (index == note_off)                      /* 0    */
     {
+        d0 = "64";
+        d1 = "0";
+    }
+    else if (index == control_change)           /* 3    */
+    {
+        d0 = "7";                   /* volume           */
+        d1 = "64";
         m_in_control = true;
         m_in_program = false;
         ui->select_button->setText("Ctrl");
         ui->select_button->setEnabled(true);
     }
-    else if (index == program_change)           // 4
+    else if (index == program_change)           /* 4    */
     {
+        d0 = "0";                   /* Grand Piano      */
+        enable_d1 = false;          /* 1-byte message   */
         m_in_control = false;
         m_in_program = true;
         ui->select_button->setText("Prog");
         ui->select_button->setEnabled(true);
     }
-    else
+    else if (index == channel_pressure)         /* 5    */
+    {
+        d0 = "0";                   /* no pressure dude */
+        enable_d1 = false;          /* 1-byte message   */
+    }
+    else if (index == pitch_wheel)              /* 6    */
+    {
+        d0 = "0";                   /* center LSB       */
+        d1 = "64";                  /* center MSB       */
+    }
+    else                            /* note on, aftert. */
     {
         m_in_control = false;
         m_in_program = false;
         ui->select_button->setText("Sel");
         ui->select_button->setEnabled(false);
     }
+    ui->data_text_edit->document()->setPlainText("");
+    ui->entry_ev_data_0->setText(d0);
+    ui->entry_ev_data_1->setEnabled(enable_d1);
+    if (enable_d1)
+        ui->entry_ev_data_1->setText(d1);
+    else
+        ui->entry_ev_data_1->setText("---");
 }
 
 /**
@@ -615,8 +648,8 @@ qseqeventframe::check_channel_msg_index (int index)
  *      -   0. Note Off
  *      -   1. Note On
  *      -   2. Aftertouch
- *      -   3. Control
- *      -   4. Program
+ *      -   3. Control          1-byte message
+ *      -   4. Program          1-byte message
  *      -   5. Ch Pressure
  *      -   7. Pitchwheel
  *
@@ -1422,8 +1455,8 @@ qseqeventframe::slot_delete ()
  *  will be determined by the timestamp and existing events.  Note that we
  *  have to recalibrate the scroll-bar when we insert/delete events.
  *
- *  As a feature, we will allow events to extend the official length of the
- *  sequence.
+ *  As a feature, we do not allow events to extend the official length of the
+ *  sequence, but provide a button for add 1 measure to the sequence.
  *
  *  We have to figure out where the new event goes, its new index into
  *  the container, and add the new table row in the corresponding place.
@@ -1486,19 +1519,19 @@ qseqeventframe::slot_modify ()
 {
     if (m_eventslots)
     {
-        int row0 = current_row();
-        const editable_event & ev0 = m_eventslots->current_event();
-        std::string ts = ui->entry_ev_timestamp->text().toStdString();
-        std::string name = ui->combo_ev_name->currentText().toStdString();
-        std::string ch = ev0.channel_string();
-        std::string d0 = ui->entry_ev_data_0->text().toStdString();
-        std::string d1 = ui->entry_ev_data_1->text().toStdString();
-        std::string chan = ui->channel_combo_box->currentText().toStdString();
-        std::string text = ui->data_text_edit->toPlainText().toStdString();
+        int row0 { current_row() };
+        const editable_event & ev0 { m_eventslots->current_event() };
+        std::string ts { ui->entry_ev_timestamp->text().toStdString() };
+        std::string name { ui->combo_ev_name->currentText().toStdString() };
+        std::string d0 { ui->entry_ev_data_0->text().toStdString() };
+        std::string d1 { ui->entry_ev_data_1->text().toStdString() };
+        std::string chan { ui->channel_combo_box->currentText().toStdString() };
+        std::string ch { chan };
+        std::string text { ui->data_text_edit->toPlainText().toStdString() };
         text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
 
-        midipulse lt = c_null_midipulse;
-        bool reload = true;
+        midipulse lt { c_null_midipulse };
+        bool reload { true };
         if (ev0.is_linked())
         {
             editable_event & ev1 = m_eventslots->lookup_link(ev0);
@@ -1517,9 +1550,9 @@ qseqeventframe::slot_modify ()
                 reload = false;
         }
 
-        std::string ltstr = m_eventslots->time_string(lt);
-        int buss = int(ev0.input_bus());
-        std::string busno = std::to_string(buss);
+        std::string ltstr { m_eventslots->time_string(lt) };
+        int buss { int(ev0.input_bus()) };
+        std::string busno { std::to_string(buss) };
         if (is_null_buss(buss))
             busno = "-";
 

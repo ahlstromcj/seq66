@@ -449,6 +449,18 @@ pulses_to_time_string (midipulse p, const midi_timing & timinginfo)
  *      -   "12:3:1"
  *      -   "12:3:1.000001"
  *
+ *  ISSUE:
+ *
+ *      What about beat-width and beats-per-measure? This function is called
+ *      in:
+ *
+ *      -   performer::pulses_to_time_string()
+ *      -   performer::duration()
+ *      -   editable_event::time_as_minutes()
+ *      -   qsmainwnd::update_time()
+ *
+ *          [ if BBT, calls pulses_to_measure_string() ]
+ *
  * \param p
  *      Provides the number of ticks, pulses, or divisions in the MIDI
  *      event time.

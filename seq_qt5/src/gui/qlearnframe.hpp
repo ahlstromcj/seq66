@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-24
+ * \updates       2026-06-25
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to modulate MIDI controller events.
@@ -104,7 +104,7 @@ private:
 
 private:        // performer::callback override
 
-    virtual bool on_automation_change (automation::slot);
+    virtual bool on_automation_change (automation::slot) override;
     virtual bool on_midi_learn (seq66::event) override;
 
 private slots:

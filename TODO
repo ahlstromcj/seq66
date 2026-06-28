@@ -1,9 +1,20 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-06-25
+2019-04-13 to 2026-06-28
 
     -   Make an issue for MIDI Learn.
         -   Any more coordination of statuses needed?
+        -   In mpk.midi, could not change Program channel from 10. FIXED.
+            Had to delete the event and insert a new one. FIXED.
+        -   Also a weird issue trying to insert the first event without
+            touching D0, a ghost event appears (1, other columns empty),
+            it is just an update issue in the event editor..
+        -   Inserting an event shows time 0 in the list until ticks box
+            is checked unchecked.
+        -   If an event does not have a D0, clear it and disable the
+            edit control. FIXED.
+        -   Consider converting pitch-wheel d1, d0 to a single number;
+            show it in the text box.
     -   The LaunchPad lights for the patterns come on, then go dark.
         Toggling the patterns (Ctrl-U, Ctrl-M, Ctrl-T) brings them back.
         Fixed, but beware of any issues.

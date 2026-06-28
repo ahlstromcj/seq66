@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-06-07
+ * \updates       2026-06-26
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -558,7 +558,7 @@ populate_midich_combo (QComboBox * combo, int buss, int ch)
     for (int channel = 0; channel <= c_midichannel_max; ++channel)
     {
         char b[4];                                      /* 2 digits or less */
-        snprintf(b, sizeof b, "%2d", channel + 1);
+        snprintf(b, sizeof b, "%d", channel + 1);
         std::string name = std::string(b);
         if (channel == c_midichannel_max)               /* i.e. 16          */
         {

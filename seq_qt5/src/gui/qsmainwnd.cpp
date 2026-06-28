@@ -3925,13 +3925,13 @@ qsmainwnd::handle_key_release (const keystroke & k)
  */
 
 void
-qsmainwnd::panic()
+qsmainwnd::panic ()
 {
     if (cb_perf().panic())
     {
-        ui->btnStop->setChecked(true);  //false);
-        ui->btnPause->setChecked(true); //false);
-        ui->btnPlay->setChecked(true);  //false);
+        ui->btnStop->setChecked(true);
+        ui->btnPause->setChecked(true);
+        ui->btnPlay->setChecked(true);
     }
 }
 
@@ -3942,7 +3942,7 @@ qsmainwnd::panic()
 void
 qsmainwnd::slot_set_home ()
 {
-    ui->spinBank->setValue(0);          // update_bank(0);
+    ui->spinBank->setValue(0);          /* update_bank(0);  */
 }
 
 /**
