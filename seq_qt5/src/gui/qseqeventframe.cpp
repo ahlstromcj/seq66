@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-06-27
+ * \updates       2026-06-30
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -100,6 +100,7 @@ qseqeventframe::qseqeventframe
     m_initialized           (false),
     m_in_control            (false),
     m_in_program            (false),
+    m_in_pitchwheel         (false),
     m_is_dirty              (false),
     m_no_channel_index      (c_midichannel_max),
     m_current_timestamp     (),
@@ -170,7 +171,7 @@ qseqeventframe::qseqeventframe
 
     /*
      * Doesn't make the table read-only.  We want that for now, until we can
-     *kj get time to modify events in-place.
+     * get time to modify events in-place.
      *
      * ui->eventTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
      */
@@ -485,6 +486,7 @@ void
 qseqeventframe::populate_meta_combo ()
 {
     ui->combo_ev_name->clear();
+
     int counter = 0;
     for ( ; /* counter value */ ; ++counter)
     {
@@ -572,6 +574,27 @@ qseqeventframe::slot_midi_channel (int /*index*/)
     // Anything to do? We just need the text.
 }
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+
+std::string
+qseqeventframe::channel_msg (int index)
+{
+    std::string result { "Illegal" };
+    switch (index)
+    {
+    case note_off:          result = "note off";            break;
+    case note_on:           result = "note on";             break;
+    case aftertouch:        result = "aftertouch";          break;
+    case control_change:    result = "control change";      break;
+    case program_change:    result = "program change";      break;
+    case channel_pressure:  result = "channel pressure";    break;
+    case pitch_wheel:       result = "pitch wheel";         break;
+    };
+    return result;
+}
+
+#endif
+
 /**
  *  Checks the given index (from the Channel Message-enabled drop-down)
  *  in order to set a couple of flags.
@@ -580,56 +603,96 @@ qseqeventframe::slot_midi_channel (int /*index*/)
 void
 qseqeventframe::check_channel_msg_index (int index)
 {
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    std::string msg { channel_msg(index) };
+    printf("[seq66] %s msg\n", msg.c_str());
+#endif
+
     QString d0 { "64" };
     QString d1 { "64" };
     bool enable_d1 { true };
-    if (index == note_off)                      /* 0    */
+    bool legal { true };
+    switch (index)
     {
+    case note_off:
+
         d0 = "64";
         d1 = "0";
-    }
-    else if (index == control_change)           /* 3    */
-    {
+        // ui->data_text_edit->document()->setPlainText("");
+        break;
+
+    case note_on:
+    case aftertouch:
+
+        // ui->data_text_edit->document()->setPlainText("");
+        break;
+
+    case control_change:
+
         d0 = "7";                   /* volume           */
         d1 = "64";
         m_in_control = true;
         m_in_program = false;
+        m_in_pitchwheel = false;
         ui->select_button->setText("Ctrl");
         ui->select_button->setEnabled(true);
-    }
-    else if (index == program_change)           /* 4    */
-    {
+        break;
+
+    case program_change:
+
         d0 = "0";                   /* Grand Piano      */
         enable_d1 = false;          /* 1-byte message   */
         m_in_control = false;
         m_in_program = true;
+        m_in_pitchwheel = false;
         ui->select_button->setText("Prog");
         ui->select_button->setEnabled(true);
-    }
-    else if (index == channel_pressure)         /* 5    */
-    {
-        d0 = "0";                   /* no pressure dude */
-        enable_d1 = false;          /* 1-byte message   */
-    }
-    else if (index == pitch_wheel)              /* 6    */
-    {
-        d0 = "0";                   /* center LSB       */
-        d1 = "64";                  /* center MSB       */
-    }
-    else                            /* note on, aftert. */
-    {
+        break;
+
+    case channel_pressure:
+
         m_in_control = false;
         m_in_program = false;
-        ui->select_button->setText("Sel");
-        ui->select_button->setEnabled(false);
+        m_in_pitchwheel = false;
+        d0 = "0";                   /* no pressure dude */
+        enable_d1 = false;          /* 1-byte message   */
+        // ui->data_text_edit->document()->setPlainText("");
+        break;
+
+    case pitch_wheel:
+
+        m_in_control = false;
+        m_in_program = false;
+        m_in_pitchwheel = true;
+        d0 = "0";                   /* center LSB       */
+        d1 = "64";                  /* center MSB       */
+        break;
+
+    default:
+
+        legal = false;
+        break;
+
     }
-    ui->data_text_edit->document()->setPlainText("");
-    ui->entry_ev_data_0->setText(d0);
-    ui->entry_ev_data_1->setEnabled(enable_d1);
-    if (enable_d1)
-        ui->entry_ev_data_1->setText(d1);
-    else
-        ui->entry_ev_data_1->setText("---");
+    if (legal)
+    {
+        if (! m_in_control && ! m_in_program)
+        {
+            ui->select_button->setText("Sel");
+            ui->select_button->setEnabled(false);
+        }
+
+        // COMMENTED OUT FOR AN EXPERIMENT
+        // ui->data_text_edit->document()->setPlainText("");
+
+        ui->entry_ev_data_0->setText(d0);
+        ui->entry_ev_data_1->setEnabled(enable_d1);
+        if (enable_d1)
+            ui->entry_ev_data_1->setText(d1);
+        else
+            ui->entry_ev_data_1->setText("---");
+    }
 }
 
 /**
@@ -670,7 +733,8 @@ qseqeventframe::slot_event_name (int index)
     printf("slot_event_name(%d) == %s\n", index, CSTR(es));
 #endif
 
-    check_channel_msg_index(index);
+    if (index >= 0)
+        check_channel_msg_index(index);
 }
 
 /**

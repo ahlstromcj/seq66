@@ -1,87 +1,50 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-06-28
+2019-04-13 to 2026-07-05
 
-    -   Make an issue for MIDI Learn.
-        -   Any more coordination of statuses needed?
-        -   In mpk.midi, could not change Program channel from 10. FIXED.
-            Had to delete the event and insert a new one. FIXED.
-        -   Also a weird issue trying to insert the first event without
-            touching D0, a ghost event appears (1, other columns empty),
-            it is just an update issue in the event editor..
-        -   Inserting an event shows time 0 in the list until ticks box
-            is checked unchecked.
-        -   If an event does not have a D0, clear it and disable the
-            edit control. FIXED.
-        -   Consider converting pitch-wheel d1, d0 to a single number;
-            show it in the text box.
-    -   The LaunchPad lights for the patterns come on, then go dark.
-        Toggling the patterns (Ctrl-U, Ctrl-M, Ctrl-T) brings them back.
-        Fixed, but beware of any issues.
+    -   MIDI Learn.
+        -   List the controls that can be learned.
+        -   The Live/Song button enables the blue song-record button,
+            but the keystroke P does not.
+        -   Set 0 button mapping needed?
+    -   Edit / Preferences / Metronome.
+        How can we implement count-in and background recording
+        properly? Is it worth it when one can just set up a
+        pattern to expand when notes are struck?
+    -   Make controller values movable in the data pane just
+        like patch values. Show the number in addition to the
+        name.
+        -   Can we alter a selected value by forwarding the arrow
+            key to the data pane for non-note events?
+    -   Events tab:
+        -   Would be good to allow H:M:S time format.
+        -   Broken: changes after the second "Grow" do not stick.
+        -   In calculations : midi_measures_to_pulses() #678,
+            calculation of ticks_per_meas is WRONG.
+    -   Segfault: Open b4uacuse patchless midi, then open the
+        pattern editor for guitar. Then open 1Bar-1920.midi when
+        channel 0 pops up as being unavailable. Similar to the
+        segfault when prompted to remap and restart. "Unavailable".
+        Partly FIXED: can still occur with multiple pattern editors
+        plus a song editor window; fix the external song editor.
+        Test this with pattern-fix, LFO, and other dialogs!
+    -   On Arch, with many pattern editors and one song editor open,
+
+Back burner:
+
     -   Should we have new global SeqSpecs?
-        -   Overrides the file setting for recording by buss.
-        -   Overrides the file setting for recording by channel.
+        -   Overrides the 'rc' setting for recording by buss.
+        -   Overrides the 'rc' setting for recording by channel.
         -   Overrides the current settings for
             -   Tighten record.
             -   Quantized record.
             -   Note-mapped record.
     -   How about a full-song channel override (except for drums on
         Ch. 10) for crippled hardware like the Akai MPK Mini Play?
-    -   More tooltips
-        -   Edit / Preferences / Metronome.
-    -   Slot dots:  see qloopbutton.cpp.
-        -   Red for record. Already implemented. Uses drum_paint().
-        -   Orange for record + MIDI Thru. Try the sel_color().
-        -   Yellow for just MIDI Thru. Try the near_color()
-        -   Or use explicit Qt::orange and Qt::yellow
-    -   Make controller values movable in the data pane just
-        like patch values. Show the number in addition to the
-        name.
-    -   Events tab: adding an event past the pattern measure size
-        now prohibited. Added a Grow button.
-        Would be good to allow H:M:S time format.
-        Broken: changes after the second "Grow" do not stick.
-        In calculations : midi_measures_to_pulses() #678,
-        calculation of ticks_per_meas is WRONG.
-    -   Can we alter a selected value by forwarding the arrow
-        key to the data pane for non-note events?
-    -   Segfault: Open b4uacuse patchless midi, then open the
-        pattern editor for guitar. Then open 1Bar-1920.midi when
-        channel 0 pops up as being unavailable. Similar to the
-        segfault when prompted to remap and restart. "Unavailable".
-        Partly fixed: can still occur with multiple pattern editors
-        plus a song editor window; fix the external song editor.
-        Test this with pattern-fix, LFO, and other dialogs!
-    -   On Arch, with many pattern editors and one song editor open,
-        loading a new file leaves the song editor open.
-    -   Issues #102, #137, #138
-    -   Cross build suspended; at a dead end. See mingw-qt-build.text.
+        Better to modify each pattern as desired and save it to a
+        suitably named alternative.
+    -   Issues #138
     -   Finish off the refactoring of Pt_Time.
-    -   Windows:
-        -   Install or configure qt6 in Windows to build that version.
-        -   Figure out how to do a 32-bit build.
-    -   In qmake on Windows:
-        -   Builds in Git Bash, but the MIDI Mapper/Wave synth are disabled
-            in the port dropdown, but the Mapper is enabled in Preferences.
-        -   MSYS2: error: '../../C:/msys64/mingw64/bin/moc', needed by
-            'Seq66qt5/qseq66.exe.p/moc_qlfoframe.cpp', missing and no
-            known rule to make it. [moc is in C:/msys64/mingw64/bin/moc]
-            $ pacman -S mingw-w64-x86_64-qt5-tools
-        -   MSYS $ meson compile -C build/cc nsisinstaller
-            ERROR: Build data file '...//build/cc/meson-private/build.dat'
-            references functions or classes that do not exist.
-        -   Git Bash$ meson compile -C build/cc nsisinstaller
-            Generating include/seq66-git-version.h with a custom command
-            Processing config: C:\Program Files (x86)\NSIS\nsisconf.nsh
-            Processing script file: "../../nsis/MesonSetup.nsi" (ACP)
-            File: "..\release\qseq66.exe" -> no files found.
-            Usage: File [/nonfatal] [/a] ([/r] [/x filespec [...]]
-             filespec [...] | /oname=outfile one_file_only)
-            Error in script "../../nsis/MesonSetup.nsi" on line 134
-            -- aborting creation process
-
-Features:
-
     -   MIDNAM? Incorporate the xml66 and midiname projects if practical.
 
 NSM:
@@ -137,7 +100,29 @@ Backlog:
     -   Consider adding time-bg/fg-color to the palette file, using
         the 'usr' version otherwise. Not sure we like this idea.
     -   Add integration with JACK dbus. Low priority.
-    -   Finish getting Windows builds in MSYS2 to work. Low priority.
+    -   Windows:
+        -   Install or configure qt6 in Windows to build that version.
+        -   Figure out how to do a 32-bit build.
+        -   Builds in Git Bash, but the MIDI Mapper/Wave synth are disabled
+            in the port dropdown, but the Mapper is enabled in Preferences.
+        -   MSYS2: error: '../../C:/msys64/mingw64/bin/moc', needed by
+            'Seq66qt5/qseq66.exe.p/moc_qlfoframe.cpp', missing and no
+            known rule to make it. [moc is in C:/msys64/mingw64/bin/moc]
+            $ pacman -S mingw-w64-x86_64-qt5-tools
+        -   MSYS $ meson compile -C build/cc nsisinstaller
+            ERROR: Build data file '...//build/cc/meson-private/build.dat'
+            references functions or classes that do not exist.
+        -   Git Bash$ meson compile -C build/cc nsisinstaller
+            Generating include/seq66-git-version.h with a custom command
+            Processing config: C:\Program Files (x86)\NSIS\nsisconf.nsh
+            Processing script file: "../../nsis/MesonSetup.nsi" (ACP)
+            File: "..\release\qseq66.exe" -> no files found.
+            Usage: File [/nonfatal] [/a] ([/r] [/x filespec [...]]
+             filespec [...] | /oname=outfile one_file_only)
+            Error in script "../../nsis/MesonSetup.nsi" on line 134
+            -- aborting creation process
+        -   Finish getting Windows builds in MSYS2 to work.
+        -   Cross build suspended; at a dead end. See mingw-qt-build.text.
     -   Oddity: drag a pattern to a new slot, and when the mouse
         hovers over the new slot, the slot number appears under it.
 
@@ -353,61 +338,6 @@ ISSUES:
 
     STATUS: Verified. Also another issue: use the event editor to
     add Program changes at various time-stamps. They all end up at 0!
-
-#137 multisignature fake bug + UX suggestion
-
-	OK so initially I thought it was a bug, but it turns out it is just a UX
-    thing.
-
-	Reproduce steps
-
-	0. (optional) press play
-	1. create pattern 1
-	2. press play
-	3. create pattern 2
-	4. set signature to 3/4
-
-    > pattern 2 will stay in 4/4 eventhough the dropdown boxes will display
-    > `3` and   `4`
-
-	When pressing stop, and re-opening the editor, the dropdown boxes
-	mysteriously were reset to `4` and `4` :/
-
-    This 'bug' made me bang my head against the wall..read the docs again..try
-    various things to make the loops play with different signatures.
-
-	Cause
-    It turns out that signatures cannot be changed when playing.  However, the
-    GUI allows changing the dropdowns (but the controls do not update the
-    data).
-
-	Solution
-    While playing, the signature dropdowns should be grayed out (and enabled
-    once pattern is no longer playing)  `<---- preferred`. NOTE:
-    the time signatures work, but the time signature event is not added
-    until the time-signature logging button to the left is clicked.
-    This work whether the L position (progress bar) is moving or is set with a
-    click in the time pane.
-
-	Other (probably more complicated/annoying) solutions are:
-
-	* Stop the transport when changing the signature.
-	* Refactor things to allow updating signature in realtime [see NOTE
-      above.
-    
-    STATUS: Fixed.
-
-    EXTRA WORK (STATUS: Fixed, needs more testing perhaps):
-
-        1. Follow up on issue #111, Time signature changes does not get
-           saved on .midi file.
-        2. Changing the Global Time Signature shows the changes in
-           the grid slots and the seqroll, but not in the pattern-editor
-           combo boxes.
-        3. Re 2, changing to 3/8, saving, and re-opening shows 4/8!
-           The actual time-signature event is 4/4!
-        4. Hmmmm, generally only the first track has a time signature
-           event. Do we need to go back to that?
 
 #138 workflow regarding multitimbral program change + MSB + LSB
 

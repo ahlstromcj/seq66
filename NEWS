@@ -1,34 +1,41 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-06-27
+2015-07-10 to 2026-07-03
 
 # Change Log
 
-## [0.99.26] - 2026-06-27
+## [0.99.26] - 2026-07-03
 
-"MIDI Learn Perhaps"
+"MIDI Learn"
 
-Starting to work out the feasibility of MIDI Learn....
+This version introduces the Seq66 flavor of MIDI Learn. Learning
+the grid controls for the pattern-grid and mute-groups is nearly
+automatic, while learning the automation controls is a bit different
+from other MIDI applications. Uses a "Learn Manager" dialog.
 
 ### Added
 
+-   MIDI learn! See that section in the user manual for details
 -   The new "font-fix.qss" style sheet can be used to correct
     font sizes (and only font sizes).
 -   More tool-tips.
 -   Control actions via keys and buttons have been added
-    in preparation for MIDI Learn.
--   Added "Jitter" to the sequence of recording modes.
+    to augment MIDI Learn.
+-   Pattern editor.
+    -   Added "Jitter" to the pattern editor tools.
+-   Event editor.
+    -   Added a button to enlarge the pattern by one measure.
 
 ### Changed
 
 -   Most of the 'qss' files have been tweaked.
 -   Updated the creation of menus and actions to specify font size.
-    However, currently disabled.
+    However, currently not used, in favor of styles.
 -   The --investigate option turns off the log file for easier
     debugging.
--   Changed the shortcut (accelerator key) for Project Configuration
-    from Ctrl-J ("LF") to Ctrl-G ("BEL") so that Ctrl-J can be used
-    to active automation::slot::thru.
+-   Changed the shortcut (accelerator key) for Import / Project
+    Configuration from Ctrl-J ("LF") to Ctrl-G ("BEL") so that
+    Ctrl-J can be used to activate automation::slot::thru.
 
 ### Fixed
 
@@ -43,7 +50,7 @@ Starting to work out the feasibility of MIDI Learn....
 
 ### Removed
 
--   TBD
+-   Nothing.
 
 ## [0.99.25] - 2026-06-06
 

@@ -90,15 +90,7 @@ qlearnframe::qlearnframe
     performer::callbacks    (p),
     ui                      (new Ui::qlearnframe),
     m_perf                  (p),
-    m_midi_learn            (*p.create_midi_learn()),   /* fingers crossed! */
-    m_refresh               (true),
-    m_timer                 (nullptr),
-    m_learn_button_group    (nullptr),
-    m_action_button_group   (nullptr),
-    m_current_keyname       (),
-    m_inverse               (false),
-    m_d1min                 (0),
-    m_d1max                 (127)
+    m_midi_learn            (*p.create_midi_learn())    /* fingers crossed! */
 {
     ui->setupUi(this);
     connect
@@ -267,10 +259,12 @@ qlearnframe::qlearnframe
     midi_learn().clear_current_index();
 
     /*
-     * Check for a pending automation-control every 5 x 40 milliseconds.
+     * Check for a pending automation-control every
+     * 200 = 5 x 40 milliseconds. But let's go a little slower, about
+     * 4 times a second.
      */
 
-    m_timer = qt_timer(this, "qlearnframe", 5, SLOT(slot_poll_update()));
+    m_timer = qt_timer(this, "qlearnframe", 6, SLOT(slot_poll_update()));
 }
 
 qlearnframe::~qlearnframe()
@@ -292,6 +286,7 @@ qlearnframe::on_automation_change (automation::slot s)
             "Automation " + automation::slot_to_string(s)
         };
         ui->current_logged_control_line_edit->setText(qt(eventname));
+        refresh();
     }
     return true;
 }
@@ -338,8 +333,6 @@ qlearnframe::on_midi_learn (seq66::event ev)
     return result;
 }
 
-// ALSO NEED TO MODIFY, SET DIRTY, and ALSO IGNORE follow-on events.
-
 /**
  *  Set the text of the Clear button to the current category.
  */
@@ -371,43 +364,42 @@ qlearnframe::set_buttons (bool enable)
  *  display it in the user-interface.
  *
  *  This value will be cleared once a MIDI controller event comes in.
+ *
+ *      if (last != midi_learn().automation_slot() || m_refresh)
  */
 
 void
 qlearnframe::slot_poll_update ()
 {
     automation::slot last { perf().last_automation_slot() };
-    if (last != midi_learn().automation_slot() || m_refresh)
+    int index { midi_learn().current_index() };
+    std::string eventname;
+    if (midi_learn().is_loop())
     {
-        int index { midi_learn().current_index() };
-        std::string eventname;
-        if (midi_learn().is_loop())
-        {
-            ui->current_logged_control_label->setText("Loop Control");
-            eventname = "Loop " + std::to_string(index);
-        }
-        else if (midi_learn().is_mute_group())
-        {
-            ui->current_logged_control_label->setText("Mute Control");
-            eventname = "Mute Group " + std::to_string(index);
-        }
-        else if (midi_learn().is_automation())
-        {
-            ui->current_logged_control_label->setText("Next Control");
-            eventname = "Automation " + automation::slot_to_string(last);
-            midi_learn().automation_slot(last);
-        }
-        if (eventname.empty())
-        {
-            // No code
-        }
-        else
-        {
-            QString txt { qt(eventname) };
-            ui->current_logged_control_line_edit->setText(txt);
-        }
-        m_refresh = false;
+        ui->current_logged_control_label->setText("Loop Control");
+        eventname = "Loop " + std::to_string(index);
     }
+    else if (midi_learn().is_mute_group())
+    {
+        ui->current_logged_control_label->setText("Mute Control");
+        eventname = "Mute Group " + std::to_string(index);
+    }
+    else if (midi_learn().is_automation())
+    {
+        ui->current_logged_control_label->setText("Next Control");
+        eventname = "Automation " + automation::slot_to_string(last);
+        midi_learn().automation_slot(last);
+    }
+    if (eventname.empty())
+    {
+        // No code
+    }
+    else
+    {
+        QString txt { qt(eventname) };
+        ui->current_logged_control_line_edit->setText(txt);
+    }
+    m_refresh = false;
 }
 
 void

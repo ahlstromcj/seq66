@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-06-23
+ * \updates       2026-07-04
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -94,6 +94,7 @@ class performer
 {
     friend class jack_assistant;
     friend class midifile;
+    friend class midilearn;
     friend class rcfile;
     friend class playlist;
     friend class qperfeditframe64;
@@ -1168,6 +1169,7 @@ public:
 private:
 
     void notify_automation_change (automation::slot s);
+    void notify_midi_learn (automation::slot s);
     void notify_set_change (screenset::number setno, change mod = change::yes);
     void notify_mutes_change (mutegroup::number setno, change mod = change::yes);
     void notify_ui_change (seq::number seqno, change mod = change::yes);

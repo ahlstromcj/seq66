@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-25
+ * \updates       2026-07-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -77,6 +77,21 @@ midilearn::active_counts
         autocount = m_automation_ctrl_count;
     }
     return result;
+}
+
+void
+midilearn::automation_slot (automation::slot s)
+{
+    m_automation_slot = s;
+    m_current_index = slot_to_int_cast(s);
+
+    /*
+     * Causes a segfault (infinite loop, most likely).
+     *
+     * perf().notify_automation_change(s);
+     * perf().notify_midi_learn(s);
+     */
+
 }
 
 /*
@@ -148,9 +163,8 @@ midilearn::save ()
 {
     bool result { perf().save_midi_learn(m_current_controls) };
     if (result)
-    {
-        // TODO ?
-    }
+        m_original_controls = m_current_controls;
+
     return result;
 }
 

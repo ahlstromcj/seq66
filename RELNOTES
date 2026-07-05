@@ -1,33 +1,23 @@
-Release Notes for Seq66 v. 0.99.25 2026-06-06 "Mesonry Opens Doors!"
+Release Notes for Seq66 v. 0.99.26 2026-07-03 "MIDI Learn".
 
-This release contains some minor feature updates and fixes, and a
-major refactoring of the Seq66 build to use Meson instead of GNU
-Autotools. The source code tree for the Qt GUI has been rearranged
-to separate Qt-helper code from the user-interface code.
+This version introduces the Seq66 flavor of MIDI Learn. See NEWS,
+the Help menu, and the user manual. It works differently from other
+implementations of MIDI Learn.
 
-- Main window.
-  - The button in Help / About is now an OK button.
 - Pattern editor.
-    - Added a wrench icon for the pattern-fix button.
+-   Added "Jitter" to the pattern editor tools.
 - Event editor. Added checks on timestamps plus a button to
-  increase the pattern size by one measure.
-- Fixed more QMouseEvent x()/y() deprecations found by the Meson
-  build.
+  - Added a button to enlarge the pattern by one measure.
 - Build system.
-  - Meson is used to manage the build.
-  - The lib66 library project is used as a Meson subproject.
-  - The work.sh script provides handy options to apply Meson setup
-    and compilation.
-  - The normal build is made in build/cc. Other build subdirectories
-    are clang, cross, portmidi, and debug.
-  - Windows. The build, and making the NSIS installer, are supported.
-    (The old batch-file build script still works.)
-  - Build info. Uses the /etc/os-release file if available.
-  - The CLI (seq66cli) and GUI (qseq66) are both built by default.
-  - JACK Session support is disabled by default, but can be enabled.
-  - Except for the Qt libraries, the build is a static build.
-- Documentation updated.
-
-See NEWS for many more details.
+  - A missing "makensis" application no longer causes a build error.
+- Miscellaneous:
+  - The --investigate option turns off the log file for easier
+    debugging.
+  - Most of the 'qss' files have been tweaked.
+  - The new "font-fix.qss" style sheet can be used to correct font
+    sizes.
+  - More tool-tips.
+  - Fixed some errors. See "Fixed" in NEWS.
+- Documentation updated to explain the MIDI Learn Manager.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

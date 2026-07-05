@@ -2303,7 +2303,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionMIDILearn">
    <property name="text">
-    <string>MIDI Learn</string>
+    <string>MIDI &amp;Learn</string>
    </property>
   </action>
  </widget>

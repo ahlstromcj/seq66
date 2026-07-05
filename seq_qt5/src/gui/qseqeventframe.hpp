@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-06-05
+ * \updates       2026-06-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -185,6 +185,10 @@ private:
     void data_0_helper (int d0);
     void check_channel_msg_index (int index);
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    std::string channel_msg (int index);
+#endif
+
     sequence & track ()
     {
         return m_seq;
@@ -294,11 +298,13 @@ private:
 
     /**
      *  Indicates if the user has selected Channel Message and either
-     *  Control or Program. We'd like to do a name lookup for these values.
+     *  Control or Program. We'd like to do a name lookup or calculations
+     *  for these values.
      */
 
     bool m_in_control;
     bool m_in_program;
+    bool m_in_pitchwheel;
 
     /**
      *  Indicates a modification is active.

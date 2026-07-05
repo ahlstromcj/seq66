@@ -634,6 +634,15 @@ performer::notify_automation_change (automation::slot s)
         (void) notify->on_automation_change(s);
 }
 
+/**
+ *  Log the last automation slot used.
+ *
+ * \param notify
+ *      If true (the default), then notify all clients of automation
+ *      changes. If called from an performer::callbacks::on_automation_change()
+ *      override, this must be false, otherwise an infinite loop occurs.
+ */
+
 void
 performer::last_automation_slot (automation::slot s, bool notify)
 {
@@ -648,6 +657,19 @@ performer::last_automation_slot (automation::slot s, bool notify)
 
     if (notify)
         notify_automation_change(s);
+}
+
+/**
+ *  Tell MIDI Learn clients about this slot. Safe to call
+ *  from an on_automation_change() override.
+ */
+
+void
+performer::notify_midi_learn (automation::slot s)
+{
+    m_last_automation_slot = s;
+    if (not_nullptr(midi_learn()))
+        midi_learn()->automation_slot(s);
 }
 
 /*

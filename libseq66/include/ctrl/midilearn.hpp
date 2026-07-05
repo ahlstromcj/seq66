@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-06-25
+ * \updates       2026-07-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -216,11 +216,7 @@ public:
         return m_automation_slot;
     }
 
-    void automation_slot (automation::slot s)
-    {
-        m_automation_slot = s;
-        m_current_index = slot_to_int_cast(s);
-    }
+    void automation_slot (automation::slot s);
 
     int loops_ctrl_count () const
     {

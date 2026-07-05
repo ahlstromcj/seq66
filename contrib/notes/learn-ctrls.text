@@ -1,0 +1,157 @@
+GUI Elements Supported by MIDI Learn
+Chris Ahlstrom
+2026-07-04 to 2026-07-05
+
+-   Loops. All 32 hot-keys and grid buttons can be learned via auto-increment.
+-   Mute-groups. All 32 hot-keys and grid buttons can be learned via
+    auto-increment.
+-   Automation.
+
+    -   Keystrokes only (i.e. no GUI element).
+
+        "Ins"                       automation::mod_snapshot
+        "o"                         automation::mod_queue (compare to keep_queue)
+        "`"                         automation::mod_gmute
+        "|"                         automation::mod_oneshot
+        "KP_Home"                   automation::mod_replace
+        "Home"                      automation::play_ss
+        "BkSpace"                   automation::solo vs grid_solo
+        "KP_/"                      automation::thru
+        "KP_."                      automation::play_ss ?
+        "KP_*"                      automation::record_style
+        "KP_-"                      automation::quan_record
+        "F6"                        automation::FF
+        "F5"                        automation::rewind
+        "F2"                        automation::playlist
+        "F3"                        automation::playlist_song
+        Up/Down                     automation::playlist (arrow keys)
+        Left/Right                  automation::playlist_song (arrow keys)
+        "="         Pattern menu    automation::pattern_edit
+        "-"         Pattern menu    automation::event_edit
+        "F10"                       automation::song_mode
+        "F11"                       automation::toggle_jack
+        "/"                         automation::slot_shift
+
+    -   Main window.
+
+        "~"         Panic.          automation::panic
+        "Esc"       Stop.           automation::stop
+        "."         Pause.          automation::playback
+        "Space"     Play.           automation::start
+        "\"         Q.              automation::keep_queue
+        "l" (el)    L.              automation::mod_glearn (menu too)
+        "F8"        Mute.           automation::toggle_mutes
+        "P"         Live/Song.      automation::song_record
+        "KP_+"      !.              automation::reset_sets
+        "]"         Set Up.         automation::ss_up
+        "["         Set Down.       automation::ss_dn
+        "'"         BPM Up.         automation::bpm_up
+        ";"         BPM Down.       automation::bpm_dn
+        "PageUp"    Ctrl BPM Up.    automation::bpm_page_up
+        "PageDn"    Ctrl BPM Dn.    automation::bpm_page_dn
+        "F9"        Tap BPM.        automation::tap_bpm
+        "F12"       Show/hide.      automation::menu_mode
+        "0xe8"      BBT/HMS         automation::mod_bbt_hms
+        "0xe9"      L<-->R          automation::mod_LR_loop
+        "0xea"      Undo - pattern  automation::mod_undo
+        "0xeb"      redo - pattern  automation::mod_redo
+        "Quit"      File / Quit     automation::quit (no keystroke)
+
+                    Recoding Modes Cycling Button
+
+        "0xe2" (no key)    "        automation::grid_quant_none
+        "0xe3" (no key)    "        automation::grid_quant_full
+        "0xe4" (no key)    "        automation::grid_quant_tighten
+        "0xe5" (no key)    "        automation::grid_quant_random
+        "0xe6" (no key)    "        automation::grid_quant_jitter
+        "0xe7" (no key)    "        automation::grid_quant_notemap
+
+                    Recoding Styles Cycling Button
+
+        "Sh_F1"            "        automation::record_overdub
+        "Sh_F2"            "        automation::record_overwrite
+        "Sh_F3"            "        automation::record_expand
+        "Sh_F4"            "        automation::record_oneshot
+
+                    Grid Slot Mode Dropdown
+
+        "Sh_F5"            "        automation::grid_loop
+        "Sh_F6"            "        automation::grid_record
+        "Sh_F7"            "        automation::grid_copy
+        "Sh_F8"            "        automation::grid_paste
+        "Sh_F9"            "        automation::grid_clear
+        "Sh_F10"           "        automation::grid_delete
+        "Sh_F11"           "        automation::grid_thru
+        "Sh_F12"           "        automation::grid_solo
+        "0xe0" (no key)    "        automation::grid_cut
+        "0xe1" (no key)    "        automation::grid_double
+        "0xfc" (no key)    "        automation::grid_mutes
+
+    -   Pattern editor.
+
+        Recording Modes (as above)  automation::grid_quant_none
+                                    automation::grid_quant_tighten
+                                    automation::grid_quant_full
+                                    automation::grid_quant_jitter
+                                    automation::grid_quant_random
+                                    automation::grid_quant_notemap
+        Recording Styles (as above) automation::record_overdub
+                                    automation::record_overwrite
+                                    automation::record_expand
+                                    automation::record_oneshot
+
+        "0xea"      Undo - pattern  automation::mod_undo
+        "0xeb"      redo - pattern  automation::mod_redo
+
+    -   Song editor.
+
+        No learn support; really depends on using the mouse.
+
+-   Bugs.
+
+    Zero Out.   automation::mutes_clear In Mutes tab, button sets no slot
+    L/R Looping automation::mod_LR_loop in main window only
+
+-   Missing items.
+
+    -   Main window.
+
+            Record.
+            Open Song Editor.
+            Set 0.
+            Metronome.
+            Background Recording.
+
+    -   Pattern editor.
+
+            L/R Looping.
+            LFO.
+            Live mode repetitions.
+            Arm/Mute.
+            Thru toggle.
+            Record toggle.
+            Vel/Free.
+            All left-side buttons.
+            All right-side buttons.
+            All top-buttons including Undo/Redo.
+        
+Set up for learn?
+
+    follow_transport
+    loop_LR
+    record_toggle
+    save_session
+    song_pointer
+    ss_set
+    top
+    visibility
+    mod_transpose_song
+    mod_copy_set
+    mod_paste_set
+    mod_toggle_tracks (but toggle_mutes) works
+    set_mode_normal
+    set_mode_auto
+    set_mode_additive
+    set_mode_all_sets
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

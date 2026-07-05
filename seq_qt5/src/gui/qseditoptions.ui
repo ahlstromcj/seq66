@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -2824,12 +2824,20 @@ Saved in the 'usr' file when Seq66 exits.</string>
             <property name="enabled">
              <bool>true</bool>
             </property>
+            <property name="toolTip">
+             <string>Number of measures to click metronome
+before starting playback.</string>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkbox_metro_count_in">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="toolTip">
+             <string>If set, count-in with the metronome
+prior to starting playback.</string>
             </property>
             <property name="text">
              <string>Enabled</string>
@@ -2838,13 +2846,22 @@ Saved in the 'usr' file when Seq66 exits.</string>
           </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="checkbox_metro_recording">
+            <property name="toolTip">
+             <string>If set, allow recording while counting in.
+NOTE: this feature is not yet finished.</string>
+            </property>
             <property name="text">
              <string>Recording</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineedit_metro_recording_measures"/>
+           <widget class="QLineEdit" name="lineedit_metro_recording_measures">
+            <property name="toolTip">
+             <string>Number of measures for count-in
+recording.</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -2918,6 +2935,10 @@ Saved in the 'usr' file when Seq66 exits.</string>
               <bold>false</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>The program (e.g. percussion) to use for the
+metronome beats.</string>
+            </property>
             <property name="text">
              <string>Patch</string>
             </property>
@@ -2939,6 +2960,9 @@ Saved in the 'usr' file when Seq66 exits.</string>
               <pointsize>11</pointsize>
               <bold>false</bold>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>The note (either drum or pitch) to use.</string>
             </property>
             <property name="text">
              <string>Note</string>
@@ -2962,6 +2986,9 @@ Saved in the 'usr' file when Seq66 exits.</string>
               <bold>false</bold>
              </font>
             </property>
+            <property name="toolTip">
+             <string>The loudness of the metronome beat.</string>
+            </property>
             <property name="text">
              <string>Velocity</string>
             </property>
@@ -2983,6 +3010,11 @@ Saved in the 'usr' file when Seq66 exits.</string>
               <pointsize>11</pointsize>
               <bold>false</bold>
              </font>
+            </property>
+            <property name="toolTip">
+             <string>The length of notes as a fraction
+of the beat-width. 0 means half
+the beat width.</string>
             </property>
             <property name="text">
              <string>Length fraction</string>
@@ -3154,7 +3186,8 @@ Saved in the 'usr' file when Seq66 exits.</string>
              </size>
             </property>
             <property name="toolTip">
-             <string>The enabled bus from which to record into the background.</string>
+             <string>The enabled bus from which to record into the background.
+This feature is still unfinished.</string>
             </property>
            </widget>
           </item>
@@ -3210,7 +3243,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
             </property>
             <property name="toolTip">
              <string>The output bus through which to play the incoming
-background-recorded notes.</string>
+background-recorded notes. Still unfinished.</string>
             </property>
            </widget>
           </item>

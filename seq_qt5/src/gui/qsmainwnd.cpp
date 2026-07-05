@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-16
+ * \updates       2026-07-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -423,7 +423,6 @@ qsmainwnd::qsmainwnd
         ui->btnBBTHMS, SIGNAL(clicked(bool)),
         this, SLOT(toggle_time_format(bool))
     );
-
     m_dialog_prefs = new (std::nothrow) qseditoptions(cb_perf(), this);
 
     /*
@@ -1684,13 +1683,14 @@ qsmainwnd::slot_midi_learn_help ()
         if (not_nullptr(browser))
         {
             dialog->setWindowTitle("MIDI Learn");
-            // dialog->setFixedSize(440, 540);
             dialog->resize(640, 540);
 
             std::string html = open_share_doc_file("midi_learn.html", "Learn");
             if (html.empty())
                 html = s_error_html;
 
+            browser->setLineWrapMode(QTextEdit::WidgetWidth);
+            browser->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
             browser->setHtml(qt(html));
 
             QVBoxLayout * layout = new (std::nothrow) QVBoxLayout(dialog);
@@ -2209,22 +2209,16 @@ qsmainwnd::update_window_title (const std::string & fn)
 
 /**
  *  Toggles the recording of the live song control done by the musician.
- *  This functionality currently does not have a key devoted to it, nor is it
- *  a saved setting. But it now has a MIDI automation slot, mod_bbt_hms.
+ *  This functionality currently does not have a key devoted to it, nor is it a
+ *  saved setting. But it has a MIDI automation slot, mod_bbt_hms.
  */
 
 void
 qsmainwnd::toggle_time_format (bool /*on*/)
 {
     m_tick_time_as_bbt = ! m_tick_time_as_bbt;
-    QString label = m_tick_time_as_bbt ? "B:B:T" : "H:M:S" ;
-    ui->btnBBTHMS->setText(label);
     update_time(cb_perf().get_tick());
-
-    /*
-     * Leads to a segfault.
-     */
-     cb_perf().last_automation_slot(automation::slot::mod_bbt_hms, false);
+    cb_perf().last_automation_slot(automation::slot::mod_bbt_hms, false);
 }
 
 void
@@ -4446,12 +4440,19 @@ qsmainwnd::tap ()
     update_tap(bp);
 }
 
+/**
+ *  The set_beats_per_minute() call sets the bpm slot, so
+ *  we have to correct that for MIDI Learn.
+ */
+
 void
 qsmainwnd::update_tap (midibpm bp)
 {
     set_tap_button(cb_perf().current_beats());
     if (cb_perf().current_beats() > 1)      /* first one is useless         */
         set_beats_per_minute(bp);           /* ui->spinBpm->setValue(bp)    */
+
+    cb_perf().last_automation_slot(automation::slot::tap_bpm);
 }
 
 /**
@@ -4553,6 +4554,7 @@ qsmainwnd::slot_show_hide ()
         qt_set_layout_visibility(ui->hLayoutBottom_1, true);
         qt_set_layout_visibility(ui->hLayoutBottom_2, true);
     }
+    cb_perf().last_automation_slot(automation::slot::menu_mode, false);
 }
 
 bool
@@ -4710,20 +4712,24 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
 bool
 qsmainwnd::on_automation_change (automation::slot s)
 {
-    bool result = not_nullptr(m_live_frame);
+    bool result { not_nullptr(m_live_frame) };
+    bool slot_used { false };
     if (s == automation::slot::mod_bbt_hms)
     {
         toggle_time_format(true);
+        slot_used = true;
     }
     else if (s == automation::slot::mod_LR_loop)
     {
         toggle_loop();
+        slot_used = true;
     }
     else if (s == automation::slot::menu_mode)
     {
-        bool hide = ! ui->btnShowHide->isChecked();
+        bool hide { ! ui->btnShowHide->isChecked() };
         ui->btnShowHide->setChecked(hide);
         slot_show_hide();
+        slot_used = true;
     }
     else if
     (
@@ -4743,7 +4749,11 @@ qsmainwnd::on_automation_change (automation::slot s)
         int setno { cb_perf().playscreen_number() };
         emit signal_set_change(int(setno));
         m_is_title_dirty = true;
+        slot_used = true;
     }
+    if (slot_used)
+        cb_perf().notify_midi_learn(s);
+
     if (result)
         m_live_frame->set_needs_update();           /* brute force          */
 
