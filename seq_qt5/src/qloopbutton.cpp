@@ -470,9 +470,9 @@ qloopbutton::initialize_fingerprint ()
 }
 
 /**
- *  Sets up the foreground and background colors of the button and the
- *  appropriate setAutoFillBackground() setting. We've removed the garish
- *  painting of the pattern color on the button borders.
+ *  Sets up the foreground and background colors of the button.
+ *  We've removed the garish painting of the pattern color on the button
+ *  borders.
  */
 
 void

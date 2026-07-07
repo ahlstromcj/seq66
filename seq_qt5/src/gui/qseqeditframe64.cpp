@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-06-04
+ * \updates       2026-07-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3859,6 +3859,7 @@ void
 qseqeditframe64::loop_mode (bool ischecked)
 {
     perf().looping(ischecked);
+    perf().last_automation_slot(automation::slot::loop_LR, false);
     set_dirty();
 }
 

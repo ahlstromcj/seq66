@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-06-14
+ * \updates       2026-07-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -492,7 +492,7 @@ keycontainer::keys_automation ()
         { "F9",        automation::action::toggle  }, // 26 tap_bpm
         { "Space",     automation::action::toggle  }, // 27 start [not " "!]
         { "Esc",       automation::action::toggle  }, // 28 stop
-        { "KP_Ins",    automation::action::toggle  }, // 29 reserved_29
+        { "KP_Ins",    automation::action::toggle  }, // 29 loop_LR
         { "F8",        automation::action::toggle  }, // 30 toggle_mutes
         { "F7",        automation::action::toggle  }, // 31 song_pointer
         { "\\",        automation::action::toggle  }, // 32 keep_queue
@@ -548,7 +548,7 @@ keycontainer::keys_automation ()
          */
 
         { "0xe8",      automation::action::toggle  }, // 69 mod_bbt_hms
-        { "0xe9",      automation::action::toggle  }, // 70 mod_LR_loop
+        { "0xe9",      automation::action::toggle  }, // 70 reserved_70
         { "0xea",      automation::action::toggle  }, // 71 mod_undo
         { "0xeb",      automation::action::toggle  }, // 72 mod_redo
         { "0xec",      automation::action::toggle  }, // 73 mod_transpose_song

@@ -244,9 +244,6 @@ sequence::sequence (int ppqn) :
     m_events.zero_len_correction(m_snap_tick / 2);
     m_triggers.set_ppqn(int(m_ppqn));
     m_triggers.set_length(m_length);
-
-    // for (auto & p : m_playing_notes)            /* no notes playing now     */
-    //     p = 0;
 }
 
 /**
@@ -385,7 +382,6 @@ sequence::partial_assign (const sequence & rhs, bool domodify)
         m_seq_in_edit               = false;
         m_status                    = 0;
         m_cc                        = 0;
-        m_name                      = rhs.m_name;
         m_last_tick = m_queued_tick = m_trigger_offset = 0;
 
         /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2026-06-14
+ * \updates       2026-07-06
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -840,6 +840,7 @@ void
 qperfeditframe64::marker_loop (bool loop)
 {
     perf().looping(loop);
+    perf().last_automation_slot(automation::slot::loop_LR, false);
 }
 
 void

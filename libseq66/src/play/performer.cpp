@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-06-28
+ * \updates       2026-07-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -11016,24 +11016,24 @@ performer::automation_bbt_hms
     return result;
 }
 
+/**
+ *  This function was for slot mod_LR_loop, which was redundant
+ *  re slot loop_LR.
+ */
+
 bool
-performer::automation_LR_loop
+performer::automation_reserved_70
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
     bool result = true;
-    std::string name = auto_name(automation::slot::mod_LR_loop);
+    std::string name = auto_name(automation::slot::reserved_70);
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        /*
-         * ca 2026-06-12
-         * notify_automation_change(automation::slot::mod_LR_loop);
-         */
-
-        last_automation_slot(automation::slot::mod_LR_loop);
+        last_automation_slot(automation::slot::reserved_70);
     }
     return result;
 }
@@ -11366,8 +11366,8 @@ performer::sm_auto_func_list [] =
         &performer::automation_bbt_hms
     },
     {
-        automation::slot::mod_LR_loop,
-        &performer::automation_LR_loop
+        automation::slot::reserved_70,
+        &performer::automation_reserved_70
     },
     {
         automation::slot::mod_undo,

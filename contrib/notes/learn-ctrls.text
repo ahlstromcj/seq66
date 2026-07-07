@@ -1,6 +1,6 @@
 GUI Elements Supported by MIDI Learn
 Chris Ahlstrom
-2026-07-04 to 2026-07-05
+2026-07-04 to 2026-07-06
 
 -   Loops. All 32 hot-keys and grid buttons can be learned via auto-increment.
 -   Mute-groups. All 32 hot-keys and grid buttons can be learned via
@@ -52,7 +52,7 @@ Chris Ahlstrom
         "F9"        Tap BPM.        automation::tap_bpm
         "F12"       Show/hide.      automation::menu_mode
         "0xe8"      BBT/HMS         automation::mod_bbt_hms
-        "0xe9"      L<-->R          automation::mod_LR_loop
+        "KP_Ins"    L<-->R          automation::loop_LR (was mod_LR_loop)
         "0xea"      Undo - pattern  automation::mod_undo
         "0xeb"      redo - pattern  automation::mod_redo
         "Quit"      File / Quit     automation::quit (no keystroke)
@@ -110,7 +110,7 @@ Chris Ahlstrom
 -   Bugs.
 
     Zero Out.   automation::mutes_clear In Mutes tab, button sets no slot
-    L/R Looping automation::mod_LR_loop in main window only
+    L/R Looping automation::loop_LR (was mod_LR_loop) in main window only
 
 -   Missing items.
 
@@ -134,11 +134,10 @@ Chris Ahlstrom
             All left-side buttons.
             All right-side buttons.
             All top-buttons including Undo/Redo.
-        
+
 Set up for learn?
 
     follow_transport
-    loop_LR
     record_toggle
     save_session
     song_pointer
@@ -154,4 +153,4 @@ Set up for learn?
     set_mode_additive
     set_mode_all_sets
 
-# vim: sw=3 ts=3 wm=8 et ft=sh
+# vim: sw=3 ts=3 wm=8 et ft=cpp

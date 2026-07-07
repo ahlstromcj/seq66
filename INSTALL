@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.99.26 and above
 Chris Ahlstrom
-2015-09-10 to 2026-05-29
+2015-09-10 to 2026-07-06
 
 If you are in a hurry, there are the quick steps to install Seq66,
 given that all the DEPENDENCIES described later are in place:
@@ -10,7 +10,7 @@ given that all the DEPENDENCIES described later are in place:
     $ ./work.sh
     $ sudo ./work.sh --install
     $ ./work.sh --clean
-    $ qseq66 &
+    $ ./build/cc/Seq66qt5/qseq66 &
 
 Introduction:
 

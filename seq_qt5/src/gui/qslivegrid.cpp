@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-06-16
+ * \updates       2026-07-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -92,9 +92,8 @@
 #if defined SEQ66_PLATFORM_DEBUG
 #include "util/strfunctions.hpp"        /* seq66::pointer_to_string()       */
 #endif
-#include "ui_qslivegrid.h"
 
-#define SEQ66_TRACK_LIVE_GRID_MOVEMENT
+#include "ui_qslivegrid.h"
 
 namespace seq66
 {
@@ -103,8 +102,8 @@ namespace seq66
  *  Provides size restrictions.
  */
 
-static const int c_minimum_width   = 300;
-static const int c_minimum_height  = 180;
+static const int c_minimum_width   { 300 };
+static const int c_minimum_height  { 180 };
 
 /**
  *  The Qt 5 version of mainwid.
@@ -150,8 +149,6 @@ qslivegrid::qslivegrid
     setFocusPolicy(Qt::StrongFocus);
     ui->setupUi(this);
 
-#if defined SEQ66_TRACK_LIVE_GRID_MOVEMENT
-
     /*
      * The next two lines of code allow the live grid to track the
      * mouse position in the mouseMoveEvent() function. We want the
@@ -162,21 +159,18 @@ qslivegrid::qslivegrid
 
     ui->frame->setAttribute(Qt::WA_TransparentForMouseEvents);
     setMouseTracking(true);
-
-#endif
-
     m_msg_box = new QMessageBox(this);
     m_msg_box->setText(tr("A pattern is present."));
     m_msg_box->setInformativeText(tr("Overwrite with a blank pattern?"));
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     m_msg_box->setDefaultButton(QMessageBox::No);
 
-    int w = usr().scale_size(c_minimum_width);
-    int h = usr().scale_size_y(c_minimum_height);
+    int w { usr().scale_size(c_minimum_width) };
+    int h { usr().scale_size_y(c_minimum_height) };
     ui->frame->setMinimumSize(QSize(w, h));
     if (is_external())
     {
-        QString bname = qt(perf().set_name(bank_id()));
+        QString bname { qt(perf().set_name(bank_id())) };
         ui->txtBankName->setText(bname);
         connect
         (
@@ -209,7 +203,7 @@ qslivegrid::qslivegrid
         ui->buttonMetronome->setEnabled(true);
         qt_set_icon(rec_xpm, ui->buttonBackgroundRecord);
 
-        bool background_record = rc().metro_settings().count_in_recording();
+        bool background_record { rc().metro_settings().count_in_recording() };
         ui->buttonBackgroundRecord->setEnabled(background_record);
         show_record_style();
 
@@ -223,8 +217,10 @@ qslivegrid::qslivegrid
             ui->buttonLoopMode, SIGNAL(clicked(bool)),
             this, SLOT(slot_record_style(bool))
         );
-        std::string keyname =
-            cb_perf().automation_key(automation::slot::record_style);
+        std::string keyname
+        {
+            cb_perf().automation_key(automation::slot::record_style)
+        };
 
         /*
          * Record mode: none, tighten, quantize, and note-map.
@@ -306,18 +302,18 @@ qslivegrid::~qslivegrid()
 void
 qslivegrid::set_grid_mode ()
 {
-    int gcode = usr().grid_mode_code();
+    int gcode { usr().grid_mode_code() };
     ui->comboGridMode->setCurrentIndex(gcode);
 }
 
 void
 qslivegrid::enable_solo (bool enable)
 {
-    int index = usr().grid_mode_code(gridmode::solo);
+    int index { usr().grid_mode_code(gridmode::solo) };
     enable_combobox_item(ui->comboGridMode, index, enable);
 
 #if THIS_CODE_WORKS
-    std::string recordcolor{"<font color=\"red\">Record</font>"};
+    std::string recordcolor { "<font color=\"red\">Record</font>" };
     index = usr().grid_mode_code(gridmode::record);
     set_combobox_item(ui->comboGridMode, index, recordcolor);
 #endif
@@ -336,12 +332,12 @@ void
 qslivegrid::populate_grid_mode ()
 {
     ui->comboGridMode->clear();
-    int ending = usr().grid_mode_code(gridmode::double_length);
+    int ending { usr().grid_mode_code(gridmode::double_length) };
     for (int counter = 0; counter <= ending; ++counter)
     {
-        gridmode gm = usr().grid_mode(counter);
-        bool enabled = true;                /* gm != gridmode::double_length */
-        std::string modename = usr().grid_mode_label(gm);
+        gridmode gm { usr().grid_mode(counter) };
+        bool enabled { true };          /* gm != gridmode::double_length    */
+        std::string modename { usr().grid_mode_label(gm) };
         QString combotext(qt(modename));
         ui->comboGridMode->insertItem(counter, combotext);
         enable_combobox_item(ui->comboGridMode, counter, enabled);
@@ -351,7 +347,7 @@ qslivegrid::populate_grid_mode ()
 void
 qslivegrid::slot_grid_mode (int index)
 {
-    gridmode gm = usr().grid_mode(index);
+    gridmode gm { usr().grid_mode(index) };
     perf().set_grid_mode(gm);
 }
 
@@ -373,16 +369,16 @@ qslivegrid::show_grid_mode ()
 void
 qslivegrid::set_playlist_name (const std::string & plname, bool modified)
 {
-    std::string basename = shorten_file_spec(plname, 52);           /* 64 */
-    std::string path = plname;
+    std::string basename { shorten_file_spec(plname, 52) };         /* 64 */
+    std::string path { plname };
     if (modified)
         basename += " *";
 
-    QString name = qt(basename);
+    QString name { qt(basename) };
     ui->labelPlaylistSong->setText(name);
     if (! path.empty())
     {
-        QString p = qt(path);
+        QString p { qt(path) };
         ui->labelPlaylistSong->setToolTip(p);
     }
     (void) recreate_all_slots();
@@ -457,8 +453,8 @@ qslivegrid::conditional_update ()
 void
 qslivegrid::create_loop_buttons ()
 {
-    int fw = ui->frame->width();
-    int fh = ui->frame->height();
+    int fw { ui->frame->width() };
+    int fh { ui->frame->height() };
     m_slot_w = (fw - m_space_cols - 1) / columns();
     m_slot_h = (fh - m_space_rows - 1) / rows() - 1;
     for (int row = 0; row < rows(); ++row)
@@ -467,8 +463,8 @@ qslivegrid::create_loop_buttons ()
     for (int column = 0; column < columns(); ++column)
         ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
 
-    int setsize = perf().screenset_size();
-    int offset = seq_offset();
+    int setsize { perf().screenset_size() };
+    int offset { seq_offset() };
     for (int seqno = 0; seqno < setsize; ++seqno)
     {
         /*
@@ -479,8 +475,8 @@ qslivegrid::create_loop_buttons ()
          * // int s = is_external() ? (seqno + offset) : seqno ;
          */
 
-        int s = seqno + offset;                 /* provides old behavior    */
-        qslotbutton * pb = create_one_button(s);
+        int s { seqno + offset };               /* provides old behavior    */
+        qslotbutton * pb { create_one_button(s) };
         if (not_nullptr(pb))
         {
             m_loop_buttons.push_back(pb);
@@ -506,12 +502,12 @@ qslivegrid::clear_loop_buttons ()
 {
     if (! m_loop_buttons.empty())
     {
-        int setsize = perf().screenset_size();
+        int setsize { perf().screenset_size() };
         if (setsize <= int(m_loop_buttons.size()))
         {
             for (int seqno = 0; seqno < setsize; ++seqno)
             {
-                qslotbutton * pb = m_loop_buttons[seqno];
+                qslotbutton * pb { m_loop_buttons[seqno] };
                 if (not_nullptr(pb))
                     delete pb;
             }
@@ -529,22 +525,22 @@ qslivegrid::measure_loop_buttons ()
 {
     m_x_max = m_y_max = 0;
     m_x_min = m_y_min = 99999;
-    int setsize = perf().screenset_size();
+    int setsize { perf().screenset_size() };
     for (int seqno = 0; seqno < setsize; ++seqno)
     {
-        qslotbutton * pb = loop_button(seqno);
+        qslotbutton * pb { loop_button(seqno) };
         if (not_nullptr(pb))
         {
-            QRect r = pb->geometry();
+            QRect r { pb->geometry() };
             if (m_slot_w == 0)
             {
                 m_slot_w = r.width();       /* all buttons same size    */
                 m_slot_h = r.height();
             }
-            int x0 = r.x();
-            int x1 = x0 + m_slot_w;         /* r.width()  */
-            int y0 = r.y();
-            int y1 = y0 + m_slot_h;         /* r.height() */
+            int x0 { r.x() };
+            int x1 { x0 + m_slot_w };       /* r.width()  */
+            int y0 { r.y() };
+            int y1 { y0 + m_slot_h };       /* r.height() */
             if (x0 < m_x_min)
                 m_x_min = x0;
 
@@ -579,11 +575,11 @@ qslivegrid::measure_loop_buttons ()
 bool
 qslivegrid::get_slot_coordinate (int x, int y, int & row, int & column)
 {
-    bool result = m_x_max > 0;
+    bool result { m_x_max > 0 };
     if (result)
     {
-        int xslotsize = (m_x_max - m_x_min) / columns();
-        int yslotsize = (m_y_max - m_y_min) / rows();
+        int xslotsize { (m_x_max - m_x_min) / columns() };
+        int yslotsize { (m_y_max - m_y_min) / rows() };
         row = (y - m_y_min) / yslotsize;
         column = (x - m_x_min) / xslotsize;
     }
@@ -603,19 +599,19 @@ qslivegrid::get_slot_coordinate (int x, int y, int & row, int & column)
 qslotbutton *
 qslivegrid::create_one_button (seq::number seqno)
 {
-    qslotbutton * result = nullptr;
+    qslotbutton * result { nullptr };
     int row, column;
     bool valid = perf().seq_to_grid(seqno, row, column, is_external());
     if (valid)
     {
-        bool enabled = perf().is_screenset_active(seqno);
-        const QSize btnsize = QSize(m_slot_w, m_slot_h);
+        bool enabled { perf().is_screenset_active(seqno) };
+        const QSize btnsize { QSize(m_slot_w, m_slot_h) };
         std::string snstring;
         if (valid)
             snstring = std::to_string(seqno);
 
-        std::string hotkey = perf().lookup_slot_key(seqno);
-        seq::pointer pattern = perf().loop(seqno);          /* can be null  */
+        std::string hotkey { perf().lookup_slot_key(seqno) };
+        seq::pointer pattern { perf().loop(seqno) };        /* can be null  */
         if (pattern)
         {
             result = new (std::nothrow) qloopbutton
@@ -715,10 +711,10 @@ qslivegrid::set_bank_values (const std::string & name, int id)
 qslotbutton *
 qslivegrid::button (int row, int column)
 {
-    qslotbutton * result = nullptr;
+    qslotbutton * result { nullptr };
     if (! m_loop_buttons.empty())
     {
-        int index = perf().grid_to_index(row, column);
+        int index { perf().grid_to_index(row, column) };
         if (index < int(m_loop_buttons.size()))
             result = m_loop_buttons[index];
     }
@@ -741,7 +737,7 @@ qslivegrid::button (int row, int column)
 qslotbutton *
 qslivegrid::loop_button (seq::number seqno)
 {
-    seq::number sz = seq::number(m_loop_buttons.size());
+    seq::number sz { seq::number(m_loop_buttons.size()) };
     return seqno < sz ? m_loop_buttons[seqno] : nullptr ;
 }
 
@@ -753,11 +749,11 @@ qslivegrid::loop_button (seq::number seqno)
 bool
 qslivegrid::delete_slot (int row, int column)
 {
-    qslotbutton * pb = button(row, column);
-    bool result = not_nullptr(pb);
+    qslotbutton * pb { button(row, column) };
+    bool result { not_nullptr(pb) };
     if (result)
     {
-        QLayoutItem * item = ui->loopGridLayout->itemAtPosition(row, column);
+        QLayoutItem * item { ui->loopGridLayout->itemAtPosition(row, column) };
         if (not_nullptr(item))
             ui->loopGridLayout->removeWidget(item->widget());
     }
@@ -768,7 +764,7 @@ bool
 qslivegrid::delete_slot (seq::number seqno)
 {
     int row, column;
-    bool result = perf().index_to_grid(seqno, row, column);
+    bool result { perf().index_to_grid(seqno, row, column) };
     if (result)
         result = delete_slot(row, column);
 
@@ -783,11 +779,11 @@ qslivegrid::delete_slot (seq::number seqno)
 bool
 qslivegrid::delete_all_slots ()
 {
-    bool result = ! m_loop_buttons.empty();
+    bool result { ! m_loop_buttons.empty() };
     if (result)
     {
-        bool failed = false;
-        int setsize = perf().screenset_size();
+        bool failed { false };
+        int setsize { perf().screenset_size() };
         if (setsize <= int(m_loop_buttons.size()))
         {
             for (int seqno = 0; seqno < setsize; ++seqno)
@@ -815,7 +811,7 @@ qslivegrid::delete_all_slots ()
 bool
 qslivegrid::recreate_all_slots ()
 {
-    bool result = delete_all_slots();
+    bool result { delete_all_slots() };
     qloopbutton::boxes_initialized(true);       /* actually sets it false i */
     qloopbutton::progress_box_size              /* in case user changed it  */
     (
@@ -843,13 +839,13 @@ qslivegrid::recreate_all_slots ()
 bool
 qslivegrid::refresh_all_slots ()
 {
-    bool result = ! m_loop_buttons.empty();
+    bool result { ! m_loop_buttons.empty() };
     if (result)
     {
-        seq::number offset = perf().playscreen_offset();
+        seq::number offset { perf().playscreen_offset() };
         for (auto pb : m_loop_buttons)
         {
-            seq::pointer s = perf().get_sequence(offset);
+            seq::pointer s { perf().get_sequence(offset) };
             if (not_nullptr(s))
             {
                 pb->set_checked(s->armed());
@@ -864,12 +860,12 @@ qslivegrid::refresh_all_slots ()
 bool
 qslivegrid::modify_slot (qslotbutton * newslot, int row, int column)
 {
-    bool result = delete_slot(row, column);
+    bool result { delete_slot(row, column) };
     if (result)
     {
         ui->loopGridLayout->addWidget(newslot, row, column);
 
-        int index = perf().grid_to_index(row, column);
+        int index { perf().grid_to_index(row, column) };
         m_loop_buttons[index] = newslot;
     }
     return result;
@@ -935,7 +931,7 @@ qslivegrid::update_sequence (seq::number seqno, bool redo)
         int row, column;
         if (perf().seq_to_grid(seqno, row, column, is_external()))
         {
-            qslotbutton * pb = button(row, column);
+            qslotbutton * pb { button(row, column) };
             if (not_nullptr(pb))
                 pb->reupdate(true);
         }
@@ -963,7 +959,7 @@ qslivegrid::update_sequence (seq::number seqno, bool redo)
 int
 qslivegrid::seq_id_from_xy (int click_x, int click_y)
 {
-    int result = seq::unassigned();
+    int result { seq::unassigned() };
     int row, column;
     if (get_slot_coordinate(click_x, click_y, row, column))
          result = int(perf().grid_to_seq(bank_id(), row, column));
@@ -997,8 +993,8 @@ qslivegrid::mousePressEvent (QMouseEvent * ev)
 {
     current_seq(seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev)));
 
-    bool ok = current_seq() != seq::unassigned();
-    bool nonblankslot = perf().set_current_sequence(current_seq());
+    bool ok { current_seq() != seq::unassigned() };
+    bool nonblankslot { perf().set_current_sequence(current_seq()) };
     if (ok)
     {
         if (ev->button() == Qt::LeftButton)
@@ -1025,7 +1021,7 @@ qslivegrid::mousePressEvent (QMouseEvent * ev)
                 button_toggle_checked(current_seq());
                 m_button_down = true;
             }
-            seq::pointer s = perf().get_sequence(current_seq());
+            seq::pointer s { perf().get_sequence(current_seq()) };
             if (not_nullptr(s))
                 s->set_popup(false);
         }
@@ -1106,7 +1102,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * ev)
 void
 qslivegrid::mouseMoveEvent (QMouseEvent * ev)
 {
-    seq::number seqno = seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev));
+    seq::number seqno { seq_id_from_xy(qt_mouse_x(ev), qt_mouse_y(ev)) };
     if (seqno != hover_seq())
     {
         if (! seq::unassigned(hover_seq()))
@@ -1141,19 +1137,10 @@ qslivegrid::mouseMoveEvent (QMouseEvent * ev)
             }
         }
     }
-#if defined SEQ66_TRACK_LIVE_GRID_MOVEMENT
-    else                                                /* ca 2025-10-19    */
+    else
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf
-        (
-            "x,y = %d,%d --> track #%d\n", qt_mouse_x(ev),
-            qt_mouse_y(ev), seqno
-        );
-#endif
-        current_seq(seqno);
+        /* Needless code removed */
     }
-#endif
 }
 
 /**
@@ -1180,13 +1167,13 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * ev)
 void
 qslivegrid::button_toggle_enabled (seq::number seqno)
 {
-    bool assigned = seqno != seq::unassigned();
+    bool assigned { seqno != seq::unassigned() };
     if (assigned)
     {
-        qslotbutton * pb = loop_button(seqno);
+        qslotbutton * pb { loop_button(seqno) };
         if (not_nullptr(pb))
         {
-            seq::pointer s = pb->loop();
+            seq::pointer s { pb->loop() };
             if (s)
                 (void) pb->toggle_enabled();
         }
@@ -1203,7 +1190,7 @@ qslivegrid::button_toggle_enabled (seq::number seqno)
 void
 qslivegrid::button_toggle_checked (seq::number seqno)
 {
-    bool assigned = seqno != seq::unassigned();
+    bool assigned { seqno != seq::unassigned() };
     if (assigned)
     {
         (void) perf().loop_control
@@ -1216,13 +1203,19 @@ qslivegrid::button_toggle_checked (seq::number seqno)
 void
 qslivegrid::button_toggle_flat (seq::number seqno)
 {
-    bool assigned = seqno != seq::unassigned();
+    bool assigned { seqno != seq::unassigned() };
     if (assigned)
     {
-        qslotbutton * pb = loop_button(seqno);
+        qslotbutton * pb { loop_button(seqno) };
         if (not_nullptr(pb))
         {
-            bool isflat = pb->isFlat();
+            /*
+             * We call setAutoFillBackground() here to avoid an error where the
+             * "Untitled" label overlaps on newly-created pattern slots.
+             */
+
+            bool isflat { pb->isFlat() };
+            pb->setAutoFillBackground(true);
             pb->setFlat(! isflat);
         }
     }
@@ -1231,11 +1224,11 @@ qslivegrid::button_toggle_flat (seq::number seqno)
 void
 qslivegrid::new_sequence ()
 {
-    bool createseq = true;
-    seq::number current = current_seq();
+    bool createseq { true };
+    seq::number current { current_seq() };
     if (perf().is_seq_active(current))
     {
-        int choice = m_msg_box->exec();
+        int choice { m_msg_box->exec() };
         if (choice == QMessageBox::Yes)
             createseq = perf().remove_sequence(current);
         else
@@ -1305,12 +1298,12 @@ void
 qslivegrid::sequence_key_check ()
 {
     seq::number seqno;
-    bool ok = perf().got_seqno(seqno);
+    bool ok { perf().got_seqno(seqno) };        /* side-effect  */
     if (perf().seq_edit_pending())
     {
         if (ok)
         {
-            seq::pointer s = perf().get_sequence(seqno);
+            seq::pointer s { perf().get_sequence(seqno) };
             current_seq(seqno);
             if (is_nullptr(s))
                 new_sequence();
@@ -1377,9 +1370,9 @@ qslivegrid::handle_key_release (const keystroke & k)
 void
 qslivegrid::keyPressEvent (QKeyEvent * ev)
 {
-    bool show = rc().verbose();
-    keystroke k = qt_keystroke(ev, keystroke::action::press, show);
-    bool done = handle_key_press(k);
+    bool show { rc().verbose() };
+    keystroke k { qt_keystroke(ev, keystroke::action::press, show) };
+    bool done { handle_key_press(k) };
     if (done)
         update();
     else
@@ -1389,9 +1382,9 @@ qslivegrid::keyPressEvent (QKeyEvent * ev)
 void
 qslivegrid::keyReleaseEvent (QKeyEvent * ev)
 {
-    bool show = rc().verbose();
-    keystroke k = qt_keystroke(ev, keystroke::action::release, show);
-    bool done = handle_key_release(k);
+    bool show { rc().verbose() };
+    keystroke k { qt_keystroke(ev, keystroke::action::release, show) };
+    bool done { handle_key_release(k) };
     if (done)
         update();
     else
@@ -1420,7 +1413,7 @@ qslivegrid::update_state ()
     {
         if (not_nullptr(pb))
         {
-            seq::pointer s = pb->loop();
+            seq::pointer s { pb->loop() };
             if (s)
             {
                 pb->set_checked(s->armed());
@@ -1450,7 +1443,7 @@ qslivegrid::alter_sequence (seq::number seqno)
     int row, column;
     if (perf().seq_to_grid(seqno, row, column, is_external()))
     {
-        qslotbutton * pb = create_one_button(seqno);
+        qslotbutton * pb { create_one_button(seqno) };
         if (not_nullptr(pb))
         {
             if (modify_slot(pb, row, column))
@@ -1467,8 +1460,8 @@ qslivegrid::alter_sequence (seq::number seqno)
 void
 qslivegrid::record_sequence ()
 {
-    bool ok = false;
-    seq::pointer sp = perf().get_sequence(current_seq());
+    bool ok { false };
+    seq::pointer sp { perf().get_sequence(current_seq()) };
     if (sp)
         ok = perf().set_recording_flip(*sp);
 
@@ -1490,14 +1483,17 @@ qslivegrid::flatten_sequence ()
 void
 qslivegrid::export_sequence ()
 {
-    std::string prompt = "Export pattern...";
-    std::string fname = rc().last_used_dir();
-    bool ok = show_file_dialog     /* qsmainwnd::midi_filename_prompt() */
-    (
-        this, fname, prompt,
-        "MIDI files (*.midi *.mid);;All files (*)",
-        SavingFile, NormalFile, ".midi"
-    );
+    std::string prompt { "Export pattern..." };
+    std::string fname { rc().last_used_dir() };
+    bool ok
+    {
+        show_file_dialog     /* qsmainwnd::midi_filename_prompt() */
+        (
+            this, fname, prompt,
+            "MIDI files (*.midi *.mid);;All files (*)",
+            SavingFile, NormalFile, ".midi"
+        )
+    };
     if (ok)
     {
         if (! perf().export_sequence(current_seq(), fname))
@@ -1523,7 +1519,7 @@ qslivegrid::copy_sequence ()
 void
 qslivegrid::cut_sequence ()
 {
-    bool ok = perf().cut_sequence(current_seq());
+    bool ok { perf().cut_sequence(current_seq()) };
     if (ok)
     {
         can_paste(true);
@@ -1543,7 +1539,7 @@ qslivegrid::cut_sequence ()
 void
 qslivegrid::delete_sequence ()
 {
-    bool ok = perf().remove_sequence(current_seq());
+    bool ok { perf().remove_sequence(current_seq()) };
     if (ok)
     {
         perf().notify_sequence_removal
@@ -1559,7 +1555,7 @@ qslivegrid::delete_sequence ()
 void
 qslivegrid::clear_sequence ()
 {
-    bool ok = perf().clear_sequence(current_seq());
+    bool ok { perf().clear_sequence(current_seq()) };
     if (ok)
     {
         can_paste(false);
@@ -1570,7 +1566,7 @@ qslivegrid::clear_sequence ()
 void
 qslivegrid::paste_sequence ()
 {
-    bool ok = perf().can_paste() && can_paste();
+    bool ok { perf().can_paste() && can_paste() };
     if (ok)
     {
         ok = perf().paste_sequence(current_seq());
@@ -1583,7 +1579,7 @@ qslivegrid::paste_sequence ()
 void
 qslivegrid::merge_sequence ()
 {
-    bool ok = perf().can_paste() && can_paste();
+    bool ok { perf().can_paste() && can_paste() };
     if (ok)
     {
         ok = perf().merge_sequence(current_seq());
@@ -1596,8 +1592,8 @@ qslivegrid::merge_sequence ()
 void
 qslivegrid::slot_set_bank_name ()
 {
-    QString newname = ui->txtBankName->text();
-    std::string name = newname.toStdString();
+    QString newname { ui->txtBankName->text() };
+    std::string name { newname.toStdString() };
     update_bank_name(name);
 }
 
@@ -1632,10 +1628,10 @@ qslivegrid::slot_record_alteration (bool /*clicked*/)
 void
 qslivegrid::slot_toggle_metronome (bool /*clicked*/)
 {
-    Qt::KeyboardModifiers qkm = QGuiApplication::keyboardModifiers();
+    Qt::KeyboardModifiers qkm { QGuiApplication::keyboardModifiers() };
     if (qkm & Qt::ControlModifier)
     {
-        bool on = ui->buttonMetronome->isChecked();
+        bool on { ui->buttonMetronome->isChecked() };
         if (on)
         {
             ui->buttonMetronome->setChecked(false);
@@ -1645,7 +1641,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
     }
     else if (qkm & Qt::AltModifier)
     {
-        bool on = ui->buttonMetronome->isChecked();
+        bool on { ui->buttonMetronome->isChecked() };
         if (on)
         {
             ui->buttonMetronome->setChecked(false);
@@ -1655,7 +1651,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
     }
     else
     {
-        bool on = ui->buttonMetronome->isChecked();
+        bool on { ui->buttonMetronome->isChecked() };
         if (on)
         {
             (void) perf().install_metronome();  /* arms if already existing */
@@ -1678,7 +1674,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
 void
 qslivegrid::slot_toggle_background_record (bool /*clicked*/)
 {
-    bool on = ui->buttonBackgroundRecord->isChecked();
+    bool on { ui->buttonBackgroundRecord->isChecked() };
     if (on)
     {
         qt_set_icon(rec_on_xpm, ui->buttonBackgroundRecord);
@@ -1700,9 +1696,9 @@ void
 qslivegrid::show_record_style ()
 {
 #if defined USE_BUTTON_COLORING
-    static bool s_uninitialized = true;
+    static bool s_uninitialized { true };
     static QPalette s_palette;
-    QPushButton * button = ui->buttonLoopMode;
+    QPushButton * button { ui->buttonLoopMode };
     if (s_uninitialized)
     {
         s_uninitialized = false;
@@ -1717,7 +1713,7 @@ qslivegrid::show_record_style ()
     }
     else
     {
-        QPalette pal = button->palette();
+        QPalette pal { button->palette() };
         QColor c;
         switch (usr().record_style())
         {
@@ -1748,9 +1744,9 @@ void
 qslivegrid::show_record_alteration ()
 {
 #if defined USE_BUTTON_COLORING
-    static bool s_uninitialized = true;
+    static bool s_uninitialized { true };
     static QPalette s_palette;
-    QPushButton * button = ui->buttonRecordMode;
+    QPushButton * button { ui->buttonRecordMode };
     if (s_uninitialized)
     {
         s_uninitialized = false;
@@ -1765,7 +1761,7 @@ qslivegrid::show_record_alteration ()
     }
     else
     {
-        QPalette pal = button->palette();
+        QPalette pal { button->palette() };
         QColor c;
         switch (usr().record_alteration())
         {
@@ -1832,7 +1828,7 @@ qslivegrid::popup_menu ()
 
     m_popup = new_qmenu("Slot", this);
 
-    QAction * ns = new_qaction("&New pattern", m_popup);
+    QAction * ns { new_qaction("&New pattern", m_popup) };
     QObject::connect(ns, SIGNAL(triggered(bool)), this, SLOT(new_sequence()));
     m_popup->addAction(ns);
     m_popup->addSeparator();
@@ -1849,13 +1845,14 @@ qslivegrid::popup_menu ()
 
     if (! is_external())
     {
-        seq::number mcs = current_seq() % perf().screenset_max();
+        seq::number mcs { current_seq() % perf().screenset_max() };
         char temp[48];
         snprintf
         (
             temp, sizeof temp, "&Live grid window for set %d", mcs
         );
-        QAction * livegrid = new_qaction(temp, m_popup);
+
+        QAction * livegrid { new_qaction(temp, m_popup) };
         m_popup->addAction(livegrid);
         m_popup->addSeparator();
         QObject::connect
@@ -1866,22 +1863,27 @@ qslivegrid::popup_menu ()
     }
     if (perf().is_seq_active(current_seq()))
     {
-        seq::pointer s = perf().get_sequence(current_seq());
+        seq::pointer s { perf().get_sequence(current_seq()) };
         if (! is_external())
         {
+            /*
+             * This macro is defined in libseq66/include/seq66_features.h.
+             */
+
 #if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
-            QMenu * menuEdit = new_qmenu("&Edit");
-            QAction * actionRecord = new_qaction("&Record toggle", m_popup);
+
+            QMenu * menuEdit { new_qmenu("&Edit") };
+            QAction * actionRecord { new_qaction("&Record toggle", m_popup) };
             m_popup->addAction(actionRecord);
             connect
             (
                 actionRecord, SIGNAL(triggered(bool)),
                 this, SLOT(record_sequence())
             );
-            QAction * editseqex = new_qaction
-            (
-                "Pattern in &window", menuEdit
-            );
+            QAction * editseqex
+            {
+                new_qaction("Pattern in &window", menuEdit)
+            };
             menuEdit->addAction(editseqex);
             connect
             (
@@ -1890,10 +1892,10 @@ qslivegrid::popup_menu ()
             );
             if (perf().is_seq_active(current_seq()))
             {
-                QAction * editseq = new_qaction
-                (
-                    "Pattern in &tab", menuEdit
-                );
+                QAction * editseq
+                {
+                    new_qaction("Pattern in &tab", menuEdit)
+                };
                 connect
                 (
                     editseq, SIGNAL(triggered(bool)),
@@ -1902,10 +1904,10 @@ qslivegrid::popup_menu ()
                 menuEdit->addAction(editseq);
             }
 
-            QAction * editevents = new_qaction
-            (
-                "&Events in tab", menuEdit
-            );
+            QAction * editevents
+            {
+                new_qaction("&Events in tab", menuEdit)
+            };
             menuEdit->addAction(editevents);
 
             if (perf().is_seq_recording(current_seq()))
@@ -1923,17 +1925,17 @@ qslivegrid::popup_menu ()
             }
             m_popup->addMenu(menuEdit);
 #else
-            QAction * actionRecord = new_qaction("&Record toggle", m_popup);
+            QAction * actionRecord { new_qaction("&Record toggle", m_popup) };
             m_popup->addAction(actionRecord);
             connect
             (
                 actionRecord, SIGNAL(triggered(bool)),
                 this, SLOT(record_sequence())
             );
-            QAction * editseqex = new_qaction
-            (
-                "Edit pattern in &window", m_popup
-            );
+            QAction * editseqex
+            {
+                new_qaction("Edit pattern in &window", m_popup)
+            };
             m_popup->addAction(editseqex);
             connect
             (
@@ -1942,7 +1944,10 @@ qslivegrid::popup_menu ()
             );
             if (perf().is_seq_active(current_seq()))
             {
-                QAction * editseq = new_qaction("Edit pattern in &tab", m_popup);
+                QAction * editseq
+                {
+                    new_qaction("Edit pattern in &tab", m_popup)
+                };
                 m_popup->addAction(editseq);
                 connect
                 (
@@ -1951,12 +1956,11 @@ qslivegrid::popup_menu ()
                 );
             }
 
-            QAction * editevents = new_qaction
-            (
-                "Edit e&vents in tab", m_popup
-            );
+            QAction * editevents
+            {
+                new_qaction("Edit e&vents in tab", m_popup)
+            };
             m_popup->addAction(editevents);
-
             if (perf().is_seq_recording(current_seq()))
             {
                 editevents->setDisabled(true);
@@ -1977,16 +1981,18 @@ qslivegrid::popup_menu ()
          *  Color menus
          */
 
-        QMenu * menuColour = new_qmenu("&Color...");
-        int firstcolor = palette_to_int(PaletteColor::none);
-        int lastcolor = palette_to_int(PaletteColor::white);
+        QMenu * menuColour { new_qmenu("&Color...") };
+        int firstcolor { palette_to_int(PaletteColor::none) };
+        int lastcolor { palette_to_int(PaletteColor::white) };
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
-            PaletteColor pc = PaletteColor(c);
-            std::string cname =
-                c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc);
+            PaletteColor pc { PaletteColor(c) };
+            std::string cname
+            {
+                c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc)
+            };
 
-            QAction * a = new_qaction(cname, menuColour);
+            QAction * a { new_qaction(cname, menuColour) };
             connect
             (
                 a, &QAction::triggered,
@@ -1997,14 +2003,14 @@ qslivegrid::popup_menu ()
             menuColour->addAction(a);
         }
 
-        QMenu * menu2Colour = new_qmenu("Dark colors");
+        QMenu * menu2Colour { new_qmenu("Dark colors") };
         firstcolor = palette_to_int(PaletteColor::dk_black);
         lastcolor = palette_to_int(PaletteColor::dk_white);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
-            PaletteColor pc = PaletteColor(c);
-            std::string cname = get_color_name_ex(pc);
-            QAction * a = new_qaction(cname, menu2Colour);
+            PaletteColor pc { PaletteColor(c) };
+            std::string cname { get_color_name_ex(pc) };
+            QAction * a { new_qaction(cname, menu2Colour) };
             connect
             (
                 a, &QAction::triggered,
@@ -2015,14 +2021,14 @@ qslivegrid::popup_menu ()
             menu2Colour->addAction(a);
         }
 
-        QMenu * menu3Colour = new_qmenu("Other colors");
+        QMenu * menu3Colour { new_qmenu("Other colors") };
         firstcolor = palette_to_int(PaletteColor::orange);
         lastcolor = palette_to_int(PaletteColor::grey);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
-            PaletteColor pc = PaletteColor(c);
-            std::string cname = get_color_name_ex(pc);
-            QAction * a = new_qaction(cname, menu3Colour);
+            PaletteColor pc { PaletteColor(c) };
+            std::string cname { get_color_name_ex(pc) };
+            QAction * a { new_qaction(cname, menu3Colour) };
             connect
             (
                 a, &QAction::triggered,
@@ -2033,14 +2039,14 @@ qslivegrid::popup_menu ()
             menu3Colour->addAction(a);
         }
 
-        QMenu * menu4Colour = new_qmenu("More colors");
+        QMenu * menu4Colour { new_qmenu("More colors") };
         firstcolor = palette_to_int(PaletteColor::dk_orange);
         lastcolor = palette_to_int(PaletteColor::dk_grey);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
-            PaletteColor pc = PaletteColor(c);
-            std::string cname = get_color_name_ex(pc);
-            QAction * a = new_qaction(cname, menu4Colour);
+            PaletteColor pc { PaletteColor(c) };
+            std::string cname { get_color_name_ex(pc) };
+            QAction * a { new_qaction(cname, menu4Colour) };
             connect
             (
                 a, &QAction::triggered,
@@ -2057,7 +2063,7 @@ qslivegrid::popup_menu ()
 
 #if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
 
-        QMenu * menuTrack = new_qmenu("&Track");
+        QMenu * menuTrack { new_qmenu("&Track") };
         if (s->trigger_count() > 0)
         {
             /**
@@ -2065,7 +2071,10 @@ qslivegrid::popup_menu ()
              *  trigger, useful for export.
              */
 
-            QAction * actionFlatten = new_qaction("&Flatten triggers", menuTrack);
+            QAction * actionFlatten
+            {
+                new_qaction("&Flatten triggers", menuTrack)
+            };
             menuTrack->addAction(actionFlatten);
             connect
             (
@@ -2079,7 +2088,7 @@ qslivegrid::popup_menu ()
              *  Export menu. This action writes the track to a new file.
              */
 
-            QAction * actionExport = new_qaction("&Export", menuTrack);
+            QAction * actionExport { new_qaction("&Export", menuTrack) };
             menuTrack->addAction(actionExport);
             connect
             (
@@ -2088,7 +2097,7 @@ qslivegrid::popup_menu ()
             );
         }
 
-        QAction * actionCopy = new_qaction("&Copy", menuTrack);
+        QAction * actionCopy { new_qaction("&Copy", menuTrack) };
         menuTrack->addAction(actionCopy);
         connect
         (
@@ -2096,7 +2105,7 @@ qslivegrid::popup_menu ()
             this, SLOT(copy_sequence())
         );
 
-        QAction * actionCut = new_qaction("Cu&t", menuTrack);
+        QAction * actionCut { new_qaction("Cu&t", menuTrack) };
         menuTrack->addAction(actionCut);
         connect
         (
@@ -2104,7 +2113,7 @@ qslivegrid::popup_menu ()
             this, SLOT(cut_sequence())
         );
 
-        QAction * actionDelete = new_qaction("&Delete", menuTrack);
+        QAction * actionDelete { new_qaction("&Delete", menuTrack) };
         menuTrack->addAction(actionDelete);
         connect
         (
@@ -2114,7 +2123,7 @@ qslivegrid::popup_menu ()
 
         if (can_clear())
         {
-            QAction * actionClear = new_qaction("Clear e&vents", menuTrack);
+            QAction * actionClear { new_qaction("Clear e&vents", menuTrack) };
             menuTrack->addAction(actionClear);
             connect
             (
@@ -2124,7 +2133,10 @@ qslivegrid::popup_menu ()
         }
         if (can_paste())
         {
-            QAction * actionMerge = new_qaction("&Merge into pattern", menuTrack);
+            QAction * actionMerge
+            {
+                new_qaction("&Merge into pattern", menuTrack)
+            };
             menuTrack->addAction(actionMerge);
             connect
             (
@@ -2143,7 +2155,10 @@ qslivegrid::popup_menu ()
              *  trigger, useful for export.
              */
 
-            QAction * actionFlatten = new_qaction("&Flatten triggers", m_popup);
+            QAction * actionFlatten
+            {
+                new_qaction("&Flatten triggers", m_popup)
+            };
             m_popup->addAction(actionFlatten);
             connect
             (
@@ -2157,7 +2172,7 @@ qslivegrid::popup_menu ()
              *  Export menu. This action writes the track to a new file.
              */
 
-            QAction * actionExport = new_qaction("&Export", m_popup);
+            QAction * actionExport { new_qaction("&Export", m_popup) };
             m_popup->addAction(actionExport);
             connect
             (
@@ -2170,7 +2185,7 @@ qslivegrid::popup_menu ()
          *  Copy/Cut/Delete/Paste menus
          */
 
-        QAction * actionCopy = new_qaction("Cop&y", m_popup);
+        QAction * actionCopy { new_qaction("Cop&y", m_popup) };
         m_popup->addAction(actionCopy);
         connect
         (
@@ -2178,7 +2193,7 @@ qslivegrid::popup_menu ()
             this, SLOT(copy_sequence())
         );
 
-        QAction * actionCut = new_qaction("Cu&t", m_popup);
+        QAction * actionCut { new_qaction("Cu&t", m_popup) };
         m_popup->addAction(actionCut);
         connect
         (
@@ -2186,7 +2201,7 @@ qslivegrid::popup_menu ()
             this, SLOT(cut_sequence())
         );
 
-        QAction * actionDelete = new_qaction("&Delete", m_popup);
+        QAction * actionDelete { new_qaction("&Delete", m_popup) };
         m_popup->addAction(actionDelete);
         connect
         (
@@ -2196,7 +2211,7 @@ qslivegrid::popup_menu ()
 
         if (can_clear())
         {
-            QAction * actionClear = new_qaction("Clear events", m_popup);
+            QAction * actionClear { new_qaction("Clear events", m_popup) };
             m_popup->addAction(actionClear);
             connect
             (
@@ -2206,7 +2221,10 @@ qslivegrid::popup_menu ()
         }
         if (can_paste())
         {
-            QAction * actionMerge = new_qaction("&Merge into pattern", m_popup);
+            QAction * actionMerge
+            {
+                new_qaction("&Merge into pattern", m_popup)
+            };
             m_popup->addAction(actionMerge);
             connect
             (
@@ -2217,7 +2235,7 @@ qslivegrid::popup_menu ()
 
 #endif
 
-        mastermidibus * mmb = perf().master_bus();
+        mastermidibus * mmb { perf().master_bus() };
         if (not_nullptr(mmb))
         {
             s->set_popup(true);
@@ -2230,23 +2248,25 @@ qslivegrid::popup_menu ()
 
             if (rc().sequence_lookup_support())
             {
-                QMenu * menuinbuss = new_qmenu("&Input bus");
-                const inputslist & ipm = input_port_map();
-                int inbuses = ipm.active() ?
-                    ipm.count() : mmb->get_num_in_buses() ;
+                QMenu * menuinbuss { new_qmenu("&Input bus") };
+                const inputslist & ipm { input_port_map() };
+                int inbuses
+                {
+                    ipm.active() ?  ipm.count() : mmb->get_num_in_buses()
+                };
 
                 /*
                  * bussbyte midi_in_bus = s->seq_midi_in_bus();
                  */
 
-                bussbyte midi_in_bus = s->true_in_bus();
+                bussbyte midi_in_bus { s->true_in_bus() };
                 for (int bus = 0; bus < inbuses; ++bus)
                 {
                     bool active;
                     std::string busname;
                     if (perf().ui_get_input(bussbyte(bus), active, busname))
                     {
-                        QAction * a = new_qaction(busname, menuinbuss);
+                        QAction * a { new_qaction(busname, menuinbuss) };
                         a->setCheckable(true);
                         if (midi_in_bus == bussbyte(bus))
                             a->setChecked(true);
@@ -2266,8 +2286,8 @@ qslivegrid::popup_menu ()
                     }
                 }
 
-                QAction * f = new_qaction("&Free", menuinbuss);
-                bussbyte nullbuss = null_buss();
+                QAction * f { new_qaction("&Free", menuinbuss) };
+                bussbyte nullbuss { null_buss() };
                 f->setCheckable(true);
                 if (is_null_buss(midi_in_bus))
                     f->setChecked(true);
@@ -2287,19 +2307,20 @@ qslivegrid::popup_menu ()
              *  set_midi_buschannel
              */
 
-            QMenu * menubuss = new_qmenu("Output &bus");
-            const clockslist & opm = output_port_map();
-            int buses = opm.active() ?
-                opm.count() : mmb->get_num_out_buses() ;
-
+            QMenu * menubuss { new_qmenu("Output &bus") };
+            const clockslist & opm { output_port_map() };
+            int buses
+            {
+                opm.active() ?  opm.count() : mmb->get_num_out_buses()
+            };
             for (int bus = 0; bus < buses; ++bus)
             {
                 e_clock ec;
                 std::string busname;
                 if (perf().ui_get_clock(bussbyte(bus), ec, busname))
                 {
-                    bool disabled = ec == e_clock::disabled;
-                    QAction * a = new_qaction(busname, menubuss);
+                    bool disabled { ec == e_clock::disabled };
+                    QAction * a { new_qaction(busname, menubuss) };
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(s->true_bus() == bus);
                     connect
@@ -2319,14 +2340,15 @@ qslivegrid::popup_menu ()
              *  set_midi_channel().
              */
 
-            QMenu * menuchan = new_qmenu("Output &channel");
-            int buss = s->true_bus();
+            QMenu * menuchan { new_qmenu("Output &channel") };
+            int buss { s->true_bus() };
             for (int channel = 0; channel <= c_midichannel_max; ++channel)
             {
                 char b[4];                              /* 2 digits or less */
                 snprintf(b, sizeof b, "%2d", channel + 1);
-                std::string name = std::string(b);
-                std::string sname = usr().instrument_name(buss, channel);
+
+                std::string name { std::string(b) };
+                std::string sname { usr().instrument_name(buss, channel) };
                 if (! sname.empty())
                 {
                     name += " [";
@@ -2335,11 +2357,14 @@ qslivegrid::popup_menu ()
                 }
                 if (channel == c_midichannel_max)
                 {
-                    QAction * a = new_qaction("Free", menuchan);
+                    QAction * a { new_qaction("Free", menuchan) };
                     connect
                     (
                         a, &QAction::triggered,
-                        [this, /*buss,*/ channel] { set_midi_channel(channel); }
+                        [this, /*buss,*/ channel]
+                        {
+                            set_midi_channel(channel);
+                        }
                     );
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(s->midi_channel() == channel);
@@ -2347,11 +2372,14 @@ qslivegrid::popup_menu ()
                 }
                 else
                 {
-                    QAction * a = new_qaction(name, menuchan);
+                    QAction * a { new_qaction(name, menuchan) };
                     connect
                     (
                         a, &QAction::triggered,
-                        [this, /*buss,*/ channel] { set_midi_channel(channel); }
+                        [this, /*buss,*/ channel]
+                        {
+                            set_midi_channel(channel);
+                        }
                     );
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(s->midi_channel() == channel);
@@ -2363,7 +2391,7 @@ qslivegrid::popup_menu ()
     }
     else if (perf().can_paste() && can_paste())
     {
-        QAction * actionPaste = new_qaction("&Paste", m_popup);
+        QAction * actionPaste { new_qaction("&Paste", m_popup) };
         m_popup->addAction(actionPaste);
         connect
         (
@@ -2371,7 +2399,7 @@ qslivegrid::popup_menu ()
             this, SLOT(paste_sequence())
         );
 
-        QAction * actionMerge = new_qaction("&Merge", m_popup);
+        QAction * actionMerge { new_qaction("&Merge", m_popup) };
         m_popup->addAction(actionMerge);
         connect
         (
@@ -2385,7 +2413,7 @@ qslivegrid::popup_menu ()
     m_popup->exec(QCursor::pos());
     if (perf().is_seq_active(current_seq()))
     {
-        seq::pointer s = perf().get_sequence(current_seq());
+        seq::pointer s { perf().get_sequence(current_seq()) };
         s->set_popup(false);
     }
 
@@ -2452,8 +2480,8 @@ qslivegrid::dropEvent (QDropEvent * ev)
 {
     foreach (const QUrl & url, ev->mimeData()->urls())
     {
-        QString urlasfile = url.toLocalFile();
-        std::string fname = urlasfile.toStdString();
+        QString urlasfile { url.toLocalFile() };
+        std::string fname { urlasfile.toStdString() };
         if (! parent()->open_file(fname))
             file_error("Drag-and-drop failed", fname);
     }
@@ -2466,4 +2494,3 @@ qslivegrid::dropEvent (QDropEvent * ev)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

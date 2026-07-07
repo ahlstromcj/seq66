@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2026-05-02
+ * \updates       2026-07-07
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the old mainwid class.
@@ -177,25 +177,25 @@ qslivebase::seq_offset () const
 void
 qslivebase::color_by_number (int i)
 {
-    perf().set_color(m_current_seq, i);
+    perf().set_color(current_seq(), i);
 }
 
 void
 qslivebase::set_midi_bus (int b)
 {
-    (void) perf().set_midi_bus(m_current_seq, b);
+    (void) perf().set_midi_bus(current_seq(), b);
 }
 
 void
 qslivebase::set_midi_channel (int channel)
 {
-    (void) perf().set_midi_channel(m_current_seq, channel);
+    (void) perf().set_midi_channel(current_seq(), channel);
 }
 
 void
 qslivebase::set_midi_in_bus (int b)
 {
-    (void) perf().set_midi_in_bus(m_current_seq, b);
+    (void) perf().set_midi_in_bus(current_seq(), b);
 }
 
 }           // namespace seq66

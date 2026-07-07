@@ -1,12 +1,16 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-07-05
+2019-04-13 to 2026-07-06
 
     -   MIDI Learn.
         -   List the controls that can be learned.
         -   The Live/Song button enables the blue song-record button,
             but the keystroke P does not.
         -   Set 0 button mapping needed?
+        -   Do not fill in an automation name when loop/mutes
+            are selected.
+    -   In a new pattern, with a title set, hovering over it also
+        shows "Untitled"!
     -   Edit / Preferences / Metronome.
         How can we implement count-in and background recording
         properly? Is it worth it when one can just set up a

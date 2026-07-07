@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-07-04
+ * \updates       2026-07-06
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -4088,7 +4088,7 @@ public:
         automation::action a, int d0, int d1,
         int index, bool inverse
     );
-    bool automation_LR_loop
+    bool automation_reserved_70
     (
         automation::action a, int d0, int d1,
         int index, bool inverse

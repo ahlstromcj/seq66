@@ -1,12 +1,13 @@
-# README for Seq66 0.99.25 2026-06-06
+# README for Seq66 0.99.26 2026-07-06
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
 aware piano-roll; song layout for creative composition; control/status via MIDI
 automation, and mute-groups to enable/disable sets of patterns. Tools for live
 performance and for composing great-sounding MIDI tracks. Supports the Non/New
-Session Manager; can run headless and on a small computer like the Pi.  It does
-not support audio samples, just MIDI.
+Session Manager; can run headless and on a small computer like the Pi. And
+now it provides a form of MIDI Learn. It does not support audio samples,
+just MIDI.
 
 __Seq66__ Seq24/Kepler34 on steroids with
 modern C++ and new features. Linux and Windows users can build this application
