@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-07-06
+2019-04-13 to 2026-07-08
 
     -   MIDI Learn.
         -   List the controls that can be learned.
@@ -9,6 +9,7 @@ Chris Ahlstrom
         -   Set 0 button mapping needed?
         -   Do not fill in an automation name when loop/mutes
             are selected.
+        -   Add a slot::metronome
     -   In a new pattern, with a title set, hovering over it also
         shows "Untitled"!
     -   Edit / Preferences / Metronome.

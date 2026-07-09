@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2026-07-06
+ * \updates       2026-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -216,9 +216,9 @@ opcontrol::automation_slot_name (slot s)
         "Panic",                // 42 panic *
         "Visibility",           // 43 visibility *
         "Save Session",         // 44 save_session
-        "Record Toggle",        // 45 record_toggle
+        "Record Toggle",        // 45 record_toggle (mode)
         "Grid Mutes",           // 46 grid_mutes Grid expansion :-(
-        "Reserved 47",          // 47 reserved_47
+        "Record",               // 47 record
         "Reserved 48",          // 48 reserved_48
 
         /*
@@ -261,7 +261,7 @@ opcontrol::automation_slot_name (slot s)
          */
 
         "BBT/HMS",              // 69: mod_bbt_hms
-        "Reserved 70",          // 70: reserved_70
+        "Set 0",                // 70: mod_set_0
         "Undo",                 // 71: mod_undo
         "Redo",                 // 72: mod_redo
         "Transpose Song",       // 73: mod_transpose_song ???

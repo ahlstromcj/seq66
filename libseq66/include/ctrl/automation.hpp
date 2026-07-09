@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-07-06
+ * \updates       2026-07-09
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -240,7 +240,7 @@ enum class slot
     save_session,       /**< 44: Save the MIDI and configuration files now. */
     record_toggle,      /**< 45: Enter toggle-record for next hot-key.      */
     grid_mutes,         /**< 46: Grid mode extension :-( for reserved_46    */
-    reserved_47,        /**< 47: Reserved for expansion.                    */
+    record,             /**< 47: Indicates the record button is pressed.    */
     reserved_48,        /**< 48: Reserved for expansion.                    */
 
     /*
@@ -284,7 +284,7 @@ enum class slot
      */
 
     mod_bbt_hms,        /**< 69: Toggle between time-display modes.         */
-    reserved_70,        /**< 70: Was mod_LR_loop. See loop_LR instead.      */
+    mod_set_0,          /**< 70: Was mod_LR_loop. See loop_LR instead.      */
     mod_undo,           /**< 71: Undo events in current active pattern. ??? */
     mod_redo,           /**< 72: Redo events in current active pattern. ??? */
     mod_transpose_song, /**< 73: Apply song transpose. ??????               */

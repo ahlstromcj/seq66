@@ -3423,6 +3423,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
 void
 qseqeditframe64::slot_follow (bool ischecked)
 {
+    perf().last_automation_slot(automation::slot::follow_transport, false);
     if (not_nullptr(m_seqroll))
         m_seqroll->progress_follow(ischecked);
 }

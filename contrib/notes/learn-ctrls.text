@@ -89,12 +89,15 @@ Chris Ahlstrom
 
     -   Pattern editor.
 
+       "0xfd" (no key)  Record      automation::record
+
         Recording Modes (as above)  automation::grid_quant_none
                                     automation::grid_quant_tighten
                                     automation::grid_quant_full
                                     automation::grid_quant_jitter
                                     automation::grid_quant_random
                                     automation::grid_quant_notemap
+
         Recording Styles (as above) automation::record_overdub
                                     automation::record_overwrite
                                     automation::record_expand
@@ -110,7 +113,6 @@ Chris Ahlstrom
 -   Bugs.
 
     Zero Out.   automation::mutes_clear In Mutes tab, button sets no slot
-    L/R Looping automation::loop_LR (was mod_LR_loop) in main window only
 
 -   Missing items.
 

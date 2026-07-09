@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2026-06-22
-% \update      2026-07-01
+% \update      2026-07-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -15,7 +15,7 @@
 %-------------------------------------------------------------------------------
 
 \section{MIDI Learn}
-\label{sec:midi_import_export}
+\label{sec:midi_learn}
 
    The new (as of version 0.99.26) MIDI Learn feature of
    \textsl{Seq66} provides rudimentary support for a
@@ -140,7 +140,7 @@
    \itempar{Learn Action}{learn!action}
    This item selects which action the MIDI event will trigger:
 
-   \end{itemize}
+   \begin{itemize}
       \item \textbf{Toggle}.
          The default is "Toggle", which is the most common trigger needed.
          Most hot-keys act as toggles, as an example.
@@ -318,6 +318,35 @@
       \item Click the \textbf{Save} button.
          This copies the current events to the main control-in set.
    \end{enumber}
+
+\subsection{Learn / Automation Cheat Diagrams}
+\label{subsec:midi_learn_automation_cheat_diagrams}
+
+   This section shows the \textsl{Seq66} user-interface elements that
+   can be learned, and the seq66::automation::slot enumeration values
+   for each. When the element is clicked, that enumeration value
+   is shown in the learn manager.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{midi-learning/main-window.png}
+   \caption{Main Window Automation Elements}
+   \label{fig:main_window_automation_elements}
+\end{figure}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{midi-learning/pattern-window.png}
+   \caption{Pattern Window Automation Elements}
+   \label{fig:pattern_window_automation_elements}
+\end{figure}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{midi-learning/song-window.png}
+   \caption{Song Window Automation Elements}
+   \label{fig:song_window_automation_elements}
+\end{figure}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

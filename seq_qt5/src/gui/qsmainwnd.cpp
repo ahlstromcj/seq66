@@ -918,7 +918,7 @@ qsmainwnd::qsmainwnd
     connect
     (
         ui->setHomeButton, SIGNAL(clicked(bool)),
-        this, SLOT(slot_set_home())
+        this, SLOT(slot_set_home())                 /* "Set 0" button   */
     );
     connect
     (
@@ -3937,6 +3937,7 @@ void
 qsmainwnd::slot_set_home ()
 {
     ui->spinBank->setValue(0);          /* update_bank(0);  */
+    cb_perf().last_automation_slot(automation::slot::mod_set_0);
 }
 
 /**

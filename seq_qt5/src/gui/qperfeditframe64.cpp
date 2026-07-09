@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2026-07-06
+ * \updates       2026-07-08
  * \license       GNU GPLv2 or above
  *
  *  The Song Editor allows the musician to layout the play-back of the
@@ -222,9 +222,10 @@ qperfeditframe64::qperfeditframe64
      * Follow Progress Button.  Qt::NoFocus is the default focus policy.
      */
 
-    std::string keyname =
-        perf().automation_key(automation::slot::follow_transport);
-
+    std::string keyname
+    {
+        perf().automation_key(automation::slot::follow_transport)
+    };
     tooltip_with_keystroke(ui->m_toggle_follow, keyname);
     qt_set_icon(follow_xpm, ui->m_toggle_follow);
 
@@ -466,7 +467,9 @@ qperfeditframe64::scroll_by_step (qscrollmaster::dir d)
 void
 qperfeditframe64::follow (bool ischecked)
 {
-    m_perfroll->progress_follow(ischecked);
+    perf().last_automation_slot(automation::slot::follow_transport, false);
+    if (not_nullptr(m_perfroll))
+        m_perfroll->progress_follow(ischecked);
 }
 
 /**
@@ -744,6 +747,7 @@ qperfeditframe64::slot_duration (bool /* ischecked */ )
 
     std::string dur = perf().duration(m_duration_mode);
     ui->btnDuration->setText(qt(dur));
+    perf().last_automation_slot(automation::slot::mod_bbt_hms, false);
 }
 
 void

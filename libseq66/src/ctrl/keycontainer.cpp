@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2026-07-06
+ * \updates       2026-07-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -510,7 +510,7 @@ keycontainer::keys_automation ()
         { "0xfa",      automation::action::toggle  }, // 44 save_session
         { "+",         automation::action::toggle  }, // 45 record_toggle
         { "_",         automation::action::toggle  }, // 46 grid_mutes
-        { "0xfd",      automation::action::toggle  }, // 47 reserved_47
+        { "0xfd",      automation::action::toggle  }, // 47 record
         { "0xfe",      automation::action::toggle  }, // 48 reserved_48
 
         /*
@@ -548,7 +548,7 @@ keycontainer::keys_automation ()
          */
 
         { "0xe8",      automation::action::toggle  }, // 69 mod_bbt_hms
-        { "0xe9",      automation::action::toggle  }, // 70 reserved_70
+        { "0xe9",      automation::action::toggle  }, // 70 mod_set_0
         { "0xea",      automation::action::toggle  }, // 71 mod_undo
         { "0xeb",      automation::action::toggle  }, // 72 mod_redo
         { "0xec",      automation::action::toggle  }, // 73 mod_transpose_song

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-07-06
+ * \updates       2026-07-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -4571,9 +4571,9 @@ performer::set_sequence_name (seq::ref s, const std::string & name)
  */
 
 /**
- *  Handles setting the status of basic recording.
- *  Encapsulates code used by the sequence editing frames' recording-change
- *  callbacks.
+ *  Handles setting the status of basic recording.  Encapsulates code used by
+ *  the sequence editing frame's recording-change callbacks. Do not confuse
+ *  this with record-toggle, a grid mode setting.
  *
  * \param recordon
  *      Provides the current status of the Record button.
@@ -4591,6 +4591,7 @@ bool
 performer::set_recording (seq::ref s, toggler t)
 {
     bool result = s.set_recording(t);
+    last_automation_slot(automation::slot::record);
     if (result)
         set_needs_update();
 
@@ -4694,6 +4695,7 @@ bool
 performer::set_recording_ex (bool /*record*/)
 {
     bool result = false;
+    last_automation_slot(automation::slot::record);
     if (record_by_buss())
         result = set_recording_buss_flip();
     else if (record_by_channel())
@@ -4747,6 +4749,7 @@ performer::set_recording (seq::number seqno, toggler flag)
 bool
 performer::set_thru (seq::ref s, bool thruon, bool toggle)
 {
+    last_automation_slot(automation::slot::thru);
     return s.set_thru(thruon, toggle);
 }
 
@@ -8535,6 +8538,7 @@ performer::loop_control
         {
             m_pending_loop = seq::unassigned();
             m_record_toggle_pending = false;
+
             seq::pointer sp = get_sequence(seqno);
             if (sp)
                 result = set_recording_flip(*sp);
@@ -9219,7 +9223,11 @@ performer::automation_thru
         else if (a == automation::action::off)
             set_thru(seqno, false, false);                      /* off      */
 
-        last_automation_slot(automation::slot::thru);
+        /*
+         * Moved to set_thru():
+         *
+         * last_automation_slot(automation::slot::thru);
+         */
     }
     return true;
 }
@@ -10633,6 +10641,10 @@ performer::automation_save_session
     return true;
 }
 
+/**
+ * This sets up the recording-toggling mode of the grid slots.
+ */
+
 bool
 performer::automation_record_toggle
 (
@@ -10646,6 +10658,34 @@ performer::automation_record_toggle
     {
         m_record_toggle_pending = true;
         last_automation_slot(automation::slot::record_toggle);
+    }
+    return true;
+}
+
+/**
+ * This is called when a record button is pressed in the pattern
+ * editor.
+ */
+
+bool
+performer::automation_record
+(
+    automation::action a, int d0, int d1,
+    int index, bool inverse
+)
+{
+    std::string name = auto_name(automation::slot::record);
+    print_parameters(name, a, d0, d1, index, inverse);
+    if (! inverse)
+    {
+        sequence * sp = m_master_bus->get_sequence();
+        if (not_nullptr(sp))
+        {
+            seq::ref s { *sp };
+            return set_recording(s, toggler::flip);
+        }
+        else
+            return false;
     }
     return true;
 }
@@ -11022,18 +11062,18 @@ performer::automation_bbt_hms
  */
 
 bool
-performer::automation_reserved_70
+performer::automation_mod_set_0
 (
     automation::action a, int d0, int d1,
     int index, bool inverse
 )
 {
     bool result = true;
-    std::string name = auto_name(automation::slot::reserved_70);
+    std::string name = auto_name(automation::slot::mod_set_0);
     print_parameters(name, a, d0, d1, index, inverse);
     if (automation::actionable(a) && ! inverse)
     {
-        last_automation_slot(automation::slot::reserved_70);
+        last_automation_slot(automation::slot::mod_set_0);
     }
     return result;
 }
@@ -11264,7 +11304,7 @@ performer::sm_auto_func_list [] =
         automation::slot::grid_mutes,
         &performer::automation_grid_mode
     },
-    { automation::slot::reserved_47, &performer::automation_no_op        },
+    { automation::slot::record,      &performer::automation_record       },
     { automation::slot::reserved_48, &performer::automation_no_op        },
 
     /*
@@ -11366,8 +11406,8 @@ performer::sm_auto_func_list [] =
         &performer::automation_bbt_hms
     },
     {
-        automation::slot::reserved_70,
-        &performer::automation_reserved_70
+        automation::slot::mod_set_0,
+        &performer::automation_mod_set_0
     },
     {
         automation::slot::mod_undo,
