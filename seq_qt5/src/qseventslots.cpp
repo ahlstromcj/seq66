@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-05-02
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -80,7 +80,7 @@ qseventslots::qseventslots
     m_current_iterator      (),
     m_pager_index           (0),
     m_show_data_as_hex      (false),                    /* hexadecimal()    */
-    m_show_time_as_pulses   (false)                     /* pulses()         */
+    m_time_format           (timeformat::bbt)
 {
     load_events();
 }
@@ -304,8 +304,18 @@ qseventslots::set_table_event (editable_event & ev, int row)
     std::string data_0;
     std::string data_1;
     std::string linktime;
-    std::string tstring = m_show_time_as_pulses ?
-        std::to_string(long(ev.timestamp())) : ev.timestamp_string() ;
+    std::string tstring;
+
+//      tstring = ev.timestamp_string();
+
+    midipulse ts { ev.timestamp() };
+    const midi_timing & mt { m_event_container.timing() };
+    if (m_time_format == timeformat::bbt)
+        tstring = pulses_to_measurestring(ts, mt);
+    else if (m_time_format == timeformat::hms)
+        tstring = pulses_to_time_string(ts, mt);
+    else if (m_time_format == timeformat::ticks)
+        tstring = pulses_to_string(ts);
 
     int buss = int(ev.input_bus());
     std::string busno;
@@ -336,17 +346,12 @@ qseventslots::set_table_event (editable_event & ev, int row)
         if (ev.is_linked())
         {
             midipulse lt = ev.link_time();
-            if (m_show_time_as_pulses)
-            {
-                linktime = std::to_string(long(lt));
-            }
-            else
-            {
-                linktime = pulses_to_measurestring
-                (
-                    lt, m_event_container.timing()
-                );
-            }
+            if (m_time_format == timeformat::ticks)
+                linktime = pulses_to_string(lt);
+            else if (m_time_format == timeformat::bbt)
+                linktime = pulses_to_measurestring(lt, mt);
+            else if (m_time_format == timeformat::hms)
+                linktime = pulses_to_time_string(lt, mt);
         }
         else
             linktime = "None";

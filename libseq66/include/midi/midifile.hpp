@@ -248,6 +248,11 @@ public:
     bool write_song (performer & p);
     bool write_one_pattern (performer & p, int track);
 
+    const std::string & name () const
+    {
+        return m_name;
+    }
+
     const std::string & error_message () const
     {
         return m_error_message;

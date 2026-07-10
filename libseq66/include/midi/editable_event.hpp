@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2025-02-20
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -123,40 +123,6 @@ public:
     };
 
     /**
-     *  Provides a code to indicate the desired timestamp format.  Three are
-     *  supported.  All editable events will share the same timestamp format,
-     *  but it seems good to make this a event class member, rather than
-     *  something imposed from an outside static value.  We shall see.
-     */
-
-    using timestamp_format_t = enum
-    {
-        /**
-         *  This format displays the time in "measures:beats:divisions"
-         *  format, where measures and beats start at 1.  Thus, "1:1:0" is
-         *  equivalent to 0 pulses or to "0:0:0.0" in normal time values.
-         */
-
-        timestamp_measures,
-
-        /**
-         *  This format displays the time in "hh:mm:second.fraction" format.
-         *  The value displayed should not depend upon the internal timing
-         *  parameters of the event.
-         */
-
-        timestamp_time,
-
-        /**
-         *  This format specifies a bare pulse format for the timestamp -- a
-         *  long integer ranging from 0 on up.  Obviously, this representation
-         *  depends on the PPQN value for the sequence holding this event.
-         */
-
-        timestamp_pulses
-    };
-
-    /**
      *  Provides a type that contains the pair of values needed for the
      *  various lookup maps that are needed to manage editable events.
      */
@@ -164,7 +130,6 @@ public:
     using name_value_t = struct
     {
         /**
-         *  ca 2023-05-02
          *  Supplements the event value with an index into a combo-box or
          *  similar list.  We cannot support every possible event_value for
          *  lookup.
@@ -246,10 +211,12 @@ private:
 
     /**
      *  Indicates the format to display the time-stamp.  The default is to
-     *  display in timestamp_measures format.
+     *  display in timeformat::bbt format.
+     *
+     *      timestamp_format_t m_format_timestamp;
      */
 
-    timestamp_format_t m_format_timestamp;
+    timeformat m_format_timestamp;
 
     /**
      *  Holds the string version of the MIDI pulse's time-stamp.

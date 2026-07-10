@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>618</height>
+    <width>902</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -432,8 +432,8 @@ the current set.  Modifies the song.</string>
         </property>
         <property name="toolTip">
          <string>This button displays the current time during
-playback. Clicking it toggles between
-B:B:T and H:M:S format.</string>
+playback. Clicking it moves between B:B:T,
+H:M:S, and ticks (MIDI pulses) formats.</string>
         </property>
         <property name="text">
          <string>008:16:0000</string>
@@ -1780,8 +1780,8 @@ beats/minute.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>900</width>
-     <height>28</height>
+     <width>902</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">

@@ -1,0 +1,92 @@
+Notes on the Akai Mini Play Sound Engine
+Chris Ahlstrom
+2026-07-10 to 2026-07-10
+
+https://sandsoftwaresound.net/akai-mpk-mini-play-midi-implementation/
+
+The Akai MPK mini Play (MK1/MK2) uses the Dream S.A.S. SAM2635 synthesizer chip
+as its sound engine; 16-channel General MIDI (GM/GS) sound set.
+
+The Arm sends MIDI messages to the SAM2635 when INTERNAL SOUNDS are turned on,
+i.e., when the INTERNAL SOUNDS button is lit. When INTERNAL SOUNDS are turned
+off, the Arm software sends MIDI messages over USB exclusively. Oddly, the Arm
+sends some MIDI messages over USB when INTERNAL SOUNDS are on — and not always
+on the expected MIDI channel!
+
+The Mini Play responds to NOTE ON and NOTE OFF messages on “keyboard” channels
+2-9 and 11-16, playing the default Grand Piano sound. Such joy is misleading,
+however. Send a program change on channels 2-9 and 11-16, and the program
+change is redirected to channel 1! Do not send program change to any other
+channels than 1 and 10 if you value your sanity!
+
+The Arm software filters out all System Exclusive (SysEx) messages other than
+its own. Stated another way, if you send SAM2635 SysEx, it will never be
+delivered. So, you cannot send GM or GS reset, tweak reverb and chorus
+parameters, and so forth because these are all done via SAM2635 SysEx.
+
+The Arm software does pass all MIDI Continuous Controller (CC) messages to the
+SAM2635. RPN and NRPN commands also get through because these kind of commands
+are formed using CC messages. Here are the MIDI CC messages which appear to
+work:
+
+    CC #0    Bank Select (MSB)
+    CC #1    Modulation wheel
+    CC #6    Data Entry
+    CC #7    Volume (channel volume)
+    CC #10   Pan
+    CC #11   Expression
+    CC #74   TVF cutoff frequency
+    CC #91   Reverb send level
+    CC #71   TVF resonance
+    CC #93   Chorus send level
+    CC #73   Envelope attack time
+    CC #72   Envelope release time
+    CC #80   Reverb program
+    CC #81   Chorus program
+    CC #91   Reverb send level
+    CC #93   Chorus send level
+    CC #98   NRPN LSB
+    CC #99   NRPN MSB
+    CC #100  RPN LSB
+    CC #101  RPN MSB
+
+Pitch bend and Program Change also get through. However, Program Change is
+always redirected to channel 1.
+
+You can form RPN and NRPN commands via MIDI CC messages. For example, the Arm
+software controls EQ Low and EQ High using NRPN:
+
+    B0 63 37 B0 62 00 B0 06 48      Equalizer low band
+    B0 63 37 B0 62 03 B0 06 40      Equalizer high band
+
+Dream have a whole raft of NRPN commands with MSB 0x37. Consult the
+Dream SAM2635 firmware manual. Dream call these commands “Special MIDI
+Controls”.
+
+CC#80 Reverb program and CC#81 Chorus program are the two bright spots in a
+relatively bleak picture. You can change the reverb type with CC#80:
+
+    00: Room1
+    01: Room2
+    02: Room3
+    03: Hall1
+    04: Hall2
+    05: Plate
+    06: Delay
+    07: Pan delay
+
+CC#81 changes the chorus type:
+
+    00: Chorus1
+    01: Chorus2
+    02: Chorus3
+    03: Chorus4
+    04: Feedback
+    05: Flanger
+    06: Short delay
+    07: Feedback delay
+
+Since the Arm software blocks all non-Akai SysEx, you cannot tweak the reverb
+and chorus parameters.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

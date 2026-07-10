@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-04-21
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -85,6 +85,7 @@ public:
         note,
         tempo,
         time_signature,
+        control_change,
         program_change,
         pitchbend,
         text,
@@ -132,6 +133,11 @@ public:
     bool is_time_signature () const
     {
         return m_data_type == type::time_signature;
+    }
+
+    bool is_control_change () const
+    {
+        return m_data_type == type::control_change;
     }
 
     bool is_program_change () const

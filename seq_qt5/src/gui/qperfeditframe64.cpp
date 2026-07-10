@@ -106,7 +106,7 @@ qperfeditframe64::qperfeditframe64
     m_mainperf          (p),
     m_palette           (nullptr),
     m_is_external       (isexternal),
-    m_duration_mode     (true),
+    m_duration_mode     (timeformat::bbt),
     m_move_L_marker     (false),
     m_snap_list         (perf_snap_items()),    /* issue #44, no "current"   */
     m_snap              (8),
@@ -743,7 +743,7 @@ qperfeditframe64::entry_mode (bool ischecked)
 void
 qperfeditframe64::slot_duration (bool /* ischecked */ )
 {
-    m_duration_mode = ! m_duration_mode;
+    m_duration_mode = next_time_format(m_duration_mode);
 
     std::string dur = perf().duration(m_duration_mode);
     ui->btnDuration->setText(qt(dur));

@@ -6374,10 +6374,15 @@ performer::get_max_extent () const
 }
 
 std::string
-performer::duration (bool dur) const
+performer::duration (timeformat fmt) const
 {
     midipulse tick = get_max_extent();
-    return dur ? pulses_to_time_string(tick) : pulses_to_measure_string(tick) ;
+    if (fmt == timeformat::bbt)
+        return pulses_to_measure_string(tick);
+    else if (fmt == timeformat::hms)
+        return pulses_to_time_string(tick);
+    else
+        return pulses_to_string(tick);          /* see calculations module  */
 }
 
 /**

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-10-16
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2992,6 +2992,8 @@ midifile::write (performer & p, bool doseqspec)
             bool result = write_header(numtracks, smfformat);
             if (result)
             {
+#if 0           // Moved to write_midi_file() to reduce verbosity.
+
                 std::string temp = "Writing ";
                 temp += doseqspec ? "Seq66" : "Normal" ;
                 temp += " SMF ";
@@ -3000,6 +3002,7 @@ midifile::write (performer & p, bool doseqspec)
                 temp += std::to_string(m_ppqn);
                 temp += " PPQN";
                 file_message(temp, m_name);
+#endif
             }
             else
                 m_error_message = "Failed to write header.";
@@ -3849,7 +3852,8 @@ write_midi_file
     else
     {
         bool glob = usr().global_seq_feature();
-        bool doseqspec = p.smf_format() > 0;
+        int smfformat = p.smf_format();
+        bool doseqspec = smfformat > 0;
         midifile f(fname, p.ppqn(), glob);
         result = f.write(p, doseqspec);
         if (result)
@@ -3857,7 +3861,17 @@ write_midi_file
             rc().midi_filename(fname);
             rc().last_used_dir(fname.substr(0, fname.rfind("/") + 1));
             (void) rc().add_recent_file(fname);     /* rc().midi_filename() */
-            file_message("Wrote MIDI file", fname);
+
+            // file_message("Wrote MIDI file", fname);
+
+            std::string temp = "Writing ";
+            temp += doseqspec ? "Seq66" : "Normal" ;
+            temp += " SMF ";
+            temp += std::to_string(smfformat);
+            temp += " MIDI file ";
+            temp += std::to_string(f.ppqn());
+            temp += " PPQN";
+            file_message(temp, f.name());
             p.unmodify();
         }
         else

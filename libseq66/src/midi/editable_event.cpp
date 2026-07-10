@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-08-20
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -561,7 +561,7 @@ editable_event::editable_event (const editable_events & parent) :
     m_link_time         (c_null_midipulse),
     m_category          (subgroup::name),
     m_name_category     (),
-    m_format_timestamp  (timestamp_measures),
+    m_format_timestamp  (timeformat::bbt),
     m_name_timestamp    (),
     m_name_status       (),
     m_name_meta         (),
@@ -588,7 +588,7 @@ editable_event::editable_event
     m_link_time         (c_null_midipulse),
     m_category          (subgroup::name),
     m_name_category     (),
-    m_format_timestamp  (timestamp_measures),
+    m_format_timestamp  (timeformat::bbt),
     m_name_timestamp    (),
     m_name_status       (),
     m_name_meta         (),
@@ -698,11 +698,11 @@ editable_event::timestamp (const std::string & ts_string)
 std::string
 editable_event::format_timestamp ()
 {
-    if (m_format_timestamp == timestamp_measures)
+    if (m_format_timestamp == timeformat::bbt)
         m_name_timestamp = time_as_measures();
-    else if (m_format_timestamp == timestamp_time)
+    else if (m_format_timestamp == timeformat::hms)
         m_name_timestamp = time_as_minutes();
-    else if (m_format_timestamp == timestamp_pulses)
+    else if (m_format_timestamp == timeformat::ticks)
         m_name_timestamp = time_as_pulses();
     else
         m_name_timestamp = "unsupported category in editable event";

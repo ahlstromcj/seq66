@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2025-07-17
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll),
@@ -182,7 +182,14 @@ private:
     performer & m_mainperf;
     QPalette * m_palette;
     bool m_is_external;
-    bool m_duration_mode;               /* true == H:M:S.fraction       */
+
+    /*
+     * Changed from bool to the timeformat enumeration in the
+     * calculations module.
+     */
+
+    timeformat m_duration_mode;         /* bbt, hms, or ticks           */
+
     bool m_move_L_marker;
     combolist m_snap_list;
     int m_snap;                         /* set snap-to in pulses/ticks  */

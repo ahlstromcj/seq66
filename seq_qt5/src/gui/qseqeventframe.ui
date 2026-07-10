@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>420</height>
+    <height>424</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -436,7 +436,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      <x>499</x>
      <y>48</y>
      <width>331</width>
-     <height>51</height>
+     <height>52</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0" columnstretch="1,6">
@@ -1009,7 +1009,7 @@ by name.</string>
      </widget>
     </item>
     <item row="3" column="2">
-     <widget class="QPushButton" name="reserved_button_1">
+     <widget class="QPushButton" name="time_format_button">
       <property name="minimumSize">
        <size>
         <width>52</width>
@@ -1023,15 +1023,17 @@ by name.</string>
        </size>
       </property>
       <property name="toolTip">
-       <string>Reserved</string>
+       <string>Cycles between time formats of B:B:T, H:M:S,
+and ticks (pulses). For time less than one hour,
+the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
       </property>
       <property name="text">
-       <string/>
+       <string>BBT</string>
       </property>
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QPushButton" name="reserved_button_2">
+     <widget class="QPushButton" name="reserved_button">
       <property name="minimumSize">
        <size>
         <width>52</width>

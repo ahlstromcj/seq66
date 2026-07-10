@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-06-05
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -197,6 +197,54 @@ bit_set (fixeffect lhs, fixeffect rhs)
     int L = static_cast<int>(lhs) | static_cast<int>(rhs);
     lhs = static_cast<fixeffect>(L);
     return lhs;
+}
+
+/**
+ *  Rather than a boolean for B:B:T versus H:M:S, we want a three state
+ *  type to show ticks.
+ *
+ *  Provides a code to indicate the desired timestamp format.  Three are
+ *  supported.  All editable events will share the same timestamp format.
+ *
+ * \var bbt
+ *      This format displays the time in "measures:beats:divisions"
+ *      format, where measures and beats start at 1.  Thus, "1:1:0" is
+ *      equivalent to 0 pulses or to "0:0:0.0" in normal time values.
+ *
+ * \var hms
+ *      This format displays the time in "hh:mm:second.fraction" format.
+ *      The value displayed should not depend upon the internal timing
+ *      parameters of the event.
+ *
+ * \var ticks
+ *      This format specifies a bare pulse format for the timestamp -- a
+ *      long integer ranging from 0 on up.  Obviously, this representation
+ *      depends on the PPQN value for the sequence holding this event.
+ */
+
+enum class timeformat
+{
+    bbt,
+    hms,
+    ticks
+};
+
+/**
+ *  This function allows clicking a UI item to get to the next time
+ *  format.
+ */
+
+inline timeformat
+next_time_format (timeformat current)
+{
+    if (current == timeformat::bbt)
+        current = timeformat::hms;
+    else if (current == timeformat::hms)
+        current = timeformat::ticks;
+    else if (current == timeformat::ticks)
+        current = timeformat::bbt;
+
+    return current;
 }
 
 /*

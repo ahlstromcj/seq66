@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2026-06-06
+% \update      2026-07-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -274,6 +274,10 @@
          It can be edited to move an event in time.
          The button next to it can be used to increase the length
          of the pattern by one measure.
+         The time format can also be changed to H:M:S and ticks
+         (i.e. pulses or divisions).
+         For times less than an hour, no hour is shown.
+         Also shown is the fraction of a second.
       \item \textbf{Event}.
          This dropdown shows the event name.
          It can also be used to select an event that is appropriate for
@@ -282,6 +286,10 @@
          This "selection" button is disabled unless either Control Change
          or Program Change is selected.
          See the next two figures.
+      \item \textbf{BBT}.
+         This button replaces the "Tick Time" check-box described below.
+         Each time it is clicked, the time displays cycle between
+         B:B:T, H:M:S, and tick (pulses, divisions) values.
       \item \textbf{D0}.
          Shows data byte 1, e.g. the note number for a note event.
          It can also be edited.
@@ -289,8 +297,10 @@
          Shows data byte 2, e.g. the velocity for a note event.
          It can also be edited.
       \item \textbf{Tick Time}.
-         If check-marked, the \textbf{Time} column in the event list
-         is shown as ticks (pulses, divisions) instead of B:B:T.
+         This has been removed in favor of the BBT button described
+         above.
+%        If check-marked, the \textbf{Time} column in the event list
+%        is shown as ticks (pulses, divisions) instead of B:B:T.
       \item \textbf{Hex}.
          If check-marked, the \textbf{D0} and \textbf{D1} columns
          in the event list, as well as the editable

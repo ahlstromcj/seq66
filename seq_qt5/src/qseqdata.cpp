@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-02
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -495,6 +495,15 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 brush.setColor(grey_color());
                 painter.setBrush(brush);
             }
+            else if (is_control_change() && cev->is_controller())
+            {
+#if defined SEQ66_SHOW_GM_CONTROL_NAME
+                /*
+                 * Actually not sure this is useful under the
+                 * current setup.
+                 */
+#endif
+            }
             else if (is_program_change() && cev->is_program_change())
             {
                 int patch = int(cev->d0());
@@ -913,6 +922,14 @@ qseqdata::set_data_type (midibyte status, midibyte control)
         m_data_type = type::time_signature;
         m_status = EVENT_MIDI_META;     /* tricky */
         m_cc = status;
+    }
+    else if (event::is_controller_msg(status))
+    {
+#if defined SEQ66_SHOW_GM_CONTROL_NAME
+        m_data_type = type::control_change;
+        m_status = status;
+        m_cc = control;
+#endif
     }
     else if (event::is_program_change_msg(status))
     {

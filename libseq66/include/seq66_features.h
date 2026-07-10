@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-04-17
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -65,6 +65,17 @@
  */
 
 #define SEQ66_SHOW_SELECTED_KEY_OCTAVE
+
+/**
+ *  In the pattern editor's data pane, we can show the full GM name
+ *  of the control-change, instead of just the number.
+ *
+ *  However, the way control changes are kind of different in
+ *  nature (they are "continuous controls") for most types of
+ *  control. There are exceptions like Bank Select, of course.
+ */
+
+#undef SEQ66_SHOW_GM_CONTROL_NAME
 
 /**
  *  In the pattern editor's data pane, we can show the full GM name

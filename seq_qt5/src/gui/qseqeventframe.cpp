@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-06-30
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -97,6 +97,7 @@ qseqeventframe::qseqeventframe
     m_linked_selection      (false),
     m_show_data_as_hex      (false),
     m_show_time_as_pulses   (false),
+    m_time_format           (timeformat::bbt),
     m_initialized           (false),
     m_in_control            (false),
     m_in_program            (false),
@@ -247,11 +248,16 @@ qseqeventframe::qseqeventframe
         ui->hex_data_check_box, SIGNAL(stateChanged(int)),
         this, SLOT(slot_hex_data_state(int))
     );
+
+    ui->pulse_time_check_box->hide();
+
+#if 0
     connect
     (
         ui->pulse_time_check_box, SIGNAL(stateChanged(int)),
         this, SLOT(slot_pulse_time_state(int))
     );
+#endif
 
     /*
      *  Experimental. Monitor the D0 field for changes via user edit.
@@ -279,7 +285,7 @@ qseqeventframe::qseqeventframe
 
     /*
      * We need to evaluate the time-stamp to make sure it is within
-     * the current length of the patter.
+     * the current length of the pattern.
      *
      *      m_current_timestamp = pulses_to_string(0);  // ts;
      */
@@ -359,6 +365,17 @@ qseqeventframe::qseqeventframe
     ui->button_dump->setEnabled(true);
 
     /*
+     * A button to increase the pattern size by one.
+     */
+
+    qt_set_icon(grow_xpm, ui->grow_button);
+    connect
+    (
+        ui->grow_button, SIGNAL(clicked(bool)),
+        this, SLOT(slot_grow())
+    );
+
+    /*
      * Select button for control/program popup menus.
      */
 
@@ -369,14 +386,14 @@ qseqeventframe::qseqeventframe
     );
 
     /*
-     * A button to increase the pattern size by one.
+     * Button show the current time format and change to
+     * the next one: B:B:T, H:M:S, and Ticks.
      */
 
-    qt_set_icon(grow_xpm, ui->grow_button);
     connect
     (
-        ui->grow_button, SIGNAL(clicked(bool)),
-        this, SLOT(slot_grow())
+        ui->time_format_button, SIGNAL(clicked(bool)),
+        this, SLOT(slot_next_time_format())
     );
 
     /*
@@ -767,10 +784,16 @@ qseqeventframe::slot_hex_data_state (int state)
 void
 qseqeventframe::slot_pulse_time_state (int state)
 {
+    (void) state;
+#if 0
     bool is_true = state != Qt::Unchecked;
     m_show_time_as_pulses = is_true;
     m_eventslots->pulses(is_true);
+    m_time_format = is_true ? timeformat::ticks : timeformat::bbt ;
+    m_eventslots->time_format(is_true ? timeformat::ticks : timeformat::bbt);
+    ui->time_format_button->setText(is_true ? "Ticks" : "BBT");
     initialize_table();
+#endif
 }
 
 /**
@@ -1769,6 +1792,20 @@ qseqeventframe::slot_cancel ()
 }
 
 /**
+ *  Adds one measure to the length. We also need to prohibit entering
+ *  events past the measure-count of the pattern.
+ */
+
+void
+qseqeventframe::slot_grow ()
+{
+    int currentm { track().get_measures() };
+    int newm { track().increment_measures() };
+    if (newm > currentm)
+        set_seq_lengths(get_lengths());
+}
+
+/**
  *  Shows the appropriate popup meneu.
  */
 
@@ -1782,17 +1819,33 @@ qseqeventframe::slot_event_popup ()
 }
 
 /**
- *  Adds one measure to the length. We also need to prohibit entering
- *  events past the measure-count of the pattern.
+ *  Gets to the next time format.
  */
 
 void
-qseqeventframe::slot_grow ()
+qseqeventframe::slot_next_time_format ()
 {
-    int currentm { track().get_measures() };
-    int newm { track().increment_measures() };
-    if (newm > currentm)
-        set_seq_lengths(get_lengths());
+    m_time_format = next_time_format(m_time_format);
+
+    std::string tf;
+    if (m_time_format == timeformat::bbt)
+        tf = "BBT";
+    else if (m_time_format == timeformat::hms)
+        tf = "HMS";
+    else
+        tf = "Ticks";
+
+    ui->time_format_button->setText(qt(tf));
+    m_eventslots->time_format(m_time_format);
+
+#if 0
+    bool is_true = m_time_format == timeformat::ticks;
+    m_eventslots->pulses(is_true);
+    m_show_time_as_pulses = is_true;
+    ui->time_format_button->setCheck(is_true);
+#endif
+
+    initialize_table();
 }
 
 /**

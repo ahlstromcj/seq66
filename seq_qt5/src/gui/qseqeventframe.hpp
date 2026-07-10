@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-06-30
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -247,9 +247,10 @@ private slots:
     void slot_pulse_time_state (int state);
     void slot_ev_data_0_edit (const QString &);
     void slot_meta_text_change ();
-    void slot_event_popup ();
     void slot_grow ();
     void slot_timestamp_change ();
+    void slot_event_popup ();
+    void slot_next_time_format ();
 
 private:
 
@@ -285,9 +286,17 @@ private:
 
     /**
      *  If true, show the time as pulses instead of B:B:T.
+     *  This will go away.
      */
 
     bool m_show_time_as_pulses;
+
+    /**
+     *  Holds the current time-format. See the calculations header
+     *  file.
+     */
+
+    timeformat m_time_format;
 
     /**
      *  Indicates the dialog has now been set up.  We need this to

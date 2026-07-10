@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-07-08
+2015-07-10 to 2026-07-10
 
 # Change Log
 
-## [0.99.26] - 2026-07-08
+## [0.99.26] - 2026-07-10
 
 "MIDI Learn"
 
@@ -27,6 +27,9 @@ from other MIDI applications. Uses a "Learn Manager" dialog.
     -   Added "Jitter" to the pattern editor tools.
 -   Event editor.
     -   Added a button to enlarge the pattern by one measure.
+    -   Replaced the "Ticks" check-box with a "BBT" button
+        to cycle through display of time in B:B:T, H:M:S, or
+        ticks.
 
 ### Changed
 
@@ -54,6 +57,8 @@ from other MIDI applications. Uses a "Learn Manager" dialog.
 
 -   Slots.
     -   automation::slot::mod\_LR\_loop
+-   Event editor. Removed the "Ticks" check-box. Use the BBT button
+    instead.
 
 ## [0.99.25] - 2026-06-06
 

@@ -193,7 +193,7 @@ private:
      *  If true, show the time as pulses instead of B:B:T.
      */
 
-    bool m_show_time_as_pulses;
+    timeformat m_time_format;
 
 public:
 
@@ -311,9 +311,18 @@ private:
         m_show_data_as_hex = flag;
     }
 
+    void time_format (timeformat tf)
+    {
+        m_time_format = tf;
+    }
+
+    /*
+     * Legacy.
+     */
+
     void pulses (bool flag)
     {
-        m_show_time_as_pulses = flag;
+        m_time_format = flag ? timeformat::ticks : timeformat::bbt ;
     }
 
     bool load_events ();

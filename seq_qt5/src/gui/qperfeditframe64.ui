@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>859</width>
-    <height>387</height>
+    <width>861</width>
+    <height>389</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -81,7 +81,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>307</height>
+          <height>319</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -115,8 +115,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>691</width>
-          <height>305</height>
+          <width>693</width>
+          <height>319</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -263,7 +263,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>670</width>
+          <width>672</width>
           <height>16</height>
          </rect>
         </property>
@@ -848,9 +848,9 @@ To reset, set to 0 and apply it.</string>
         </font>
        </property>
        <property name="toolTip">
-        <string>Shows duration of the song based
-on the longest track or Song layout.
-Click to toggle between H:M:S and B:B:T
+        <string>Shows duration of the song based on the
+longest track or Song layout. Click to move
+between H:M:S, B:B:T, and ticks (pulses)
 format.</string>
        </property>
        <property name="text">

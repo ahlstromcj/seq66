@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-07-09
+ * \updates       2026-07-10
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -2983,7 +2983,7 @@ public:
     }
 
     midipulse get_max_extent () const;
-    std::string duration (bool dur = true) const;
+    std::string duration (timeformat dur = timeformat::bbt) const;
     int count_exportable () const;
     bool convert_to_smf_0 (bool remove_old = true);
 

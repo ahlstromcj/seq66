@@ -263,16 +263,16 @@ qsmainwnd::qsmainwnd
 #if SEQ66_MIDI_LEARN_SUPPORT
     m_midi_learn_frame      (nullptr),
 #endif
-    m_ppqn_list             (supported_ppqns(), true), /* add a blank slot  */
-    m_beatwidth_list        (beatwidth_items()),     /* see settings module */
-    m_beats_per_bar_list    (beats_per_bar_items()), /* ditto               */
+    m_ppqn_list             (supported_ppqns(), true),  /* add a blank slot */
+    m_beatwidth_list        (beatwidth_items()),        /* settings module  */
+    m_beats_per_bar_list    (beats_per_bar_items()),    /* ditto            */
     m_main_bpm              (0.0),
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
     m_is_looping            (false),
     m_use_nsm               (usensm),
     m_is_title_dirty        (true),
-    m_tick_time_as_bbt      (false),            /* toggled in constructor   */
+    m_tick_time_format      (timeformat::ticks),        /* changed in ctor  */
     m_previous_tick         (0),
     m_is_playing_now        (false),
     m_open_editors          (),
@@ -2209,24 +2209,37 @@ qsmainwnd::update_window_title (const std::string & fn)
 
 /**
  *  Toggles the recording of the live song control done by the musician.
- *  This functionality currently does not have a key devoted to it, nor is it a
- *  saved setting. But it has a MIDI automation slot, mod_bbt_hms.
+ *  This functionality currently does not have a key devoted to it,
+ *  nor is it a saved setting. But it has a MIDI automation slot, mod_bbt_hms.
+ *
+ *      m_tick_time_as_bbt = ! m_tick_time_as_bbt;
+ *
+ *  See the calculations header file.
  */
 
 void
 qsmainwnd::toggle_time_format (bool /*on*/)
 {
-    m_tick_time_as_bbt = ! m_tick_time_as_bbt;
+
+    m_tick_time_format = next_time_format(m_tick_time_format);
     update_time(cb_perf().get_tick());
     cb_perf().last_automation_slot(automation::slot::mod_bbt_hms, false);
 }
 
+/**
+ *  See the calculations header file.
+ */
+
 void
 qsmainwnd::update_time (midipulse tick)
 {
-    std::string t = m_tick_time_as_bbt ?
-        cb_perf().pulses_to_measure_string(tick) :
-        cb_perf().pulses_to_time_string(tick) ;
+    std::string t;
+    if (m_tick_time_format == timeformat::bbt)
+        t = cb_perf().pulses_to_measure_string(tick);
+    else if (m_tick_time_format == timeformat::hms)
+        t = cb_perf().pulses_to_time_string(tick);
+    else
+        t = pulses_to_string(tick);
 
     ui->btnBBTHMS->setText(qt(t));
 }

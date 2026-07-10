@@ -406,9 +406,15 @@ private:
     /**
      *  Indicates whether to show the time as bar:beats:ticks or as
      *  hours:minutes:seconds.  The default is true:  bar:beats:ticks.
+     *
+     *      bool m_tick_time_as_bbt;
+     *
+     *  Now we use an enumeration to move between the formats of
+     *  B:B:T, H:M:S, and ticks (pulses). See the calculations header
+     *  file.
      */
 
-    bool m_tick_time_as_bbt;
+    timeformat m_tick_time_format;
 
     /**
      *  Holds the last performer tick, so that we can avoid refreshing the
