@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2026-05-18
+ * \updates       2026-07-13
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -620,9 +620,13 @@ private:
      *  If true, this flag indicates to open the most recent MIDI file, which is
      *  the first in the list.  This flag is set and used only at startup time,
      *  after the "session" is created.
+     *
+     *  The second flag is the opposite, but is not saved, and used only
+     *  on the command line.
      */
 
     bool m_load_most_recent;
+    bool m_dont_load_recent;
 
     /**
      *  If true, show the full directory path in the most-recent-file list, in
@@ -1217,6 +1221,11 @@ public:
         return m_load_most_recent && ! playlist_active();
     }
 
+    bool dont_load_recent () const
+    {
+        return m_dont_load_recent;
+    }
+
     bool full_recent_paths () const
     {
         return m_full_recent_paths;
@@ -1621,6 +1630,11 @@ public:
     void load_most_recent (bool f)
     {
         m_load_most_recent = f;
+    }
+
+    void do_not_load_recent ()
+    {
+        m_dont_load_recent = true;
     }
 
     void full_recent_paths (bool f)

@@ -1,7 +1,7 @@
 # ROADMAP for a Possible Seq66 v. 2
 
 Chris Ahlstrom
-2022-05-11 to 2022-08-24
+2022-05-11 to 2026-07-13
 
 This file is simply some thoughts about the future of __Seq66__ and
 a version 2...  if we decide to keep updating this project until Ahlstrom
@@ -11,20 +11,21 @@ croaks. :-D Also see the bottom of the TODO file.
 
 ##  Qt Upgrade
 
-    It should be straightforward to upgrade from Qt 5 to Qt 6.  We will see if
-    it is better to leverage The Qt5Compat library at first.
+    It should be straightforward to upgrade from Qt 5 to Qt 6.
+    This is done with version 0.99.25 and beyond.
 
 ##  Configuration files
 
     Currently, we see no need to change the format of the Seq66 configuration
     files greatly.  The INI format is simpler and easier to read and edit than
-    XML, and covers our needs well.
+    XML, and covers our needs well. Also see the separate cfg66 project.
 
 ##  Non Session Manager
 
     Will continue to be supported.  Will remove the unused nsmserver module,
     which was mostly meant for "just in cases" already covered by other
-    NSM-derived projects.
+    NSM-derived projects. However, see the new nsm66 and nsmd66 projects,
+    not yet in heavy usage.
 
 ##  Builds
 
@@ -33,14 +34,18 @@ croaks. :-D Also see the bottom of the TODO file.
         It might be nice to stick with Qmake, but it's been deprecated by Qt.
         There should be no need for both the build systems we use at present:
         Autotools and Qmake.
+    *   As of 0.99.25, we use Meson, with Qmake left in use for QtCreator.
     *   The libraries libseq66, sessions, seq\_portmidi, and seq\_rtmidi will
         be split into separate projects for better re-use.
-    *   A new namespace would be in order:  seqx or somesuch.
+    *   A new namespace would be in order.
 
 ##  Engines
 
-    *   Remove the Mac and Windows support from our derivative "portmidi" library.
-    *   Move the support to our derivative "rtmidi" library.
+    *   Remove the Mac and Windows support from our derivative "portmidi"
+        library.
+    *   Move the support to our derivative "rtmidi" library. But we are
+        working on a more comprehensive "rtmidi" library in the rtl66
+        projects.
 
 ##  Executables
 

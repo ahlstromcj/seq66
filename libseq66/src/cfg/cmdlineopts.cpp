@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-06-12
+ * \updates       2026-07-13
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -164,6 +164,7 @@ cmdlineopts::s_long_options []
     {"config",              required_argument, 0, 'c'},
     {"rc",                  required_argument, 0, 'f'},
     {"usr",                 required_argument, 0, 'F'},
+    {"new",                 no_argument,       0, 'e'},
 
     /*
      * Never implemented!
@@ -198,7 +199,7 @@ cmdlineopts::s_long_options []
  *
 \verbatim
         0123456789#@AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
-        xx       xx xx::x:xx  :: x:x xxxxx::xxxx *x: :xx:xxxx:xxxx::  aa
+        xx       xx xx::x:xx x:: x:x xxxxx::xxxx *x: :xx:xxxx:xxxx::  aa
 \endverbatim
  *
  *  The I (inspect) options has been replaced by the S (session) option
@@ -344,6 +345,7 @@ static const std::string s_help_3
     "   -S, --session name      Use alternate configuration from sessions.rc.\n"
     "   -L, --locale lname      Set global locale, if installed on the system.\n"
     "   -i, --investigate       Turn on various trouble-shooting code.\n"
+    "   -e, --new               Ignore last-used file, load with empty tune.\n"
     "   -o, --option optoken    Provides app-specific options for expansion.\n"
     "                           Options supported are:\n\n"
 };
@@ -1090,6 +1092,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'd':                           /* --record-by-channel          */
             rc().record_by_channel(true);
+            break;
+
+        case 'e':                           /* --new                        */
+            rc().do_not_load_recent();
             break;
 
         case 'F':                           /* --usr                        */

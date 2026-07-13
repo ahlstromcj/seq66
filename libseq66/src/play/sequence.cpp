@@ -386,10 +386,10 @@ sequence::partial_assign (const sequence & rhs, bool domodify)
 
         /*
          * Read-only:    m_maxbeats = rhs.m_maxbeats;
+         * Why this?     m_ppqn = rhs.m_ppqn;
          */
 
-//      m_ppqn                      = rhs.m_ppqn;
-        m_seq_number                = rhs.m_seq_number;     // ?
+        m_seq_number                = rhs.m_seq_number;
         m_seq_color                 = rhs.m_seq_color;
         m_seq_edit_mode             = rhs.m_seq_edit_mode;
         m_length                    = rhs.m_length;
@@ -1848,7 +1848,7 @@ sequence::live_play (midipulse tick)
         {
             if (times_played >= loop_count_max())
             {
-                if (is_metro_seq())                 /* count-in is complete */
+                if (is_metro_seq())         /* the count-in is complete     */
                     perf()->finish_count_in();
 
                 return;
@@ -2183,13 +2183,11 @@ sequence::selected_box
         }
     }
 
-    bool result =
-    (
-        (tick_s < m_maxbeats * m_ppqn) &&
-        (tick_f > 0) &&
-        (note_l < c_midibyte_data_max) &&
-        (note_h >= 0)
-    );
+    bool result
+    {
+        (tick_s < m_maxbeats * m_ppqn) && (tick_f > 0) &&
+        (note_l < c_midibyte_data_max) && (note_h >= 0)
+    };
     return result;
 }
 

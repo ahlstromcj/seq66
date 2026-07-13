@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2023-05-08
+ * \updates       2026-07-11
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -240,6 +240,11 @@ public:
         return m_event_container.count();   /* m_event_count        */
     }
 
+    const midi_timing & midi_timing_cref () const
+    {
+        return m_event_container.timing();
+    }
+
     /**
      *  Returns the current number of rows (events) in the qseventslots's
      *  display.
@@ -309,6 +314,11 @@ private:
     void hexadecimal (bool flag)
     {
         m_show_data_as_hex = flag;
+    }
+
+    timeformat time_format () const
+    {
+        return m_time_format;
     }
 
     void time_format (timeformat tf)

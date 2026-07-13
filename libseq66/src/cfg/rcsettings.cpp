@@ -141,6 +141,7 @@ rcsettings::rcsettings () :
     m_tempo_track_number        (0),
     m_recent_files              (),
     m_load_most_recent          (true),
+    m_dont_load_recent          (false),
     m_full_recent_paths         (false),
     m_portmaps_present          (false),
     m_portmaps_active           (false)
@@ -273,6 +274,7 @@ rcsettings::set_defaults ()
     m_tempo_track_number = 0;
     m_recent_files.clear();
     m_load_most_recent = true;
+    m_dont_load_recent = false;
     m_full_recent_paths = false;
     m_portmaps_present = false;
     m_portmaps_active = false;

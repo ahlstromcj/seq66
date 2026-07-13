@@ -1,10 +1,15 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-07-10
+2019-04-13 to 2026-07-13
 
     -   MIDI Learn.
         -   The Live/Song button enables the blue song-record button,
             but the keystroke P does not.
+        -   The slot-shift key (/) does not get logged into
+            the learn manager.
+        -   Why is "Solo" disabled?
+        -   The "Song" button shows song_record!
+        -   F2 --> playllist; F3 --> playlist instead of playlist_song.
         -   Do not fill in an automation name when loop/mutes
             are selected.
         -   Add a slot::metronome toggle? Only one slot left!
@@ -18,28 +23,11 @@ Chris Ahlstrom
             -   Delete triggers (new)?
             -   Cut / Delete / Clear events
     -   Events tab:
-        -   Changing the time format does not affect the time-stamp
-            field at the right of the dialog.
-            We claim to be able to use pulses and H:M:S, so
-            verify that, too.
-        -   Added a Note On and Note off. D0 is shown as a control
-            value!
-        -   Adding a Note On should add a Note off of PPQN/16
-            I think.
-            -   And they should be linked. [verify_and_link()]
-            -   And if the Note On or Off is edited, the link should
-                change.
+        -   Adding a Note On should add a Note off of PPQN/16, but
+            currently not easily done due to the need to add links.
         -   Broken: changes after the second "Grow" do not stick.
         -   In calculations : midi_measures_to_pulses() #678,
             calculation of ticks_per_meas is WRONG.
-    -   Segfault: Open b4uacuse patchless midi, then open the
-        pattern editor for guitar. Then open 1Bar-1920.midi when
-        channel 0 pops up as being unavailable. Similar to the
-        segfault when prompted to remap and restart. "Unavailable".
-        Partly FIXED: can still occur with multiple pattern editors
-        plus a song editor window; fix the external song editor.
-        Test this with pattern-fix, LFO, and other dialogs!
-        On Arch, with many pattern editors and one song editor open.
 
 Back burner:
 

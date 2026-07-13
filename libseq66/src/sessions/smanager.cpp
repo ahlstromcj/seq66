@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2025-06-12
+ * \updates       2025-07-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -1050,7 +1050,11 @@ smanager::create (int argc, char * argv [])
             std::string fname = midi_filename();
             if (fname.empty())
             {
-                if (rc().load_most_recent())
+                bool load               /* load if --new not given  */
+                {
+                    rc().load_most_recent() && ! rc().dont_load_recent()
+                };
+                if (load)
                 {
                     std::string midifname = rc().recent_file(0, false);
                     if (! midifname.empty())

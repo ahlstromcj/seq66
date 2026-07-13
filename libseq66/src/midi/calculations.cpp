@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-06-05
+ * \updates       2026-07-13
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -101,6 +101,8 @@ namespace seq66
 
 static const int c_qn_beats = 4;
 
+#if defined THIS_CODE_IS_USED
+
 /**
  *  Convenience function. We don't want to use seq66::string_to_int()
  *  because that uses a leading "0" or "0x" to determine the base of the
@@ -113,20 +115,27 @@ strtoi (const std::string & v)
     return v.empty() ? 0 : std::atoi(v.c_str());
 }
 
+#endif
+
 /**
  *  Extracts up to 4 numbers from a colon-delimited string, or 1 from a
  *  non-delimited string.  Actually colon or period are used.
  *
- *      -   measures : beats : divisions
+ *      -   measures:beats:divisions
  *          -   "8" represents solely the number of pulses.  That is, if the
  *              user enters a single number, it is treated as the number of
  *              pulses.
  *          -   "8:1" represents a measure and a beat.
  *          -   "213:4:920"  represents a measure, a beat, and pulses.
- *      -   hours : minutes : seconds . fraction.  We really don't support
- *          this concept at present.  Beware!
+ *      -   hours:minutes:seconds.fraction.
  *          -   "2:04:12.14"
  *          -   "0:1:2"
+ *      -   Generic cases:
+ *          -   ".14"           Just a fraction present.
+ *          -   "12.14"         Usually seconds and fraction of seconds.
+ *          -   "04:12.14"      Minutes plus the above.
+ *          -   "2:04:12.14"    A full time specification.
+ *          -   Above w/o ".14" A BBT entry.
  *
  * \warning
  *      This is not the most efficient implementation you'll ever see.
@@ -134,7 +143,8 @@ strtoi (const std::string & v)
  *
  * \param s
  *      Provides the input time string, in measures or time format,
- *      to be processed.
+ *      to be processed. This string is padded to conform to
+ *      "B:B:T" or "H:M:S" as needed.
  *
  * \param [out] part_1
  *      The destination reference for the first part of the time.
@@ -149,6 +159,7 @@ strtoi (const std::string & v)
  *
  * \param [out] fraction
  *      The destination reference for the fractional part of the time.
+ *      It includes the "." character.
  *
  * \return
  *      Returns the number of parts provided, ranging from 0 to 4.
@@ -160,30 +171,74 @@ int
 extract_timing_numbers
 (
     const std::string & s,
-    std::string & part_1,
-    std::string & part_2,
-    std::string & part_3,
-    std::string & fraction
+    int & part_1,
+    int & part_2,
+    int & part_3,
+    double & fraction
 )
 {
     tokenization tokens;
-    int count = tokenize_string(s, tokens); /* a function in this module    */
-    part_1.clear();
-    part_2.clear();
-    part_3.clear();
-    fraction.clear();
+    int count { tokenize_time_string(s, tokens) };  /* defined below        */
+    std::string p1 { "0" };
+    std::string p2 { "0" };
+    std::string p3 { "0" };
+    std::string f { ".0" };
     if (count > 0)
-        part_1 = tokens[0];
+    {
+        bool hasfraction { s.find_first_of(".") != std::string::npos};
+        switch (count)
+        {
+        case 1:
 
-    if (count > 1)
-        part_2 = tokens[1];
+            if (hasfraction)
+                f = tokens[0];
+            else
+                p3 = tokens[0];
+            break;
 
-    if (count > 2)
-        part_3 = tokens[2];
+        case 2:
 
-    if (count > 3)
-        fraction = tokens[3];
+            if (hasfraction)
+            {
+                p3 = tokens[0];
+                f = tokens[1];
+            }
+            else
+            {
+                p2 = tokens[0];
+                p3 = tokens[1];
+            }
+            break;
 
+        case 3:
+
+            if (hasfraction)
+            {
+                p2 = tokens[0];
+                p3 = tokens[1];
+                f = tokens[2];
+            }
+            else
+            {
+                p1 = tokens[0];
+                p2 = tokens[1];
+                p3 = tokens[2];
+            }
+            break;
+
+        case 4:
+
+            p1 = tokens[0];
+            p2 = tokens[1];
+            p3 = tokens[2];
+            f = tokens[3];
+            break;
+        }
+        part_1 = std::stoi(p1);
+        part_2 = std::stoi(p2);
+        part_3 = std::stoi(p3);
+        fraction = f[0] == '.' ? std::stod(f) : 0.0 ;
+    }
     return count;
 }
 
@@ -198,6 +253,9 @@ extract_timing_numbers
  *          non-delimiters until the next delimiter or the end of the string.
  *      -#  Repeat until no more delimiters exist.
  *
+ *  As a special case, a token like "01.58" is broken into two tokens, "01" and
+ *  ".58". This type of token should always occur at the end of the source.
+ *
  * \param source
  *      The string to be parsed and tokenized.
  *
@@ -210,35 +268,39 @@ extract_timing_numbers
  */
 
 int
-tokenize_string
+tokenize_time_string
 (
     const std::string & source,
     tokenization & tokens
 )
 {
-    static std::string s_delims = ":. ";
-    int result = 0;
+    int result { 0 };
     tokens.clear();
-    auto pos = source.find_first_not_of(s_delims);
-    if (pos != std::string::npos)
+    tokenization temp { tokenize(source, ":") };
+    if (! temp.empty())
     {
-        for (;;)
+        std::string t { temp.back() };                          /* last one */
+        auto ppos { t.find_first_of(".") };
+        if (ppos != std::string::npos)                          /* "01.58"  */
         {
-            auto depos = source.find_first_of(s_delims, pos);
-            if (depos != std::string::npos)
-            {
-                tokens.push_back(source.substr(pos, depos - pos));
-                pos = source.find_first_not_of(s_delims, depos +1);
-                if (pos == std::string::npos)
-                    break;
-            }
-            else
-            {
-                tokens.push_back(source.substr(pos));
-                break;
-            }
+            std::size_t count { ppos - 1 };
+            std::string u { t.substr(0, count) };               /* "01"     */
+            std::string v { t.substr(ppos) };                   /* ".58"    */
+            t = u;
+            temp.push_back(v);
         }
-        result = int(tokens.size());
+        result = int(temp.size());
+        tokens = temp;
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        if (result > 0)
+        {
+            printf("Tokens:");
+            for (auto t : temp)
+                printf(" '%s'", t.c_str());
+
+            printf("\n");
+        }
+#endif
     }
     return result;
 }
@@ -286,12 +348,12 @@ pulses_to_string (midipulse p)
 std::string
 pulses_to_measurestring (midipulse p, const midi_timing & seqparms)
 {
-    midi_measures measures;                 /* measures, beats, divisions   */
+    midi_measures measures;                         /* measures:beats:ticks */
     char tmp[32];
     int width = 3;
     if (is_null_midipulse(p))
     {
-        p = 0;                              /* punt the runt!               */
+        p = 0;                                      /* punt the runt!       */
     }
     else if (seqparms.ppqn() >= 1000)
     {
@@ -303,7 +365,7 @@ pulses_to_measurestring (midipulse p, const midi_timing & seqparms)
     pulses_to_midi_measures(p, seqparms, measures); /* fill measures struct */
     snprintf
     (
-        tmp, sizeof tmp, "%03d:%d:%0*d",    /* "%03d:%d:%03d"               */
+        tmp, sizeof tmp, "%02d:%d:%0*d",            /* "%03d:%d:%03d"       */
         measures.measures(), measures.beats(), width, measures.divisions()
     );
     return std::string(tmp);
@@ -459,7 +521,7 @@ pulses_to_time_string (midipulse p, const midi_timing & timinginfo)
  *      -   editable_event::time_as_minutes()
  *      -   qsmainwnd::update_time()
  *
- *          [ if BBT, calls pulses_to_measure_string() ]
+ *          [ if BBT, calls pulses_to_measurestring() ]
  *
  * \param p
  *      Provides the number of ticks, pulses, or divisions in the MIDI
@@ -516,7 +578,7 @@ pulses_to_time_string (midipulse p, midibpm bpm, int ppqn, bool showus)
     else
     {
         /*
-         * Why the spaces?  It is inconsistent.  But see the
+         * Why the spaces? It is inconsistent. But see the
          * HMS_to_pulses() function first.
          */
 
@@ -543,6 +605,52 @@ pulses_to_hours (midipulse p, midibpm bpm, int ppqn)
     unsigned long microseconds = ticks_to_delta_time_us(p, bpm, ppqn);
     int seconds = int(microseconds / 1000000UL);
     return seconds / (60 * 60);
+}
+
+/**
+ *  This function allows clicking a UI item to get to the next time
+ *  format.
+ */
+
+timeformat
+next_time_format (timeformat current)
+{
+    if (current == timeformat::bbt)
+        current = timeformat::hms;
+    else if (current == timeformat::hms)
+        current = timeformat::ticks;
+    else if (current == timeformat::ticks)
+        current = timeformat::bbt;
+
+    return current;
+}
+
+std::string
+time_format_name (timeformat tf)
+{
+    std::string result;
+    if (tf == timeformat::bbt)
+        result = "BBT";
+    else if (tf == timeformat::hms)
+        result = "HMS";
+    else
+        result = "Ticks";
+
+    return result;
+}
+
+std::string
+time_format_string (timeformat tf, midipulse ts, const midi_timing & mt)
+{
+    std::string result;
+    if (tf == timeformat::bbt)
+        result = pulses_to_measurestring(ts, mt);
+    else if (tf == timeformat::hms)
+        result = pulses_to_time_string(ts, mt);
+    else if (tf == timeformat::ticks)
+        result = pulses_to_string(ts);
+
+    return result;
 }
 
 /**
@@ -577,6 +685,8 @@ trunc_measures (double measures)
  *  as "B:B:T") to a MIDI pulse/ticks/clock value. Note that, here, "division"
  *  is simply a number of pulses less than a beat.
  *
+ * NO LONGER TRUE:
+ *
  *  If the third value (the MIDI pulses or ticks value) is set to the dollar
  *  sign ("$"), then the pulses are set to PPQN-1, as a handy shortcut to
  *  indicate the end of the beat.
@@ -609,21 +719,24 @@ BBT_string_to_pulses
     midipulse result = 0;
     if (! measures.empty())
     {
-        std::string m, b, d, dummy;
+        int m, b, d;
+        double dummy;
         int valuecount = extract_timing_numbers(measures, m, b, d, dummy);
         if (valuecount >= 1)
         {
             midi_measures meas_values;                      /* 0 in ctor    */
-            meas_values.measures(strtoi(m));
+            meas_values.measures(m);
             if (valuecount > 1)
             {
-                meas_values.beats(strtoi(b));
+                meas_values.beats(b);
                 if (valuecount > 2)
                 {
+#if 0
                     if (d == "$")
                         meas_values.divisions(seqparms.ppqn() - 1);
                     else
-                        meas_values.divisions(strtoi(d));
+#endif
+                    meas_values.divisions(d);
                 }
             }
             result = midi_measures_to_pulses(meas_values, seqparms);
@@ -708,23 +821,18 @@ midi_measures_to_pulses
 midi_measures
 string_to_measures (const std::string & bbt)
 {
-    std::string m;
-    std::string b;
-    std::string t;
-    std::string fraction;
+    int m, b, t;                        /* measures, beats, and ticks       */
+    double fraction;                    /* not used in this functions       */
     int count = extract_timing_numbers(bbt, m, b, t, fraction);
     if (count > 0)
     {
-        int measures = strtoi(m);
-        int beats = strtoi(b);
-        int ticks = strtoi(t);
-        if (measures == 0)
-            measures = 1;
+        if (m == 0)
+            m = 1;
 
-        if (beats == 0)
-            beats = 1;
+        if (b == 0)
+            b = 1;
 
-        return midi_measures(measures, beats, ticks);
+        return midi_measures(m, b, t);
     }
     else
     {
@@ -737,10 +845,32 @@ string_to_measures (const std::string & bbt)
  *  Converts a string that represents "hours:minutes:seconds.fraction" into a
  *  MIDI pulse/ticks/clock value.
  *
+ *  Let h = hours, m = minutes, s = seconds, and f = fraction of *  seconds.
+ *
+ * Duration in seconds (S):
+ *
+ *      S = 3600h + 60m + s + f
+ *
+ * Microseconds per quarter note (MPQN):
+ *
+ *      MPQN = 60,000,000 / BPM
+ *
+ * Microseconds per tick:
+ *
+ *      MPT = MPQN / PPQN
+ *
+ * Ticks (divisions, pulses):
+ *
+ *      D = S * 1,000,000 / MPT
+ *        = S * 1,000,000 / MPQN * PPQN
+ *        = S * 1,000,000 / 60,000,000 * BPM * PPQN
+ *        = S * 0.167 * BPM * PPQN
+ *
  * \param timestring
  *      The time value to be converted, which must be of the form
- *      "HH:MM:SS" or "HH:MM:SS.fraction".  That is, at least three
- *      of the four parts must be found.
+ *      "HH:MM:SS" or "HH:MM:SS.fraction"; this is forces by prepending
+ *      values. Thus "MM:SS" beccomes "00:MM:SS" and "SS.fraction"
+ *      becomes "00:00:SS.fraction".
  *
  * \param bp
  *      The beats-per-minute tempo (e.g. 120) of the current MIDI song.
@@ -760,22 +890,25 @@ HMS_string_to_pulses (const std::string & timestring, midibpm bp, int ppq)
     midipulse result = 0;
     if (! timestring.empty())
     {
-        std::string sh, sm, ss, us;
-        int count { extract_timing_numbers(timestring, sh, sm, ss, us) };
-        if (count >= 3)
+        int sh, sm, ss;
+        double frac;
+        int count { extract_timing_numbers(timestring, sh, sm, ss, frac) };
+        if (count > 0)
         {
-            /**
-             * This conversion assumes that the fractional parts of the
-             * seconds is padded with zeroes on the left or right to 6 digits.
+            const double bpmfactor { 1000000.0 / 60000000.0 };
+            double hours { double(sh) };
+            double minutes { double(sm) };
+            double seconds { double(ss) };
+            double sec { ((hours * 60.0) + minutes) * 60.0 + seconds + frac };
+
+            /*
+             * Instead of:
+             *
+             *      double us { 1000000.0 * sec };
+             *      double pulses = delta_time_us_to_ticks(us, bp, ppq);
              */
 
-            int hours = strtoi(sh);
-            int minutes = strtoi(sm);
-            int seconds = strtoi(ss);
-            double secfraction = string_to_double(us, 0, 3); /* atof(us)    */
-            long sec = ((hours * 60) + minutes) * 60 + seconds;
-            long microseconds = 1000000 * sec + long(1000000.0 * secfraction);
-            double pulses = delta_time_us_to_ticks(microseconds, bp, ppq);
+            double pulses { sec * bpmfactor * bp * ppq };
             result = midipulse(pulses);
         }
     }
@@ -805,9 +938,9 @@ HMS_string_to_pulses (const std::string & timestring, midibpm bp, int ppq)
  *      Provides the structure needed to provide BPM and other values needed
  *      for some of the conversions done by this function.
  *
- * \param use_hms_string
- *      If true, interpret the string as an "H:M:S" string. The default
- *      is false.
+ * \param tf
+ *      Provides the time format to assume when calculating the timestamp.
+ *      The default is timeformat::bbt.
  *
  * \return
  *      Returns the string as converted to MIDI pulses (or divisions, clocks,
@@ -819,22 +952,18 @@ string_to_pulses
 (
     const std::string & s,
     const midi_timing & mt,
-    bool use_hms_string
+    timeformat tf
 )
 {
     midipulse result = 0;
-    tokenization tokens;
-    int count = tokenize_string(s, tokens);     /* function in this module  */
-    if (count == 1)                             /* no colons in it          */
+    if (! s.empty())
     {
-        result = midipulse(string_to_long(s));
-    }
-    else if (count > 1)
-    {
-        if (use_hms_string)
+        if (tf == timeformat::bbt)
+            result = BBT_string_to_pulses(s, mt);
+        else if (tf == timeformat::hms)
             result = HMS_string_to_pulses(s, mt.beats_per_minute(), mt.ppqn());
         else
-            result = BBT_string_to_pulses(s, mt);
+            result = midipulse(string_to_long(s));
     }
     return result;
 }

@@ -1,4 +1,4 @@
-.TH Seq66 "June 2026" "Version 0.99.26" "Seq66 Manual Page"
+.TH Seq66 "July 2026" "Version 0.99.26" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
@@ -285,6 +285,14 @@ SEQ_SESSION_TAG="tagname" with the desired tag-name.
 .B \-L, \-\-locale localename
 Set a different locale for running seq66. If the current locale uses the
 comma as a decimal point, then try --locale en_US.UTF-8 (for example).
+
+.TP 8
+.B \-i, \-\-investigate
+Turns on various trouble-shooting code, adding some verbosity.
+
+.TP 8
+.B \-e, \-\-new
+Bring up a new (empty) tune, regardless of recent-file settings.
 
 .TP 8
 .B \-o, \-\-option opvalue

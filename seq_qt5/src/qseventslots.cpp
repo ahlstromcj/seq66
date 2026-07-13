@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-07-10
+ * \updates       2026-07-12
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -165,9 +165,16 @@ qseventslots::events_to_string () const
     std::string result;
     if (m_event_count > 0)
     {
+        std::string timetype { "  B:B:T  " };
+        if (time_format() == timeformat::hms)
+            timetype = "  H:M:S  ";
+        else if (time_format() == timeformat::ticks)
+            timetype = "Ticks    ";
+
         int row = 0;
-        result +=
-" No.  Ticks Timestamp Event   Status Ch. --   D0    D1 Link-time Length  Rank\n"
+        result += " No.  Ticks ";
+        result += timetype;
+        result += "Event   Status Ch. --   D0    D1 Link-time Length  Rank\n"
             ;
         for (const auto & ei : m_event_container)
         {
@@ -271,9 +278,11 @@ qseventslots::set_current_event
         else
             m_parent.set_event_plaintext("");   /* no plaintext data here   */
     }
+
+    std::string formatted_time { ev.format_timestamp() };
     set_event_text
     (
-        ev.category_string(), ev.timestamp_string(), ev.status_string(),
+        ev.category_string(), formatted_time, ev.status_string(),
         data_0, data_1, channel
     );
     m_current_row = m_current_index = index;
@@ -301,24 +310,12 @@ qseventslots::data_string (midibyte d)
 void
 qseventslots::set_table_event (editable_event & ev, int row)
 {
-    std::string data_0;
-    std::string data_1;
-    std::string linktime;
-    std::string tstring;
-
-//      tstring = ev.timestamp_string();
-
     midipulse ts { ev.timestamp() };
     const midi_timing & mt { m_event_container.timing() };
-    if (m_time_format == timeformat::bbt)
-        tstring = pulses_to_measurestring(ts, mt);
-    else if (m_time_format == timeformat::hms)
-        tstring = pulses_to_time_string(ts, mt);
-    else if (m_time_format == timeformat::ticks)
-        tstring = pulses_to_string(ts);
-
+    std::string tstring { time_format_string(m_time_format, ts, mt) };
     int buss = int(ev.input_bus());
     std::string busno;
+    ev.time_format(m_time_format);                  /* for every damn event */
     if (is_null_buss(buss))
     {
         if (m_seq.has_in_bus())
@@ -329,6 +326,9 @@ qseventslots::set_table_event (editable_event & ev, int row)
     else
         busno = std::to_string(buss);
 
+    std::string data_0;
+    std::string data_1;
+    std::string linktime;
     if (ev.is_meta_text())
     {
         data_0 = ev.ex_text_string();
@@ -346,12 +346,7 @@ qseventslots::set_table_event (editable_event & ev, int row)
         if (ev.is_linked())
         {
             midipulse lt = ev.link_time();
-            if (m_time_format == timeformat::ticks)
-                linktime = pulses_to_string(lt);
-            else if (m_time_format == timeformat::bbt)
-                linktime = pulses_to_measurestring(lt, mt);
-            else if (m_time_format == timeformat::hms)
-                linktime = pulses_to_time_string(lt, mt);
+            linktime = time_format_string(m_time_format, lt, mt);
         }
         else
             linktime = "None";
@@ -381,6 +376,7 @@ qseventslots::event_to_string
 ) const
 {
     char line[132];
+    std::string formatted_time { ev.format_timestamp() };
     if (ev.is_ex_data())
     {
         std::string data_0 = ev.ex_data_string();
@@ -388,7 +384,7 @@ qseventslots::event_to_string
         (
             line, sizeof line,
             "%4d %6ld %-9s %-9s %-30s  0x%04x\n",
-            index, long(ev.timestamp()), ev.timestamp_string().c_str(),
+            index, long(ev.timestamp()), formatted_time.c_str(),
             ev.status_string().c_str(), data_0.c_str(), ev.get_rank()
         );
     }
@@ -421,7 +417,7 @@ qseventslots::event_to_string
         (
             line, sizeof line,
             "%4d %6ld %-9s %-9s 0x%02x Ch %2s %3s %3s %-9s %6s  0x%04x\n",
-            index, long(ev.timestamp()), ev.timestamp_string().c_str(),
+            index, long(ev.timestamp()), formatted_time.c_str(),
             ev.status_string().c_str(), rawstatus, ev.channel_string().c_str(),
             data_0.c_str(), data_1.c_str(), linktime.c_str(),
             lenstring.c_str(), ev.get_rank()
@@ -606,6 +602,8 @@ qseventslots::insert_event
     (
         evts, evname, evdata0, evdata1, channel, text
     );
+    edev.time_format(time_format());                /* forward the format   */
+    edev.format_timestamp();
     m_current_event = edev;
     return insert_event(edev);
 }

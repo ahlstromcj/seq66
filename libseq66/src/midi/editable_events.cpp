@@ -137,6 +137,7 @@ editable_events::get_length () const
 /**
  *  Adds an event, converted to an editable_event, to the internal event list.
  *
+ *
  * \param e
  *      Provides the regular event to be added to the list of editable events.
  *
@@ -149,7 +150,26 @@ bool
 editable_events::add (const event & e)
 {
     editable_event ed(*this, e);            /* make the event "editable"    */
-    return add(ed);
+    bool result = add(ed);
+
+#if defined THIS_CODE_WORKS                 /* it does not                  */
+
+    /*
+     * Let's link and reload if a note off is entered. However, this does not
+     * work and causes a segfault. Instead, we need to have a Note Off
+     * automatically added and make the link explicitly.
+     */
+
+    if (result && e.is_note_off())
+    {
+        (void) track().events().verify_and_link();  /* hmmm, 0, false   */
+        clear();
+        result = load_events();
+    }
+
+#endif
+
+    return result;
 }
 
 /**

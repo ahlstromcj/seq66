@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-07-10
+ * \updates       2026-07-12
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -229,24 +229,6 @@ enum class timeformat
     ticks
 };
 
-/**
- *  This function allows clicking a UI item to get to the next time
- *  format.
- */
-
-inline timeformat
-next_time_format (timeformat current)
-{
-    if (current == timeformat::bbt)
-        current = timeformat::hms;
-    else if (current == timeformat::hms)
-        current = timeformat::ticks;
-    else if (current == timeformat::ticks)
-        current = timeformat::bbt;
-
-    return current;
-}
-
 /*
  * Free functions in the seq66 namespace.
  */
@@ -255,12 +237,12 @@ extern std::string wave_type_name (waveform wv);
 extern int extract_timing_numbers
 (
     const std::string & s,
-    std::string & part_1,
-    std::string & part_2,
-    std::string & part_3,
-    std::string & fraction
+    int & part_1,
+    int & part_2,
+    int & part_3,
+    double & fraction
 );
-extern int tokenize_string
+extern int tokenize_time_string
 (
     const std::string & source,
     tokenization & tokens
@@ -292,6 +274,14 @@ extern std::string pulses_to_time_string
     bool showus = true
 );
 extern int pulses_to_hours (midipulse pulses, midibpm bp, int ppq);
+extern timeformat next_time_format (timeformat current);
+extern std::string time_format_name (timeformat tf);
+extern std::string time_format_string
+(
+    timeformat tf,
+    midipulse ts,
+    const midi_timing & mt
+);
 extern double trunc_measures (double measures);
 extern midipulse BBT_string_to_pulses
 (
@@ -313,7 +303,7 @@ extern midipulse string_to_pulses
 (
     const std::string & s,
     const midi_timing & mt,
-    bool use_hms_string = false
+    timeformat tf = timeformat::bbt         /* bool use_hms_string = false  */
 );
 extern int randomize (int range, int seed = 0);
 #if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION

@@ -561,7 +561,7 @@ editable_event::editable_event (const editable_events & parent) :
     m_link_time         (c_null_midipulse),
     m_category          (subgroup::name),
     m_name_category     (),
-    m_format_timestamp  (timeformat::bbt),
+    m_time_format       (timeformat::bbt),
     m_name_timestamp    (),
     m_name_status       (),
     m_name_meta         (),
@@ -588,7 +588,7 @@ editable_event::editable_event
     m_link_time         (c_null_midipulse),
     m_category          (subgroup::name),
     m_name_category     (),
-    m_format_timestamp  (timeformat::bbt),
+    m_time_format       (timeformat::bbt),
     m_name_timestamp    (),
     m_name_status       (),
     m_name_meta         (),
@@ -655,7 +655,7 @@ editable_event::category (const std::string & name)
  *      have to set the string version at the same time.
  *
  *  The format of the string representation is of the format selected by the
- *  m_format_timestamp member and is set by the format_timestamp() function.
+ *  m_time_format member and is set by the format_timestamp() function.
  *
  * \param ts
  *      Provides the timestamp in units of MIDI pulses.
@@ -672,7 +672,7 @@ editable_event::timestamp (midipulse ts)
  * \setter event::set_timestamp() [string version]
  *
  *  The format of the string representation is of the format selected by the
- *  m_format_timestamp member and is set by the format_timestamp() function.
+ *  m_time_format member and is set by the format_timestamp() function.
  *
  * \param ts_string
  *      Provides the timestamp in units of MIDI pulses.
@@ -691,18 +691,20 @@ editable_event::timestamp (const std::string & ts_string)
 
 /**
  *  Formats the current timestamp member as a string.  The format of the
- *  string representation is of the format selected by the m_format_timestamp
+ *  string representation is of the format selected by the m_time_format
  *  member.
+ *
+ *  m_name_timestamp is mutable.
  */
 
 std::string
-editable_event::format_timestamp ()
+editable_event::format_timestamp () const
 {
-    if (m_format_timestamp == timeformat::bbt)
+    if (m_time_format == timeformat::bbt)
         m_name_timestamp = time_as_measures();
-    else if (m_format_timestamp == timeformat::hms)
+    else if (m_time_format == timeformat::hms)
         m_name_timestamp = time_as_minutes();
-    else if (m_format_timestamp == timeformat::ticks)
+    else if (m_time_format == timeformat::ticks)
         m_name_timestamp = time_as_pulses();
     else
         m_name_timestamp = "unsupported category in editable event";
@@ -717,7 +719,7 @@ editable_event::format_timestamp ()
  */
 
 std::string
-editable_event::time_as_measures ()
+editable_event::time_as_measures () const
 {
     if (not_nullptr(parent()))
     {
@@ -738,7 +740,7 @@ editable_event::time_as_measures ()
  */
 
 std::string
-editable_event::time_as_minutes ()
+editable_event::time_as_minutes () const
 {
     if (not_nullptr(parent()))
     {
@@ -791,6 +793,11 @@ editable_event::time_as_minutes ()
  *      applicable to the event.  Some meta event may provide multiple values
  *      in this string.
  *
+ * \param text
+ *      Provides the text needed to provide additional values to meta events
+ *      and SysEx events. For a Note On/Off, this will be the link-time,
+ *      if that's feasible to do here. It is not.
+ *
  * \param chan
  *      Provides the string name for the channel.  If empty (the default
  *      value), the channel is not changed.  The name of the channel is re
@@ -821,6 +828,15 @@ editable_event::set_status_from_string
             set_data(d0);
         else if (is_two_byte_msg(status))
             set_data(d0, d1);
+
+#if defined AUTOMATIC_NOTE_OFF
+        if (is_strict_note_msg(c))
+        {
+            if (! text.empty)
+            {
+                midipulse t = parent()->string_to_pulses(text);
+        }
+#endif
     }
     else
     {

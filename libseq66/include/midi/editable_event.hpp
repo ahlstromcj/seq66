@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2026-07-10
+ * \updates       2026-07-11
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -216,13 +216,15 @@ private:
      *      timestamp_format_t m_format_timestamp;
      */
 
-    timeformat m_format_timestamp;
+    timeformat m_time_format;
 
     /**
      *  Holds the string version of the MIDI pulse's time-stamp.
+     *  It is mutable so it can be adjust according to the selected
+     *  time-format.
      */
 
-    std::string m_name_timestamp;
+    mutable std::string m_name_timestamp;
 
     /**
      *  Holds the name of the status value for this event.  It will include
@@ -305,6 +307,16 @@ public:
 
     void category (const std::string & cs);
 
+    timeformat time_format () const
+    {
+        return m_time_format;
+    }
+
+    void time_format (timeformat tf)
+    {
+        m_time_format = tf;
+    }
+
     const std::string & timestamp_string () const
     {
         return m_name_timestamp;
@@ -329,13 +341,13 @@ public:
      *  pulses.
      */
 
-    std::string time_as_pulses ()
+    std::string time_as_pulses () const
     {
         return pulses_to_string(timestamp());
     }
 
-    std::string time_as_measures ();
-    std::string time_as_minutes ();
+    std::string time_as_measures () const;
+    std::string time_as_minutes () const;
     void set_status_from_string
     (
         const std::string & ts,
@@ -351,7 +363,7 @@ public:
         const std::string & sd1,
         const std::string & chan
     );
-    std::string format_timestamp ();
+    std::string format_timestamp () const;  /* but mutable */
     std::string stock_event_string ();
     std::string ex_data_string () const;
     std::string ex_text_string () const;

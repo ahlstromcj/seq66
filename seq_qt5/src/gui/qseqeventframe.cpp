@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-07-10
+ * \updates       2026-07-11
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -250,14 +250,6 @@ qseqeventframe::qseqeventframe
     );
 
     ui->pulse_time_check_box->hide();
-
-#if 0
-    connect
-    (
-        ui->pulse_time_check_box, SIGNAL(stateChanged(int)),
-        this, SLOT(slot_pulse_time_state(int))
-    );
-#endif
 
     /*
      *  Experimental. Monitor the D0 field for changes via user edit.
@@ -781,21 +773,6 @@ qseqeventframe::slot_hex_data_state (int state)
     initialize_table();
 }
 
-void
-qseqeventframe::slot_pulse_time_state (int state)
-{
-    (void) state;
-#if 0
-    bool is_true = state != Qt::Unchecked;
-    m_show_time_as_pulses = is_true;
-    m_eventslots->pulses(is_true);
-    m_time_format = is_true ? timeformat::ticks : timeformat::bbt ;
-    m_eventslots->time_format(is_true ? timeformat::ticks : timeformat::bbt);
-    ui->time_format_button->setText(is_true ? "Ticks" : "BBT");
-    initialize_table();
-#endif
-}
-
 /**
  *  Also gets the characters remaining after translation to encoded
  *  MIDI bytes.  Too slow? No.
@@ -1088,7 +1065,10 @@ qseqeventframe::set_event_category (const std::string & c)
 }
 
 /**
- * NEW
+ * TODO:
+ *
+ *  When the user has edited the string, we need to use the time-format
+ *  to figures out how to convert the time-string to ticks.
  */
 
 void
@@ -1101,11 +1081,18 @@ qseqeventframe::slot_timestamp_change ()
     }
     else
     {
-        midipulse p { track().timestring_to_ticks(ts) };
+        /*
+         * midipulse p { track().timestring_to_ticks(ts) };
+         */
+
+        const midi_timing & mt = m_eventslots->midi_timing_cref();
+        midipulse p { string_to_pulses(ts, mt, m_time_format) };
         if (p >= track().get_length())
             ui->entry_ev_timestamp->setText(qt(m_current_timestamp));
         else
             m_current_timestamp = ts;
+
+        ui->button_modify->setEnabled(true);
     }
 }
 
@@ -1308,7 +1295,7 @@ void
 qseqeventframe::set_event_line (int row, const editable_event & ev)
 {
     const editable_event & ev2 = m_eventslots->lookup_link(ev);
-    std::string linktime = ev2.timestamp_string();
+    std::string linktime = ev2.format_timestamp();
     std::string evtimestamp = m_eventslots->time_string(ev.timestamp());
     std::string evname = ev.status_string();
     int buss = int(ev.input_bus());
@@ -1550,6 +1537,10 @@ qseqeventframe::slot_delete ()
  *
  *  If USE_QCHANNELPOPUP_CODE is defined, this combo-box is under
  *  the control of the qchannelpopup object.
+ *
+ *  We convert the entered value to pulses as per the current time format.
+ *  Then we convert it to BBT so we don't have to mess with a lot of
+ *  event-slot and editable-event functions.
  */
 
 void
@@ -1557,19 +1548,47 @@ qseqeventframe::slot_insert ()
 {
     if (m_eventslots)
     {
-        std::string ts = ui->entry_ev_timestamp->text().toStdString();
-        std::string name = ui->combo_ev_name->currentText().toStdString();
-        std::string d0 = ui->entry_ev_data_0->text().toStdString();
-        std::string d1 = ui->entry_ev_data_1->text().toStdString();
-        std::string busno = "-";
-        std::string ch = ui->channel_combo_box->currentText().toStdString();
-        std::string text = ui->data_text_edit->toPlainText().toStdString();
+        std::string tstext { ui->entry_ev_timestamp->text().toStdString() };
+        const midi_timing & mt { m_eventslots->midi_timing_cref() };
+        midipulse p { string_to_pulses(tstext, mt, m_time_format) };
+        std::string ts { time_format_string(timeformat::bbt, p, mt) };
+        std::string name { ui->combo_ev_name->currentText().toStdString() };
+        std::string d0 { ui->entry_ev_data_0->text().toStdString() };
+        std::string d1 { ui->entry_ev_data_1->text().toStdString() };
+        std::string busno { "-" };
+        std::string ch { ui->channel_combo_box->currentText().toStdString() };
+        std::string text { ui->data_text_edit->toPlainText().toStdString() };
         text = string_to_midi_bytes(text);      /* encode for ext ASCII     */
+
         std::string linktime;                   /* empty, no link time yet  */
         bool has_events = m_eventslots->insert_event
         (
             ts, name, d0, d1, ch, text
         );
+#if defined AUTOMATIC_NOTE_OFF
+
+        /*
+         * This doesn't seem to be feasible.
+         * Must reload the pattern.
+         */
+
+        if (name == "Note On" && m_linked_selection)
+        {
+            std::string offname { "Note Off" };
+            std::string offd1 { "0" };
+            std::string offlinktime { ts };
+            midipulse offp = p + track().step_edit_note_length();
+            std::string offts
+            {
+                time_format_string(timeformat::bbt, offp, mt)
+            };
+            linktime = time_format_string(timeformat::bbt, p, mt);
+            (void) m_eventslots->insert_event
+            (
+                ts, name, d0, d1, ch, text
+            );
+        }
+#endif
         set_seq_lengths(get_lengths());
         if (has_events)
         {
@@ -1578,9 +1597,9 @@ qseqeventframe::slot_insert ()
             ui->eventTableWidget->insertRow(cr);
             set_row_height(cr, sc_event_row_height);
             if (text.empty())
-                set_event_line(cr, ts, name, busno, chan, d0, d1, linktime);
+                set_event_line(cr, tstext, name, busno, chan, d0, d1, linktime);
             else
-                set_event_line(cr, ts, name, busno, chan, text, d1, linktime);
+                set_event_line(cr, tstext, name, busno, chan, text, d1, linktime);
 
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
@@ -1827,24 +1846,13 @@ qseqeventframe::slot_next_time_format ()
 {
     m_time_format = next_time_format(m_time_format);
 
-    std::string tf;
-    if (m_time_format == timeformat::bbt)
-        tf = "BBT";
-    else if (m_time_format == timeformat::hms)
-        tf = "HMS";
-    else
-        tf = "Ticks";
-
+    std::string tf { time_format_name(m_time_format) };
     ui->time_format_button->setText(qt(tf));
     m_eventslots->time_format(m_time_format);
 
-#if 0
-    bool is_true = m_time_format == timeformat::ticks;
-    m_eventslots->pulses(is_true);
-    m_show_time_as_pulses = is_true;
-    ui->time_format_button->setCheck(is_true);
-#endif
-
+    const editable_event & ev { m_eventslots->current_event() };
+    tf = ev.format_timestamp();
+    ui->entry_ev_timestamp->setText(qt(tf));
     initialize_table();
 }
 
@@ -1862,7 +1870,7 @@ qseqeventframe::set_controller_entry
     midibyte control
 )
 {
-    QAction * item = new_qaction(text, this);   // hmmmmmmmmmm
+    QAction * item = new_qaction(text, this);
     menu->addAction(item);
     connect
     (
