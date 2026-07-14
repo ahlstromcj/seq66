@@ -1,7 +1,17 @@
+        cmdlineopts module illustrates features of getopt we have not yet
+        implemented in cfg66:
+
+        -   partial matching of long options.
+        -   detection of mbiguous options due to no being long enough
+
+            option '--h' is ambiguous; possibilities:
+            '--help' '--home' '--hide-ports'
+
         libseq66/src/cfg/midicontrolfile.cpp
         libseq66/include/cfg/rcsettings.hpp
         libseq66/include/ctrl/automation.hpp
         libseq66/include/ctrl/keycontainer.hpp
+        libseq66/include/ctrl/keycontrol.hpp
         libseq66/include/ctrl/midicontrol.hpp
         libseq66/include/ctrl/midicontrolin.hpp
         libseq66/include/ctrl/midilearn.hpp         [NEW]

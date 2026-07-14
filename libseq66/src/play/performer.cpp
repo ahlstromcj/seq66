@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-07-09
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -794,7 +794,7 @@ performer::notify_resolution_change (int ppq, midibpm bpm, change mod)
 void
 performer::notify_song_action (bool signalit, playlist::action act)
 {
-    if (act != playlist::action::none)
+    if (act != playlist::action::song)
     {
         bool issong
         {
@@ -7782,7 +7782,7 @@ performer::midi_control_keystroke (const keystroke & k)
 
                 automation::action a = kc.action_code();
                 bool invert = ! kkey.is_press();
-                int d0 = (-1);                                  /* key flag */
+                int d0 = keystroke_control_flag();              /* key flag */
                 int d1 = 0;                                     /* no d1    */
                 int index = kc.control_code();
                 bool learning = is_group_learn();               /* before   */
@@ -10165,7 +10165,13 @@ performer::automation_playlist_song
     {
         if (a == automation::action::toggle)            /* select-by-value  */
         {
-            result = open_select_song_by_midi(d1);
+            if (is_keystroke_control(d0))
+            {
+                result = open_next_song();
+                notify_song_action(true, playlist::action::next_song);
+            }
+            else
+                result = open_select_song_by_midi(d1);
         }
         else if (a == automation::action::on)           /* select-next      */
         {

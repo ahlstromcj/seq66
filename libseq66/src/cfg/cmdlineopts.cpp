@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-07-13
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -459,6 +459,56 @@ cmdlineopts::get_compound_option
 }
 
 /**
+ *  Removes the initial dashes in a token.
+ */
+
+static std::string
+strip_dashes (const std::string & option)
+{
+    std::string result;
+    if (! option.empty())
+    {
+        std::string::size_type opos { 0 };
+        while (option[opos] == '-')
+            ++opos;
+
+        result = option.substr(opos);
+    }
+    return result;
+}
+
+/**
+ *  Checks for partial matches. It turns out GNU getopt() can match
+ *  options on the first unique letters. For example, "--hel" will
+ *  match "--help" if there is no "--hello" option. This function
+ *  is used for long-form options.
+ *
+ *  Use only for long-form options (two dashes).
+ */
+
+static bool
+partial_matches_option
+(
+    const std::string & partial,
+    const std::string & option
+)
+{
+    std::string p { strip_dashes(partial) };
+    std::string op { strip_dashes(option) };
+    bool result { true };
+    std::string::size_type index { 0 };
+    for (auto c : p)
+    {
+        if (index > op.size() || c != op[index++])
+        {
+            result = false;
+            break;
+        }
+    }
+    return result;
+}
+
+/**
  *  Checks to see if the first option is a help or version argument, just so
  *  we can skip the "Reading configuration ..." messages.  Also check for the
  *  "?" option that people sometimes use as a guess to get help.
@@ -481,21 +531,30 @@ cmdlineopts::help_check (int argc, char * argv [])
     for ( ; argc > 1; --argc)
     {
         std::string arg { argv[argc - 1] };
+        if (arg == "?")
+        {
+            result = true;
+        }
+        else
+        {
+            result =
+                arg == "-h" ||
+                arg == "-V" ||
+                partial_matches_option(arg, "--version") ||
+                partial_matches_option(arg, "--help") ||
+                arg == "-#"
+                ;
+        }
+#if 0
         if
         (
             (arg == "-h") || (arg == "--help") ||
             (arg == "-V") || (arg == "--version") ||
             (arg == "-#")
         )
-        {
-            result = true;
+#endif
+        if (result)
             break;
-        }
-        else if (arg == "?")
-        {
-            result = true;
-            break;
-        }
     }
     return result;
 }

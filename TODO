@@ -1,18 +1,20 @@
 TO DO for Seq66 0.99.26
 Chris Ahlstrom
-2019-04-13 to 2026-07-13
+2019-04-13 to 2026-07-14
+
+Back burner:
 
     -   MIDI Learn.
-        -   The Live/Song button enables the blue song-record button,
-            but the keystroke P does not.
-        -   The slot-shift key (/) does not get logged into
-            the learn manager.
-        -   Why is "Solo" disabled?
-        -   The "Song" button shows song_record!
-        -   F2 --> playllist; F3 --> playlist instead of playlist_song.
-        -   Do not fill in an automation name when loop/mutes
-            are selected.
         -   Add a slot::metronome toggle? Only one slot left!
+        -   Do not fill in an automation name when loop/mutes
+            are selected. How?
+    -   Edit / Preferences / Metronome.
+        How can we implement count-in and background recording
+        properly? Is it worth it when one can just set up a
+        pattern to expand when notes are struck?
+    -   Events tab:
+        -   Adding a Note On should add a Note off of PPQN/16, but
+            currently not easily done due to the need to add links.
     -   Patterns.
         -   In a pattern slot, if another slot has Record on, disable
             the menu entry. (Or change both at once?)
@@ -22,15 +24,6 @@ Chris Ahlstrom
             -   Flatten triggers.
             -   Delete triggers (new)?
             -   Cut / Delete / Clear events
-    -   Events tab:
-        -   Adding a Note On should add a Note off of PPQN/16, but
-            currently not easily done due to the need to add links.
-        -   Broken: changes after the second "Grow" do not stick.
-        -   In calculations : midi_measures_to_pulses() #678,
-            calculation of ticks_per_meas is WRONG.
-
-Back burner:
-
     -   Should we have new global SeqSpecs?
         -   Overrides the 'rc' setting for recording by buss.
         -   Overrides the 'rc' setting for recording by channel.
@@ -60,10 +53,6 @@ NSM:
 
 Backlog:
 
-    -   Edit / Preferences / Metronome.
-        How can we implement count-in and background recording
-        properly? Is it worth it when one can just set up a
-        pattern to expand when notes are struck?
     -   Takes up too much space:
         -   The buss name could be shown as a field in the event editor.
         -   Also could show channel names if provided in 'usr' file.

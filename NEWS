@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.26
 Chris Ahlstrom
-2015-07-10 to 2026-07-13
+2015-07-10 to 2026-07-14
 
 # Change Log
 
-## [0.99.26] - 2026-07-13
+## [0.99.26] - 2026-07-14
 
 "MIDI Learn"
 
@@ -15,7 +15,7 @@ from other MIDI applications. Uses a "Learn Manager" dialog.
 
 ### Added
 
--   MIDI learn! See that section in the user manual for details
+-   MIDI learn! See that section in the user manual for details.
 -   The new "font-fix.qss" style sheet can be used to correct
     font sizes (and only font sizes).
 -   More tool-tips.
@@ -55,6 +55,9 @@ from other MIDI applications. Uses a "Learn Manager" dialog.
 -   Event editor.
     -   Fixes to some event handling, such as pitch-wheel.
     -   Added filling in of some data depending on the event selected.
+-   Command-line.
+    -   Fixed --help and --version abbreviations so that the application
+        stops after, say, options --hel, for example.
 
 ### Removed
 

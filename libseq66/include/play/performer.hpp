@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-07-10
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -1181,7 +1181,7 @@ private:
     void notify_song_action
     (
         bool signalit = true,
-        playlist::action act = playlist::action::none
+        playlist::action act = playlist::action::song
     );
 
 public:

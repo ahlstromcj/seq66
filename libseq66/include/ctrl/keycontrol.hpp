@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2022-05-13
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  *  This class is similar in intent to the midicontrol class, but is simpler
@@ -195,6 +195,22 @@ private:
 
 };              // class keycontrol
 
+/*----------------------------------------------------------------------------
+ * Free functions
+ *--------------------------------------------------------------------------*/
+
+inline int
+keystroke_control_flag ()
+{
+    return (-1);
+}
+
+inline bool
+is_keystroke_control (int d0)
+{
+    return d0 == keystroke_control_flag();
+}
+
 }               // namespace seq66
 
 #endif          // SEQ66_KEYCONTROL_HPP
@@ -204,4 +220,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

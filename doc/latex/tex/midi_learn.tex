@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2026-06-22
-% \update      2026-07-09
+% \update      2026-07-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -41,12 +41,11 @@
       \item There is currently no way to make the learnable
          controls obvious. If an action is learnable, it
          shows up in the learn manager.
+         There is also a cheat-sheet and section of this manual
+         that show the learnable controls.
       \item Ignoring the live-grid slots, there are currently only
          80 or so user-interface actions that can be mapped.
-         Not everything clickable can be mapped,
-         and currently there is no way know without trying them,
-         though the most common visible actions are mappable.
-         This could be expanded somewhat, pending user requests.
+         Not everything clickable can be mapped.
       \item There are no "continuous controls" (such as a volume
          or pan knob) in \textsl{Seq66}.
          Hence no direct mappings of CC events.
@@ -56,6 +55,8 @@
          is clumsy.
       \item There is no way to use MIDI Learn to set up output
          control events to affect lights on the MIDI controller.
+         That has to be done by reading documentation and
+         editing the 'ctrl' file manually.
    \end{itemize}
 
    We are still working on coordinating and improving the MIDI
@@ -209,6 +210,9 @@
    they don't require clicking on the user-interface.
    The \textbf{Automation} control recording requires a little more
    work.
+
+   Note that the keystroke corresponding to a given user-interface element
+   can also be used to activate the wait for a MIDI control event.
 
 \subsection{Learn / Loops}
 \label{subsec:midi_learn_loops}

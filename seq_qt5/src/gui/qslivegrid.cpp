@@ -270,11 +270,11 @@ qslivegrid::qslivegrid
     setAcceptDrops(true);
 
     /*
-     * Redundant, so disabled.
+     * Redundant, so disabled. But this is confusing.
+     *
+     *      if (! is_external())
+     *          enable_solo(false);
      */
-
-    if (! is_external())
-        enable_solo(false);
 
     /*
      * Register to be notified by the performer.

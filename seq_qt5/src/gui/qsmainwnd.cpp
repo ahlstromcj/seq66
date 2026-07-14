@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-06
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -634,9 +634,10 @@ qsmainwnd::qsmainwnd
         this, SLOT(set_song_mute_toggle())
     );
 
-    std::string keyname =
-        cb_perf().automation_key(automation::slot::toggle_mutes);
-
+    std::string keyname
+    {
+        cb_perf().automation_key(automation::slot::toggle_mutes)
+    };
     tooltip_with_keystroke(ui->btnMute, keyname);
     ui->btnMute->setCheckable(true);                /* ok? */
 
@@ -1496,6 +1497,8 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
      *  if (not_nullptr(m_live_frame))
      *      m_live_frame->enable_solo(! playmode);
      */
+
+    cb_perf().last_automation_slot(automation::slot::song_mode, false);
 }
 
 void
@@ -3869,7 +3872,7 @@ qsmainwnd::handle_key_press (const keystroke & k)
     bool done = false;
     if (k.is_press())
     {
-        playlist::action act = playlist::action::none;
+        playlist::action act = playlist::action::song;
         if (k.is_right())
         {
             act = playlist::action::next_song;

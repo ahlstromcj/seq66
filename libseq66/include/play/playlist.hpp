@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2025-06-16
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -62,7 +62,7 @@ public:
     {
         next_list,
         next_song,
-        none,
+        song,
         previous_song,
         previous_list,
         max
@@ -315,7 +315,7 @@ public:
     static action int_to_action (int i)
     {
         action result = static_cast<action>(i);
-        return result < action::max ? result : action::none ;
+        return result < action::max ? result : action::song ;
     }
 
     void show () const;
