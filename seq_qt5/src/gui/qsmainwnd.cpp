@@ -1052,11 +1052,11 @@ qsmainwnd::qsmainwnd
      * CONNECT the menu actions to show_midi_learn_frame
      */
 
-#if defined QT_VERSION_5
+// #if defined QT_VERSION_5
 
-#error Qt 5 not yet done
+// #error Qt 5 not yet done
 
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+// #elif defined QT_VERSION_6 || defined QT_VERSION_7
 
     connect
     (
@@ -1097,7 +1097,7 @@ qsmainwnd::qsmainwnd
         }
     );
 
-#endif          // QT
+// #endif          // QT
 
 #else
 
@@ -1688,10 +1688,12 @@ qsmainwnd::slot_midi_learn_help ()
             dialog->setWindowTitle("MIDI Learn");
             dialog->resize(640, 540);
 
-            std::string html = open_share_doc_file("midi_learn.html", "Learn");
+//          std::string html = open_share_doc_file("midi_learn.html", "Learn");
+            std::string html = open_share_doc_file("midi_learn.html");
             if (html.empty())
+            {
                 html = s_error_html;
-
+            }
             browser->setLineWrapMode(QTextEdit::WidgetWidth);
             browser->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
             browser->setHtml(qt(html));

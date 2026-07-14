@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2026-05-18
+# \update      2026-07-14
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -80,6 +80,7 @@ HEADERS += include/seq66_features.h \
  include/ctrl/midicontrolbase.hpp \
  include/ctrl/midicontrol.hpp \
  include/ctrl/midicontrolout.hpp \
+ include/ctrl/midilearn.hpp \
  include/ctrl/midimacro.hpp \
  include/ctrl/midimacros.hpp \
  include/ctrl/midioperation.hpp \
@@ -167,6 +168,7 @@ SOURCES += src/seq66_features.cpp \
  src/ctrl/midicontrolbase.cpp \
  src/ctrl/midicontrol.cpp \
  src/ctrl/midicontrolout.cpp \
+ src/ctrl/midilearn.cpp \
  src/ctrl/midimacro.cpp \
  src/ctrl/midimacros.cpp \
  src/ctrl/midioperation.cpp \

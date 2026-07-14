@@ -652,8 +652,11 @@ performer::last_automation_slot (automation::slot s, bool notify)
 #endif
 
     m_last_automation_slot = s;
+
+#if SEQ66_MIDI_LEARN_SUPPORT
     if (not_nullptr(midi_learn()))
         midi_learn()->automation_slot(s);
+#endif
 
     if (notify)
         notify_automation_change(s);
@@ -668,8 +671,11 @@ void
 performer::notify_midi_learn (automation::slot s)
 {
     m_last_automation_slot = s;
+
+#if SEQ66_MIDI_LEARN_SUPPORT
     if (not_nullptr(midi_learn()))
         midi_learn()->automation_slot(s);
+#endif
 }
 
 /*
@@ -3602,6 +3608,8 @@ performer::create_master_bus ()
     return result;
 }
 
+#if SEQ66_MIDI_LEARN_SUPPORT
+
 /**
  *  Creates a midilearn object and returns the pointer. This makes
  *  it easier to create it in the qlearnframe member initializer
@@ -3646,6 +3654,8 @@ performer::save_midi_learn (const midicontrolin & mci)
 
     return result;
 }
+
+#endif      // SEQ66_MIDI_LEARN_SUPPORT
 
 /**
  *  Calls the MIDI buss and JACK initialization functions and the input/output
@@ -7878,6 +7888,7 @@ performer::midi_control_event (const event & ev, bool recording)
 
     if (result)
     {
+#if SEQ66_MIDI_LEARN_SUPPORT
         bool mlearn { not_nullptr(midi_learn()) };
         if (mlearn)
         {
@@ -7932,6 +7943,7 @@ performer::midi_control_event (const event & ev, bool recording)
         }
         else
         {
+#endif      // SEQ66_MIDI_LEARN_SUPPORT
             midicontrol::key k(ev);
             const midicontrol & incoming = m_midi_control_in.control(k);
             bool good = incoming.is_usable();
@@ -7960,7 +7972,9 @@ performer::midi_control_event (const event & ev, bool recording)
                     else
                         good = false;
                 }
+#if SEQ66_MIDI_LEARN_SUPPORT
             }
+#endif
         }
 
         /*

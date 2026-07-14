@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2026-06-06
+ * \updates       2026-07-14
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,7 +70,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2026-06-06"
+#define SEQ66_VERSION_DATE_SHORT "2026-07-14"
 #endif
 
 #if ! defined SEQ66_API_VERSION
@@ -78,7 +78,7 @@
 #endif
 
 #if ! defined SEQ66_VERSION
-#define SEQ66_VERSION "0.99.25"
+#define SEQ66_VERSION "0.99.26"
 #endif
 
 #if ! defined SEQ66_GIT_VERSION
@@ -88,6 +88,12 @@
 #if ! defined SEQ66_PACKAGE_VERSION
 #define SEQ66_PACKAGE_VERSION SEQ66_VERSION
 #endif
+
+/**
+ *  A new feature of Seq66 is MIDI Learn.
+ */
+
+#define SEQ66_MIDI_LEARN_SUPPORT        1   /* this works pretty well now   */
 
 /**
  *  This macro helps us adapt our "ui" includes to freaking qmake's
