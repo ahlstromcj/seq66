@@ -1,3 +1,280 @@
+2026-07-15  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, VERSION, doc/latex/tex/midi_learn.tex,
+	libseq66/src/cfg/settings.cpp, meson.build, nsis/MesonSetup.nsi,
+	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
+	nsis/build_release_package.bat, seq_qt5/src/gui/qsmainwnd.cpp: Prep
+	for version 0.99.26.
+
+2026-07-14  Chris <ahlstromcj@gmail.com>
+
+	* include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/libseq66.pro,
+	libseq66/src/play/performer.cpp, seq_qt5/src/gui/qsmainwnd.cpp: 
+	Fixed building MIDI Learn (or not) via the Qt pro files.
+	* NEWS, RELNOTES, TODO, contrib/notes/backports-list.text,
+	doc/latex/tex/midi_learn.tex, libseq66/include/ctrl/keycontrol.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/gui/qslivegrid.cpp, seq_qt5/src/gui/qsmainwnd.cpp: Fixed
+	more MIDI-learn-related issues.
+
+2026-07-13  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, ROADMAP.md, TODO, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/editable_events.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/sessions/smanager.cpp,
+	man/seq66.1, man/seq66cli.1, man/sequencer66.1,
+	seq_qt5/include/qseventslots.hpp,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.hpp, seq_qt5/src/qseventslots.cpp: 
+	Enhanced event editor, add --new command-line option.
+
+2026-07-10  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/akai-mpk-mini-play.text,
+	contrib/notes/backports-list.text, doc/latex/tex/event_editor.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/song_editor.tex,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/midifile.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/seq66_features.h,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qseventslots.hpp,
+	seq_qt5/src/gui/qperfeditframe64.cpp,
+	seq_qt5/src/gui/qperfeditframe64.hpp,
+	seq_qt5/src/gui/qperfeditframe64.ui,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.hpp,
+	seq_qt5/src/gui/qseqeventframe.ui, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/gui/qsmainwnd.hpp, seq_qt5/src/gui/qsmainwnd.ui,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseventslots.cpp: Added an
+	enum class timeformat for bbt, hms, and ticks display support.
+
+2026-07-09  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/learn-ctrls.text,
+	doc/latex/tex/midi_learn.tex, libseq66/include/ctrl/automation.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/gui/qperfeditframe64.cpp,
+	seq_qt5/src/gui/qseqeditframe64.cpp, seq_qt5/src/gui/qsmainwnd.cpp: 
+	Added MIDI Learn slots and a cheat sheet.
+
+2026-07-07  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, README.md, TODO, contrib/notes/learn-ctrls.text,
+	data/license.text, data/readme.text, data/readme.windows,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp,
+	seq_qt5/src/gui/qperfeditframe64.cpp,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qslivegrid.cpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qslivebase.cpp: Removed
+	redundant mod_LR_loop, fixed Untitled appearing on new patterns when
+	hovering.
+
+2026-07-05  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, TODO, contrib/notes/learn-ctrls.text,
+	data/share/doc/info/midi_learn.html, doc/latex/tex/menu.tex,
+	doc/latex/tex/midi_learn.tex, include/seq66-config.h.in,
+	libseq66/include/ctrl/midilearn.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/midilearn.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qseditoptions.ui,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.hpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/gui/qsmainwnd.ui: Filled in some of the gaps in MIDI
+	Learn.
+
+2026-06-28  Chris <ahlstromcj@gmail.com>
+
+	* .gitignore, NEWS, TODO, libseq66/include/midi/calculations.hpp,
+	libseq66/src/ctrl/opcontrol.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.ui, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Fixes related to MIDI Learn and the
+	event editor.
+
+2026-06-25  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/backports-list.text,
+	doc/latex/tex/midi_learn.tex,
+	libseq66/include/ctrl/midicontrol.hpp,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/ctrl/midilearn.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/midicontrolin.cpp,
+	libseq66/src/ctrl/midilearn.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qlearnframe.ui, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qsmainwnd.cpp: MIDI Learn basically complete, test
+	more.
+
+2026-06-23  Chris <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/ctrl/automation.hpp,
+	libseq66/include/ctrl/midilearn.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/automation.cpp, libseq66/src/ctrl/midilearn.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/gui/qlearnframe.cpp,
+	seq_qt5/src/gui/qlearnframe.hpp, seq_qt5/src/gui/qlearnframe.ui,
+	seq_qt5/src/gui/qsmainwnd.hpp: Added the 'hold' action to MIDI
+	Learn.
+
+2026-06-22  Chris <ahlstromcj@gmail.com>
+
+	* TODO, doc/latex/tex/menu.tex, doc/latex/tex/midi_learn.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/ctrl/midilearn.hpp,
+	libseq66/src/ctrl/midilearn.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qlearnframe.ui, work.sh: Got MIDI Learn working,
+	with some coordination fixes still needed.
+
+2026-06-21  Chris <ahlstromcj@gmail.com>
+
+	* include/seq66-config.h.in, libseq66/include/ctrl/midilearn.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/automation.cpp, libseq66/src/ctrl/midilearn.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/src/gui/qlearnframe.cpp,
+	seq_qt5/src/gui/qlearnframe.hpp: Refactoring MIDI Learn, trying to
+	get loops to work.
+
+2026-06-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp: Fixed a build error if MIDI learn
+	not enabled.
+
+2026-06-19  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/ctrl/automation.hpp,
+	libseq66/include/ctrl/keycontrol.hpp,
+	libseq66/include/ctrl/midicontrol.hpp,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/ctrl/midilearn.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/midicontrol.cpp,
+	libseq66/src/ctrl/midicontrolin.cpp,
+	libseq66/src/ctrl/midilearn.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/gui/qlearnframe.cpp,
+	seq_qt5/src/gui/qlearnframe.hpp, seq_qt5/src/gui/qlearnframe.ui,
+	seq_qt5/src/gui/qslivegrid.cpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qt5_helpers.cpp: A lot of work
+	on MIDI Learn, in progress.
+
+2026-06-14  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qt5_helpers.hpp,
+	seq_qt5/src/gui/qperfeditframe64.cpp,
+	seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qslivegrid.cpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/gui/qsmainwnd.ui, seq_qt5/src/qt5_helpers.cpp: Basically
+	all last-automation codes are in place.
+
+2026-06-12  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/backports-list.text,
+	data/linux/qseq66.ctrl, include/seq66-config.h.in,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/ctrl/keycontainer.hpp,
+	libseq66/include/ctrl/midilearn.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/keycontrol.cpp,
+	libseq66/src/ctrl/midicontrol.cpp, libseq66/src/ctrl/midilearn.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseditoptions.hpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/qslotbutton.cpp: Adding automation-slot numbers to
+	actions and buttons, in progress.
+
+2026-06-09  Chris <ahlstromcj@gmail.com>
+
+	* INSTALL, include/seq66-config.h.in,
+	libseq66/include/ctrl/midilearn.hpp, libseq66/include/meson.build,
+	libseq66/src/ctrl/midilearn.cpp, libseq66/src/meson.build,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.ui,
+	seq_qt5/src/gui/qsmainwnd.cpp: Added provisional midilearn class.
+
+2026-06-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/share/doc/info/midi_learn.html,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qlearnframe.ui, seq_qt5/src/gui/qsappinfo.cpp,
+	seq_qt5/src/gui/qsmainwnd.cpp, seq_qt5/src/gui/qsmainwnd.hpp,
+	seq_qt5/src/gui/qsmainwnd.ui: Adding provision help for MIDI Learn,
+	which is far from ready.
+
+2026-06-08  Chris <ahlstromcj@gmail.com>
+
+	* include/seq66-config.h.in, seq_qt5/meson.build,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/gui/qlearnframe.cpp,
+	seq_qt5/src/gui/qlearnframe.hpp, seq_qt5/src/gui/qlearnframe.ui,
+	seq_qt5/src/gui/qpatternfix.cpp, seq_qt5/src/gui/qpatternfix.hpp,
+	seq_qt5/src/gui/qpatternfix.ui, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/gui/qsmainwnd.hpp, seq_qt5/src/gui/qsmainwnd.ui,
+	work.sh: Starting to add MIDI Learn, added qlearnframe.
+
+2026-06-07  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, Seq66qt5/seq66qt5.cpp, TODO,
+	contrib/notes/backports-list.text, data/samples/dark-gradient.qss,
+	data/samples/flat-rounded.qss, data/samples/font-fix.qss,
+	data/samples/green.qss, data/samples/incrypt-66.qss,
+	data/samples/monogreen.qss, data/samples/perstfic-66.qss,
+	doc/latex/tex/preferences.tex, include/seq66-config.h.in,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/performer.cpp,
+	man/seq66.1, meson.build, nsis/meson.build,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/gui/qseditoptions.ui,
+	seq_qt5/src/gui/qsessionframe.ui, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/gui/qsmainwnd.ui, seq_qt5/src/qt5_helpers.cpp: Added
+	font-fix.qss, fixed an issue with a missing makensis application,
+	many minor UI tweaks.
+
+2026-06-06  Chris <ahlstromcj@gmail.com>
+
+	* ChangeLog, TODO, libseq66/src/seq66_features.cpp, work.sh: Release
+	Notes for Seq66 v. 0.99.25 2026-06-06 "Mesonry Opens Doors!" This release contains some minor feature updates and fixes, and a
+	major refactoring of the Seq66 build to use Meson instead of GNU
+	Autotools. The source code tree for the Qt GUI has been rearranged
+	to separate Qt-helper code from the user-interface code.  - Main window.    - The button in Help / About is now an OK button.  - Pattern editor.      - Added a wrench icon for the pattern-fix button.  - Event editor. Added checks on timestamps plus a button to   increase the pattern size by one measure.  - Fixed more QMouseEvent x()/y() deprecations found by the Meson   build.  - Build system.    - Meson is used to manage the build.    - The lib66 library project is used as a Meson subproject.    - The work.sh script provides handy options to apply Meson setup     and compilation.    - The normal build is made in build/cc. Other build subdirectories     are clang, cross, portmidi, and debug.    - Windows. The build, and making the NSIS installer, are
+	    supported.  (The old batch-file build script still works.)   - Build info. Uses the /etc/os-release file if available.    - The CLI (seq66cli) and GUI (qseq66) are both built by default.    - JACK Session support is disabled by default, but can be enabled.    - Except for the Qt libraries, the build is a static build.  - Documentation updated.  See NEWS for many more details.
+
 2026-06-06  Chris Ahlstrom <ahlstromcj@gmail.com>
 
 	* NEWS, README.md, RELNOTES, TODO, VERSION,
