@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2025-07-21
+ * \updates       2026-07-15
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -648,13 +648,26 @@ share_doc_folder_list (const std::string & path_end)
     {
 #if defined SEQ66_PLATFORM_WINDOWS
         std::string s_64_dir = "C:/Program Files/Seq66/data/share/doc";
+        std::string s_build_dir = "data/share/doc/";
+        std::string s_shadow_dir = "../seq66/data/share/doc/";
+
         std::string app_path = seq_app_path();
         std::string path = s_64_dir;
         if (! path_end.empty())
-            path = pathname_concatenate(s_64_dir, path_end);
+        {
+            s_64_dir = pathname_concatenate(s_64_dir, path_end);
+            s_build_dir = pathname_concatenate(s_build_dir, path_end);
+            s_shadow_dir = pathname_concatenate(s_shadow_dir, path_end);
 
-        path[0] = app_path[0];                  /* change C: if needed  */
-        s_folder_list.push_back(path);
+            /*
+             * Change C: (drive letter) if needed.
+             */
+
+            s_64_dir[0] = app_path[0];
+            s_build_dir[0] = app_path[0];
+            s_shadow_dir[0] = app_path[0];
+        }
+        s_folder_list.push_back(s_64_dir);
 #else
         std::string s_usr_dir = "/usr/share/doc/";
         std::string s_usr_local_dir = "/usr/local/share/doc/";
@@ -671,9 +684,9 @@ share_doc_folder_list (const std::string & path_end)
         }
         s_folder_list.push_back(s_usr_dir);
         s_folder_list.push_back(s_usr_local_dir);
+#endif
         s_folder_list.push_back(s_build_dir);
         s_folder_list.push_back(s_shadow_dir);
-#endif
         s_uninitialized = false;
     }
     return s_folder_list;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-14
+ * \updates       2026-07-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1688,7 +1688,6 @@ qsmainwnd::slot_midi_learn_help ()
             dialog->setWindowTitle("MIDI Learn");
             dialog->resize(640, 540);
 
-//          std::string html = open_share_doc_file("midi_learn.html", "Learn");
             std::string html = open_share_doc_file("midi_learn.html");
             if (html.empty())
             {
@@ -1705,7 +1704,9 @@ qsmainwnd::slot_midi_learn_help ()
                 dialog->setLayout(layout);
                 dialog->exec();                     /* opens in modal mode  */
             }
+            delete browser;
         }
+        delete dialog;
     }
 #endif
 }

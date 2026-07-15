@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2026-06-22
-% \update      2026-07-14
+% \update      2026-07-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -17,13 +17,13 @@
 \section{MIDI Learn}
 \label{sec:midi_learn}
 
-   The new (as of version 0.99.26) MIDI Learn feature of
-   \textsl{Seq66} provides rudimentary support for a
+   The MIDI Learn feature of
+   \textsl{Seq66} provides rudimentary, but useful, support for a
    mapping of MIDI events to many of the controls of the
    \textsl{Seq66} user-interface.
 
-   Hitherto, adding these mappings required looking up
-   a MIDI controllers output events in its programmer's
+   Previously, adding these mappings required looking up
+   a MIDI controller's output events in its programmer's
    manual, and then hand-editing them into a
    \textsl{Seq66} 'ctrl' file.
    See \sectionref{subsec:configuration_ctrl}.
@@ -41,8 +41,10 @@
       \item There is currently no way to make the learnable
          controls obvious. If an action is learnable, it
          shows up in the learn manager.
-         There is also a cheat-sheet and section of this manual
+         There is a cheat-sheet and section of this manual
          that show the learnable controls.
+         Also, if a button supports automation, the
+         automation action name is shown in the learn manager.
       \item Ignoring the live-grid slots, there are currently only
          80 or so user-interface actions that can be mapped.
          Not everything clickable can be mapped.
@@ -51,22 +53,17 @@
          Hence no direct mappings of CC events.
          However, they can still be used to trigger
          an action.
-      \item Making corrections, especially for loops and mute-groups,
-         is clumsy.
+      \item Making corrections for loops and mute-groups is clumsy.
       \item There is no way to use MIDI Learn to set up output
          control events to affect lights on the MIDI controller.
          That has to be done by reading documentation and
          editing the 'ctrl' file manually.
    \end{itemize}
 
-   We are still working on coordinating and improving the MIDI
-   Learn process.
-
-   Prior to using MIDI learn, the MIDI controls from the 'ctrl' are
-   loaded at start-up, and copied into the "performer" as the main
-   control set, if set as active in the 'rc'.
-   Remember that a control container has three sections for input
-   controls.
+   Prior to using MIDI learn, the MIDI controls from the currently-active
+   'ctrl' file are loaded at start-up, and copied into the main
+   control set.  Remember that a control container has three sections for
+   \textsl{input} controls.
 
    \begin{itemize}
       \item \textbf{[loop-control]}
@@ -74,12 +71,11 @@
       \item \textbf{[automation-control]}
    \end{itemize}
 
-   We'll call these "Categories".
-
-   In each section, present is the name of a hot-key, plus
+   Let's call these automation "categories".
+   Each line of each category provides the name of a hot-key, plus
    three "stanzas" that specify the inverse flag, the event status and
    value, plus a range of acceptable values.
-   The sections are:
+   The stanzas are:
 
    \begin{itemize}
       \item \textbf{[toggle]}
@@ -91,12 +87,12 @@
    are copied into a separate ("original") container to support the
    "Reset" operation, and then copied to another ("current")
    container for modification.
-   When events are added, they are added to the "current" container,
+   When events are added, they are added to the current container,
    replacing any event that matches the current combination of
    category Loops/Mutes/Automation and Toggle/On/Off.
 
-   The following dialog can be brought to the
-   screen by the \textbf{Learn} menu (see\sectionref{subsec:menu_learn}.)
+   The Learn Manager dialog can be brought to the
+   screen via the \textbf{Learn} menu (see\sectionref{subsec:menu_learn}.)
 
 \begin{figure}[H]
    \centering 
@@ -107,6 +103,7 @@
 
    While this dialog is open, the MIDI Learn functionality is available,
    and it goes away when the dialog closes.
+   Here are the controls in this dialog.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -129,7 +126,7 @@
          have been mapped. This operation is simple and fast.
       \item \textbf{Automation}.
          In this mode, the user clicks the desired GUI element,
-         verifies that it's effect is shown in the Learn Manager,
+         verifies that it's action is shown in the Learn Manager,
          and then clicks the desired MIDI controller button.
          This sequence is required for each GUI element to be learned.
    \end{itemize}
@@ -153,8 +150,10 @@
       \item \textbf{Off}.
          If selected, the MIDI control press is allocated as an "off" action.
       \item \textbf{Hold}.
-         A "hold" selection logs the MIDI control press as an "on"
-         action, and logs the MIDI control release as an "off" action.
+         A "hold" selection logs the MIDI control
+         \textsl{press} as an "on"
+         action, and logs the MIDI control
+         \textsl{release} as an "off" action.
          Useful for maintaining a certain state only when the MIDI
          controller button is held down.
    \end{itemize}
@@ -164,7 +163,7 @@
    \begin{itemize}
       \item \textbf{Inverse}.
          "Inverse" reverses the action of the control.
-         Almost never used, as far as we know.
+         Almost never used, really.
       \item \textbf{d1min}.
          Determines the minimum d1 (second data byte) value to
          trigger the action.
@@ -180,13 +179,13 @@
    \itempar{Learn Save}{learn!save}
    When clicked, this copies the currently-entered events into
    the application's main control-in container, and also
-   replaces the "original" container to support a possible
+   replaces the original container to support a possible
    reset operation.
-   In addition, the 'ctrl' file is marked for saving.
+   In addition, the 'ctrl' file is marked for saving at exit.
 
    \itempar{Learn Reset}{learn!Reset}
    When clicked, this copies the original or last-saved events into
-   the current container.
+   the current container, overwriting any changes.
 
    \itempar{Learn Clear All}{learn!clear all}
    When clicked, all events are cleared from the current container.
@@ -212,14 +211,14 @@
    work.
 
    Note that the keystroke corresponding to a given user-interface element
-   can also be used to activate the wait for a MIDI control event.
+   can also be used to select the action to assign to a MIDI control event.
 
 \subsection{Learn / Loops}
 \label{subsec:midi_learn_loops}
 
    In the user interface, the muting and unmuting of a particular pattern in
    the live grid is handled using either a hot-key or by clicking on a
-   button in the grid.
+   button in the on-screen grid.
    The Learn-Loops process allows easy assignment of a MIDI event
    to each grid slot.
 
@@ -230,9 +229,10 @@
    \begin{enumber}
       \item Bring up the Learn Manager and make sure the \textbf{Loops}
          radio button is active.
-      \item Make sure the Loops \textbf{Active Events} count is zero.
+      \item If desired, make sure the Loops
+         \textbf{Active Events} count is zero.
          If not, click the \textbf{Clear} button, which clears
-         \textsl{all} controls, or click the \textbf{Clear loop}.
+         \textsl{all} controls, or click \textbf{Clear loop}.
          Beware!
       \item Verify that the \textbf{Next Control} box shows "Loop 0".
       \item Leave the \textbf{Action} set to \textsl{Toggle},
@@ -244,7 +244,7 @@
          to toggle pattern 0.
       \item Click the remaining buttons all the way up to pattern 31.
          One can stop early, if desired.
-         Verify that the \textbf{Active Events} count are
+         Verify that the \textbf{Active Events} count is
          as expected.
       \item If some mistakes were made, the only recourse is to
          click the \textbf{Reset} button and start over.
@@ -261,12 +261,13 @@
    When activated, this process works by auto-incrementing the
    mute-group number
    from 0 to 31 as each MIDI controller button is pressed.
-   Obviously, this works best on a grid controller.
+   This works best on a grid controller.
 
    \begin{enumber}
       \item Bring up the Learn Manager and make sure the \textbf{Mutes}
          radio button is active.
-      \item Make sure the Mutes \textbf{Active Events} count is zero.
+      \item If desired,
+         make sure the Mutes \textbf{Active Events} count is zero.
          If not, click the \textbf{Clear} button, which clears
          \textsl{all} controls, or click the \textbf{Clear mutegroup}.
          Beware!
@@ -281,7 +282,7 @@
          to toggle mute-group 0.
       \item Click the remaining buttons all the way up to mute-group 31.
          One can stop early, if desired.
-         Verify that the \textbf{Active Events} count are
+         Verify that the \textbf{Active Events} count is
          as expected.
       \item If some mistakes were made, the only recourse is to
          click the \textbf{Reset} button and start over.
@@ -300,25 +301,29 @@
    \begin{enumber}
       \item Bring up the Learn Manager and make sure the
          \textbf{Automation} radio button is active.
-      \item Make sure the Automation \textbf{Active Events} count is zero.
+      \item If desired,
+         make sure the Automation \textbf{Active Events} count is zero.
          If not, click the \textbf{Clear} button, which clears
          \textsl{all} controls, or click the \textbf{Clear automation}.
          Beware!
+         There's no real need to clear it if all one wants to do
+         is add more automation controls.
       \item Verify that the \textbf{Next Control} box shows
-         "Automation" followed by the name of the desired control.
+         "Automation" followed by the (internal)
+         name of the desired control.
       \item Leave the \textbf{Action} set to \textsl{Toggle},
          the \textbf{Inverse} unchecked, \textbf{d1min} set to 0,
          and \textbf{d1max} set to 127.
          This ensures good recording and acceptance of all note velocities,
          for example.
-      \item Click the first button on the controller to log that event
-         to toggle mute-group 0.
-      \item Click the remaining buttons all the way up to mute-group 31.
+      \item Click the desired button on the controller to log that event.
+      \item Click the other user-interface elements, following each
+         click with a button press on the MIDI controller.
          One can stop early, if desired.
-         Verify that the \textbf{Active Events} count are
+         Verify that the \textbf{Active Events} count is
          as expected.
-      \item If some mistakes were made, the only recourse is to
-         click the \textbf{Reset} button and start over.
+      \item If some mistakes were made, just repeat the desired
+         mapping.
       \item Click the \textbf{Save} button.
          This copies the current events to the main control-in set.
    \end{enumber}
