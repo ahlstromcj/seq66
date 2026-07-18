@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>620</height>
+    <width>906</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -543,7 +543,7 @@ H:M:S, and ticks (MIDI pulses) formats.</string>
        <enum>QTabWidget::TabShape::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>1</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -1780,7 +1780,7 @@ beats/minute.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>902</width>
+     <width>906</width>
      <height>26</height>
     </rect>
    </property>

@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-06-22
+# \update         2026-07-16
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-06-22"
+export SEQ66_SCRIPT_EDIT_DATE="2026-07-16"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -138,6 +138,7 @@ get_options () {
 
                   *)
                      BUILD_DIR="$BASE_BUILD_DIR/$2"
+                     MAKEFILE="$BUILD_DIR/build.ninja"
                      shift 2
                      ;;
                esac

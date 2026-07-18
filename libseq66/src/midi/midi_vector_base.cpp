@@ -537,7 +537,7 @@ midi_vector_base::fill_proprietary ()
         put_seqspec(c_midibus, 1);
         put(b);                                     /* MIDI out buss number */
     }
-    b = seq().seq_midi_in_bus();                    /* MIDI out buss number */
+    b = seq().seq_midi_in_bus();                    /* MIDI in buss number  */
     if (is_good_buss(b))
     {
         put_seqspec(c_midiinbus, 1);

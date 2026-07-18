@@ -5,7 +5,7 @@ Copyright (c) DevSec Studio. All rights reserved.
 \library       seq66 application
 \author        Chris Ahlstrom
 \date          2023-10-18
-\updates       2026-06-07
+\updates       2026-07-17
 \license       MIT
 
 MIT License
@@ -229,10 +229,13 @@ QComboBox
     padding: 1px 23px 1px 3px;
     border: 1px solid #a08070;
     border-radius: 3px;
-    min-width: 64px;
-    max-width: 108px;
+    /*
+    min-width: 180px;
+    max-width: 200px;
+    */
 }
 
+/*
 QComboBox::drop-down
  {
     subcontrol-origin: padding;
@@ -254,6 +257,7 @@ QComboBox QAbstractView
     selection-background-color: #999999;
     selection-color: #4f4f4f;
 }
+*/
 
 QToolTip
 {
@@ -291,7 +295,7 @@ QToolButton::pressed
 QTabBar::tab
 {
     color: #ffa000;
-    font-size: 11pt;
+    font-size: 10pt;
     font-weight: bold;
     width: 80px;
     border: 1px solid #444;
@@ -342,18 +346,22 @@ QTabBar::tab:!selected:hover
 /* Additions from DevSec's Cstartpage.qss */
 
 /*-----QCheckBox-----*/
+
+/*
 QCheckBox
 {
-    /*background-color: transparent;*/
     color: #ffa000;
     font-weight: normal;
     padding: 2px;
 }
 
+QCheckBox::disabled
+{
+    color: #656565;
+}
+
 QCheckBox::indicator
 {
-    /*color: #ffa000;*/
-    /*background-color: #000000;*/
     border: 1px solid #41cd52;
     width: 10px;
     height: 10px;
@@ -361,7 +369,21 @@ QCheckBox::indicator
 
 QCheckBox::indicator:checked
 {
-    /*image:url("./resources/check.png"); To replace*/
+    border: 1px solid #41cd52;
+    color: #000000
+    background-color: #c0c0c0;
+}
+
+QCheckBox::indicator:checked:hover
+{
+    color: #000000
+    background-color: #c0c0c0;
+    border: 1px solid #41cd52;
+}
+
+QCheckBox::indicator:unchecked
+{
+    color: #000000
     background-color: #c0c0c0;
     border: 1px solid #41cd52;
 }
@@ -371,17 +393,13 @@ QCheckBox::indicator:unchecked:hover
     border: 1px solid #41cd52;
 }
 
-QCheckBox::disabled
-{
-    color: #656565;
-}
-
 QCheckBox::indicator:disabled
 {
     background-color: #656565;
     color: #656565;
     border: 1px solid #656565;
 }
+*/
 
 QSpinBox
 {

@@ -3,8 +3,8 @@
 ; File:         MesonSetup.nsi (compare to Seq66Setup.nsi)
 ; Author:       Chris Ahlstrom
 ; Date:         2026-05-16
-; Updated:      2026-07-15
-; Version:      0.99.26
+; Updated:      2026-07-17
+; Version:      0.99.27
 ;
 ; Usage of this Windows build script is a little different from
 ; Seq66Setup.nsi, since the 'release' directory does not come

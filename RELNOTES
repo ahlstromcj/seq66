@@ -1,41 +1,14 @@
-Release Notes for Seq66 v. 0.99.26 2026-07-15 "MIDI Learn".
+Release Notes for Seq66 v. 0.99.27 2026-07-17 "The Fix Is In".
 
-This version introduces the Seq66 flavor of MIDI Learn. See NEWS,
-the Help menu, and the user manual. It works differently from other
-implementations of MIDI Learn.
+This version, so far, is just fixes and tweaks.
 
-- MIDI Learn.
-  - Control actions via keys and buttons have been added
-    to augment MIDI Learn.
-  - Remove the automation::slot::mod_LR_loop slot.
-- Main window and song editor.
-  - The time-display now cycles through B:B:T, H:M:S, and ticks.
 - Pattern editor.
-- Added "Jitter" to the pattern editor tools.
+  - Fixed the left-align and right-align pattern-fix actions by
+    bypassing initial meta events.
 - Event editor.
-  - Added a button to enlarge the pattern by one measure.
-  - Replaced the "Ticks" check-box with a button to cycle through
-    display of time in B:B:T, H:M:S, or ticks.
-  - Fixes to some event handling, such as pitch-wheel.
-  - Added filling in of some data depending on the event selected.
 - Build system.
-  - A missing "makensis" application no longer causes a build error.
 - Command-line:
-  - The --investigate option turns off the log file for easier
-    debugging.
-  - Added a --new option to avoid loading the most-recent
-    file for the current run.
-  - Fixed --help and --version abbreviations so that the application
-    stops after, say, options --hel, for example.
 - Miscellaneous:
-  - Most of the 'qss' files have been tweaked.
-  - The new "font-fix.qss" style sheet can be used to correct font
-    sizes. Other style sheets have been updated, as well..
-  - Beefed up the tool-tips.
-  - Changed the shortcut (accelerator key) for Import / Project
-    Configuration from Ctrl-J ("LF") to Ctrl-G ("BEL").
-  - Fixed some notable errors. See "Fixed" in NEWS. Also
-    fixed quite a few minor errors.
-- Documentation updated to explain the MIDI Learn Manager.
+- Documentation updated.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

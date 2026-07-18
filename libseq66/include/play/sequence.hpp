@@ -2193,7 +2193,7 @@ protected:
         m_free_channel = flag;
     }
 
-private:
+protected:      // private:
 
     midipulse apply_time_factor
     (
@@ -2215,6 +2215,11 @@ private:
     performer * perf ()
     {
         return m_parent;
+    }
+
+    void perf (performer * p)
+    {
+        m_parent = p;
     }
 
     bool check_oneshot_recording ();

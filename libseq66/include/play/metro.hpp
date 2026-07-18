@@ -452,8 +452,7 @@ public:
 #endif      // SEQ66_METRO_HPP
 
 /*
- * recorder.hpp
+ * metro.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

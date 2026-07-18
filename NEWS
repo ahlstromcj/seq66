@@ -1,8 +1,26 @@
-NEWS for Seq66 0.99.26
+NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-07-15
+2015-07-10 to 2026-07-17
 
 # Change Log
+
+## [0.99.27] - 2026-07-17
+
+"The Fix Is In"
+
+### Added
+
+### Changed
+
+### Fixed
+
+-   Pattern editor.
+    -   The "left align" pattern fix was broken by the new automatic
+        insertion of an initial time-signature event. Now we bypass
+        all initial meta events to get the amount of time-shift needed.
+    -   Fixed "right align" in a similar way.
+
+### Removed
 
 ## [0.99.26] - 2026-07-15
 

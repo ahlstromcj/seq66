@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-10-22
+ * \updates       2026-07-17
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -1114,6 +1114,10 @@ eventlist::move_selected_events (midipulse delta_tick)
  *  Makes the first event start at time 0. Might also change the length of
  *  the pattern. Hmmm???
  *
+ *  Another issue surfaced when we started adding an initial time-signature
+ *  event at time 0. This kills left-alignment. So we have to ignore that
+ *  event. So now we ignore Meta events to get to the start event.
+ *
  * \param relink
  *      If true (the default is false), the events are sorted and relinked.
  *
@@ -1125,39 +1129,47 @@ eventlist::move_selected_events (midipulse delta_tick)
 bool
 eventlist::align_left (bool relink)
 {
-    bool result = ! empty();
+    bool result { ! empty() };
     if (result)
     {
-        const auto startev = m_events.begin();
-        midipulse shift = startev->timestamp();
-        result = shift > 0;
-        if (result)
+        midipulse shift { 0 };
+        bool firstevent { false };
+        for (auto & ev : m_events)
         {
-            for (auto & ev : m_events)
+            if (ev.is_meta())
             {
-                midipulse newstamp = ev.timestamp() - shift;
-                if (newstamp >= 0)
-                {
-                    ev.set_timestamp(newstamp);
-                }
-                else
-                {
-                    result = false;
-                    break;
-                }
+                if (! firstevent)
+                    continue;
             }
-            if (result && relink)
+            else if (! firstevent)
             {
-                sort();
-                result = verify_and_link();
+                firstevent = true;
+                shift = ev.timestamp();
             }
+
+            midipulse newstamp = ev.timestamp() - shift;
+            if (newstamp >= 0)
+            {
+                ev.set_timestamp(newstamp);
+            }
+            else
+            {
+                result = false;
+                break;
+            }
+        }
+        if (result && relink)
+        {
+            sort();
+            result = verify_and_link();
         }
     }
     return result;
 }
 
 /**
- *  Makes the last event end at the end of the pattern.
+ *  Makes the last event end at the end of the pattern. Any meta
+ *  event at time 0 is not moved.
  *
  * \param relink
  *      If true (the default is false), the events are sorted and relinked.
@@ -1181,7 +1193,11 @@ eventlist::align_right (bool relink)
         {
             for (auto & ev : m_events)
             {
-                midipulse newstamp = ev.timestamp() + shift;
+                midipulse oldstamp = ev.timestamp();
+                if (ev.is_meta() && oldstamp == 0)
+                    continue;
+
+                midipulse newstamp = oldstamp + shift;
                 if (newstamp < endts)
                 {
                     ev.set_timestamp(newstamp);

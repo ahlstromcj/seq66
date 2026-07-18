@@ -211,6 +211,8 @@ metro::init_setup (performer * p, int measures)
  *  Fills the event list for the metronome.  Requires that all the setting
  *  functions noted above be called first.
  *
+ *  This seems a little redundant.
+ *
  *  For finding the length, can use measures_to_ticks() or
  *  sequence::apply_length().
  */
@@ -398,8 +400,7 @@ recorder::uninitialize ()
 }           // namespace seq66
 
 /*
- * recorder.cpp
+ * metro.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

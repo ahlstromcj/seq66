@@ -1339,6 +1339,7 @@
 
    A button at the far right of the events panel will
    bring up the Pattern Fix dialog.
+   It is also available from the \textbf{Tools} menu.
    See \sectionref{subsec:pattern_editor_pattern_fix}.
 
 \subsection{Pattern Editor / Left Buttons}
@@ -2022,11 +2023,9 @@
 
    This dialog provides for a number of overall modifications of a pattern.
    Before we start, some obvious limitations.
-   Applying a fix, then deciding to change the fix, requires
+   Applying a fix, then deciding to redo with a different fix, requires
    one to click the \textbf{Reset} before applying the next change.
-   Now, if the change does not look correct, one can close the pattern
-   editor and reopen it to see if the change took hold correctly.
-   Also, once a change is made, the modify flag (asterisk) is shown,
+   Once a change is made, the modify flag (asterisk) is shown,
    but currently a reset cannot remove that flag.
 
 \begin{figure}[H]
@@ -2037,8 +2036,8 @@
 \end{figure}
 
    \index{pattern-editor!fix}
-   When this dialog is used, the time-stamp of \textsl{every event} in the
-   pattern can be changed.
+   When this dialog is used, the time-stamp of every event (except meta
+   events at the beginning of the pattern) can be changed.
    Many other changes can be made as well.
    Once selected, the pattern number is shown in the title-bar and in a
    read-only text field.
@@ -2109,9 +2108,13 @@
          of the sequence, removing any delays.
          Useful when recording a pattern live and not quite
          hitting the first beat in time.
+         Meta events at the beginning (time 0) of the pattern
+         are skipped when figuring out how much to shift.
       \item \textbf{Align right}.
          Align the pattern to the right of the sequence;
          the last note ends at the end of the sequence.
+         Meta events at the beginning (time 0) of the pattern
+         are not shifted.
       \item \textbf{Reverse measures}.
          Reverses all of the events in the whole pattern, flipping the measures
          completely.  For example, if all the events occur near the end of the

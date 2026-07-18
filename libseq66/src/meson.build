@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-06-09
+# \updates     2026-07-18
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -86,6 +86,7 @@ libseq66_sources += files(
     'play/performer.cpp',
     'play/playlist.cpp',
     'play/portslist.cpp',
+    'play/scratchpad.cpp',
     'play/screenset.cpp',
     'play/seq.cpp',
     'play/sequence.cpp',

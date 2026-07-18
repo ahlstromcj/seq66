@@ -1,6 +1,11 @@
-TO DO for Seq66 0.99.26
+TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-07-14
+2019-04-13 to 2026-07-17
+
+    -   qss.
+        -   The incrypt qss fonts are too big in the tabs.
+        -   Some dropdowns seem too narrow.
+        -   The checkboxes are grey on grey when checked.
 
 Back burner:
 
