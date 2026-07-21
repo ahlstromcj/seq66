@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2023-06-25
+ * \updates       2026-07-21
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the clock_e enumeration.
@@ -135,16 +135,41 @@ clocking_enabled (e_clock ce)
     return ce == e_clock::pos || ce == e_clock::mod;
 }
 
+/**
+ *  The port was not even found on the system.
+ */
+
 inline bool
 port_unavailable (e_clock ce)
 {
     return ce == e_clock::unavailable;
 }
 
+/**
+ *  The port was found on the system, but the user disabled it.
+ */
+
 inline bool
 port_disabled (e_clock ce)
 {
     return ce == e_clock::disabled;
+}
+
+/**
+ *  The port is not useable, and should be disabled in selection
+ *  lists.
+ */
+
+inline bool
+port_unusable (e_clock ce)
+{
+    return ce == e_clock::unavailable || ce == e_clock::disabled;
+}
+
+inline bool
+port_active (e_clock ce)
+{
+    return ! port_unusable(ce);
 }
 
 }           // namespace seq66
@@ -156,4 +181,3 @@ port_disabled (e_clock ce)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

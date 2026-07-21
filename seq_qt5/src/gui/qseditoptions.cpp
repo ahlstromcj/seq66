@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-25
+ * \updates       2026-07-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -220,16 +220,16 @@ qseditoptions::setup_clock_combo_box (int buses)
 {
     QComboBox * out = ui->comboBoxMidiOutBuss;
     out->clear();
-    for (int bus = 0; bus < buses; ++bus)
+    for (int b = 0; b < buses; ++b)
     {
         std::string busname;
         e_clock ec;
-        bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
+        bool good = perf().ui_get_clock(bussbyte(b), ec, busname);
         if (good)
         {
-            bool enabled = ec != e_clock::disabled;
+            bool active = port_active(ec);
             out->addItem(qt(busname));
-            enable_combobox_item(out, bus, enabled);
+            enable_combobox_item(out, b, active);
         }
     }
 
@@ -241,8 +241,8 @@ qseditoptions::setup_clock_combo_box (int buses)
      */
 
     bool active = perf().midi_control_out().is_enabled();
-    int buss = perf().midi_control_out().configured_buss();
-    out->setCurrentIndex(buss);
+    int outbuss = perf().midi_control_out().configured_buss();
+    out->setCurrentIndex(outbuss);
     ui->checkBoxMidiOutBuss->setChecked(active);
     m_outbus_count = buses;
 }
@@ -254,20 +254,21 @@ qseditoptions::refresh_clock_combo_box ()
     bool active = perf().midi_control_out().configure_enabled();
     bool out_enabled = ui->checkBoxMidiOutBuss->isChecked();
     int buses = m_outbus_count;
-    for (int bus = 0; bus < buses; ++bus)
+    for (int b = 0; b < buses; ++b)
     {
         std::string busname;
         e_clock ec;
-        bool good = perf().ui_get_clock(bussbyte(bus), ec, busname);
+        bool good = perf().ui_get_clock(bussbyte(b), ec, busname);
         if (good)
         {
-            bool enabled = ec != e_clock::disabled && out_enabled;
-            enable_combobox_item(out, bus, enabled);
+            bool active = port_active(ec);
+            bool enabled = active && out_enabled;
+            enable_combobox_item(out, b, active);
         }
     }
 
-    int buss = perf().midi_control_out().configured_buss();
-    out->setCurrentIndex(buss);
+    int outbuss = perf().midi_control_out().configured_buss();
+    out->setCurrentIndex(outbuss);
     ui->checkBoxMidiOutBuss->setChecked(active);
 }
 
@@ -1121,7 +1122,19 @@ qseditoptions::setup_tab_metronome ()
     );
 
     /*
-     * combobox_metro_buss:
+     * Related to Metronome buss.
+     */
+
+    bool metroactive { rc().metro_settings().metro_active() };
+    ui->checkbox_metro_enabled->setChecked(metroactive);
+    connect
+    (
+        ui->checkbox_metro_enabled, SIGNAL(clicked(bool)),
+        this, SLOT(slot_metro_enabled())
+    );
+
+    /*
+     * Metronome buss
      *
      *  Code similar to that in qsmainwnd.  Output MIDI control
      *  buss combo-box population.
@@ -1135,15 +1148,15 @@ qseditoptions::setup_tab_metronome ()
     {
         int metrobus = int(rc().metro_settings().buss());
         int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
-        for (int bus = 0; bus < buses; ++bus)
+        for (int b = 0; b < buses; ++b)
         {
             e_clock ec;
             std::string busname;
-            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            if (perf().ui_get_clock(bussbyte(b), ec, busname))
             {
-                bool enabled = ec != e_clock::disabled;
+                bool active = port_active(ec);
                 out->addItem(qt(busname));
-                enable_combobox_item(out, bus, enabled);
+                enable_combobox_item(out, b, active);
             }
         }
         ui->combobox_metro_buss->setCurrentIndex(metrobus);
@@ -1179,13 +1192,23 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_count_in, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_count_in_measures())
     );
-    count_in_active = rc().metro_settings().count_in_recording();
-    ui->checkbox_metro_recording->setChecked(count_in_active);
+
+    /*
+     * Related to Metro Record buss.
+     *
+     * This boolean should be renamed recording_active() or
+     * scratchpad_active().
+     */
+
+    bool rec_active = rc().metro_settings().count_in_recording();
+    ui->checkbox_metro_recording->setChecked(rec_active);
     connect
     (
         ui->checkbox_metro_recording, SIGNAL(clicked(bool)),
         this, SLOT(slot_metro_recording())
     );
+
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
     metrotemp = rc().metro_settings().recording_measures();
     qmetrotemp = qt(std::to_string(metrotemp));
     ui->lineedit_metro_recording_measures->setText(qmetrotemp);
@@ -1194,9 +1217,12 @@ qseditoptions::setup_tab_metronome ()
         ui->lineedit_metro_recording_measures, SIGNAL(editingFinished()),
         this, SLOT(slot_metro_recording_measures())
     );
+#else
+    ui->lineedit_metro_recording_measures->hide();
+#endif
 
     /*
-     * combobox_metro_record_buss:
+     * Metronome Record buss
      *
      *  Code similar to that in qsmainwnd.  Output MIDI control
      *  buss combo-box population.
@@ -1207,14 +1233,14 @@ qseditoptions::setup_tab_metronome ()
     in->clear();
     if (not_nullptr(mmb))
     {
-        int enabled_count = 0;
-        int last_input = (-1);
-        int buses = ipm.active() ? ipm.count() : mmb->get_num_in_buses() ;
-        for (int bus = 0; bus < buses; ++bus)
+        int enabled_count { 0 };
+        int buses { ipm.active() ? ipm.count() : mmb->get_num_in_buses() };
+        int recbus { rc().metro_settings().recording_buss() };
+        for (int b = 0; b < buses; ++b)
         {
             std::string busname;
             bool inputing;
-            bool good = perf().ui_get_input(bus, inputing, busname);
+            bool good = perf().ui_get_input(b, inputing, busname);
             if (good)
             {
                 /*
@@ -1223,20 +1249,14 @@ qseditoptions::setup_tab_metronome ()
                  * ports, which should never be used.
                  */
 
-                bool enabled = inputing && ! perf().is_input_system_port(bus);
+                bool active = inputing && ! perf().is_input_system_port(b);
                 in->addItem(qt(busname));
-                enable_combobox_item(in, bus, enabled);
-                if (enabled)
-                {
+                enable_combobox_item(in, b, active);
+                if (active)
                     ++enabled_count;
-                    last_input = bus;
-                }
             }
         }
-        ui->combobox_metro_record_buss->setCurrentIndex(last_input);
-        if (enabled_count == 1)
-            rc().metro_settings().recording_buss(midibyte(last_input));
-
+        ui->combobox_metro_record_buss->setCurrentIndex(recbus);
         connect
         (
             ui->combobox_metro_record_buss, SIGNAL(currentIndexChanged(int)),
@@ -1245,27 +1265,49 @@ qseditoptions::setup_tab_metronome ()
     }
 
     /*
-     * combobox_metro_thru_buss
+     * Metronome Thru buss
      */
+
+    bool thruactive { rc().metro_settings().thru_active() };
+    ui->checkbox_metro_thru->setChecked(thruactive);
+    connect
+    (
+        ui->checkbox_metro_thru, SIGNAL(clicked(bool)),
+        this, SLOT(slot_thru_enabled())
+    );
 
     out = ui->combobox_metro_thru_buss;
     out->clear();
     if (not_nullptr(mmb))
     {
-        int thrubus = int(rc().metro_settings().thru_buss());
-        int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
-        for (int bus = 0; bus < buses; ++bus)
+        /*
+         * Enable the Thru combo-box only if Thru is active and
+         * at least one buss is enabled.
+         *
+         * DO THIS TO THE OTHER COMBOS AS WELL.
+         * ===================================
+         */
+
+        bool item_on { false };
+        bool thru_on { int(rc().metro_settings().thru_active()) };
+        int thrubus { int(rc().metro_settings().thru_buss()) };
+        int buses { opm.active() ? opm.count() : mmb->get_num_out_buses() };
+        for (int b = 0; b < buses; ++b)
         {
             e_clock ec;
             std::string busname;
-            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+            if (perf().ui_get_clock(bussbyte(b), ec, busname))
             {
-                bool enabled = ec != e_clock::disabled;
+                bool on = port_active(ec);
+                if (on)
+                    item_on = true;
+
                 out->addItem(qt(busname));
-                enable_combobox_item(out, bus, enabled);
+                enable_combobox_item(out, b, on);
             }
         }
         out->setCurrentIndex(thrubus);
+        out->setEnabled(thru_on && item_on);
         connect
         (
             out, SIGNAL(currentIndexChanged(int)),
@@ -1274,10 +1316,10 @@ qseditoptions::setup_tab_metronome ()
     }
 
     /*
-     * combobox_metro_thru_channel
+     * Metronome Thru channel
      */
 
-    repopulate_thru_channel_menu(int(rc().metro_settings().thru_buss()));
+    repopulate_thru_channel_menu(int(rc().metro_settings().thru_channel()));
 }
 
 void
@@ -1503,6 +1545,14 @@ qseditoptions::slot_metro_reload ()
 }
 
 void
+qseditoptions::slot_metro_enabled ()
+{
+    bool on { ui->checkbox_metro_enabled->isChecked() };
+    rc().metro_settings().metro_active(on);
+    modify_metronome(true);                    /* no reload button */
+}
+
+void
 qseditoptions::slot_metro_buss (int index)
 {
     int b = int(rc().metro_settings().buss());
@@ -1557,6 +1607,7 @@ qseditoptions::slot_metro_recording ()
 void
 qseditoptions::slot_metro_recording_measures ()
 {
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
     QString text = ui->lineedit_metro_recording_measures->text();
     std::string m = text.toStdString();
     int measures = string_to_int(m);
@@ -1565,6 +1616,7 @@ qseditoptions::slot_metro_recording_measures ()
         rc().metro_settings().recording_measures(measures);
         modify_metronome(true);                    /* no reload button */
     }
+#endif
 }
 
 void
@@ -1579,15 +1631,35 @@ qseditoptions::slot_metro_record_buss (int index)
 }
 
 void
+qseditoptions::slot_thru_enabled ()
+{
+    bool on { ui->checkbox_metro_thru->isChecked() };
+    rc().metro_settings().thru_active(on);
+    modify_metronome(true);                    /* no reload button */
+}
+
+void
 qseditoptions::slot_metro_thru_buss (int index)
 {
-    int b = int(rc().metro_settings().thru_buss());
-    if (index != b)
+    int thrub { int(rc().metro_settings().thru_buss()) };
+    if (index == 0)
     {
-        rc().metro_settings().thru_buss(midibyte(index));
-        repopulate_thru_channel_menu(int(rc().metro_settings().thru_buss()));
-        modify_metronome();
+        if (thrub != null_buss())
+        {
+            rc().metro_settings().thru_buss(null_buss());
+            modify_metronome();
+        }
     }
+    else
+    {
+        if (index != thrub)
+        {
+            rc().metro_settings().thru_buss(midibyte(index));
+            repopulate_thru_channel_menu(int(rc().metro_settings().thru_buss()));
+            modify_metronome();
+        }
+    }
+
 }
 
 void

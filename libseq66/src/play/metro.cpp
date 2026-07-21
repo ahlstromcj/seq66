@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2024-12-14
+ * \updates       2026-07-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -66,7 +66,11 @@ metrosettings::metrosettings () :
     m_count_in_active       (false),
     m_count_in_measures     (1),
     m_count_in_recording    (false),
-    m_recording_measures    (0)
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
+    m_recording_measures    (0),
+#endif
+    m_metro_active          (false),
+    m_thru_active           (false)
 {
     /*
      * See the principal constructor below.
@@ -125,7 +129,9 @@ metrosettings::set_defaults ()
     m_count_in_active       = false;
     m_count_in_measures     = 1;
     m_count_in_recording    = false;
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
     m_recording_measures    = 0;
+#endif
 }
 
 bool
@@ -344,20 +350,24 @@ recorder::~recorder ()
 bool
 recorder::initialize (performer * p)
 {
-    bool result = init_setup(p, settings().recording_measures());
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
+    bool result { init_setup(p, settings().recording_measures()) };
+#else
+    bool result { init_setup(p, 0) };
+#endif
     if (result)
     {
-        int ppq = p->ppqn();                        /* p->get_ppqn()        */
-        int bw = settings().beat_width();           /* get_beat_width()     */
-        int increment = pulses_per_beat(ppq, bw);
+        int ppq { p->ppqn() };                        /* p->get_ppqn()        */
+        int bw { settings().beat_width() };           /* get_beat_width()     */
+        int increment { pulses_per_beat(ppq, bw) };
         if (settings().initialize(increment))
         {
-            bool unmute = usr().pattern_armed();
-            alteration alter = usr().record_alteration();
-            recordstyle rs = usr().pattern_record_style();
-            bool usethru = usr().pattern_thru();
-            bussbyte outbuss = settings().thru_buss();
-            midibyte channel = settings().thru_channel();
+            bool unmute { usr().pattern_armed() };
+            alteration alter { usr().record_alteration() };
+            recordstyle rs { usr().pattern_record_style() };
+            bool usethru { usr().pattern_thru() };
+            bussbyte outbuss { settings().thru_buss() };
+            midibyte channel { settings().thru_channel() };
             armed(unmute);
             set_recording(alter, toggler::on);      /* eg. quantize...      */
             set_recording_style(rs);                /* merge, expand, etc.  */

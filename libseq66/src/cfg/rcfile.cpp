@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-05-16
+ * \updates       2026-07-20
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -550,6 +550,9 @@ rcfile::parse ()
     tag = "[metronome]";
     if (line_after(file, tag))
     {
+        bool flag = get_boolean(file, tag, "output-buss-active");
+        rc().metro_settings().metro_active(flag);
+
         int temp = get_integer(file, tag, "output-buss");
         rc().metro_settings().buss(temp);
         temp = get_integer(file, tag, "output-channel");
@@ -582,12 +585,22 @@ rcfile::parse ()
         rc().metro_settings().count_in_active(countin);
         temp = get_integer(file, tag, "count-in-measures");
         rc().metro_settings().count_in_measures(temp);
+
+        /*
+         * This should be renamed to "scratchpad-active" or
+         * "record-buss-active". And "record-buss".
+         */
+
         countin = get_boolean(file, tag, "count-in-recording");
         rc().metro_settings().count_in_recording(countin);
         temp = get_integer(file, tag, "recording-buss");
         rc().metro_settings().recording_buss(temp);
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
         temp = get_integer(file, tag, "recording-measures");
         rc().metro_settings().recording_measures(temp);
+#endif
+        bool thruflag = get_boolean(file, tag, "thru-buss-active");
+        rc().metro_settings().thru_active(true);
         temp = get_integer(file, tag, "thru-buss");
         rc().metro_settings().thru_buss(temp);
         temp = get_integer(file, tag, "thru-channel");
@@ -1109,6 +1122,10 @@ rcfile::write ()
 "# width) to 2.0).\n"
 "\n[metronome]\n\n"
     ;
+    write_boolean
+    (
+        file, "output-buss-active", rc().metro_settings().metro_active()
+    );
     write_integer(file, "output-buss", int(rc().metro_settings().buss()));
     write_integer(file, "output-channel", int(rc().metro_settings().channel()));
     write_integer
@@ -1150,19 +1167,37 @@ rcfile::write ()
         file, "count-in-measures",
         int(rc().metro_settings().count_in_measures())
     );
+
+    /*
+     * Record buss is active, actually. Should rename at some point.
+     */
+
     write_boolean
     (
-        file, "count-in-recording",
+        file, "count-in-recording",                 /* "record-buss-active" */
         rc().metro_settings().count_in_recording()
     );
-    write_integer
+    write_integer                                   /* "record-buss"        */
     (
         file, "recording-buss", int(rc().metro_settings().recording_buss())
     );
+
+    /*
+     * We really don't need this feature....
+     */
+
     write_integer
     (
         file, "recording-measures",
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
         int(rc().metro_settings().recording_measures())
+#else
+        0
+#endif
+    );
+    write_boolean
+    (
+        file, "thru-buss-active", rc().metro_settings().thru_active()
     );
     write_integer(file, "thru-buss", int(rc().metro_settings().thru_buss()));
     write_integer

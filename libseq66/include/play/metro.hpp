@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-08-05
- * \updates       2022-08-18
+ * \updates       2026-07-20
  * \license       GNU GPLv2 or above
  *
  *  The metro is a sequence with a special configuration.  It can be added
@@ -138,11 +138,26 @@ private:
     int m_count_in_measures;
 
     /**
-     *  Additional support for background recording.
+     *  Additional support for background/scratchp;ad recording.
      */
 
-    bool m_count_in_recording;
+    bool m_count_in_recording;          /* m_scratchpad_recording later */
+
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
     int m_recording_measures;
+#endif
+
+    /**
+     *  If set, the Metro buss can be used.
+     */
+
+    bool m_metro_active;
+
+    /**
+     *  If set, the Record Thru buss can be used.
+     */
+
+    bool m_thru_active;
 
 public:
 
@@ -257,14 +272,36 @@ public:
         return m_count_in_recording;
     }
 
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
+
     int recording_measures () const
     {
         return m_recording_measures;
     }
 
+#endif
+
+    bool metro_active () const
+    {
+        return m_metro_active;
+    }
+
+    bool thru_active () const
+    {
+        return m_thru_active;
+    }
+
+    /**
+     * This is now always the case.
+     */
+
     bool expand_recording () const
     {
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
         return m_recording_measures == 0;
+#else
+        return true;
+#endif
     }
 
 public:
@@ -377,9 +414,23 @@ public:
         m_count_in_recording = flag;
     }
 
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
+
     void recording_measures (int m)
     {
         m_recording_measures = m;
+    }
+
+#endif
+
+    void metro_active (bool flag)
+    {
+        m_metro_active = flag;
+    }
+
+    void thru_active (bool flag)
+    {
+        m_thru_active = flag;
     }
 
 };          // class metrosettings

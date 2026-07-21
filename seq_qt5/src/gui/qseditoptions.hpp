@@ -293,8 +293,10 @@ private slots:
     void slot_metro_recording_measures ();
     void slot_metro_record_buss (int index);
     void slot_metro_thru_buss (int index);
+    void slot_thru_enabled ();
     void slot_metro_thru_channel (int index);
     void slot_metro_reload ();
+    void slot_metro_enabled ();
     void slot_escape_pattern ();
     void slot_convert_to_smf_1 ();
     void slot_pattern_arm ();

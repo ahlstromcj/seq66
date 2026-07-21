@@ -345,9 +345,7 @@ qsmainwnd::qsmainwnd
     ui->cmb_global_bus->addItem("None");
     if (not_nullptr(mmb))
     {
-        int buses = opm.active() ?
-            opm.count() : mmb->get_num_out_buses() ;
-
+        int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
         for (int bus = 0; bus < buses; ++bus)
         {
             e_clock ec;

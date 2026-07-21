@@ -19,6 +19,7 @@
         libseq66/include/midi/editable_event.hpp
         libseq66/include/midi/mastermidibus.hpp
         libseq66/include/midi/midibus.hpp
+        libseq66/include/midi/midibus_common.hpp
         libseq66/include/midi/midifile.hpp
         libseq66/include/os/daemonize.hpp
         libseq66/include/os/timing.hpp

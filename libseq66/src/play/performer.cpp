@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-07-14
+ * \updates       2026-07-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -303,7 +303,11 @@ performer::performer (int ppq, int rows, int columns) :
     m_play_list             (),
     m_note_mapper           (new (std::nothrow) notemapper()),
     m_metronome             (),                 /* no metronome by default  */
+#if defined USE_SCRATCHPAD_RECORDING
+    m_scratchpad            (nullptr),          /* no scratchpad by default */
+#else
     m_recorder              (nullptr),          /* no background recording  */
+#endif
     m_metronome_count_in    (false),
     m_song_start_mode       (sequence::playback::automatic),
     m_reposition            (false),
@@ -2036,6 +2040,40 @@ performer::arm_metronome (bool on)
 bool
 performer::install_recorder ()
 {
+#if defined USE_SCRATCHPAD_RECORDING
+    if (bool(m_scratchpad))                         /* transitory pointer   */
+        return true;                                /* already in progress  */
+
+    metrosettings & ms { rc().metro_settings() };
+    m_scratchpad = new (std::nothrow) scratchpad();
+
+    bool result { not_nullptr(m_scratchpad) };
+    if (result)
+    {
+        result = new_sequence(m_scratchpad, 0);     /* earliest slot        */
+        if (result)
+        {
+#if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
+            int recmeasures { ms.recording_measures() };
+#else
+            int recmeasures { 0 };
+#endif
+            result = m_scratchpad->initialize
+            (
+                this, ms.recording_buss(), recmeasures,
+                ms.thru_buss(), ms.thru_channel()
+            );
+            if (result)
+            {
+                auto_play();
+            }
+            else
+            {
+                remove_recorder();
+            }
+        }
+    }
+#else
     if (bool(m_recorder))                           /* transitory pointer   */
         return true;                                /* already in progress  */
 
@@ -2054,6 +2092,7 @@ performer::install_recorder ()
             }
         }
     }
+#endif
     return result;
 }
 
@@ -2064,9 +2103,19 @@ performer::reload_recorder ()
     return install_recorder();
 }
 
+/**
+ *  This really just disables the recorder. It's already part of the
+ *  play-set, and deleting it causes problems. Let the user remove
+ *  it, if desired.
+ */
+
 void
 performer::remove_recorder ()
 {
+#if defined USE_SCRATCHPAD_RECORDING
+    auto_stop(true);
+    m_scratchpad = nullptr;
+#else
     if (not_nullptr(m_recorder))
     {
         delete m_recorder;
@@ -2074,6 +2123,7 @@ performer::remove_recorder ()
 
         // TODO notify all subscribers
     }
+#endif
 }
 
 /**
@@ -2087,6 +2137,15 @@ performer::remove_recorder ()
 bool
 performer::finish_recorder ()
 {
+#if defined USE_SCRATCHPAD_RECORDING
+    bool result = not_nullptr(m_scratchpad);
+    if (result)
+        result = m_scratchpad->event_count() > 0;
+
+    auto_stop(true);
+    m_scratchpad->uninitialize();
+    remove_recorder();                                  /* just disables    */
+#else
     bool result = not_nullptr(m_recorder);
     if (result)
         result = m_recorder->event_count() > 0;
@@ -2096,6 +2155,7 @@ performer::finish_recorder ()
 
     // TODO notify all subscribers
 
+#endif
     return result;
 }
 
@@ -5789,7 +5849,14 @@ void
 performer::auto_play ()
 {
     bool isplaying = false;
-    bool onekey = false;                /* keys().start() == keys().stop(); */
+
+#if 0
+
+    /*
+     * No compiler complains about this long-standing boner.
+     */
+
+    bool onekey = false;        /* WTF? keys().start() == keys().stop();    */
     if (onekey)
     {
         if (is_running())
@@ -5806,7 +5873,11 @@ performer::auto_play ()
             isplaying = true;
         }
     }
-    else if (! is_running())
+    else
+
+#endif
+
+    if (! is_running())
     {
         if (rc().metro_settings().count_in_active())
         {

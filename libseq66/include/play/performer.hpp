@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-07-14
+ * \updates       2026-07-18
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -58,6 +58,12 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition/synchronizer    */
+
+#define USE_SCRATCHPAD_RECORDING        /* EXPERIMENTAL */
+
+#if defined USE_SCRATCHPAD_RECORDING
+#include "play/scratchpad.hpp"          /* seq66::scratchpad                */
+#endif
 
 #if defined USE_SONG_BOX_SELECT
 #include <set>                          /* std::set, arbitary selection     */
@@ -469,6 +475,12 @@ private:
 
     std::shared_ptr<metro> m_metronome;
 
+#if defined USE_SCRATCHPAD_RECORDING
+
+    scratchpad * m_scratchpad;
+
+#else
+
     /**
      *  Provides an optional pointer to a single recorder pattern, owned and
      *  managed by performer.  Coding for this is still in progress.
@@ -477,6 +489,8 @@ private:
      */
 
     recorder * m_recorder;
+
+#endif
 
     /**
      *  A quick indication that count-in is requested and able to be used.

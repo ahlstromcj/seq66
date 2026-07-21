@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-06-03
+% \update      2026-07-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1097,8 +1097,8 @@
 
    \index{metronome}
    Also shown in the figure is a \textbf{Metronome} button.
-   This is a feature new with \textsl{Seq66} version 0.99.0, and still has a few
-   minor issues to work out, but it works.
+   This is a feature new with \textsl{Seq66} version 0.99.0,
+   and still has a few minor issues to work out, but it works.
    The metronome has a number of configurable items.
    See \sectionref{subsubsec:configuration_rc_metronome}.
 
@@ -1109,32 +1109,51 @@
    It is always available, stored as a hidden automatically-generated
    pattern.
 
-\paragraph{Count-in Recording}
+\paragraph{Background Recording}
 \label{paragraph:patterns_background_recording}
 
-   \index{count-in recording}
+   \index{background recording}
    Also shown in the figure is a \textbf{Count-In Recording} button.
    This feature still has a few
    minor issues to work out, but it works.
-   It is not \textbf{background recording}, which involves a
-   thread continuously recording in the background.  Some day.
+   It is not strictly \textbf{background recording}, which involves a
+   thread continuously recording in the background all the time.
 
    The recorder has a number of configurable items.
    See \sectionref{subsubsec:configuration_rc_background_recording}.
-   Count-in recording needs to be enabled in the configuration.
-   Otherwise, the count-in-recording button is disabled.
+   Count-in recording needs to be enabled in
+   \textbf{Edit / Preferences / Metronome}.
+   Otherwise, the count-in/background recording button is disabled.
+   Once enabled, start the background-recording session:
 
-   When enabled, press the count-in-recording button.  Now all events on the
-   given input buss will be recorded, even if playback is not started.
-   Better to start playback after enabling recording!
+   \begin{enumber}
+      \item Press the background-recording button.
+         A new pattern is created in the next available slot, already
+         set to record and expand.
+      \item Playback starts immediately.
+         Nothing is recorded at first.
+      \item When ready to improvise, start playing the MIDI instrument.
+         All events on the background-recording input buss will be recorded.
+         The pattern will continue to expand, basically "forever".
+      \item Once one is satisfied with the recording, stop playback.
+      \end{enumber}
 
-   Once one is satisfied with the recording, stop playback, then
-   click the count-in-recording button again.
-   If any events have been recorded, then they are pasted into a new pattern in
-   the next available pattern slot.
-   There, they can be edited or deleted.
-   Note that the count-in pattern is muted while recording.
-   We will change how it works based on user feedback.
+   The events can be edited, copied, or deleted.
+   If the process above is done again, a new background-recording
+   pattern is created in the next available slot.
+
+%  Note that the count-in pattern is muted while recording.
+%  We will change how it works based on user feedback.
+
+   One might ask why not have background-recording operating all the time,
+   in a hidden pattern, as other applications do?
+
+   The the decision to improvise should be a conscious decision.
+   The visual feedback of a visible recording slot and the motions of
+   progress in the other patterns enhance the improvisation.
+   Also, this provides integration with count-in recording.
+
+%  Create an issue if this bothers you.
 
 \paragraph{Pattern Loop-Record Modes}
 \label{paragraph:patterns_loop_modes}

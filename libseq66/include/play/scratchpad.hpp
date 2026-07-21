@@ -67,8 +67,9 @@ public:
     (
         performer * p,
         bussbyte recbuss,
-        int recmeasures = 0
-
+        int recmeasures         = 0,
+        bussbyte thrubuss       = null_buss(),          /* c_bussbyte_max   */
+        midibyte thruchannel    = 0
     );
     bool uninitialize ();
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-18
- * \updates       2026-07-18
+ * \updates       2026-07-20
  * \license       GNU GPLv2 or above
  *
  *  The scratchpad is a sequence with the following differences:
@@ -53,7 +53,6 @@
  *          version.
  */
 
-// #include "cfg/settings.hpp"          /* seq66::usr() config accessor     */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/scratchpad.hpp"          /* seq66::scratchpad class          */
 
@@ -110,7 +109,9 @@ scratchpad::initialize
 (
     performer * p,
     bussbyte recbuss,
-    int recmeasures
+    int recmeasures,                    /* currently not used, always 0     */
+    bussbyte thrubuss,
+    midibyte thruchannel
 )
 {
     bool result
@@ -125,31 +126,23 @@ scratchpad::initialize
 
         set_parent(p);
 
-//      int ppq { p->ppqn() };
-//      int bw { get_beat_width() };
-//      int increment { pulses_per_beat(ppq, bw) };
         alteration alter { alteration::none };
         recordstyle rs { recordstyle::expand };
-//      bussbyte thrubuss { settings().thru_buss();
-//      midibyte thruchannel { settings().thru_channel();
         armed(false);
         set_recording(alter, toggler::on);          /* eg. quantize...      */
         set_recording_style(rs);                    /* merge, expand, etc.  */
         set_midi_in_bus(recbuss);                   /* for recording        */
-//      if (is_good_bus(thrubuss))
-//      {
-    //      set_midi_bus(thrubuss);                 /* for playback         */
-    //      set_midi_channel(thruchannel);
-    //      set_thru(true);
-//      }
-        set_name("Scratch Pad");
+        if (is_good_buss(thrubuss))
+        {
+            set_midi_bus(thrubuss);                 /* for playback         */
+            set_midi_channel(thruchannel);
+            set_thru(true);
+        }
+        else
+            set_thru(false);
+
+        set_name("Scratchpad");
         set_color(s_scratchpad_color, true);
-
-        /*
-         * Do not make these settings.
-         * expanded_recording(true);
-         */
-
         unmodify();                                 /* not part of song     */
     }
     return result;
@@ -158,7 +151,8 @@ scratchpad::initialize
 bool
 scratchpad::uninitialize ()
 {
-    set_recording(alteration::none, toggler::off);  /* doesn't clear expand */
+//  set_recording(alteration::none, toggler::off);  /* doesn't clear expand */
+    set_recording(toggler::off);
     set_color(0, true);
 
     /*
