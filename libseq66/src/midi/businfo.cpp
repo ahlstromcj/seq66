@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2026-05-18
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -298,6 +298,7 @@ businfo::print () const
     }
     else
     {
+#if defined USE_OLD_CODE
         flags += " clock ";
         if (init_clock() == e_clock::none)
             flags += "Off";
@@ -309,6 +310,9 @@ businfo::print () const
             flags += "Disabled";
         else
             flags += "illegal!";
+#else
+        flags += clock_to_string(init_clock());
+#endif
     }
     printf
     (

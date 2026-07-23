@@ -1,7 +1,12 @@
-Release Notes for Seq66 v. 0.99.27 2026-07-17 "The Fix Is In".
+Release Notes for Seq66 v. 0.99.27 2026-07-22 "Scratchpad Recording"
 
-This version, so far, is just fixes and tweaks.
+This version refactors the metronome code to support "scratchpad
+recording", similar to background recording but with visual feedback.
+Background recording when one wants to improvise.  Also many fixes,
+tweaks, and minor updates.
 
+- Main window.
+  Fixed disabling unavailable ports in the global buss dropdown.
 - Pattern editor.
   - Fixed the left-align and right-align pattern-fix actions by
     bypassing initial meta events.

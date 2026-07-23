@@ -210,6 +210,7 @@ public:
     bussbyte bus_from_nick_name (const std::string & nick) const;
     bussbyte bus_from_alias (const std::string & alias) const;
     std::string port_name_from_bus (bussbyte nominalbuss) const;
+    std::string to_string (const std::string & tag = "") const;
     void show (const std::string & tag = "") const;
     bool set_enabled (bussbyte bus, bool enabled);
     bool is_available (bussbyte bus) const;
@@ -232,7 +233,6 @@ protected:
         return m_master_io;
     }
 
-    std::string to_string (const std::string & tag = "") const;
     std::string extract_nickname (const std::string & name) const;
     bool extract_port_pair
     (
@@ -267,6 +267,12 @@ protected:
     }
 
 };              // class portslist
+
+/*
+ *  Free functions
+ */
+
+extern std::string clock_to_string (e_clock e);
 
 }               // namespace seq66
 

@@ -1,27 +1,45 @@
 NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-07-21
+2015-07-10 to 2026-07-23
 
 # Change Log
 
-## [0.99.27] - 2026-07-21
+## [0.99.27] - 2026-07-23
 
-"The Fix Is In"
+"Scratchpad Recording"
 
 ### Added
 
 -   Edit / Preferences / Metronome
     -   Added check-boxes to activate the Metro, Record, and Thru ports.
+    -   Added a button set the metronome to the internal hard-wired
+        settings, which uses the drum channel.
 
 ### Changed
 
+-   Background recording. This feature has been fixed and upgrade to
+    do "scratchpad recording". This is like background recording,
+    but requires the user to enable it. It immediately adds a new
+    pattern in record mode, enables expansion of the pattern, and
+    starts play. Improvise at will until done, stop recording,
+    and use the new pattern (or delete it) as desired.
+-   Port-mapping.
+    -   The Recreate button clears the port map and recreates it,
+        including any devices plugged in while Seq66 runs.
+
 ### Fixed
 
+-   Main window.
+    -   Show inactive/unavailable ports as disabled in the global buss
+        dropdown list.
 -   Pattern editor.
     -   The "left align" pattern fix was broken by the new automatic
         insertion of an initial time-signature event. Now we bypass
         all initial meta events to get the amount of time-shift needed.
     -   Fixed "right align" in a similar way.
+-   Live grid.
+    -   When Edit / Preferences is closed, the metronome and scratchpad
+        statuses (enabled/disabled) are reflected in the buttons.
 
 ### Removed
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-07-20
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1126,6 +1126,7 @@ performer::store_io_maps ()
          * Not until user sets this flag: rc().portmaps_active(true);
          */
 
+        rc().portmaps_active(true);
         if (! rc().first_run_in_progress())
             rc().auto_rc_save(true);
     }

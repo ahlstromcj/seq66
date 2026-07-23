@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-15
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -346,20 +346,15 @@ qsmainwnd::qsmainwnd
     if (not_nullptr(mmb))
     {
         int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
-        for (int bus = 0; bus < buses; ++bus)
+        for (int b = 0; b < buses; ++b)
         {
             e_clock ec;
             std::string busname;
-            if (cb_perf().ui_get_clock(bussbyte(bus), ec, busname))
+            if (cb_perf().ui_get_clock(bussbyte(b), ec, busname))
             {
-                bool unavailable = cb_perf().is_port_unavailable
-                (
-                    bus, midibase::io::output
-                );
-                bool disabled = ec == e_clock::disabled;
                 ui->cmb_global_bus->addItem(qt(busname));
-                if (disabled || unavailable)
-                    enable_bus_item(bus, false);
+                if (port_unusable(ec))
+                    enable_bus_item(b + 1, false);
             }
         }
 
@@ -1144,16 +1139,10 @@ qsmainwnd::lock_main_window (bool lockit)
 }
 
 void
-qsmainwnd::enable_bus_item (int bus, bool enabled)
+qsmainwnd::enable_bus_item (int b, bool active)
 {
-    /*
-     * Why plus one? Changed ca 2025-05-19.
-     *
-     * int index = bus + 1;
-     */
-
-    int index = bus;
-    enable_combobox_item(ui->cmb_global_bus, index, enabled);
+    int index = b;
+    enable_combobox_item(ui->cmb_global_bus, index, active);
 }
 
 /**
@@ -1472,17 +1461,13 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
     if (playmode)
     {
         /*
-         * No longer disabled in Song mode.
-         *
-         * ui->btnMute->setEnabled(true);
+         * No longer disabled in Song mode: ui->btnMute->setEnabled(true);
          */
     }
     else
     {
         /*
-         * Always enabled now.
-         *
-         * ui->btnMute->setEnabled(true);
+         * Always enabled now. ui->btnMute->setEnabled(true);
          */
 
         song_recording(false);

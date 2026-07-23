@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2026-05-03
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -243,10 +243,10 @@ void
 qclocklayout::clock_callback_clicked (int id)
 {
     if (id == (-2))
-        id = (-1);                                  /* e_clock::disabled    */
+        id = (-1);                              /* e_clock::disabled        */
 
-    e_clock clocking = static_cast<e_clock>(id);
-    bool enable = clocking != e_clock::disabled;
+    e_clock clocking = int_to_clock(id);        /* static_cast<e_clock>(id) */
+    bool enable = port_active(clocking);        /* e_clock::disabled        */
     perf().ui_set_clock(bus(), clocking);
     m_label_outputbusname->setEnabled(enable);
     m_rbutton_portdisabled->setEnabled(enable);
@@ -263,4 +263,3 @@ qclocklayout::clock_callback_clicked (int id)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

@@ -67,6 +67,10 @@ const int c_midibus_sysex_chunk = 0x100;        // 256
  *  It is also (perhaps ill-advisedly) used for other statuses, including
  *  for some input port statuses.
  *
+ * Note:
+ *
+ *      See portslist::e_clock_to_string().
+ *
  * \var unavailable
  *      This value indicates that a port defined in a port-map is not
  *      present on the system.
@@ -105,7 +109,7 @@ enum class e_clock
 {
     unavailable = -2,
     disabled    = -1,
-    none         = 0,
+    none        =  0,
     pos,
     mod,
     max

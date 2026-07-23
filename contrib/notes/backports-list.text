@@ -47,6 +47,7 @@
         libseq66/src/midi/midifile.cpp
         libseq66/src/os/daemonize.cpp
         libseq66/src/play/performer.cpp
+        libseq66/src/play/portslist.cpp
  *      libseq66/src/play/sequence.cpp
         libseq66/src/seq66_features.cpp
         libseq66/src/sessions/clinsmanager.cpp

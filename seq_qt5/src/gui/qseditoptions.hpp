@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-11
+ * \updates       2026-07-23
  * \license       GNU GPLv2 or above
  */
 
@@ -90,6 +90,8 @@ private:
     void setup_tab_metronome ();
     void setup_tab_pattern ();
     void setup_tab_session ();
+    void disconnect_metro_output_slots ();
+    void connect_metro_output_slots ();
     void exit_required ();
     void set_enabled (QDialogButtonBox::StandardButton bcode, bool on);
     void set_text
@@ -296,6 +298,7 @@ private slots:
     void slot_thru_enabled ();
     void slot_metro_thru_channel (int index);
     void slot_metro_reload ();
+    void slot_metro_defaults ();
     void slot_metro_enabled ();
     void slot_escape_pattern ();
     void slot_convert_to_smf_1 ();

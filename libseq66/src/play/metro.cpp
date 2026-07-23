@@ -46,7 +46,7 @@ namespace seq66
  */
 
 metrosettings::metrosettings () :
-    m_buss                  (0),
+    m_buss                  (0),            /* is this reasonable?      */
     m_channel               (9),            /* MIDI channel 10, drums   */
     m_recording_buss        (0),
     m_thru_buss             (0),
@@ -112,7 +112,7 @@ metrosettings::calculate_length (int increment, float fraction)
 void
 metrosettings::set_defaults ()
 {
-    m_buss                  = 0;
+    m_buss                  = 0;        /* is this reasonable?              */
     m_channel               = 9;        /* Channel 10, Percussion           */
     m_beats_per_bar         = 4;
     m_beat_width            = 4;
@@ -132,6 +132,16 @@ metrosettings::set_defaults ()
 #if defined LIMIT_SCRATCHPAD_RECORDING_LENGTH
     m_recording_measures    = 0;
 #endif
+
+    /*
+     * The following members are not affected, as there are no
+     * reasonable defaults for them, or they should not change..
+     *
+     *      m_recording_buss
+     *      m_thru_buss
+     *      m_thru_channel
+     */
+
 }
 
 bool

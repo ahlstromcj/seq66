@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-07-07
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -2319,7 +2319,7 @@ qslivegrid::popup_menu ()
                 std::string busname;
                 if (perf().ui_get_clock(bussbyte(bus), ec, busname))
                 {
-                    bool disabled { ec == e_clock::disabled };
+                    bool disabled { port_unusable(ec) }; // e_clock::disabled
                     QAction * a { new_qaction(busname, menubuss) };
                     a->setCheckable(true);                  /* issue #106   */
                     a->setChecked(s->true_bus() == bus);
@@ -2448,6 +2448,12 @@ bool
 qslivegrid::on_automation_change (automation::slot /* s */)
 {
     update_state();
+
+    bool metro_on { rc().metro_settings().metro_active() };
+    ui->buttonMetronome->setEnabled(metro_on);
+
+    bool scratchpad_on { rc().metro_settings().count_in_recording() };
+    ui->buttonBackgroundRecord->setEnabled(scratchpad_on);
     set_needs_update();
     return true;
 }

@@ -24,18 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2025-08-18
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "play/clockslist.hpp"          /* seq66::clockslist class          */
 #include "util/strfunctions.hpp"        /* seq66::string_format() template  */
-
-/*
- *  This namespace is not documented because it screws up the document
- *  processing done by Doxygen.
- */
 
 namespace seq66
 {
@@ -103,7 +98,7 @@ clockslist::add
         }
         else
         {
-            ioitem.io_enabled = clocktype != e_clock::disabled;
+            ioitem.io_enabled = port_active(clocktype);     /* disabled     */
             ioitem.out_clock = clocktype;
         }
         ioitem.io_name = portname;
@@ -180,23 +175,23 @@ clockslist::add_map_line (const std::string & line)
  */
 
 bool
-clockslist::set (bussbyte bus, e_clock clocktype)
+clockslist::set (bussbyte b, e_clock clocktype)
 {
-    auto it = m_master_io.find(bus);
+    auto it = m_master_io.find(b);
     bool result = it != m_master_io.end();
     if (result)
     {
-        bool enabled = clocktype != e_clock::disabled;
-        it->second.io_enabled = enabled;
+        bool active = port_active(clocktype);       /* e_clock::disabled    */
+        it->second.io_enabled = active;
         it->second.out_clock = clocktype;
     }
     return result;
 }
 
 e_clock
-clockslist::get (bussbyte bus) const
+clockslist::get (bussbyte b) const
 {
-    auto it = m_master_io.find(bus);
+    auto it = m_master_io.find(b);
     return it != m_master_io.end() ? it->second.out_clock : e_clock::none ;
 }
 

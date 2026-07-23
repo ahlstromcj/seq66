@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2025-08-18
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -216,6 +216,8 @@ portslist::is_available (bussbyte bus) const
  *  classes' set() functions.  The old check has some issues, in retrospect:
  *
  *      result = it->second.out_clock == e_clock::disabled;
+ *
+ *  We could not use port_active(ioitem::out_clock).
  */
 
 bool
@@ -731,16 +733,7 @@ portslist::const_io_block (const std::string & nickname) const
 std::string
 portslist::e_clock_to_string (e_clock e) const
 {
-    std::string result;
-    switch (e)
-    {
-        case e_clock::disabled:     result = "Disabled";    break;
-        case e_clock::none:         result = "Off";         break;
-        case e_clock::pos:          result = "Pos";         break;
-        case e_clock::mod:          result = "Mod";         break;
-        default:                    result = "Unknown";     break;
-    }
-    return result;
+    return clock_to_string(e);
 }
 
 /**
@@ -864,21 +857,22 @@ portslist::io_line
 std::string
 portslist::to_string (const std::string & tag) const
 {
-    std::string result = "I/O List: '" + tag + "'\n";
-    int count = 0;
+    std::string result { "I/O List: '" + tag + "'\n" };
+    int count { 0 };
     for (const auto & iopair : m_master_io)
     {
-        const io & item = iopair.second;
-        std::string temp = std::to_string(count) + ". ";
-        temp += item.io_enabled ? "Enabled;  " : "Disabled; " ;
-        if (! item.io_available)
-            temp += "Unavailable ";
-
-        temp += "Clock = " + e_clock_to_string(item.out_clock);
-        temp += "\n   ";
-        temp += "Name:     " + item.io_name + "\n  ";
-        temp += "Nickname: " + item.io_nick_name + "\n  ";
-        temp += "Alias:    " + item.io_alias + "\n";
+        const io & item { iopair.second };
+        std::string temp { "[" };
+        temp += std::to_string(count) + "] ";
+        if (item.io_client_number >= 0 && item.io_port_number >= 0)
+        {
+            temp += std::to_string(item.io_client_number) + ":";
+            temp += std::to_string(item.io_port_number) + " ";
+        }
+        temp += "" + item.io_name + "\n";
+        temp += "    Status:   " + e_clock_to_string(item.out_clock) +"\n";
+        temp += "    Nickname: '" + item.io_nick_name + "'\n";
+        temp += "    Alias:    '" + item.io_alias + "'\n";
         result += temp;
         ++count;
     }
@@ -890,6 +884,26 @@ portslist::show (const std::string & tag) const
 {
     std::string listdump = to_string(tag);
     std::cout << listdump << std::endl;
+}
+
+/*
+ *  Free functions
+ */
+
+std::string
+clock_to_string (e_clock e)
+{
+    std::string result;
+    switch (e)
+    {
+        case e_clock::unavailable:  result = "Unavailable";     break;
+        case e_clock::disabled:     result = "Disabled";        break;
+        case e_clock::none:         result = "Enabled/Clk off"; break;
+        case e_clock::pos:          result = "Pos";             break;
+        case e_clock::mod:          result = "Mod";             break;
+        default:                    result = "Unknown";         break;
+    }
+    return result;
 }
 
 }               // namespace seq66

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2025-08-18
+ * \updates       2026-07-22
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -489,7 +489,7 @@ bool
 midibase::set_clock (e_clock clocktype)
 {
     m_clock_type = clocktype;
-    m_io_active = clocktype != e_clock::disabled;
+    m_io_active = port_active(clocktype);           /* e_clock::disabled    */
     return true;
 }
 

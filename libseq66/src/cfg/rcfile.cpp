@@ -28,8 +28,8 @@
  * \updates       2026-07-20
  * \license       GNU GPLv2 or above
  *
- *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
- *  in layout.  See the user's manual included with Seq66.
+ *  The <code> ~/.config/qseq66/qseq66.rc </code> configuration file is fairly
+ *  simple in layout.  See the user's manual included with Seq66.
  *
  *  Note that the parse() and write() functions process sections in a
  *  different order!  The reason this does not mess things up is that the
