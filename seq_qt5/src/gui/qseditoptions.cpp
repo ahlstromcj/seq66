@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-23
+ * \updates       2026-07-24
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1165,7 +1165,6 @@ qseditoptions::setup_tab_metronome ()
     in->clear();
     if (not_nullptr(mmb))
     {
-        int enabled_count { 0 };
         int buses { ipm.active() ? ipm.count() : mmb->get_num_in_buses() };
         int recbus { rc().metro_settings().recording_buss() };
         if (rc().investigate())
@@ -1189,8 +1188,6 @@ qseditoptions::setup_tab_metronome ()
                 bool active = inputing && ! perf().is_input_system_port(b);
                 in->addItem(qt(busname));
                 enable_combobox_item(in, b, active);
-                if (active)
-                    ++enabled_count;
             }
         }
         ui->combobox_metro_record_buss->setCurrentIndex(recbus);

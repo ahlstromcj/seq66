@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-05-02
+ * \updates       2026-07-25
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -501,7 +501,36 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     {
         pen.setColor(sel_color());
         painter.setPen(pen);
-        draw_ghost_notes(painter, m_selection);
+
+        eventlist & clip { sequence::clipboard() };
+        int cnum { clip.owning_sequence() };
+        int tnum { track().seq_number() };
+        if (tnum == cnum)
+        {
+            draw_ghost_notes(painter, m_selection);
+        }
+        else
+        {
+            /*
+             * Compare this code to qseqroll::get_selected_box().
+             */
+
+            midipulse tick_s, tick_f;       /* start, end of tick window    */
+            int note_h, note_l;             /* high, low notes in window    */
+            bool ok { clip.selected_box(tick_s, note_h, tick_f, note_l) };
+            if (ok)
+            {
+                convert_tn_box_to_rect
+                (
+                    tick_s, tick_f, note_h, note_l, m_selection
+                );
+                painter.drawRect
+                (
+                    current_x(), current_y(),
+                    m_selection.width(), m_selection.height()
+                );
+            }
+        }
     }
 
     int selw = selection().width();
@@ -1004,16 +1033,24 @@ qseqroll::draw_ghost_notes
         hbox = unit_height();
 
     float widthslope = wbox / float(t1 - t0);       /* (x1-x0) / (t1-t0)    */
-    float hieghtslope = hbox / float(ndiff);        /* (y1-y0) / (n1-n0)    */
+    float heightslope = hbox / float(ndiff);        /* (y1-y0) / (n1-n0)    */
 
     /*
      * ca 2025-07-06. Not really necessary to draw an outline box.
      *
      *      painter.drawRect(x0, y0 + 1, wbox, hbox);
+     *
+     *  One issues is that, when pasting from another pattern,
+     *  the notes are not detectable in the loop below.
+     *
+     *  sequence::cbegin() and cend() are event::buffer::const_iterator
+     *  values.
      */
 
     track().draw_lock();
-    for (auto cev = track().cbegin(); ! track().cend(cev); ++cev)
+
+    event::buffer::const_iterator b { track().cbegin() };
+    for (auto cev = b; ! track().cend(cev); ++cev)
     {
         sequence::note_info ninfo;
         sequence::draw dt = track().get_next_note(ninfo, cev);
@@ -1025,7 +1062,7 @@ qseqroll::draw_ghost_notes
             int ti = int(ninfo.start());
             int ni = ninfo.note();
             int xi = (ti - t0) * widthslope + xo + 1;
-            int yi = (n1 - ni) * hieghtslope + yo + 4;
+            int yi = (n1 - ni) * heightslope + yo + 4;
             if (dt == sequence::draw::linked)
             {
                 m_note_width = z().tix_to_pix(ninfo.length());
@@ -2127,10 +2164,10 @@ qseqroll::move_selected_notes (int dx, int dy)
     }
     else
     {
-        int snap_x = dx * snap();                   /* time-stamp snap  */
-        if (track().any_selected_notes())                /* redundant!       */
+        int snap_x = dx * snap();                       /* time-stamp snap  */
+        if (track().any_selected_notes())               /* redundant!       */
         {
-            int snap_y = -dy;                       /* note pitch snap  */
+            int snap_y = -dy;                           /* note pitch snap  */
             track().move_selected_notes(snap_x, snap_y);
         }
         else if (snap_x != 0)
@@ -2240,9 +2277,7 @@ qseqroll::start_paste ()
     track().clipboard_box(tick_s, note_h, tick_f, note_l);
     convert_tn_box_to_rect(tick_s, tick_f, note_h, note_l, selection());
     selection().xy_incr(drop_x(), drop_y() - selection().y());
-
-    m_sel_offset_x = 0;
-    m_sel_offset_y = 0;
+    m_sel_offset_x = m_sel_offset_y = 0;
 }
 
 /**

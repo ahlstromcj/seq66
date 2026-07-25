@@ -101,22 +101,6 @@ namespace seq66
 
 static const int c_qn_beats = 4;
 
-#if defined THIS_CODE_IS_USED
-
-/**
- *  Convenience function. We don't want to use seq66::string_to_int()
- *  because that uses a leading "0" or "0x" to determine the base of the
- *  conversions.
- */
-
-static int
-strtoi (const std::string & v)
-{
-    return v.empty() ? 0 : std::atoi(v.c_str());
-}
-
-#endif
-
 /**
  *  Extracts up to 4 numbers from a colon-delimited string, or 1 from a
  *  non-delimited string.  Actually colon or period are used.

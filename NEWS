@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-07-23
+2015-07-10 to 2026-07-25
 
 # Change Log
 
-## [0.99.27] - 2026-07-23
+## [0.99.27] - 2026-07-25
 
 "Scratchpad Recording"
 
@@ -14,6 +14,9 @@ Chris Ahlstrom
     -   Added check-boxes to activate the Metro, Record, and Thru ports.
     -   Added a button set the metronome to the internal hard-wired
         settings, which uses the drum channel.
+-   Pattern editor.
+    -   Added an "owning sequence number" member to eventlist.
+        Could be useful in pasting notes across patterns.
 
 ### Changed
 
@@ -37,6 +40,8 @@ Chris Ahlstrom
         insertion of an initial time-signature event. Now we bypass
         all initial meta events to get the amount of time-shift needed.
     -   Fixed "right align" in a similar way.
+    -   Fixed pasting across patterns to show a box where the notes
+        will go.
 -   Live grid.
     -   When Edit / Preferences is closed, the metronome and scratchpad
         statuses (enabled/disabled) are reflected in the buttons.

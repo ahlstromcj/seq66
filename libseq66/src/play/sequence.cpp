@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-06-05
+ * \updates       2026-07-25
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -253,6 +253,21 @@ sequence::sequence (int ppqn) :
 sequence::~sequence ()
 {
     // Empty body
+}
+
+/**
+ *  Sets the sequence number, and also passes it to the event
+ *  list, mostly for use in the event clipboard.
+ */
+
+void
+sequence::seq_number (int seqno)
+{
+    if (seqno >= 0 && seqno <= limit())
+    {
+        m_seq_number = short(seqno);
+        m_events.owning_sequence(seqno);
+    }
 }
 
 /**
@@ -2159,34 +2174,9 @@ sequence::selected_box
 )
 {
     automutex locker(m_mutex);
-    tick_s = m_maxbeats * m_ppqn;       /* the largest tick/pulse we allow  */
-    tick_f = 0;                         /* the smallest tick possible       */
-    note_l = c_midibyte_data_max;       /* the largest note value possible  */
-    note_h = (-1);                      /* the lowest, impossible note      */
-    for (auto & e : m_events)
-    {
-        if (e.is_selected())
-        {
-            midipulse time = e.timestamp();
-            if (time < tick_s)
-                tick_s = time;
-
-            if (time > tick_f)
-                tick_f = time;
-
-            int note = e.get_note();
-            if (note < note_l)
-                note_l = note;
-
-            if (note > note_h)
-                note_h = note;
-        }
-    }
-
     bool result
     {
-        (tick_s < m_maxbeats * m_ppqn) && (tick_f > 0) &&
-        (note_l < c_midibyte_data_max) && (note_h >= 0)
+        m_events.selected_box(tick_s, note_h, tick_f, note_l)
     };
     return result;
 }
@@ -2221,36 +2211,10 @@ sequence::onsets_selected_box
 )
 {
     automutex locker(m_mutex);
-    bool result = false;
-    tick_s = m_maxbeats * m_ppqn;
-    tick_f = note_h = 0;
-    note_l = c_midibyte_data_max;
-    for (auto & e : m_events)
+    bool result
     {
-        if (e.is_selected_note_on())
-        {
-            /*
-             * We cannot check On/Off here.  It screws up seqevent selection,
-             * which has no "off".
-             */
-
-            midipulse time = e.timestamp();
-            if (time < tick_s)
-                tick_s = time;
-
-            if (time > tick_f)
-                tick_f = time;
-
-            int note = e.get_note();
-            if (note < note_l)
-                note_l = note;
-
-            if (note > note_h)
-                note_h = note;
-
-            result = true;
-        }
-    }
+        m_events.onsets_selected_box(tick_s, note_h, tick_f, note_l)
+    };
     return result;
 }
 
@@ -2285,35 +2249,10 @@ sequence::clipboard_box
 )
 {
     automutex locker(m_mutex);
-    bool result = false;
-    tick_s = m_maxbeats * m_ppqn;
-    tick_f = 0;
-    note_h = 0;
-    note_l = c_midibyte_data_max;
-    if (sm_clipboard.empty())
+    bool result
     {
-        tick_s = tick_f = note_h = note_l = 0;
-    }
-    else
-    {
-        result = true;                  /* FIXME */
-        for (auto & e : sm_clipboard)
-        {
-            midipulse time = e.timestamp();
-            int note = e.get_note();
-            if (time < tick_s)
-                tick_s = time;
-
-            if (time > tick_f)
-                tick_f = time;
-
-            if (note < note_l)
-                note_l = note;
-
-            if (note > note_h)
-                note_h = note;
-        }
-    }
+        sm_clipboard.selected_box(tick_s, note_h, tick_f, note_l)
+    };
     return result;
 }
 
@@ -3029,8 +2968,10 @@ sequence::copy_selected ()
     eventlist clipbd;
     bool result = m_events.copy_selected(clipbd);
     if (result)
+    {
         sm_clipboard = clipbd;
-
+        sm_clipboard.owning_sequence(seq_number());
+    }
     return result;
 }
 

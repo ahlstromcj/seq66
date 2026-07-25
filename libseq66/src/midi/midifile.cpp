@@ -218,26 +218,6 @@ is_proptag (midilong p)
     return (miditag(p) & c_prop_tag_word) == c_prop_tag_word;
 }
 
-#if defined USE_THIS_CODE
-
-/**
- *  Name of the initial text meta events (00 through 07).
- */
-
-const std::string midifile::sm_meta_text_labels[8] =
-{
-    "Seq number",
-    "Text",
-    "Copyright",
-    "Track Name",
-    "Instrument Name",
-    "Lyric",
-    "Marker",
-    "Cue Point"
-};
-
-#endif
-
 /**
  *  Principal constructor.
  *

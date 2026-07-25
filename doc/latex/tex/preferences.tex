@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-07-23
+% \update      2026-07-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -925,10 +925,15 @@
 \subsection{Edit / Preferences / Metronome Options}
 \label{subsection:edit_preferences_metronome}
 
+   \index{recording!background}
+   \index{recording!scratchpad}
    This tab contains options for the "metronome" and
    "background recording" features.
    However, note that "background recording" in
-   \textsl{Seq66} is different from other applications.
+   \textsl{Seq66} is different from other applications,
+   so we called "scratchpad recording".
+   A "scratchpad" pattern is created, playback commences, and recording
+   can progress unhindered.
 
 \begin{figure}[H]
    \centering 
@@ -1021,14 +1026,16 @@
 
    \itempar{Record Buss}{recorder!buss}
    \index{background recorder}
+   \index{scratchpad recorder}
    This value selects the input device to use to record events into the
-   background pattern.
+   background/scratchpad pattern.
    Note that this device \textsl{must be enabled} in the \textbf{MIDI Input}
    buss list.
 
    \itempar{Thru Buss}{record!thru buss}
    This value selects the output MIDI device to use to play the incoming
-   background record notes.  Otherwise they will not be heard.
+   background/scratchpad record notes.  Otherwise they will not be heard
+   (unless the device produces sound).
    It \textsl{must} be enabled in the \textbf{MIDI Clock} list.
 
    \itempar{Thru Channel}{recorder!thru channel}

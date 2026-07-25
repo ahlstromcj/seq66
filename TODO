@@ -1,27 +1,27 @@
 TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-07-23
+2019-04-13 to 2026-07-25
 
     -   Background recording / Metronome.
-        -   Finish implementing background recording via the scratchpad
-            class.
+        -   Finish testing scratchpad recording.
         -   Can we show the patch name, and if drums, the drum name?
             Can we use dropdowns for selection?
-    -   Make sure to have an option to paste selected notes
-        into a new pattern at the beginning, or into an
-        existing pattern at the end.
+    -   Copy paste:
+        -   Does not show the ghost notes unless selected
+            in the current pattern and pasted in that same pattern.
+            Partially fixed; can conjure up cases where neither
+            the ghost notes or even the box are drawn. One issue
+            is that clicking into a pattern removes the selection
+            flags from its events.
+        -   Also, can paste a long selection into a short pattern.
+    -   controllers.cpp: Fix the code commented by THIS_CODE_IS_READY.
 
 Back burner:
 
-    -   Background recording / Metronome.
     -   MIDI Learn.
         -   Add a slot::metronome toggle? Only one slot left!
         -   Do not fill in an automation name when loop/mutes
             are selected. How?
-    -   Edit / Preferences / Metronome.
-        How can we implement count-in and background recording
-        properly? Is it worth it when one can just set up a
-        pattern to expand when notes are struck?
     -   Events tab:
         -   Adding a Note On should add a Note off of PPQN/16, but
             currently not easily done due to the need to add links.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2026-07-17
+ * \updates       2026-07-24
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -46,6 +46,7 @@ namespace seq66
 
 eventlist::eventlist () :
     m_events                (),
+    m_owning_sequence       (-1),
     m_match_iterating       (false),
     m_match_iterator        (m_events.end()),
     m_length                (0),
@@ -68,6 +69,7 @@ eventlist::eventlist () :
 
 eventlist::eventlist (const eventlist & rhs) :
     m_events                (rhs.m_events),
+    m_owning_sequence       (rhs.m_owning_sequence),
     m_match_iterating       (false),
     m_match_iterator        (m_events.end()),
     m_length                (rhs.m_length),
@@ -761,7 +763,6 @@ eventlist::remove_unlinked_notes ()
     return result;
 }
 
-
 /**
  *  Quantizes the currently-selected set of events that match the type of
  *  event specified.  This function first marks the selected events.  Then it
@@ -1037,6 +1038,139 @@ eventlist::adjust_timestamp (event & er, midipulse delta_tick)
             if (s_allow_wrap)
                 result = 0;
         }
+    }
+    return result;
+}
+
+/**
+ *  Returns the 'box' of the selected items, which is composed of the
+ *  minimum and maximum notes, and the minimum and maximum timestamps.
+ *
+ * \param [out] tick_s
+ *      Side-effect return reference for the start time.
+ *
+ * \param [out] note_h
+ *      Side-effect return reference for the high note.
+ *
+ * \param [out] tick_f
+ *      Side-effect return reference for the finish time.
+ *
+ * \param [out] note_l
+ *      Side-effect return reference for the low note.
+ *
+ * \return
+ *      Returns true if all the values are usable.
+ */
+
+bool
+eventlist::selected_box
+(
+    midipulse & tick_s, int & note_h,
+    midipulse & tick_f, int & note_l
+)
+{
+    bool result { false };
+    tick_s = c_midipulse_max;           /* current LONG_MAX                 */
+    tick_f = (-1);                      /* the smallest, impossible tick    */
+    note_l = c_midibyte_data_max;       /* the largest note value possible  */
+    note_h = (-1);                      /* the lowest, impossible note      */
+    for (auto & e : m_events)
+    {
+        if (e.is_selected())
+        {
+            midipulse time = e.timestamp();
+            result = true;
+            if (time < tick_s)
+                tick_s = time;
+
+            if (time > tick_f)
+                tick_f = time;
+
+            int note = e.get_note();
+            if (note < note_l)
+                note_l = note;
+
+            if (note > note_h)
+                note_h = note;
+        }
+    }
+    if (result)
+    {
+        result =
+        (
+            (tick_s < c_midipulse_max) && (tick_f > 0) &&
+            (note_l < c_midibyte_data_max) && (note_h >= 0)
+        );
+    }
+    return result;
+}
+
+/**
+ *  Returns the 'box' of the selected items for only Note On values.
+ *  Compare to selected_box().
+ *
+ * \threadsafe
+ *
+ * \param [out] tick_s
+ *      Side-effect return reference for the start time.
+ *
+ * \param [out] note_h
+ *      Side-effect return reference for the high note.
+ *
+ * \param [out] tick_f
+ *      Side-effect return reference for the finish time.
+ *
+ * \param [out] note_l
+ *      Side-effect return reference for the low note.
+ *
+ * \return
+ *      Returns true if a selected Note On event is found.
+ */
+
+bool
+eventlist::onsets_selected_box
+(
+    midipulse & tick_s, int & note_h,
+    midipulse & tick_f, int & note_l
+)
+{
+    bool result { false };
+    tick_s = c_midipulse_max;           /* current LONG_MAX                 */
+    tick_f = (-1);
+    note_l = c_midibyte_data_max;
+    note_h = (-1);                      /* the lowest, impossible note      */
+    for (auto & e : m_events)
+    {
+        if (e.is_selected_note_on())
+        {
+            /*
+             * We cannot check On/Off here.  It screws up seqevent selection,
+             * which has no "off".
+             */
+
+            midipulse time = e.timestamp();
+            result = true;
+            if (time < tick_s)
+                tick_s = time;
+
+            if (time > tick_f)
+                tick_f = time;
+
+            int note = e.get_note();
+            if (note < note_l)
+                note_l = note;
+
+            if (note > note_h)
+                note_h = note;
+        }
+    }
+    if (result)
+    {
+        result =
+        (
+            (tick_s < c_midipulse_max) && (tick_f > 0) &&
+            (note_l < c_midibyte_data_max) && (note_h >= 0)
+        );
     }
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2025-10-22
+ * \updates       2026-07-25
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -152,6 +152,14 @@ private:
      */
 
     event::buffer m_events;
+
+    /**
+     *  Owning sequence number. Useful in decided which pattern the
+     *  clipboard came from. If no pattern owns it, the value is
+     *  -1.
+     */
+
+    int m_owning_sequence;
 
     /**
      *  Eventually we want to be able to move through events of a given type,
@@ -284,6 +292,21 @@ public:
         return m_events.empty();
     }
 
+    int owning_sequence () const
+    {
+        return m_owning_sequence;
+    }
+
+    void owning_sequence (int os)
+    {
+        m_owning_sequence = os;
+    }
+
+    void clear_owning_sequence ()
+    {
+        m_owning_sequence = (-1);
+    }
+
     midipulse get_length () const
     {
         return m_length;
@@ -343,6 +366,16 @@ public:
     void clear ();
     void sort ();
     bool merge (const eventlist & el, bool presort = true);
+    bool selected_box
+    (
+        midipulse & tick_s, int & note_h,
+        midipulse & tick_f, int & note_l
+    );
+    bool onsets_selected_box
+    (
+        midipulse & tick_s, int & note_h,
+        midipulse & tick_f, int & note_l
+    );
 
     /**
      *  Dereference access for list or map.

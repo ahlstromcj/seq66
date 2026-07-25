@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2026-06-05
+ * \updates       2026-07-24
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1221,11 +1221,7 @@ public:
         return std::to_string(seq_number());
     }
 
-    void seq_number (int seqno)
-    {
-        if (seqno >= 0 && seqno <= limit())
-            m_seq_number = short(seqno);
-    }
+    void seq_number (int seqno);
 
     int color () const
     {
@@ -2141,6 +2137,11 @@ public:
     static void clear_clipboard ()
     {
         sm_clipboard.clear();                   /* shared between sequences */
+    }
+
+    static eventlist & clipboard ()
+    {
+        return sm_clipboard;
     }
 
     static recordstyle loop_record_style (int ri);

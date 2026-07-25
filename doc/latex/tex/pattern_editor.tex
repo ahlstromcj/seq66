@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-06-03
+% \update      2026-07-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1082,6 +1082,11 @@
    As shown in the following figure, "ghost notes" will appear as the mouse
    is moved, to aid in the placement of the notes. This feature is used
    for note movement and for pasting from the clipboard.
+
+   \textbf{BUG}:
+   The ghost notes are not shown when pasting into a different pattern.
+   This happens because the code currently uses events already
+   in the pattern.
 
 \begin{figure}[H]
    \centering 

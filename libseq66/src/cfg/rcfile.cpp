@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-07-20
+ * \updates       2026-07-24
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/qseq66/qseq66.rc </code> configuration file is fairly
@@ -600,7 +600,7 @@ rcfile::parse ()
         rc().metro_settings().recording_measures(temp);
 #endif
         bool thruflag = get_boolean(file, tag, "thru-buss-active");
-        rc().metro_settings().thru_active(true);
+        rc().metro_settings().thru_active(thruflag);
         temp = get_integer(file, tag, "thru-buss");
         rc().metro_settings().thru_buss(temp);
         temp = get_integer(file, tag, "thru-channel");
