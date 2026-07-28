@@ -6419,20 +6419,27 @@ sequence::get_tick () const
 
 /**
  *  Returns the last tick played, and is used by the editor's idle function.
+ *
+ *  The "last tick" starts at 0 normally, increments up to the length
+ *  of the pattern, then returns to 0 to start the cycle again, repetitively.
+ *
  *  If m_length is 0, this function returns m_last_tick - m_trigger_offset, to
- *  avoid an arithmetic exception.  Should we return 0 instead?
+ *  avoid an arithmetic exception. Should we return 0 instead?
  *
  *  Note that seqroll calls this function to help get the location of the
- *  progress bar.  What does perfedit do?
+ *  progress bar. What does perfedit do?
  */
 
 midipulse
 sequence::get_last_tick () const
 {
-    return get_length() > 0 ?
-        (m_last_tick + get_length() - m_trigger_offset) % get_length() :
-        m_last_tick - m_trigger_offset
-        ;
+    midipulse result
+    {
+        get_length() > 0 ?
+            (m_last_tick + get_length() - m_trigger_offset) % get_length() :
+            m_last_tick - m_trigger_offset
+    };
+    return result;;
 }
 
 /**

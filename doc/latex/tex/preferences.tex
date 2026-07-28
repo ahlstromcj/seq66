@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-07-24
+% \update      2026-07-25
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -288,7 +288,8 @@
 
    \index{MIDI Thru!warning}
    \textsl{Do not use the ALSA MIDI Through ports for both control
-   and display. Use an actual device port.}
+   and display. This creates a MIDI feedback loop.
+   Use an actual device port.}
 
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
@@ -1037,6 +1038,8 @@
    background/scratchpad record notes.  Otherwise they will not be heard
    (unless the device produces sound).
    It \textsl{must} be enabled in the \textbf{MIDI Clock} list.
+   If this port is set for usage, then the created "scratchpad"
+   pattern is automatically armed, so the notes can be heard.
 
    \itempar{Thru Channel}{recorder!thru channel}
    This value selects the channel to use to play the recorded notes as

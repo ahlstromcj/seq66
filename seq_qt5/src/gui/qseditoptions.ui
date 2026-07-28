@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
-    <height>688</height>
+    <width>770</width>
+    <height>690</height>
    </rect>
   </property>
   <property name="font">
@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -558,7 +558,7 @@ Each port number can be found by name-lookup.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>370</y>
+         <y>380</y>
          <width>611</width>
          <height>161</height>
         </rect>
@@ -582,7 +582,7 @@ Each port number can be found by name-lookup.</string>
         <property name="geometry">
          <rect>
           <x>8</x>
-          <y>0</y>
+          <y>10</y>
           <width>181</width>
           <height>17</height>
          </rect>
@@ -601,9 +601,9 @@ Each port number can be found by name-lookup.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>30</y>
+          <y>38</y>
           <width>571</width>
-          <height>129</height>
+          <height>121</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
@@ -614,7 +614,7 @@ Each port number can be found by name-lookup.</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="0" colspan="3">
+         <item row="0" column="0" colspan="3" alignment="Qt::AlignmentFlag::AlignBottom">
           <widget class="QCheckBox" name="checkBoxRecordByBuss">
            <property name="toolTip">
             <string>If checked, incoming data routes to the pattern
@@ -2894,7 +2894,7 @@ recording.</string>
          <x>222</x>
          <y>20</y>
          <width>325</width>
-         <height>221</height>
+         <height>227</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">

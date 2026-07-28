@@ -1,11 +1,20 @@
 TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-07-25
+2019-04-13 to 2026-07-28
 
+    -   Seq66 does not see amsynth, though aconnect and vmpk do.
+        What is up with that? The port checks were incorrect.
+        And it works on Debian Sid.
+    -   Add a drop-down to select pitch-bend range, from 1 to 24 semitones.
+        It should send the appropriate message to a specific device.
+        Add a c_pitchbend SeqSpec to be stored with the tune, holding the range
+        value and the affected port number or name.
     -   Background recording / Metronome.
         -   Finish testing scratchpad recording.
         -   Can we show the patch name, and if drums, the drum name?
             Can we use dropdowns for selection?
+        -   Get the playset to handle the sets as well.
+        -   The patterns do not start after count-iun.
     -   Copy paste:
         -   Does not show the ghost notes unless selected
             in the current pattern and pasted in that same pattern.
@@ -14,6 +23,7 @@ Chris Ahlstrom
             is that clicking into a pattern removes the selection
             flags from its events.
         -   Also, can paste a long selection into a short pattern.
+            Either warn about it or change the length.
     -   controllers.cpp: Fix the code commented by THIS_CODE_IS_READY.
 
 Back burner:

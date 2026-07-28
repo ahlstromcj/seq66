@@ -159,10 +159,10 @@ public:
 private:
 
     /**
-     *  Provides an alias for a vector of seq objects.  The "key" is an
+     *  Provides an alias for a vector of seq objects. The "key" is an
      *  integer which is the sequence number, and is basically an array index.
-     *  The value is a seq object representing sequence.  This container holds
-     *  both inactive and active slots/sequences.  It is a vector because it
+     *  The value is a seq object representing sequence. This container holds
+     *  both inactive and active slots/sequences. It is a vector because it
      *  is cheaper to hold empty slots than it is in a map.
      */
 
@@ -515,6 +515,7 @@ private:
     void save_snapshot ();
     void restore_snapshot ();
     void set_last_ticks (midipulse tick);
+    void set_armed (bool p);
     bool copy_patterns (const screenset & source);
 
     int trigger_count () const;
@@ -572,7 +573,7 @@ private:
     bool learn_armed_statuses ();
     void apply_song_transpose (seq::number seqno = seq::all());
     void sequence_playing_change (seq::number seqno, bool on, bool qinprogress);
-    void save_queued (seq::number repseq); // save_current_screenset ()
+    void save_queued (seq::number repseq);
     void unqueue (seq::number hotseq);
     void clear ();
     void initialize (int rows, int columns);
@@ -670,6 +671,9 @@ public:
     playset & operator = (playset &&) = default;
     ~playset () = default;
 
+    void set_last_ticks (midipulse tick);
+    void set_armed (bool p);
+
     void clear ()
     {
         m_screen_sets.clear();
@@ -720,4 +724,3 @@ public:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

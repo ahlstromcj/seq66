@@ -216,15 +216,15 @@ int qseqeditframe64::sm_initial_chord        = 0;
 
 /**
  *  To reduce the amount of written code, we use the following count to cover
- *  beats/measure ranging from 1 to 16, plus an additional value of 32.  The user
- *  can always manually edit odd beats/measure values. Unused.
+ *  beats/measure ranging from 1 to 16, plus an additional value of 32.  The
+ *  user can always manually edit odd beats/measure values. Unused.
  *
  *      static const int s_beat_measure_count   = 16;
  */
 
 /**
- *  These static items are used to fill in and select the proper zoom values for
- *  the grids.  Note that they are not members, though they could be.
+ *  These static items are used to fill in and select the proper zoom values
+ *  for the grids.  Note that they are not members, though they could be.
  *  Also note the features of these zoom numbers:
  *
  *      -#  The lowest zoom value is defined in qeditbase and usrsettings.

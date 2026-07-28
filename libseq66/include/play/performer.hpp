@@ -927,9 +927,9 @@ private:                            /* key, midi, and op container section  */
 
     /**
      *  Holds the starting tick for playing.  By default, this value is always
-     *  reset to the value of the "left tick".  We want to eventually be able
-     *  to leave it at the last playing tick, to support a "pause"
-     *  functionality. Note that "tick" is actually "pulses".
+     *  reset to the value of the "left tick".  We leave it at the last
+     *  playing tick, to support "pause". Note that "tick" is actually
+     *  "pulses".
      */
 
     midipulse m_start_tick;

@@ -141,7 +141,7 @@ scratchpad::initialize
         else
             set_thru(false);
 
-        set_name("Scratchpad");
+        set_name("Scratch");
         set_color(s_scratchpad_color, true);
         unmodify();                                 /* not part of song     */
     }
@@ -151,7 +151,6 @@ scratchpad::initialize
 bool
 scratchpad::uninitialize ()
 {
-//  set_recording(alteration::none, toggler::off);  /* doesn't clear expand */
     set_recording(toggler::off);
     set_color(0, true);
 

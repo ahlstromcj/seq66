@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-07-22
+ * \updates       2026-07-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -2033,9 +2033,10 @@ performer::arm_metronome (bool on)
 }
 
 /**
- *  ca 2023-09-13
  *  Refactoring to immediately create a new pattern before recording so that
  *  the user sees it. The functionality is similar to new_sequence().
+ *
+ *  How can we delay initializing the scratchpad until the count-in is over.
  */
 
 bool
@@ -2066,6 +2067,9 @@ performer::install_recorder ()
             );
             if (result)
             {
+                if (ms.thru_active())
+                    m_scratchpad->set_armed(true);
+
                 auto_play();
             }
             else
@@ -2075,6 +2079,11 @@ performer::install_recorder ()
         }
     }
 #else
+
+    /*
+     * This code will eventually go away.
+     */
+
     if (bool(m_recorder))                           /* transitory pointer   */
         return true;                                /* already in progress  */
 
@@ -2191,6 +2200,12 @@ performer::start_count_in ()
         result = m_play_set_storage.add(m_metronome);
         if (result)
         {
+            /*
+             * Hmmm, we want the metronome always playing when activated,
+             * rather than just when counting in. However, without this
+             * code, the normal patterns do not start.
+             */
+
             (void) m_metronome->
                 loop_count_max(rc().metro_settings().count_in_measures());
 
@@ -2207,13 +2222,15 @@ performer::finish_count_in ()
     bool result = m_metronome_count_in;
     if (result)
     {
-        auto_stop();                        /* halt playback                */
-        set_tick(0);
-        arm_metronome();
-        m_play_set_storage.clear();         /* don't keep it around         */
         m_metronome_count_in = false;
+        arm_metronome(false);
+        auto_stop(true);                    /* stop_playing(true)           */
+        set_tick(0);
+        play_set().set_last_ticks(0);
+        play_set().set_armed(true);
         start_playing();                    /* resume normal playback       */
         is_pattern_playing(true);
+        arm_metronome();
     }
     return result;
 }
@@ -5850,34 +5867,6 @@ void
 performer::auto_play ()
 {
     bool isplaying = false;
-
-#if 0
-
-    /*
-     * No compiler complains about this long-standing boner.
-     */
-
-    bool onekey = false;        /* WTF? keys().start() == keys().stop();    */
-    if (onekey)
-    {
-        if (is_running())
-        {
-            stop_playing();
-        }
-        else
-        {
-            if (rc().metro_settings().count_in_active())
-                play_count_in();
-            else
-                start_playing();
-
-            isplaying = true;
-        }
-    }
-    else
-
-#endif
-
     if (! is_running())
     {
         if (rc().metro_settings().count_in_active())

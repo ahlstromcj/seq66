@@ -1666,6 +1666,7 @@ qslivegrid::slot_toggle_metronome (bool /*clicked*/)
              */
 
             (void) perf().arm_metronome(false); /* mutes the metronome      */
+            (void) perf().remove_metronome();
             qt_set_icon(metro_xpm, ui->buttonMetronome);
         }
     }

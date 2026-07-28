@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2025-05-20
+ * \updates       2026-07-28
  * \license       See above.
  *
  *  API information found at:
@@ -75,6 +75,7 @@
  \endverbatim
  */
 
+#include "cpp_types.hpp"                /* CSTR() macro from lib66.         */
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
@@ -234,23 +235,123 @@ midi_alsa_info::remove_poll_descriptors ()
     }
 }
 
+#if defined SEQ66_PLATFORM_DEBUG
+
+static std::string
+show_snd_seq_port_type (unsigned bits)
+{
+    char tmp[32];
+    (void) snprintf(tmp, sizeof tmp, "0x%x", bits);
+    std::string result { "Snd Seq Port Types: " };
+    result += tmp;
+    result += " ";
+    if (bits & SND_SEQ_PORT_TYPE_SPECIFIC)      // 0 device-specific semantics
+        result += "Specific ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_GENERIC)  // 1 understands MIDI messages
+        result += "Generic ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_GM)       // 2 compatible with Gen MIDI
+        result += "GM ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_GS)       // 3 compatible with Roland GS
+        result += "GS ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_XG)       // 4 compatible with Yamaha XG
+        result += "XG ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_MT32)     // 5 compatible with MT-32
+        result += "MT32 ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_GM2)      // 6 compatible with GM 2
+        result += "GM2 ";
+
+    if (bits & SND_SEQ_PORT_TYPE_MIDI_UMP)      // 7 a UMP port
+        result += "UMP ";
+
+    if (bits & SND_SEQ_PORT_TYPE_SYNTH)         // 10 SND_SEQ_EVENT_SAMPLE_x
+        result += "Synth ";
+
+    if (bits & SND_SEQ_PORT_TYPE_DIRECT_SAMPLE) // 11 can download instruments
+        result += "Sample ";
+
+    if (bits & SND_SEQ_PORT_TYPE_SAMPLE)        // 12 ditto
+        result += "Download ";
+
+    if (bits & SND_SEQ_PORT_TYPE_HARDWARE)      // 16 implemented in hardware
+        result += "Hardware ";
+
+    if (bits & SND_SEQ_PORT_TYPE_SOFTWARE)      // 17 implemented in software
+        result += "Software ";
+
+    if (bits & SND_SEQ_PORT_TYPE_SYNTHESIZER)   // 18 generates sounds
+        result += "Synthesizer ";
+
+    if (bits & SND_SEQ_PORT_TYPE_PORT)          // 19 connects to other devices
+        result += "Port ";
+
+    if (bits & SND_SEQ_PORT_TYPE_APPLICATION)   // 20 belongs to application
+        result += "Application ";
+
+    result += "\n";
+    return result;
+}
+
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
 /**
  *  Checks the port type for not being the "generic" types
- *  SND_SEQ_PORT_TYPE_MIDI_GENERIC and SND_SEQ_PORT_TYPE_SYNTH.
+ *  SND_SEQ_PORT_TYPE_MIDI_GENERIC, SND_SEQ_PORT_TYPE_SYNTH,
+ *  and SND_SEQ_PORT_TYPE_APPLICATION.
  *
- *  We might need to add this check!!!
+ * Midi Through -->  0xa0002 --> Generic, Software, Port
+ * amsynth      --> 0x100000 --> Application
+ * VMPK Input   --> 0x100002 --> Generic, Application
+ * VMPK Output  --> 0x100002 --> Generic, Application
+ * Fluid Synth  --> 0x140006 --> Generic, GM, Synthesizer, Application
  *
- *      ((alsatype & SND_SEQ_PORT_TYPE_APPLICATION) == 0)
+ * 1111111111
+ * 98765432109876543210
+ * 10100000000000000010
+ * ^ ^               ^
+ * | |               |
+ * | |                ------ SND_SEQ_PORT_TYPE_MIDI_GENERIC
+ * |  ---------------------- SND_SEQ_PORT_TYPE_SOFTWARE
+ *  ------------------------ SND_SEQ_PORT_TYPE_PORT
+ *
+ * Not related, but here are the SND_SEQ_PORT_CAP_x bits:
+ *
+ * Midi Through --> 0x63        --> Read, Write, Subs-Read, Subs-Write
+ * amsynth      --> 0x42 & 0x21 --> See the VMPK entries.
+ * VMPK Input   --> 0x42        --> Write and Subs-Write
+ * VMPK Output  --> 0x21        --> Read and Subs-Read
+ *
+ * Notes on amsynth:
+ *
+ *      On both Arch and Debian, we get "Non-I/O port 'MIDI Out' and 'amsynth',
+ *      but it shows up in Debian as 'MIDI IN' and 'MIDI In:in' and we can
+ *      'send notes to both of them to drive amsynth..
  */
 
 bool
-midi_alsa_info::check_port_type (snd_seq_port_info_t * pinfo) const
+midi_alsa_info::check_port_type
+(
+    const std::string & cname,
+    snd_seq_port_info_t * pinfo
+) const
 {
     unsigned alsatype = snd_seq_port_info_get_type(pinfo);
+#if defined SEQ66_PLATFORM_DEBUG
+    std::string types { show_snd_seq_port_type(alsatype) };
+    printf("%s: %s", CSTR(cname), CSTR(types));
+#else
+    (void) cname;
+#endif
     return
     (
-        ((alsatype & SND_SEQ_PORT_TYPE_MIDI_GENERIC) == 0) &&
-        ((alsatype & SND_SEQ_PORT_TYPE_SYNTH) == 0)
+        ((alsatype & SND_SEQ_PORT_TYPE_MIDI_GENERIC) != 0) ||
+        ((alsatype & SND_SEQ_PORT_TYPE_SYNTH) != 0) ||
+        ((alsatype & SND_SEQ_PORT_TYPE_APPLICATION) != 0)
     );
 }
 
@@ -316,13 +417,16 @@ midi_alsa_info::get_all_port_info
             snd_seq_port_info_set_port(pinfo, -1);
             while (snd_seq_query_next_port(m_alsa_seq, pinfo) >= 0)
             {
-                if (check_port_type(pinfo))
-                    continue;
-
                 unsigned caps = snd_seq_port_info_get_capability(pinfo);
                 std::string clientname = snd_seq_client_info_get_name(cinfo);
                 std::string portname = snd_seq_port_info_get_name(pinfo);
                 int portnumber = snd_seq_port_info_get_port(pinfo);
+                if (! check_port_type(clientname, pinfo))
+                    continue;
+
+#if defined SEQ66_PLATFORM_DEBUG
+                printf("Capabilities = 0x%x\n", caps);
+#endif
                 if ((caps & sm_input_caps) == sm_input_caps)
                 {
                     inputports.add
@@ -358,7 +462,7 @@ midi_alsa_info::get_all_port_info
                      * Subscription management from 3rd client is disallowed.
                      */
 
-                    warnprintf("Non-I/O port '%s'", clientname.c_str());
+                    warnprintf("Non-I/O port '%s'", CSTR(clientname));
                 }
             }
         }

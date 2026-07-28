@@ -1535,6 +1535,32 @@ playset::count () const
     return seq_count();
 }
 
+/**
+ *
+ */
+
+void
+playset::set_last_ticks (midipulse tick)
+{
+    for (auto & sp : m_sequence_array)
+        sp->set_last_tick(tick);
+}
+
+/**
+ *
+ */
+
+void
+playset::set_armed (bool p)
+{
+    for (auto & sp : m_sequence_array)
+        sp->set_armed(p);
+}
+
+/**
+ *
+ */
+
 std::string
 playset::to_string () const
 {
@@ -1560,4 +1586,3 @@ playset::to_string () const
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-
