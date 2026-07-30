@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2026-07-28
+ * \updates       2026-07-29
  * \license       See above.
  *
  *  API information found at:
@@ -75,7 +75,6 @@
  \endverbatim
  */
 
-#include "cpp_types.hpp"                /* CSTR() macro from lib66.         */
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
@@ -235,7 +234,7 @@ midi_alsa_info::remove_poll_descriptors ()
     }
 }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
 static std::string
 show_snd_seq_port_type (unsigned bits)
@@ -297,7 +296,7 @@ show_snd_seq_port_type (unsigned bits)
     return result;
 }
 
-#endif  // defined SEQ66_PLATFORM_DEBUG
+#endif  // defined SEQ66_PLATFORM_DEBUG_TMI
 
 /**
  *  Checks the port type for not being the "generic" types
@@ -330,7 +329,8 @@ show_snd_seq_port_type (unsigned bits)
  *
  *      On both Arch and Debian, we get "Non-I/O port 'MIDI Out' and 'amsynth',
  *      but it shows up in Debian as 'MIDI IN' and 'MIDI In:in' and we can
- *      'send notes to both of them to drive amsynth..
+ *      send notes to either of them to drive amsynth. On Arch, there's
+ *      only 'MIDI IN' (for playback) and 'MIDI OUT'.
  */
 
 bool
@@ -341,9 +341,9 @@ midi_alsa_info::check_port_type
 ) const
 {
     unsigned alsatype = snd_seq_port_info_get_type(pinfo);
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     std::string types { show_snd_seq_port_type(alsatype) };
-    printf("%s: %s", CSTR(cname), CSTR(types));
+    printf("%s: %s", cname.c_str(), types.c_str());
 #else
     (void) cname;
 #endif
@@ -424,7 +424,7 @@ midi_alsa_info::get_all_port_info
                 if (! check_port_type(clientname, pinfo))
                     continue;
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 printf("Capabilities = 0x%x\n", caps);
 #endif
                 if ((caps & sm_input_caps) == sm_input_caps)
@@ -462,7 +462,7 @@ midi_alsa_info::get_all_port_info
                      * Subscription management from 3rd client is disallowed.
                      */
 
-                    warnprintf("Non-I/O port '%s'", CSTR(clientname));
+                    warnprintf("Non-I/O port '%s'", clientname.c_str());
                 }
             }
         }

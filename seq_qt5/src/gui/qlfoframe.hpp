@@ -267,11 +267,10 @@ private:
 
 }           // namespace seq66
 
-#endif // SEQ66_QLFOFRAME_HPP
+#endif      // SEQ66_QLFOFRAME_HPP
 
 /*
  * qlfoframe.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

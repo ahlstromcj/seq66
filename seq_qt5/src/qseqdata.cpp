@@ -277,7 +277,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     int minline = data_y(0);
 
     /*
-     * Show line labels.  TODO: for pitchbend, show -2, -1, 0, 1, and 2.
+     * Show line labels.
      */
 
     pen.setColor(sel_color());

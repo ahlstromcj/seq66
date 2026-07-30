@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-06-08
+# \updates     2026-07-31
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -64,6 +64,7 @@ seq_ui_forms += files(
    'src/gui/qperfeditex.ui',
    'src/gui/qperfeditframe64.ui',
    'src/gui/qplaylistframe.ui',
+   'src/gui/qrpnframe.ui',
    'src/gui/qsabout.ui',
    'src/gui/qsappinfo.ui',
    'src/gui/qsbuildinfo.ui',
@@ -92,6 +93,7 @@ seq_moc_headers += files(
    'src/gui/qperfeditex.hpp',
    'src/gui/qperfeditframe64.hpp',
    'src/gui/qplaylistframe.hpp',
+   'src/gui/qrpnframe.hpp',
    'src/gui/qsabout.hpp',
    'src/gui/qsappinfo.hpp',
    'src/gui/qsbuildinfo.hpp',
@@ -115,6 +117,7 @@ seq_moc_sources += files(
    'src/gui/qperfeditex.cpp',        # see comment above
    'src/gui/qperfeditframe64.cpp',
    'src/gui/qplaylistframe.cpp',
+   'src/gui/qrpnframe.cpp',
    'src/gui/qsabout.cpp',
    'src/gui/qsappinfo.cpp',
    'src/gui/qsbuildinfo.cpp',

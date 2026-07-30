@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-07-25
+2015-07-10 to 2026-07-30
 
 # Change Log
 
-## [0.99.27] - 2026-07-25
+## [0.99.27] - 2026-07-30
 
 "Scratchpad Recording"
 
@@ -17,10 +17,13 @@ Chris Ahlstrom
 -   Pattern editor.
     -   Added an "owning sequence number" member to eventlist.
         Could be useful in pasting notes across patterns.
+    -   Added a dialog to more easily add RPN or NRPN control events
+        to a pattern. They can also be save as a MIDI macro in the
+        'ctrl' file.  IN PROGRESS.
 
 ### Changed
 
--   Background recording. This feature has been fixed and upgrade to
+-   Background recording. This feature has been fixed and upgraded to
     do "scratchpad recording". This is like background recording,
     but requires the user to enable it. It immediately adds a new
     pattern in record mode, enables expansion of the pattern, and

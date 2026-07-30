@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2026-07-14
+# \update      2026-07-30
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -114,6 +114,7 @@ HEADERS += include/seq66_features.h \
  include/play/performer.hpp \
  include/play/playlist.hpp \
  include/play/portslist.hpp \
+ include/play/scratchpad.hpp \
  include/play/screenset.hpp \
  include/play/seq.hpp \
  include/play/sequence.hpp \
@@ -202,6 +203,7 @@ SOURCES += src/seq66_features.cpp \
  src/play/performer.cpp \
  src/play/playlist.cpp \
  src/play/portslist.cpp \
+ src/play/scratchpad.cpp \
  src/play/screenset.cpp \
  src/play/seq.cpp \
  src/play/sequence.cpp \
@@ -226,18 +228,18 @@ SOURCES += src/seq66_features.cpp \
  src/util/strfunctions.cpp
 
 INCLUDEPATH = \
+ include \
  ../include/qt/$${MIDILIB} \
  ../libsessions/include \
  ../seq_portmidi/include \
- ../seq_rtmidi/include \
- include
+ ../seq_rtmidi/include
 
-
- ../seq_$${MIDILIB}/include \
+# ../seq_$${MIDILIB}/include
+#
 # We want to continue to use JACK session without getting a warning about
 # it being deprecated.
 
-QMAKE_CXXFLAGS += -std=c++14 -Wno-deprecated -Wno-deprecated-declarations
+QMAKE_CXXFLAGS += -std=c++17 -Wno-deprecated -Wno-deprecated-declarations
 
 #******************************************************************************
 # libseq66.pro (qpseq66)

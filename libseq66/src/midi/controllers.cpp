@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-05-12
+ * \updates       2026-07-29
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -54,7 +54,7 @@ using namepair = struct
  */
 
 static namepair
-s_controller_names [c_midibyte_data_max] =
+s_controller_names [c_midibyte_data_max]
 {
     {   0, "Bank Select"                          },    // 0x00
     {   1, "Modulation Wheel"                     },
@@ -99,7 +99,7 @@ s_controller_names [c_midibyte_data_max] =
     {  35, "---"                                  },
     {  36, "Foot Pedal (fine)"                    },
     {  37, "Portamento Time (fine)"               },
-    {  38, "Data Entry (fine)"                    },
+    {  38, "Data Entry Slider (fine)"             },
     {  39, "Volume (fine)"                        },
     {  40, "Balance (fine)"                       },
     {  41, "---"                                  },
@@ -197,7 +197,7 @@ controller_name (int index, bool usehex)
     std::string result;
     if (index >= 0 && index < c_midibyte_data_max)
     {
-        std::string name = s_controller_names[index].name;
+        std::string name { s_controller_names[index].name };
         if (usehex)
         {
             char tmp[32];
@@ -228,10 +228,10 @@ using rpnpair = struct
     std::string name;
 };
 
-const int c_rpn_value_count = 8;
+const int c_rpn_value_count { 8 };
 
 static rpnpair
-s_rpn_names [c_rpn_value_count] =
+s_rpn_names [c_rpn_value_count]
 {
     {   0x0000,     "Pitch Bend Range"            },
     {   0x0001,     "Fine Tuning"                 },
@@ -291,11 +291,11 @@ rpn_name (int index)
 bool
 rpn_number_to_bytes (short rpnn, midibyte & out [2])
 {
-    bool result = rpnn >= 0 && rpnn < 16384;
+    bool result { rpnn >= 0 && rpnn < 16384 };
     if (result)
     {
-        unsigned short rpnn_lsb = rpnn & 0x3F;
-        unsigned short rpnn_msb = rpnn & 0x3F80;    /* rpnn - rpnn_lsb ?    */
+        unsigned short rpnn_lsb { rpnn & 0x3F };
+        unsigned short rpnn_msb { rpnn & 0x3F80 };  /* rpnn - rpnn_lsb ?    */
         out[0] = midibyte(rpnn_lsb);
         out[1] = midibyte(rpnn_msb);
     }
@@ -305,12 +305,10 @@ rpn_number_to_bytes (short rpnn, midibyte & out [2])
 short
 bytes_to_rpn_number (const midibyte & in [2])
 {
-    short result = short(in[1]);                    /* the MSB 7 bits       */
+    short result { short(in[1]) };                  /* the MSB 7 bits       */
     result <<= 7;
     result += short(in[0]);
     return result;
-}
-
 }
 
 #endif
@@ -322,4 +320,3 @@ bytes_to_rpn_number (const midibyte & in [2])
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

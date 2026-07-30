@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qrpnframe</class>
+ <widget class="QFrame" name="qrpnframe">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>685</width>
+    <height>341</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Frame</string>
+  </property>
+  <widget class="QGroupBox" name="group_box_rpn">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>211</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Select Control</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>191</width>
+      <height>124</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QRadioButton" name="radio_button_rpn">
+       <property name="text">
+        <string>&amp;RPN</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_button_nrpn">
+       <property name="text">
+        <string>&amp;NRPN</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_button_rpn_data_slider">
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="text">
+        <string>&amp;Data entry slider</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_button_rpn_data_incr">
+       <property name="text">
+        <string>Data button increment</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_button_rpn_data_decr">
+       <property name="text">
+        <string>Data button decrement</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="group_box_rpn_value">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>40</y>
+     <width>241</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>Select RPN</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>216</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_pitch_range">
+       <property name="text">
+        <string>&amp;Pitchbend range</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_chan_fine_tuning">
+       <property name="text">
+        <string>Channel &amp;fine tuning</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_chan_coarse_tuning">
+       <property name="text">
+        <string>Channel &amp;coarse tuning</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_tune_program_change">
+       <property name="text">
+        <string>Tuning program change</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_tune_bank_select">
+       <property name="text">
+        <string>Tuning bank select</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_mod_depth_range">
+       <property name="text">
+        <string>&amp;Modulation depth range</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_rpn_parameter_reset">
+       <property name="font">
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="text">
+        <string>RPN parameter reset</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QComboBox" name="combo_box_channel">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>40</y>
+     <width>86</width>
+     <height>30</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>40</y>
+     <width>71</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Channel</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="line_edit_rpn_macro_name">
+   <property name="geometry">
+    <rect>
+     <x>294</x>
+     <y>257</y>
+     <width>121</width>
+     <height>28</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>226</y>
+     <width>111</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Macro name</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="check_box_rpn_append_reset">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>100</y>
+     <width>151</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Append RPN reset</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>10</y>
+     <width>281</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_5">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>RPN/NRPN Editor</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_6">
+      <property name="font">
+       <font>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="text">
+       <string>pattern #xxxx</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>130</y>
+     <width>171</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <italic>true</italic>
+    </font>
+   </property>
+   <property name="text">
+    <string>RPN and NRPN use the data
+entry slider by default. RPN
+reset is added by default; this
+is recommended.</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="check_box_rpn_append_data">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>70</y>
+     <width>171</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Append data entry slider</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>210</y>
+     <width>261</width>
+     <height>123</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="line_edit_nrpn_param_number"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Timestamp (BBT)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>RPN/NRPN parameter value</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="line_edit_rpn_param_value"/>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="line_edit_rpn_timestamp"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_nrpn_param_number">
+      <property name="text">
+       <string>NRPN parameter no.</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>300</y>
+     <width>371</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="button_rpn_macro">
+      <property name="text">
+       <string>Create Macro</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="buitton_rpn_insert">
+      <property name="text">
+       <string>&amp;Insert/Append</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="button_rpn">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

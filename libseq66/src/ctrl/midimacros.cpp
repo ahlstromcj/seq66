@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2025-07-12
+ * \updates       2026-07-29
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -142,10 +142,6 @@ midimacros::expand (midimacro & m)
             const auto cit = m_macros.find(name);
             if (cit != m_macros.end())
             {
-                /*
-                 * Was a midistring: result += expand(cit->second);
-                 */
-
                 midibytes xpanded = expand(cit->second);
                 result.insert(result.end(), xpanded.begin(), xpanded.end());
             }
@@ -163,10 +159,6 @@ midimacros::expand (midimacro & m)
         }
         else
         {
-            /*
-             * result += b;
-             */
-
             midibyte b = string_to_midibyte(token);
             result.push_back(b);
             temp.push_back(b);
@@ -253,7 +245,11 @@ midimacros::make_defaults ()
         "reset = $header 0x00 $footer    # fill in with device's reset command",
         "startup = $header 0x00 $footer  # sent at start, if not empty",
         "shutdown = $header 0x00 $footer # sent at exit, if not empty",
-        ""  /* list terminator */
+        "rpnpitch = "
+            "0xB0 0x65 0 0xB0 0x64 0x0 "
+            "0xB0 0x06 0x0C 0xB0 0x26 0 "
+            "0xB0 0x65 0x7F 0xB0 0x64 0x7F",
+        ""                                          /* list terminator */
     };
     bool result = count() == 0;
     if (result)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>424</height>
+    <height>426</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -154,9 +154,9 @@
    <property name="geometry">
     <rect>
      <x>510</x>
-     <y>280</y>
+     <y>288</y>
      <width>331</width>
-     <height>69</height>
+     <height>61</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -585,7 +585,7 @@ same time.</string>
    <property name="geometry">
     <rect>
      <x>511</x>
-     <y>248</y>
+     <y>260</y>
      <width>288</width>
      <height>28</height>
     </rect>
@@ -734,8 +734,8 @@ same time.</string>
     <rect>
      <x>502</x>
      <y>109</y>
-     <width>331</width>
-     <height>142</height>
+     <width>321</width>
+     <height>150</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">

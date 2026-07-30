@@ -77,6 +77,7 @@ FORMS += src/gui/qlearnframe.ui \
  src/gui/qperfeditex.ui \
  src/gui/qperfeditframe64.ui \
  src/gui/qplaylistframe.ui \
+ src/gui/qrpnframe.ui \
  src/gui/qsabout.ui \
  src/gui/qsappinfo.ui \
  src/gui/qsbuildinfo.ui \
@@ -99,6 +100,7 @@ HEADERS += src/gui/qlearnframe.hpp \
  src/gui/qperfeditex.hpp \
  src/gui/qperfeditframe64.hpp \
  src/gui/qplaylistframe.hpp \
+ src/gui/qrpnframe.hpp \
  src/gui/qsabout.hpp \
  src/gui/qsappinfo.hpp \
  src/gui/qsbuildinfo.hpp \
@@ -144,6 +146,7 @@ SOURCES += src/gui/qlearnframe.cpp \
  src/gui/qlfoframe.cpp \
  src/gui/qlearnframe.cpp \
  src/gui/qliveframeex.cpp \
+ src/gui/qrpnframe.cpp \
  src/gui_palette_qt5.cpp \
  src/gui/qmutemaster.cpp \
  src/gui/qpatternfix.cpp \

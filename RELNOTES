@@ -1,8 +1,12 @@
-Release Notes for Seq66 v. 0.99.27 2026-07-22 "Scratchpad Recording"
+Release Notes for Seq66 v. 0.99.27 2026-07-30 "Scratchpad Recording"
 
 This version refactors the metronome code to support "scratchpad
 recording", similar to background recording but with visual feedback.
-Background recording when one wants to improvise.  Also many fixes,
+Background recording when one wants to improvise.
+
+Another "big" addition is a dialog for adding RPN/NRPN controls.
+
+Also many fixes,
 tweaks, and minor updates.
 
 - Main window.
@@ -10,10 +14,19 @@ tweaks, and minor updates.
 - Pattern editor.
   - Fixed the left-align and right-align pattern-fix actions by
     bypassing initial meta events.
+  - Added a dialog to provide a way to create an RPN and NRPN
+    controller event in a pattern, or to add it as a MIDI
+    macro.
 - Event editor.
 - Build system.
-- Command-line:
-- Miscellaneous:
+- Command-line.
+- Miscellaneous.
+  - Background recording. This feature has been fixed and upgraded to
+    do "scratchpad recording". See the NEWS file and the user
+    manual.
+  - Port-mapping.
+    - The Recreate button clears the port map and recreates it,
+      including any devices plugged in while Seq66 runs.
 - Documentation updated.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
-    <height>425</height>
+    <width>827</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,7 +73,7 @@ Click &quot;Load List&quot; to select a playlist file.</string>
      <x>6</x>
      <y>30</y>
      <width>824</width>
-     <height>309</height>
+     <height>291</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -646,13 +646,13 @@ add it to the song table.</string>
          <string/>
         </property>
         <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+         <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContentsOnFirstShow</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -732,7 +732,7 @@ add it to the song table.</string>
            <string>Opens a dialog to set a directory and play-list file.</string>
           </property>
           <property name="text">
-           <string>Create File</string>
+           <string>Set File</string>
           </property>
          </widget>
         </item>
@@ -850,7 +850,7 @@ add it to the song table.</string>
 information.</string>
           </property>
           <property name="text">
-           <string>Save Lists</string>
+           <string>Save List</string>
           </property>
          </widget>
         </item>
@@ -879,13 +879,13 @@ information.</string>
          <string>Shows MIDI tunes in the currently-selected play-list.</string>
         </property>
         <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+         <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContentsOnFirstShow</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
@@ -1100,7 +1100,7 @@ the configured MIDI control comes in.</string>
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>344</y>
+     <y>330</y>
      <width>617</width>
      <height>69</height>
     </rect>
@@ -1238,8 +1238,8 @@ Read-only.</string>
    <property name="geometry">
     <rect>
      <x>634</x>
-     <y>344</y>
-     <width>134</width>
+     <y>330</y>
+     <width>161</width>
      <height>71</height>
     </rect>
    </property>
