@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-07-29
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -55,11 +55,11 @@ namespace seq66
  *  Constant static macro names.
  */
 
-const std::string midimacros::footer    = "footer";
-const std::string midimacros::header    = "header";
-const std::string midimacros::reset     = "reset";
-const std::string midimacros::startup   = "startup";
-const std::string midimacros::shutdown  = "shutdown";
+const std::string midimacros::footer    { "footer" };
+const std::string midimacros::header    { "header" };
+const std::string midimacros::reset     { "reset" };
+const std::string midimacros::startup   { "startup" };
+const std::string midimacros::shutdown  { "shutdown" };
 
 /**
  *  Default constructor.
@@ -231,8 +231,8 @@ midimacros::byte_strings () const
 
 /**
  *  This function creates some defaults to ensure that there is a valid
- *  macro-control section in the 'ctrl' file.  These are not useable, but will
- *  be checked for at (for example) startup and shutdown.
+ *  macro-control section in the 'ctrl' file.  Most are useable as is, or
+ *  will be checked for at (for example) startup and shutdown.
  */
 
 bool
@@ -242,9 +242,15 @@ midimacros::make_defaults ()
     {
         "footer = 0xF7                   # End-of-SysEx byte",
         "header = 0xF0 0x00 0x00         # device SysEx header, 0xF0 required",
+        "middlec_off = 0x80 0x3C 0x00    # turn off test note",
+        "middlec_on = 0x90 0x3C 0x40     # turn on test note",
         "reset = $header 0x00 $footer    # fill in with device's reset command",
         "startup = $header 0x00 $footer  # sent at start, if not empty",
         "shutdown = $header 0x00 $footer # sent at exit, if not empty",
+        "pitch = "
+            "0xB0 0x65 0 0xB0 0x64 0x0 "
+            "0xB0 0x06 0x02 0xB0 0x26 0 "
+            "0xB0 0x65 0x7F 0xB0 0x64 0x7F",
         "rpnpitch = "
             "0xB0 0x65 0 0xB0 0x64 0x0 "
             "0xB0 0x06 0x0C 0xB0 0x26 0 "
@@ -271,4 +277,3 @@ midimacros::make_defaults ()
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

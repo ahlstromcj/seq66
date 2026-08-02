@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-07-06
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -98,6 +98,7 @@
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qlfoframe.hpp"                /* seq66::qlfoframe dialog class    */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix dialog class  */
+#include "qrpnframe.hpp"                /* seq66::qrpnframe dialog class    */
 #include "qseqdata.hpp"                 /* seq66::qseqdata panel            */
 #include "qseqeditex.hpp"               /* seq66::qseqeditex class          */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
@@ -311,6 +312,7 @@ qseqeditframe64::qseqeditframe64
     m_short_version         (shorter),              /* short_version()  */
     m_is_looping            (false),
     m_lfo_wnd               (nullptr),
+    m_rpn_wnd               (nullptr),
     m_patternfix_wnd        (nullptr),
     m_tools_popup           (nullptr),
     m_tools_harmonic        (nullptr),
@@ -2764,10 +2766,11 @@ void
 qseqeditframe64::insert_macro (const std::string & macroname)
 {
     const midimacro & macro = perf().get_macro(macroname);
-    midipulse tstamp = track().get_last_tick();
+    midipulse tstamp = track().get_tick();      /* get_last_tick() == "L"   */
     bool ok = track().add_macro(tstamp, macro);
     if (ok)
     {
+        track().modify();                       /* notify all the GUIs      */
         msgprintf
         (
             msglevel::info, "Macro '%s' inserted at %ld",
@@ -2805,7 +2808,7 @@ qseqeditframe64::popup_tool_menu ()
         bool macrosactive = ! names.empty();
         if (macrosactive)
         {
-            menumacros = new_qmenu("&Insert macro at \"L\"", m_tools_popup);
+            menumacros = new_qmenu("&Insert macro...", m_tools_popup);
             if (not_nullptr(menumacros))
             {
                 for (const auto & name : names)
@@ -2913,6 +2916,12 @@ qseqeditframe64::popup_tool_menu ()
             lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame())
         );
 
+        QAction * rpnbox = new_qaction("RPN/NRPN...", m_tools_popup);
+        connect
+        (
+            rpnbox, SIGNAL(triggered(bool)), this, SLOT(show_rpn_frame())
+        );
+
         QAction * fixbox = new_qaction("Pattern &fix...", m_tools_popup);
         connect
         (
@@ -2986,6 +2995,7 @@ qseqeditframe64::popup_tool_menu ()
         m_tools_popup->addMenu(menumore);
 #else
         m_tools_popup->addAction(lfobox);
+        m_tools_popup->addAction(rpnbox);
         m_tools_popup->addAction(fixbox);
 #endif
 
@@ -4382,6 +4392,19 @@ qseqeditframe64::show_lfo_frame ()
     }
     else
         m_lfo_wnd->show();
+}
+
+void
+qseqeditframe64::show_rpn_frame ()
+{
+    if (is_nullptr(m_rpn_wnd))
+    {
+        m_rpn_wnd = new (std::nothrow) qrpnframe();
+        if (not_nullptr(m_rpn_wnd))
+            m_rpn_wnd->show();
+    }
+    else
+        m_rpn_wnd->show();
 }
 
 void

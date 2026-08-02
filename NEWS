@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-07-30
+2015-07-10 to 2026-08-02
 
 # Change Log
 
-## [0.99.27] - 2026-07-30
+## [0.99.27] - 2026-08-02
 
 "Scratchpad Recording"
 
@@ -20,6 +20,9 @@ Chris Ahlstrom
     -   Added a dialog to more easily add RPN or NRPN control events
         to a pattern. They can also be save as a MIDI macro in the
         'ctrl' file.  IN PROGRESS.
+-   Added functions for splitting and joining 14-bit MIDI values.
+-   Added more default MIDI macros. See the bottom of the file
+    data/linux/qseq66.ctrl.
 
 ### Changed
 
@@ -32,6 +35,12 @@ Chris Ahlstrom
 -   Port-mapping.
     -   The Recreate button clears the port map and recreates it,
         including any devices plugged in while Seq66 runs.
+-   Pattern editor.
+    -   Macros now inserted at progress location, not at the "L"
+        marker.
+-   Main Session tab, MIDI macros.
+    -   Macros now require clicking the Send button. This makes the
+        operation success/failure clear.
 
 ### Fixed
 
@@ -48,6 +57,8 @@ Chris Ahlstrom
 -   Live grid.
     -   When Edit / Preferences is closed, the metronome and scratchpad
         statuses (enabled/disabled) are reflected in the buttons.
+-   MIDI macros.
+    -   Fixed minor bugs sending macros via MIDI-control-out.
 
 ### Removed
 

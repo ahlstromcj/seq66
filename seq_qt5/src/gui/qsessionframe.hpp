@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2023-09-21
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -108,6 +108,7 @@ private slots:
     void slot_track_number (int trk);
     void slot_macros_active ();
     void slot_macro_pick (const QString &);
+    void slot_macro_send ();
     void slot_log_file ();
     void slot_log_file_clear ();
 

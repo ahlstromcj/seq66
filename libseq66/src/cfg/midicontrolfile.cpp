@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2025-06-24
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  *  This class handles the 'ctrl' file.
@@ -51,6 +51,8 @@ namespace seq66
  *  Version 5: Adds 8 more potential midi-control-out entries.
  *  Version 6: Adds a large number of new automation controls. Version
  *             5 files will be renamed (for backup) and replaced.
+ *
+ *  2026-08-01: Adds a sample RPN macro.
  */
 
 static const int s_ctrl_file_version = 6;
@@ -227,9 +229,8 @@ midicontrolfile::~midicontrolfile ()
 bool
 midicontrolfile::parse_stream (std::ifstream & file)
 {
-    bool result = true;
+    bool result { true };
     file.seekg(0, std::ios::beg);                   /* seek to the start    */
-    (void) parse_version(file);
 
     std::string s = parse_comments(file);
     if (! s.empty())
@@ -419,6 +420,10 @@ midicontrolfile::parse ()
     }
     else
     {
+        std::string s = parse_version(file);
+        if (s.empty() || file_version_is_old(file))
+            rc_ref().auto_rc_save(true);
+
         result = parse_stream(file);
         if (! result)
             file_error("Read failed", name());
@@ -470,11 +475,17 @@ bool
 midicontrolfile::parse_midi_control_out (std::ifstream & file)
 {
     bool result;
-    std::string mctag = "[midi-control-out-settings]";
-    std::string s = get_variable(file, mctag, "set-size");
-    int sequences = string_to_int(s, setmaster::Size());
-    bussbyte buss = get_buss_number(file, true, mctag, "output-buss");
-    bool enabled = false;
+    std::string mctag { "[midi-control-out-settings]" };
+    std::string s { get_variable(file, mctag, "set-size") };
+    int sequences { string_to_int(s, setmaster::Size()) };
+    bussbyte buss { get_buss_number(file, true, mctag, "output-buss") };
+    bool enabled { false };
+    bool new_version { false };
+//  std::string v { parse_version(file) };
+//  if (v.empty() || file_version_is_old(file))
+    if (file_version_is_old(file))
+        new_version = true;
+
     s = get_variable(file, mctag, "midi-enabled");
     if (s.empty())
     {
@@ -617,7 +628,12 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 {
                     int count = 0;
                     mco.clear_macros();         /* clear it for each pass   */
-                    while (ok)
+                    if (new_version)            /* likely added new macro   */
+                    {
+                        ok = mco.make_macro_defaults();
+                        rc_ref().auto_ctrl_save(true);
+                    }
+                    while (ok)                  /* add existing macros      */
                     {
                         tokenization t = tokenize(line(), "=");
                         ok = mco.add_macro(t);
@@ -635,8 +651,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                     }
                 }
                 else
+                {
                     ok = mco.make_macro_defaults();
-
+                    rc_ref().auto_ctrl_save(true);
+                }
                 if (ok)
                     ok = rc_ref().midi_control_active();
 
@@ -1165,9 +1183,11 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
          */
 
         file << "\n[macro-control-out]\n\n"
-"# This format is 'macroname = [ hex bytes | macro-references]'. Macro references\n"
-"# are macro-names preceded by a '$'.  Some values should always be defined, even\n"
-"# if empty: footer, header, reset, startup, and shutdown.\n\n"
+"# The format: 'macroname = [ hex bytes | macro-references]'. Macro references\n"
+"# are macro-names preceded by a '$'.  Some values are always be defined, even\n"
+"# if empty: footer, header, reset, startup, and shutdown. If adding multiple\n"
+"# event, separate each with a '|' (pipe) character. Also look in the sample\n"
+"# file data/linux/qseq66.ctrl for more macros.\n\n"
             ;
 
         std::string lines = mco.macro_lines();
@@ -1182,7 +1202,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
                 ;
         }
         else
-            file << lines << std::endl;
+            file << lines;      /*  << std::endl; */
     }
     return result;
 }

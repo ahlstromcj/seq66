@@ -96,14 +96,23 @@ enum class cc
     effect_control_2  =  13, /**< Control a parameter of a synth effect.     */
     undefined_14      =  14,
     undefined_15      =  15,
-    general_purp_16   =  16,
-    general_purp_17   =  17,
-    general_purp_18   =  18,
-    general_purp_19   =  19,
+    general_purpose_1 =  16,
+    general_purpose_2 =  17,
+    general_purpose_3 =  18,
+    general_purpose_4 =  19,
 
     /*
      * 20 – 31 Undefined.
+     *
      * 32 – 63 Controllers 0 to 31, Least Significant Bit (LSB).
+     *
+     * Examples (subtract 32 to get the coarse version):
+     *
+     *      bank_select_lsb = 32,
+     *      data_entry_fine = 38,
+     *
+     * These are rarely implemented, but we provide their names anyway,
+     * in the array s_controller_names[].
      *
      * In the below list, Off is represented by 0x00 to 0x3F (0 to 63)
      * and On by 0x40 to 0x7F.
@@ -186,4 +195,3 @@ extern void set_controller_name
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

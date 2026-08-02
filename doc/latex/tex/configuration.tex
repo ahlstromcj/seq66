@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2026-05-05
+% \update      2026-08-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2839,12 +2839,13 @@
          command-data, and the 0xf7 End-of-SysEx "footer" to end the command.
       \item Do not include time deltas; they are not needed for sending.
       \item In the "middlec" macro, the "|" separates two events, a Note On
-         followed by a Note Off.
+         followed by a Note Off. Any number of events can be added that way,
+         if they are on a single (perhaps long) line.
       \item There is no limit to the number of macros that can be defined.
       \item To send any of them directly at any time, go to the
          \textbf{Session} tab and select a macro from the drop-down list.
          There is no way to send them via MIDI control :-(.
-      \item Macros can also be inserted at the current "L" marker
+      \item Macros can also be inserted at the current progress marker
          from the Tools menu of the pattern editor.
    \end{itemize}
 

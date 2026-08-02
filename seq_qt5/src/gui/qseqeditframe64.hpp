@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-04-21
+ * \updates       2026-07-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -94,6 +94,7 @@ namespace seq66
 {
     class qlfoframe;
     class qpatternfix;
+    class qrpnframe;
     class qseqeditex;
     class screenset;
 
@@ -342,6 +343,7 @@ private slots:
     void events ();
     void data ();
     void show_lfo_frame ();
+    void show_rpn_frame ();
     void show_pattern_fix ();
     void slot_play_change (bool ischecked);
     void slot_thru_change (bool ischecked);
@@ -451,6 +453,13 @@ private:
      */
 
     qlfoframe * m_lfo_wnd;
+
+    /**
+     *  The RPN window object for handling RPN and NRPN more
+     *  systematically.
+     */
+
+    qrpnframe * m_rpn_wnd;
 
     /**
      *  The pattern-fix window object that might used by the pattern editor.

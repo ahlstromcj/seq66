@@ -26,6 +26,7 @@
         libseq66/include/os/timing.hpp
         libseq66/include/play/performer.hpp
  *      libseq66/include/play/sequence.hpp
+        libseq66/include/play/scratchpad.hpp        [NEW]
  *      libseq66/include/play/screenset.hpp
         libseq66/include/util/basic_macros.h
         libseq66/include/util/basic_macros.hpp
@@ -52,6 +53,7 @@
         libseq66/src/play/performer.cpp
         libseq66/src/play/portslist.cpp
  *      libseq66/src/play/sequence.cpp
+        libseq66/src/play/scratchpad.hpp            [NEW]
  *      libseq66/src/play/screenset.cpp
         libseq66/src/seq66_features.cpp
         libseq66/src/sessions/clinsmanager.cpp

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-07-13
+ * \updates       2026-07-30
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1558,25 +1558,84 @@ midi_data_adjust (int invalue, int reduction)
  *  value (actually 16-bit since most computer CPUs deal with 16-bit, not
  *  14-bit, integers).
  *
- *  I think Kepler34 got the bytes backward.
+ *  This function is used in performer in regard to MIDI clock position,
+ *  but why the multiplication by 48? See perform.cpp in the Seq32
+ *  project on GitHub.
  *
  * \param b0
- *      The first byte to be combined.
+ *      The first byte to be combined. The LSB. It should be a 7-bit
+ *      value, but we don't check or insure that.
  *
  * \param b1
- *      The second byte to be combined.
+ *      The second byte to be combined. The MSB. It should be a 7-bit
+ *      value, but we don't check or insure that.
  *
  * \return
- *      Returns the bytes basically OR'd together.
+ *      Returns the bytes basically shifted and OR'd together.
  */
 
 unsigned short
 combine_bytes (midibyte b0, midibyte b1)
 {
-   unsigned short short_14bit = (unsigned short)(b1);
+   unsigned short short_14bit { (unsigned short)(b1) };
    short_14bit <<= 7;
    short_14bit |= (unsigned short)(b0);
    return short_14bit * 48;
+}
+
+/**
+ *  A separate version of combine_bytes(), sort of. It doesn't do
+ *  the multiplication by 48.
+ *
+ * \param b0
+ *      The first byte to be combined. The LSB. It should be a 7-bit
+ *      value, but we don't check or insure that.
+ *
+ * \param b1
+ *      The second byte to be combined. The MSB. It should be a 7-bit
+ *      value, but we don't check or insure that.
+ *
+ * \return
+ *      Returns the bytes basically shifted and OR'd together.
+ */
+
+unsigned short
+join_14_bits (midibyte b0, midibyte b1)
+{
+   unsigned short short_14bit { (unsigned short)(b1) };
+   short_14bit <<= 7;
+   short_14bit |= (unsigned short)(b0);
+   return short_14bit;
+}
+
+/**
+ * The inverse of decode_14_bits(). Compare this function to
+ * pitch_data_bytes(), which does a little more.
+ *
+ * \param value14
+ *      The value to be split into 7-bit bytes. It is checked to be sure
+ *      it is less than 2^14 (16384).
+ *
+ * \param [out] b0
+ *      The first byte extracted. The LSB. It will be a 7-bit
+ *      value.
+ *
+ * \param [out] b1
+ *      The second byte extracted. The MSB. It will be a 7-bit
+ *      value.
+ *
+ * \return
+ *      Returns true if the value is really 14 bits. Otherwise,
+ *      use the results at your own risk.
+ */
+
+bool
+split_14_bits (unsigned short value14, midibyte & b0, midibyte & b1)
+{
+    bool result { value14 < 16384 };
+    b0 = value14 & 0x7F;
+    b1 = (value14 >> 7) & 0x7F;
+    return result;
 }
 
 /**
@@ -2181,6 +2240,8 @@ pitch_value_semitones (midibyte d0, midibyte d1, int semitone_range)
  *          00111111-1-1111111
  *             3 F   8    0
  *
+ *  Compare this function to split_14_bits().
+ *
  * \param pitch
  *      Provides the pitch value, which must range from 0 to 16384.
  *      Otherwise, 8192 is assumed.
@@ -2223,4 +2284,3 @@ pitch_data_bytes_scaled (midibyte pitch, midibyte & d0, midibyte & d1)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

@@ -1,14 +1,7 @@
 TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-07-30
+2019-04-13 to 2026-08-02
 
-    -   Seq66 does not see amsynth, though aconnect and vmpk do.
-        What is up with that? The port checks were incorrect.
-        And it works on Debian Sid.
-    -   Add a drop-down to select pitch-bend range, from 1 to 24 semitones.
-        It should send the appropriate message to a specific device.
-        Add a c_pitchbend SeqSpec to be stored with the tune, holding the range
-        value and the affected port number or name.
     -   Follow up on RPN:
         -   controllers module
         -   program-banks.text (issue #138)
@@ -16,13 +9,11 @@ Chris Ahlstrom
         -   RPN.text
         -   24stones.mid and 2stones.mid
         -   qseventslots module
-    -   Figure out how to get the latest ctrl file to set the save bit.
-    -   Use "ZZ" to exit the pattern and song editors in lieu of/addition
-        to the "Esc" key? Uh, no.
     -   The ":" key is available (as well as some other keys). How
         can we use them?
-    -   Reinvestigate the startup and shutdown macros. Test the rpnpitch
-        macro.
+    -   Reinvestigate the MIDI macros.
+        Also, the Session tab needs to match the pattern editor
+        dropdown for macros by disabling the $ macros.
     -   Background recording / Metronome.
         -   Finish testing scratchpad recording.
         -   Can we show the patch name, and if drums, the drum name?

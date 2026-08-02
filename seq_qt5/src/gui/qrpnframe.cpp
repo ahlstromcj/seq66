@@ -46,11 +46,41 @@ qrpnframe::qrpnframe
     ui(new Ui::qrpnframe)
 {
     ui->setupUi(this);
+
+    /*
+     * Obsolete in Qt 6:
+     */
+
+#if defined QT_VERSION_5
+
+
+    GroupBox rgroup { ui->group_box_rpn };
+    connect
+    (
+        rgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_select_control(int))
+    );
+
+#elif defined QT_VERSION_6 || defined QT_VERSION_7
+
+    auto lambdafunc = [this, rgroup] (QAbstractButton * abutton)
+    {
+        slot_select_control(rgroup->id(abutton));
+    };
+    connect(rgroup, &QButtonGroup::buttonClicked, lambdafunc);
+
+#endif
 }
 
 qrpnframe::~qrpnframe()
 {
     delete ui;
+}
+
+void
+qrpnframe::slot_select_control (int x)
+{
+    printf("Selected %d\n");
 }
 
 }               // namespace seq66

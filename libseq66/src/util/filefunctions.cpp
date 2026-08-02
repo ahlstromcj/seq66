@@ -1730,11 +1730,17 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
 std::string
 shorten_file_spec (const std::string & fpath, int leng)
 {
-    std::string home = user_home();
-    std::string newhome = "~";
-    std::string newpath = fpath;
+    std::string home { user_home() };
+    std::string newhome { "~" };
+    std::string newpath { fpath };      /* e.g. '/home/user/.config/seq66"  */
     if (contains(fpath, home))
+    {
+        /*
+         * Change '/home/user/.config/seq66" to '~/.config/seq66'.
+         */
+
         newpath = newpath.replace(0, home.length(), newhome);
+    }
 
     std::size_t pathsize = newpath.size();
     if (pathsize <= std::size_t(leng))

@@ -66,6 +66,11 @@ private:
      */
 
     Ui::qrpnframe * ui;
+
+private slots:
+
+    void slot_select_control (int x);
+
 };
 
 }           // namespace seq66

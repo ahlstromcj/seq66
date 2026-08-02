@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-05-09
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,6 +33,7 @@
 
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "play/performer.hpp"           /* seq66::performer                 */
+#include "util/filefunctions.hpp"       /* seq66::shorten_file_spec()       */
 #include "util/strfunctions.hpp"        /* seq66::int_to_string()           */
 #include "qsessionframe.hpp"            /* seq66::qsessionframe, this class */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
@@ -43,10 +44,12 @@ namespace seq66
 {
 
 /**
- *  Limit for showing macro bytes in the combo-box.
+ *  Limits for showing macro bytes in the combo-box and the file
+ *  line-edits..
  */
 
-static const int c_macro_byte_max = 18;
+static const int c_macro_byte_max   { 18 };
+static const int c_path_length_max  { 60 };
 
 /**
  *  Principle constructor.
@@ -300,11 +303,19 @@ qsessionframe::populate_macro_combo ()
                 ui->macroComboBox->insertItem(counter++, combotext);
             }
         }
+#if defined SEQ66_USE_SEND_ON_SELECTION
         connect
         (
             ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
             this, SLOT(slot_macro_pick(const QString &))
         );
+#else
+        connect
+        (
+            ui->pushButtonMacroSend, SIGNAL(clicked(bool)),
+            this, SLOT(slot_macro_send())
+        );
+#endif
     }
     if (macrosactive)
     {
@@ -353,6 +364,13 @@ qsessionframe::slot_macro_pick (const QString & name)
 }
 
 void
+qsessionframe::slot_macro_send ()
+{
+    QString name = ui->macroComboBox->currentText();
+    slot_macro_pick(name);
+}
+
+void
 qsessionframe::session_manager (const std::string & text)
 {
     ui->sessionManagerNameText->setText(qt(text));
@@ -361,7 +379,8 @@ qsessionframe::session_manager (const std::string & text)
 void
 qsessionframe::session_path (const std::string & text)
 {
-    ui->sessionNameText->setText(qt(text));
+    std::string t { shorten_file_spec(text, c_path_length_max) };
+    ui->sessionNameText->setText(qt(t));
 }
 
 void
@@ -385,7 +404,8 @@ qsessionframe::session_URL (const std::string & text)
 void
 qsessionframe::session_log_file (const std::string & text)
 {
-    ui->lineEditLogFile->setText(qt(text));
+    std::string t { shorten_file_spec(text, c_path_length_max) };
+    ui->lineEditLogFile->setText(qt(t));
 }
 
 void
@@ -414,13 +434,15 @@ qsessionframe::slot_log_file_clear()
 void
 qsessionframe::song_path (const std::string & text)
 {
-    ui->songPathText->setText(qt(text));
+    std::string t { shorten_file_spec(text, c_path_length_max) };
+    ui->songPathText->setText(qt(t));
 }
 
 void
 qsessionframe::last_used_dir (const std::string & text)
 {
-    ui->lineEditLastUsedDir->setText(qt(text));
+    std::string t { shorten_file_spec(text, c_path_length_max) };
+    ui->lineEditLastUsedDir->setText(qt(t));
 }
 
 /*

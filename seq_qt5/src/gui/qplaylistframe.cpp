@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2026-05-09
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,13 +52,19 @@ namespace seq66
  *  the width of the vertical scroll-bar, plus a bit more.
  */
 
-static const int c_playlist_table_fix   = 24; // 48
+static const int c_playlist_table_fix { 24 };
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
  */
 
-static const int c_playlist_row_height  = 18;
+static const int c_playlist_row_height { 18 };
+
+/**
+ *  The current length of the GUI playlist line-edits.
+ */
+
+static const int c_playlist_length { 32 };
 
 /**
  *  Principal constructor.
@@ -422,14 +428,16 @@ qplaylistframe::reset_playlist_file_name ()
 void
 qplaylistframe::set_current_playlist ()
 {
-    std::string temp;
+    std::string temp
+    {
+        shorten_file_spec(perf().playlist_filename(), c_playlist_length)
+    };
     ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
     ui->checkBoxAutoArm->setChecked(perf().playlist_auto_arm());
     ui->checkBoxAutoPlay->setChecked(perf().playlist_auto_play());
     ui->checkBoxAutoAdvance->setChecked(perf().playlist_auto_advance());
-    temp = perf().playlist_filename();
     ui->entry_playlist_file->setText(qt(temp));
-    temp = perf().file_directory();
+    temp = shorten_file_spec(perf().file_directory(), c_playlist_length);
     ui->editPlaylistPath->setText(qt(temp));
 
     int midinumber = perf().playlist_midi_number();
@@ -446,7 +454,7 @@ qplaylistframe::set_current_playlist ()
     set_spin_value(ui->spinPlaylistNumber, midinumber);
 #endif
 
-    temp = perf().playlist_midi_base();
+    temp = shorten_file_spec(perf().playlist_midi_base(), c_playlist_length);
     ui->midiBaseDirText->setText(qt(temp));
     temp = perf().playlist_name();
     ui->editPlaylistName->setText(qt(temp));

@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -603,7 +603,7 @@ Each port number can be found by name-lookup.</string>
           <x>20</x>
           <y>38</y>
           <width>571</width>
-          <height>121</height>
+          <height>126</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
@@ -3133,6 +3133,7 @@ the beat width.</string>
        </property>
        <property name="font">
         <font>
+         <pointsize>10</pointsize>
          <bold>true</bold>
         </font>
        </property>

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2025-06-07
+% \update      2026-08-02
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -33,7 +33,7 @@
 
    \begin{enumber}
       \item \textbf{Signals}.
-         During a normal run, \textsl{Seq66} will respond
+         During a conventional run, \textsl{Seq66} will respond
          to signals to save and to quit.
          The normal configuration files and command-line options will be
          used, and can be marked to be saved at exit.
@@ -44,7 +44,8 @@
          Many still use it.
          This session manager allows the configuration files to be stored in
          a separate directory, for \textsl{Seq66} to be started, and files to
-         be saved.  No restrictions on where the MIDI files can be stored.
+         be saved.
+         There are no restrictions on where the MIDI files can be stored.
       \item \textbf{Non Session Manager}
          Known as \textsl{NSM}, and in the form of a fork of that project,
          \textsl{New Session Manager},
@@ -64,15 +65,17 @@
          continue to advance.
    \end{enumber}
 
-   For session management, \textsl{NSM} is the way to go.
+   For true session management, \textsl{NSM} is the way to go.
    \textsl{JACK} session management is provided for those who still use it.
    There are other session solutions, such as \textsl{aj-snapshot},
    \textsl{Claudia}, and \textsl{Chino}.
    For now, we do not discuss them.
 
+% TODO: add cites for the above.
+
    The desired session can be set in the \textbf{Edit / Preferences /
    Session} tab.  But note that, if started by \textsl{NSM}, \textsl{Seq66}
-   will detect it and nonetheless set up for NSM usage.
+   will detect it and will set up for NSM usage.
    The \textsl{NSM} setting is
    useful for attaching to a pre-existing known session.
    \textsl{JACK} session management events are processed
@@ -573,8 +576,12 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
    The \textsl{Session} tab is a mostly \textsl{read-only} tab
    provided to orient the user to the setup supported by the session.
-   When not running in a session, the normal configuration directory and files
-   are shown.  When running in an \textsl{NSM} section, the configuration
+   When not running in a JACK or NSM session, the normal configuration
+   directory and files are shown.
+   Also see the Session tab in
+   \sectionref{subsection:edit_preferences_session}.
+
+   When running in an \textsl{NSM} section, the configuration
    information received from \textsl{NSM} is displayed.
    It is meant to display information to
    help the user understand what is happening in the run.
@@ -584,8 +591,9 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{tabs/session/session-song-info.png}
-   \caption*{Session Tab with Song Info}
+%  \includegraphics[scale=0.65]{tabs/session/session-song-info.png}
+   \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab.png}
+   \caption*{Session Tab}
 \end{figure}
 
    \index{sessions!ui}
@@ -631,7 +639,8 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          This drop-down contains all of the named MIDI macros
          defined in the 'ctrl' file's
          \texttt{[macro-control-out]} section.
-         By selecting one, it is automatically sent out via the
+         Select one, then click the \textbf{Send} button.
+         The macro bytes are sent out the
          \texttt{[output-buss]} port defined in the 'ctrl' file.
          The "startup" and "shutdown" macros, if defined,
          are sent automatically. "Startup" is useful to put
@@ -642,7 +651,9 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          The editable name of the log file
          to which to redirect warning
          and error messages during the action of \textsl{qseq66}.
-         Normally, the text is shown in the console window (when running in a
+         If cleared by the clicking the \textbf{Clear} button,
+         then clicking \textbf{Restart},
+         the text is shown in the console window (if running in a
          console window). This name is only a base-name (e.g.
          \texttt{seq66.log}); it is always stored in the "home" configuration
          directory, whether normal or the NSM session directory.

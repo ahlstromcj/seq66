@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-07-27
+ * \updates       2026-08-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3679,7 +3679,7 @@ performer::create_master_bus ()
             append_error_message
             (
                 "Creating master bus failed; check MIDI drivers or "
-                "reboot."
+                "reboot after a system update."
             );
         }
     }

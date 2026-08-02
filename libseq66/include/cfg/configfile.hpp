@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-01-19
+ * \updates       2026-07-31
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one

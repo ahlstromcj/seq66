@@ -1,4 +1,4 @@
-# README for Seq66 0.99.27 2026-07-17
+# README for Seq66 0.99.27 2026-08-02
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -6,12 +6,12 @@ aware piano-roll; song layout for creative composition; control/status via MIDI
 automation, and mute-groups to enable/disable sets of patterns. Tools for live
 performance and for composing great-sounding MIDI tracks. Supports the Non/New
 Session Manager; can run headless and on a small computer like the Pi. And
-now it provides a form of MIDI Learn. It does not support audio samples,
-just MIDI.
+now it provides a form of MIDI Learn and "scratchpad recording".
+It does not support audio samples, just MIDI.
 
-__Seq66__ Seq24/Kepler34 on steroids with
-modern C++ and new features. Linux and Windows users can build this application
-from source code. See the extensive INSTALL files. Includes a comprehensive PDF
+__Seq66__ Seq24/Kepler34 on steroids with modern C++ and new features.
+Linux and Windows users can build this application from source code.
+See the extensive INSTALL files. Includes a comprehensive PDF
 user-manual. As of this release, employs the __Meson__ build system.
 
 *The current development-in-progress branch is now "Meson". Seq66 now
@@ -45,10 +45,13 @@ in force. Otherwise the application uses the current Qt theme.
         layout, event-editing, play-lists, and session information.
     *   Low-frequency oscillator (LFO) to modify continuous controller
         and velocity values.
-    *   A "fixer" for expansion/compression/alignment of note patterns.
+    *   "Pattern fixer" for expansion/compression/alignment of note patterns.
+    *   "MIDI learn" manager for easily setting up a grid controller.
+    *   "RPN/NRPN" editor for sending out multiple MIDI device configuration
+        events.
     *   Horizontal and vertical zoom in the pattern and song editors.
     *   Extremely resizable.
-    *   A headless/daemon version can be built to use with a MIDI grid
+    *   A headless/daemon/command-line version to use with a MIDI grid
         controller.
 
 ##  Configuration files
