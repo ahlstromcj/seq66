@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-07-29
+ * \updates       2026-08-02
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -33,7 +33,6 @@
  */
 
 #include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
-#include "midi/midibytes.hpp"           /* seq66::midibyte type             */
 
 namespace seq66
 {
@@ -72,10 +71,10 @@ s_controller_names [c_midibyte_data_max]
     {  13, "Effect Control 2 "                    },
     {  14, "---"                                  },
     {  15, "---"                                  },
-    {  16, "General Purpose Slider 1"             },    // 0x10
-    {  17, "General Purpose Slider 2"             },
-    {  18, "General Purpose Slider 3"             },
-    {  19, "General Purpose Slider 4"             },
+    {  16, "General Purpose 1"                    },    // 0x10
+    {  17, "General Purpose 2"                    },
+    {  18, "General Purpose 3"                    },
+    {  19, "General Purpose 4"                    },
     {  20, "---"                                  },
     {  21, "---"                                  },
     {  22, "---"                                  },
@@ -220,33 +219,42 @@ set_controller_name (int index, const std::string & newname)
         s_controller_names[index].name = newname;
 }
 
-#if defined THIS_CODE_IS_READY
-
 using rpnpair = struct
 {
     short number;
     std::string name;
 };
 
-const int c_rpn_value_count { 8 };
+static const int c_rpn_value_count { 9 };
 
 static rpnpair
 s_rpn_names [c_rpn_value_count]
 {
-    {   0x0000,     "Pitch Bend Range"            },
-    {   0x0001,     "Fine Tuning"                 },
-    {   0x0002,     "Coarse Tuning"               },
-    {   0x0003,     "Tuning Program Change"       },
-    {   0x0004,     "Tuning Bank Select"          },
-    {   0x0005,     "Modulation Depth Range"      },
-    {   0x0006,     "Channel Range"               },
-    {   0x3FFF,     "RPN Null"                    }
+    {   0x0000,     "Pitchbend range"               },
+    {   0x0001,     "Channel fine Tuning"           },
+    {   0x0002,     "Channel coarse Tuning"         },
+    {   0x0003,     "Tuning program change"         },
+    {   0x0004,     "Tuning bank select"            },
+    {   0x0005,     "Modulation depth range"        },
+    {   0x0006,     "Channel range"                 },        // ???
+    {   0x007F,     "RPN parameter reset"           },
+    {   0x3FFF,     "RPN null"                      }
 };
 
 std::string
-rpn_name (int index)
+rpn_name (int value)
 {
     std::string result;
+    for (auto p : s_rpn_names)
+    {
+        if (p.number == short(value))
+        {
+            result = p.name;
+            break;
+        }
+    }
+
+#if 0
     if (index == 0x3FFFF)
         index = c_rpn_value_count - 1;
 
@@ -257,6 +265,7 @@ rpn_name (int index)
         result += " ";
         result += name;
     }
+#endif
     return result;
 }
 
@@ -274,44 +283,47 @@ rpn_name (int index)
  *          -   Get the last 7 bits.
  *          -   Prepend a 0.
  *
- *        MMMMMMMLLLLLLL
+ *        0MMMMMMM0LLLLLLL
+ *                01111111 0x7F
  *
  * \param rpnn
  *      The 14-bit RPN number. It must be greater than zero and less
  *      than 16364 (0x4000).
  *
  * \param [out] out
- *      Holds the two bytes, with out[0] being the LSB, and out[1] being
- *      the MSB.
  *
  * \return
- *      Returns true if the output bytes can be used.
+ *      Returns the converted bytes. Holds the two bytes, with result[0]
+ *      being the LSB, and result[1] being the MSB.
  */
 
-bool
-rpn_number_to_bytes (short rpnn, midibyte & out [2])
+midibytes
+rpn_number_to_bytes (midishort rpnn)
 {
-    bool result { rpnn >= 0 && rpnn < 16384 };
-    if (result)
+    midibytes result;
+    bool ok { rpnn < c_midishort_14_bad };
+    if (ok)
     {
-        unsigned short rpnn_lsb { rpnn & 0x3F };
-        unsigned short rpnn_msb { rpnn & 0x3F80 };  /* rpnn - rpnn_lsb ?    */
-        out[0] = midibyte(rpnn_lsb);
-        out[1] = midibyte(rpnn_msb);
+        midishort rpnn_lsb { midishort(rpnn & 0x7F) };
+        midishort rpnn_msb { midishort((rpnn >> 7) & 0x7F) };
+        result.push_back(midibyte(rpnn_lsb));
+        result.push_back(midibyte(rpnn_msb));
     }
     return result;
 }
 
-short
-bytes_to_rpn_number (const midibyte & in [2])
+midishort
+bytes_to_rpn_number (const midibytes & in)
 {
-    short result { short(in[1]) };                  /* the MSB 7 bits       */
-    result <<= 7;
-    result += short(in[0]);
+    midishort result { c_midishort_14_bad };    /* 0x4000 in midibytes.hpp  */
+    if (in.size() > 1)
+    {
+        result = midishort(in[1] & 0x7F);       /* the MSB 7 bits           */
+        result <<= 7;                           /* multiply by 128          */
+        result += midishort(in[0]);
+    }
     return result;
 }
-
-#endif
 
 }           // namespace seq66
 

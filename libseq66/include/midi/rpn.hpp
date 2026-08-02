@@ -1,0 +1,239 @@
+#if ! defined SEQ66_RPN_HPP
+#define SEQ66_RPN_HPP
+
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later
+ *  version.
+ *
+ *  seq66 is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ *  details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with seq66; if not, write to the Free Software Foundation, Inc., 59 Temple
+ *  Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/**
+ * \file          rpn.hpp
+ *
+ *  This module declares/defines a class to support the full process of
+ *  NRPN and RPN control.
+ *
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2026-07-31
+ * \updates       2026-08-02
+ * \license       GNU GPLv2 or above
+ *
+ */
+
+#include "midi/midibytes.hpp"           /* seq66::midibyte alias            */
+
+namespace seq66
+{
+    class event;
+
+/**
+ *  This class implements with ALSA version of the rpn object.
+ */
+
+class rpn
+{
+    friend class qrpnframe;
+
+public:
+
+    /**
+     *  Indicates the kind of data to be sent to a device or stored
+     *  as a macro. The non-RPN/NRPN controls allow later additions
+     *  to existing RPN/NRPN events.
+     */
+
+    enum class control
+    {
+        rpn,                            /* RPN                              */
+        nrpn,                           /* NRPN                             */
+        slider,                         /* Data entry slider                */
+        increment,                      /* Data button increment            */
+        decrement,                      /* Data button decrement            */
+        max                             /* terminator and illegal value     */
+    };
+
+    /**
+     *  Indicates which RPN parameter is to be applied.
+     */
+
+    enum class parameter
+    {
+        pitchbend_range         = 0,    /* pitchbend range, semitones.cents */
+        channel_fine_tuning     = 1,    /* fine tuning, sub-semitone, cents */
+        channel_coarse_tuning   = 2,    /* coarse tuning off 440 Hz, semis  */
+        tuning_program_change   = 3,    /* rarely used, see RPN.text        */
+        tuning_bank_select      = 4,    /* rarely used, see RPN.text        */
+        modulation_depth_range  = 5,    /* manufacturer specific change     */
+        parameter_reset         = 0x7F, /* provides 0x7F to end a change    */
+        nrpn_active             = -1    /* indicates there's no set number  */
+    };
+
+private:
+
+    /**
+     *  Indicates if this object represents an NRPN rather than an
+     *  RPN. Or is being used to append the parameter value.
+     */
+
+    control m_control_type { control::rpn };
+
+    /**
+     *  Indicates which RPN is in force.
+     */
+
+    parameter m_parameter_type { parameter::pitchbend_range };
+
+    /**
+     *  Indicates the intended time of the control insertion.
+     */
+
+    midipulse m_time_stamp;
+
+    /**
+     *  Holds the RPN or NRPN parameter selection. If negative, the
+     *  selection has not yet been made. If RPN is in force,
+     *  this number is the integer version of the parameter type.
+     */
+
+    midishort m_rpn_parameter_number { c_midishort_14_bad };
+
+    /**
+     *  Holds the parameter value to be set. It ranged from 0 to 16383
+     *  (14-bits). The default value represents the pitch-bend range
+     *  parameter.
+     */
+
+    midishort m_rpn_parameter_value { 0 };
+
+    /**
+     *  The string representation of the parameter value. We
+     *  need this to set a suitable default for the value.
+     */
+
+    std::string m_rpn_parameter_string { "0.0" };
+
+    /**
+     *  Indicates that the data-entry slider or increment/decrment
+     *  will be applied.
+     */
+
+    bool m_append_data { true };
+
+    /**
+     *  Indicates that the recommended RPN reset parameter is
+     *  to be applied.
+     */
+
+    bool m_append_reset { true };
+
+    /**
+     *  Provide the name of a macro. If not empty, we will create
+     *  a macro to include in the 'ctrl' file.
+     */
+
+    std::string m_macro_name { };
+
+public:
+
+    rpn
+    (
+        control control_type,
+        parameter parameter_type,
+        midipulse time_stamp,
+        midishort rpn_parameter_value   = 0,
+        midishort rpn_parameter_number  = c_midishort_14_bad,
+        bool append_data                = true,
+        bool append_reset               = true
+    );
+
+    virtual ~rpn ();
+
+    static midishort parameter_to_short (parameter p)
+    {
+        return static_cast<midishort>(p);
+    }
+
+    void fix_settings ();
+
+    midipulse time_stamp () const
+    {
+        return m_time_stamp;
+    }
+
+    control control_type () const
+    {
+        return m_control_type;
+    }
+
+    parameter parameter_type () const
+    {
+        return m_parameter_type;
+    }
+
+    midishort parameter_number ()
+    {
+        return m_rpn_parameter_number;
+    }
+
+    midishort parameter_value () const
+    {
+        return m_rpn_parameter_value;
+    }
+
+    std::string parameter_string () const
+    {
+        return m_rpn_parameter_string;
+    }
+
+    bool append_data () const
+    {
+        return m_append_data;
+    }
+
+    bool append_reset () const
+    {
+        return m_append_reset;
+    }
+
+    std::string macro_name () const
+    {
+        return m_macro_name;
+    }
+
+private:
+
+    /*
+     * qrpnframe is a friend who needs these, but for the most part
+     * this object is constructed in whole when the "Create Macro"
+     * or "Insert/Append" button is pressed.
+     */
+
+    void macro_name (const std::string & n)
+    {
+        m_macro_name = n;
+    }
+
+};          // class rpn
+
+}           // namespace seq66
+
+#endif      // SEQ66_RPN_HPP
+
+/*
+ * rpn.hpp
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
+ */

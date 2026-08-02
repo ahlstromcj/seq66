@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2025-07-09
+ * \updates       2026-08-02
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -221,6 +221,8 @@ const midibyte c_note_max = 0x7F;
 const midibyte c_midibyte_max       = midibyte(0xFFu);
 const bussbyte c_bussbyte_max       = bussbyte(0xFFu);
 const midishort c_midishort_max     = midishort(0xFFFF);
+const midishort c_midishort_14_max  = midishort(0x3FFF);
+const midishort c_midishort_14_bad  = midishort(0x4000);
 const midilong c_midilong_max       = midilong(0xFFFFFFFF);
 
 /**

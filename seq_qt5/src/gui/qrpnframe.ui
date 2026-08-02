@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>793</width>
-    <height>404</height>
+    <width>797</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -228,6 +228,9 @@
      <height>30</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Selects the channel number to use with the controller.</string>
+   </property>
   </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
@@ -339,6 +342,10 @@ default (recommended).</string>
      <height>30</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Changes the time format between BBT, HMS,
+and ticks.</string>
+   </property>
    <property name="text">
     <string>BBT</string>
    </property>
@@ -362,6 +369,9 @@ default (recommended).</string>
     </item>
     <item row="0" column="1">
      <widget class="QLineEdit" name="line_edit_rpn_timestamp">
+      <property name="toolTip">
+       <string>Provide or show the timestamp.</string>
+      </property>
       <property name="text">
        <string>100:02:1234</string>
       </property>
@@ -390,8 +400,15 @@ default (recommended).</string>
     </item>
     <item row="2" column="1">
      <widget class="QLineEdit" name="line_edit_rpn_param_value">
+      <property name="toolTip">
+       <string>Supply the parameter value as an integer
+or, to also set the &quot;fine&quot; values or the &quot;cents&quot;
+value, type a real number, e.g. 12.90 to
+specify a pitch change of 12 semitones and
+90 cents.</string>
+      </property>
       <property name="text">
-       <string>0x0000</string>
+       <string>0.0</string>
       </property>
      </widget>
     </item>
@@ -409,6 +426,10 @@ default (recommended).</string>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QPushButton" name="button_rpn_macro">
+      <property name="toolTip">
+       <string>Copy the event data to a MIDI-control-out
+macro.</string>
+      </property>
       <property name="text">
        <string>Create Macro</string>
       </property>
@@ -416,6 +437,9 @@ default (recommended).</string>
     </item>
     <item>
      <widget class="QPushButton" name="buitton_rpn_insert">
+      <property name="toolTip">
+       <string>Inserts the controller events at the given timestamp.</string>
+      </property>
       <property name="text">
        <string>&amp;Insert/Append</string>
       </property>
@@ -423,6 +447,9 @@ default (recommended).</string>
     </item>
     <item>
      <widget class="QPushButton" name="button_rpn">
+      <property name="toolTip">
+       <string>Close the dialog.</string>
+      </property>
       <property name="text">
        <string>Cancel</string>
       </property>
@@ -443,7 +470,7 @@ default (recommended).</string>
     <item>
      <widget class="QCheckBox" name="check_box_rpn_append_data">
       <property name="toolTip">
-       <string>Recommended</string>
+       <string>Use a parameter value.</string>
       </property>
       <property name="text">
        <string>Append data entry slider</string>
@@ -453,7 +480,7 @@ default (recommended).</string>
     <item>
      <widget class="QCheckBox" name="check_box_rpn_append_reset">
       <property name="toolTip">
-       <string>Recommended</string>
+       <string>Close out the setting change. Recommended.</string>
       </property>
       <property name="text">
        <string>Append RPN reset</string>
@@ -472,6 +499,29 @@ as well as the &quot;coarse&quot; version.</string>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>10</y>
+     <width>421</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>This dialog is not yet ready for use. Work in progress.</string>
+   </property>
   </widget>
  </widget>
  <resources/>

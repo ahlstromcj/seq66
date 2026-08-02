@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-04-20
+ * \updates       2026-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file used to define the array itself, but now it just declares it,
@@ -35,6 +35,8 @@
  */
 
 #include <string>
+
+#include "midi/midibytes.hpp"           /* seq66::midibyte type             */
 
 namespace seq66
 {
@@ -185,6 +187,9 @@ extern void set_controller_name
 (
     int index, const std::string & newname
 );
+extern std::string rpn_name (int value);
+extern midibytes rpn_number_to_bytes (midishort rpnn);
+extern midishort bytes_to_rpn_number (const midibytes & in);
 
 }           // namespace seq66
 

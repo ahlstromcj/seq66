@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-07-30
+ * \updates       2026-08-02
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -80,7 +80,7 @@ qrpnframe::~qrpnframe()
 void
 qrpnframe::slot_select_control (int x)
 {
-    printf("Selected %d\n");
+    printf("Selected %d\n", x);
 }
 
 }               // namespace seq66

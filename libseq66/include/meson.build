@@ -75,6 +75,7 @@ libseq66_headers += files(
     'midi/midi_vector_base.hpp',
     'midi/midi_vector.hpp',
     'midi/patches.hpp',
+    'midi/rpn.hpp',
     'midi/wrkfile.hpp',
     'play/clockslist.hpp',
     'play/inputslist.hpp',
