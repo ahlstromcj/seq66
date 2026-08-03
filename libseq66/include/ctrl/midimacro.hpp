@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2025-07-12
+ * \updates       2026-08-03
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -110,7 +110,7 @@ public:
     midimacro & operator = (const midimacro &) = default;
     midimacro (midimacro &&) = default;
     midimacro & operator = (midimacro &&) = default;
-    ~midimacro () = default;
+    virtual ~midimacro () = default;
 
     const std::string & name () const
     {

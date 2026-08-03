@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-08-02
+# \updates     2026-08-03
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -58,6 +58,7 @@ libseq66_sources += files(
     'ctrl/midioperation.cpp',
     'ctrl/opcontainer.cpp',
     'ctrl/opcontrol.cpp',
+    'ctrl/rpn.cpp',
     'midi/busarray.cpp',
     'midi/businfo.cpp',
     'midi/calculations.cpp',
@@ -76,7 +77,6 @@ libseq66_sources += files(
     'midi/midi_vector_base.cpp',
     'midi/midi_vector.cpp',
     'midi/patches.cpp',
-    'midi/rpn.cpp',
     'midi/wrkfile.cpp',
     'play/clockslist.cpp',
     'play/inputslist.cpp',

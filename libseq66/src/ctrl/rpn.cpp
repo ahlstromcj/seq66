@@ -25,12 +25,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-07-31
+ * \updates       2026-08-03
  * \license       GNU GPLv2 or above
  *
  */
 
-#include "midi/rpn.hpp"                 /* seq66::rpn for ALSA         */
+#include "ctrl/rpn.hpp"                 /* seq66::rpn for ALSA         */
 
 namespace seq66
 {
@@ -45,6 +45,7 @@ rpn::rpn
     bool append_data,
     bool append_reset
 ) :
+    midimacro               { },
     m_control_type          { control_type },
     m_parameter_type        { parameter_type },
     m_time_stamp            { time_stamp },
@@ -76,18 +77,22 @@ rpn::fix_settings ()
 
     case control::nrpn:
 
+        /* The parameter number provided is suitable here. */
         break;
 
     case control::slider:
 
+        m_append_data = true;
         break;
 
     case control::increment:
 
+        m_append_data = true;
         break;
 
     case control::decrement:
 
+        m_append_data = true;
         break;
 
     default:

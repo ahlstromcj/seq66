@@ -28,22 +28,22 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-02
+ * \updates       2026-08-03
  * \license       GNU GPLv2 or above
  *
  */
 
-#include "midi/midibytes.hpp"           /* seq66::midibyte alias            */
+#include "ctrl/midimacro.hpp"           /* seq66::midimacro                 */
 
 namespace seq66
 {
     class event;
 
 /**
- *  This class implements with ALSA version of the rpn object.
+ *  This class implements a set of RPN/NRPN/Data events.
  */
 
-class rpn
+class rpn final : public midimacro
 {
     friend class qrpnframe;
 
