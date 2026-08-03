@@ -1912,7 +1912,7 @@ winmm_write_short (PmInternal * midi, PmEvent * event)
 
 #define winmm_begin_sysex winmm_write_flush
 
-#ifndef winmm_begin_sysex
+#if ! defined winmm_begin_sysex
 
 static PmError
 winmm_begin_sysex (PmInternal * midi, PmTimestamp timestamp)

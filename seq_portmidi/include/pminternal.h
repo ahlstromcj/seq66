@@ -1,4 +1,4 @@
-#ifndef SEQ66_PMINTERNAL_H
+#if ! defined SEQ66_PMINTERNAL_H
 #define SEQ66_PMINTERNAL_H
 
 /*
@@ -64,7 +64,7 @@
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS          //  WIN32
-#ifndef INT32_DEFINED
+#if ! defined INT32_DEFINED
 #define INT32_DEFINED
 typedef int int32_t;
 typedef unsigned int uint32_t;
@@ -92,11 +92,11 @@ typedef unsigned int uint32_t;
 #define PM_HOST_ERROR_MSG_LEN           256
 #define PM_STRING_MAX                   256
 
-#ifndef FALSE
+#if ! defined FALSE
 #define FALSE   0
 #endif
 
-#ifndef TRUE
+#if ! defined TRUE
 #define TRUE    1
 #endif
 

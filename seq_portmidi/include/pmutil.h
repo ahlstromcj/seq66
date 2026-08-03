@@ -1,4 +1,4 @@
-#ifndef SEQ66_PMUTIL_H
+#if ! defined SEQ66_PMUTIL_H
 #define SEQ66_PMUTIL_H
 
 /*

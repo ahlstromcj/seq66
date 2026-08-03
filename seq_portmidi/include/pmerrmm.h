@@ -1,4 +1,4 @@
-#ifndef SEQ66_PMERRMM_H
+#if ! defined SEQ66_PMERRMM_H
 #define SEQ66_PMERRMM_H
 
 /*

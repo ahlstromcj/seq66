@@ -42,7 +42,7 @@ extern "C"
 {
 #endif
 
-#ifndef PMEXPORT
+#if ! defined PMEXPORT
 
 #if defined _WINDLL
 #define PMEXPORT __declspec(dllexport)

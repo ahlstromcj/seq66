@@ -1,4 +1,4 @@
-#ifndef SEQ66_PORTMIDI_H
+#if ! defined SEQ66_PORTMIDI_H
 #define SEQ66_PORTMIDI_H
 
 /*

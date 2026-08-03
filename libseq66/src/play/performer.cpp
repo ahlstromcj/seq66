@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-01
+ * \updates       2026-08-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -3841,7 +3841,7 @@ performer::launch (int ppqn)
             m_io_active = true;                     /* set done()           */
             launch_input_thread();
             launch_output_thread();
-            midi_control_out().send_macro(midimacros::startup);
+            (void) midi_control_out().send_macro(midimacros::startup);
             announce_playscreen();
             announce_mutes();
             announce_automation();
@@ -4337,7 +4337,7 @@ performer::finish ()
         stop_playing();                     /* see notes in banner          */
         reset_sequences();                  /* stop all output upon exit    */
         announce_exit(true);                /* blank device completely      */
-        midi_control_out().send_macro(midimacros::shutdown);
+        (void) midi_control_out().send_macro(midimacros::shutdown);
         m_io_active = false;                /* set done() for predicate     */
         m_is_running = false;               /* set is_running() off         */
         cv().signal();                      /* signal the end of play       */

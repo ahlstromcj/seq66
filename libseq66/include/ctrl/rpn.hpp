@@ -140,11 +140,10 @@ private:
     bool m_append_reset { true };
 
     /**
-     *  Provide the name of a macro. If not empty, we will create
-     *  a macro to include in the 'ctrl' file.
+     *  Indicates to apply the "fine" (e.g. cents) data settings.
      */
 
-    std::string m_macro_name { };
+    bool m_use_fine_rpn { true };
 
 public:
 
@@ -156,9 +155,9 @@ public:
         midishort rpn_parameter_value   = 0,
         midishort rpn_parameter_number  = c_midishort_14_bad,
         bool append_data                = true,
-        bool append_reset               = true
+        bool append_reset               = true,
+        bool use_fine_rpn               = true
     );
-
     virtual ~rpn ();
 
     static midishort parameter_to_short (parameter p)
@@ -166,7 +165,7 @@ public:
         return static_cast<midishort>(p);
     }
 
-    void fix_settings ();
+    bool fix_settings ();
 
     midipulse time_stamp () const
     {
@@ -208,10 +207,12 @@ public:
         return m_append_reset;
     }
 
-    std::string macro_name () const
+    bool use_fine_rpn () const
     {
-        return m_macro_name;
+        return m_use_fine_rpn;
     }
+
+    midimacro::events create_parameter_events (int channel);
 
 private:
 
@@ -223,7 +224,7 @@ private:
 
     void macro_name (const std::string & n)
     {
-        m_macro_name = n;
+        name(n);
     }
 
 };          // class rpn

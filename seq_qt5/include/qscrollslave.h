@@ -1,4 +1,4 @@
-#ifndef SEQ66_QSCROLLSLAVE_H
+#if ! defined SEQ66_QSCROLLSLAVE_H
 #define SEQ66_QSCROLLSLAVE_H
 
 /*

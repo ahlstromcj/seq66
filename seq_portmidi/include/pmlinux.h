@@ -1,4 +1,4 @@
-#ifndef SEQ66_PMLINUX_H
+#if ! defined SEQ66_PMLINUX_H
 #define SEQ66_PMLINUX_H
 
 /*

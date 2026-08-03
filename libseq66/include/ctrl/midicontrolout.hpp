@@ -1,4 +1,4 @@
-#ifndef SEQ66_MIDICONTROLOUT_HPP
+#if ! defined SEQ66_MIDICONTROLOUT_HPP
 #define SEQ66_MIDICONTROLOUT_HPP
 
 /*
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2025-07-12
+ * \updates       2026-08-03
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -365,7 +365,8 @@ public:
         return m_macro_events.expand();
     }
 
-    void send_macro (const std::string & name, bool flush = true);
+    bool send_macro (const std::string & name, bool flush = true);
+    bool send_macro (const midibytes & byts, bool flush = true);
 
     std::string macro_lines () const
     {

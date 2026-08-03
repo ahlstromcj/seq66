@@ -534,36 +534,40 @@ midicontrolout::send_automation (bool activate)
         send_event(uia, ai);
 }
 
-void
+bool
 midicontrolout::send_macro (const std::string & name, bool flush)
 {
-    bool enabled = is_enabled() && not_nullptr(m_master_bus);
-    if (enabled)
-        enabled = m_macro_events.active();
+    midibytes byts { m_macro_events.bytes(name) };
+    bool result { send_macro(byts, flush) };
+    return result;
+}
 
-    if (enabled)
+bool
+midicontrolout::send_macro (const midibytes & byts, bool flush)
+{
+    bool result = is_enabled() && not_nullptr(m_master_bus);
+    if (result)
+        result = m_macro_events.active() && !byts.empty();
+
+    if (result)
     {
-        midibytes byts = m_macro_events.bytes(name);
-        if (! byts.empty())
+        int len = int(byts.size());
+        bussbyte tb = true_buss();
+        if (event::is_ex_data_msg(byts[0]))
         {
-            int len = int(byts.size());
-            bussbyte tb = true_buss();
-            if (event::is_ex_data_msg(byts[0]))
-            {
-                event ev;
-                const midibyte * b = midi_bytes(byts);
-                (void) ev.set_sysex(b, len);
-                m_master_bus->sysex(tb, &ev);               /* flushes      */
-            }
+            event ev;
+            const midibyte * b = midi_bytes(byts);
+            (void) ev.set_sysex(b, len);
+            m_master_bus->sysex(tb, &ev);               /* flushes      */
+        }
+        else
+        {
+            midibyte d1 = len == 3 ? byts[2] : 0 ;
+            event ev(0, byts[0], byts[1], d1);
+            if (flush)
+                m_master_bus->play_and_flush(tb, &ev, ev.channel());
             else
-            {
-                midibyte d1 = len == 3 ? byts[2] : 0 ;
-                event ev(0, byts[0], byts[1], d1);
-                if (flush)
-                    m_master_bus->play_and_flush(tb, &ev, ev.channel());
-                else
-                    m_master_bus->play(tb, &ev, ev.channel());
-            }
+                m_master_bus->play(tb, &ev, ev.channel());
         }
     }
 }

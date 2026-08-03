@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-08-02
+2019-04-13 to 2026-08-03
 
     -   Follow up on RPN:
         -   controllers module
@@ -9,6 +9,7 @@ Chris Ahlstrom
         -   RPN.text
         -   24stones.mid and 2stones.mid
         -   qseventslots module
+        -   be sure to give the rpnframe a parent (the pattern editor).
     -   The ":" key is available (as well as some other keys). How
         can we use them?
     -   Reinvestigate the MIDI macros.

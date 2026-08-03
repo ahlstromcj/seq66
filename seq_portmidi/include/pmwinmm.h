@@ -1,4 +1,4 @@
-#ifndef SEQ66_PMWINMM_H
+#if ! defined SEQ66_PMWINMM_H
 #define SEQ66_PMWINMM_H
 
 /*

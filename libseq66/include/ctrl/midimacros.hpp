@@ -1,4 +1,4 @@
-#ifndef SEQ66_MIDIMACROS_HPP
+#if ! defined SEQ66_MIDIMACROS_HPP
 #define SEQ66_MIDIMACROS_HPP
 
 /*

@@ -1,4 +1,4 @@
-#ifndef SEQ66_NOTEMAPPER_HPP
+#if ! defined SEQ66_NOTEMAPPER_HPP
 #define SEQ66_NOTEMAPPER_HPP
 
 /*

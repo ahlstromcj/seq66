@@ -30,7 +30,8 @@
  *
  */
 
-#include "ctrl/rpn.hpp"                 /* seq66::rpn for ALSA         */
+#include "midi/controllers.hpp"         /* RPN number<-->bytes functions    */
+#include "ctrl/rpn.hpp"                 /* seq66::rpn class                 */
 
 namespace seq66
 {
@@ -43,7 +44,8 @@ rpn::rpn
     midishort rpn_parameter_value,
     midishort rpn_parameter_number,
     bool append_data,
-    bool append_reset
+    bool append_reset,
+    bool use_fine_rpn
 ) :
     midimacro               { },
     m_control_type          { control_type },
@@ -52,7 +54,8 @@ rpn::rpn
     m_rpn_parameter_number  { rpn_parameter_number },
     m_rpn_parameter_value   { rpn_parameter_value },
     m_append_data           { append_data },
-    m_append_reset          { append_reset }
+    m_append_reset          { append_reset },
+    m_use_fine_rpn          { use_fine_rpn }
 {
     // no code yet
 }
@@ -63,11 +66,14 @@ rpn::rpn
  *
  *  Note that the names of the RPNs are provided, at present, in
  *  the controllers module in the s_rpn_names[] array.
+ *
+ *  TODO: also check all number ranges.
  */
 
-void
+bool
 rpn::fix_settings ()
 {
+    bool result { true };
     switch (m_control_type)
     {
     case control::rpn:
@@ -99,6 +105,94 @@ rpn::fix_settings ()
 
         break;
     }
+    return result;
+}
+
+/**
+ *  Examples:
+ *
+ *  RPN:
+ *          pitch =
+ *              0xB0 0x65 0x00 |    // pitch range semitones (coarse)
+ *              0xB0 0x64 0x00 |    // pitch range cents (fine)
+ *              0xB0 0x06 0x02 |    // data entry slider coarse
+ *              0xB0 0x26 0x00 |    // data entry slider fine
+ *              0xB0 0x65 0x7F |    // reset coarse
+ *              0xB0 0x64 0x7F      // reset fine
+ *
+ *  NRPN: From Roland EG-101_MI.pdf (paraphrased)
+ *
+ *          vibrato rate (relative change from -64dec to 0 to +63dec =
+ *              0xB0 0x63 0x01 |    // MSB of parameter number
+ *              0xB0 0x62 0x08 |    // LSB of parameter number
+ *              0xB0 0x06 0xnn |    // MSB of data entry
+ *              0xB0 0x26 0xnn |    // LSB of data entry (ignored, optional)
+ *              0xB0 0x65 0x7F |    // reset coarse (recommended)
+ *              0xB0 0x64 0x7F      // reset fine (optional)
+ *
+ *  Most parameters are set when the rpn object is constructed.
+ *
+ * \param channel
+ *      The channel to use, re 0.
+ *
+ * \return
+ *      Returns a vector of midibytes, each one representing an individual
+ *      event. If empty, the function failed.
+ */
+
+midimacro::events
+rpn::create_parameter_events (int channel)
+{
+    midimacro::events result;
+    bool ok { channel >= 0 && channel < 16 };
+    if (ok)
+        ok = fix_settings();
+
+    if (ok)
+    {
+        midibyte cc { 0xB0 };
+        midibyte ch { midibyte(channel) };
+        midibytes pnbytes { rpn_number_to_bytes(parameter_number()) };
+        if (pnbytes.size() == 2)
+        {
+            midibytes evbytes;
+            cc |= ch;
+            evbytes.push_back(cc);                      /* controller event */
+            evbytes.push_back(0x65);                    /* RPN MSB flag     */
+            evbytes.push_back(pnbytes[1]);              /* parameter MSB    */
+            result.push_back(evbytes);                  /* push first event */
+
+            evbytes.clear();
+            evbytes.push_back(cc);                      /* controller event */
+            evbytes.push_back(0x64);                    /* RPN LSB flag     */
+            evbytes.push_back(pnbytes[0]);              /* parameter LSB    */
+            result.push_back(evbytes);                  /* push next event  */
+            if (append_data())
+            {
+                midibytes vbytes { rpn_number_to_bytes(parameter_value()) };
+                evbytes.clear();
+                evbytes.push_back(cc);                  /* controller event */
+                evbytes.push_back(0x06);                /* data slider MSB  */
+                evbytes.push_back(vbytes[1]);           /* value MSB        */
+                result.push_back(evbytes);              /* push next event */
+
+                if (use_fine_rpn())
+                {
+                    evbytes.clear();
+                    evbytes.push_back(cc);              /* controller event */
+                    evbytes.push_back(0x26);            /* data slider LSB  */
+                    evbytes.push_back(vbytes[0]);       /* value LSB        */
+                    result.push_back(evbytes);          /* push next event */
+                }
+            }
+
+            midibytes reset_msb { cc, 0x65, 0x7f };     /* (N)RPN reset MSB */
+            midibytes reset_lsb { cc, 0x64, 0x7f };     /* (N)RPN reset LSB */
+            result.push_back(reset_msb);
+            result.push_back(reset_lsb);
+        }
+    }
+    return result;
 }
 
 }           // namespace seq66

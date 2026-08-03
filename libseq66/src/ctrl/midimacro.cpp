@@ -88,9 +88,9 @@ midimacro::bytes (int index) const
 bool
 midimacro::tokenize (const std::string & values)
 {
-    bool result;
     m_tokens = seq66::tokenize(values);         /* from strfunctions module */
-    result = m_tokens.size() > 0;
+
+    bool result { m_tokens.size() > 0 };
     if (result)
     {
         m_event_count = 1;
@@ -109,7 +109,7 @@ midimacro::tokenize (const std::string & values)
 std::string
 midimacro::line () const
 {
-    std::string result = name();
+    std::string result { name() };
     result += " =";
     for (const auto & t : tokens())
     {

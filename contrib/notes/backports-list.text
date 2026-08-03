@@ -14,6 +14,7 @@
         libseq66/include/ctrl/keycontrol.hpp
         libseq66/include/ctrl/midicontrol.hpp
         libseq66/include/ctrl/midicontrolin.hpp
+        libseq66/include/ctrl/midicontrolout.hpp
         libseq66/include/ctrl/midilearn.hpp         [NEW]
         libseq66/include/midi/calculations.hpp      More changes to port!
         libseq66/include/midi/controllers.hpp
@@ -43,6 +44,7 @@
         libseq66/src/ctrl/keycontrol.cpp
         libseq66/src/ctrl/midicontrol.cpp
         libseq66/src/ctrl/midicontrolin.cpp
+        libseq66/src/ctrl/midicontrolout.cpp
         libseq66/src/ctrl/midilearn.cpp             [NEW}
         libseq66/src/midi/busarray.cpp
         libseq66/src/midi/businfo.cpp

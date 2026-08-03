@@ -1,4 +1,4 @@
-#ifndef SEQ66_MIDIMACRO_HPP
+#if ! defined SEQ66_MIDIMACRO_HPP
 #define SEQ66_MIDIMACRO_HPP
 
 /*
@@ -51,8 +51,12 @@ namespace seq66
 
 class midimacro
 {
-
     friend class midimacros;
+    friend class rpn;
+
+public:
+
+    using events = std::vector<midibytes>;
 
 private:
 
@@ -92,7 +96,7 @@ private:
      *  macro. Populated only if the separator bar ("|") was present.
      */
 
-    std::vector<midibytes> m_event_bytes;
+    events m_event_bytes;
 
     /**
      *  Is the macro good?  It is good if there is a name, if there's at least
@@ -117,7 +121,12 @@ public:
         return m_name;
     }
 
-    tokenization tokens () const
+    tokenization & tokens ()
+    {
+        return m_tokens;
+    }
+
+    const tokenization & tokens () const
     {
         return m_tokens;
     }
