@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2025-07-12
+ * \updates       2025-08-03
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -570,6 +570,7 @@ midicontrolout::send_macro (const midibytes & byts, bool flush)
                 m_master_bus->play(tb, &ev, ev.channel());
         }
     }
+    return result;
 }
 
 std::string

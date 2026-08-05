@@ -39,6 +39,10 @@
 #include "midi/event.hpp"               /* seq66::event                     */
 #include "play/performer.hpp"           /* seq66::performer::callbacks      */
 
+/*
+ *  Forward declarations for Qt.
+ */
+
 namespace Ui
 {
     class qlearnframe;
@@ -142,7 +146,8 @@ private:
     bool m_inverse { false };
     int m_d1min { 0 };
     int m_d1max { 127 };
-};
+
+};          // class qlearnframe
 
 }           // namespace seq66
 

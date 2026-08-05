@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2026-07-22
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -80,21 +80,21 @@ qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
      * Obsolete in Qt 6:
      */
 
-#if defined QT_VERSION_5
-
-    connect
-    (
-        m_rbutton_group, SIGNAL(buttonClicked(int)),
-        this, SLOT(clock_callback_clicked(int))
-    );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
     auto lambdafunc = [this] (QAbstractButton * abutton)
     {
         clock_callback_clicked(m_rbutton_group->id(abutton));
     };
     connect(m_rbutton_group, &QButtonGroup::buttonClicked, lambdafunc);
+
+#else
+
+    connect
+    (
+        m_rbutton_group, SIGNAL(buttonClicked(int)),
+        this, SLOT(clock_callback_clicked(int))
+    );
 
 #endif
 

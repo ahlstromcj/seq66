@@ -28,9 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-03
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
+ *  This class represents all the RPN and NRPN events needed to change
+ *  a MIDI parameter.
  */
 
 #include "ctrl/midimacro.hpp"           /* seq66::midimacro                 */
@@ -65,6 +67,8 @@ public:
         max                             /* terminator and illegal value     */
     };
 
+public:
+
     /**
      *  Indicates which RPN parameter is to be applied.
      */
@@ -81,72 +85,85 @@ public:
         nrpn_active             = -1    /* indicates there's no set number  */
     };
 
-private:
+public:
 
     /**
-     *  Indicates if this object represents an NRPN rather than an
-     *  RPN. Or is being used to append the parameter value.
+     *  RPN-related values grouped together for convenience, and for
+     *  usage by qrpnframe.
      */
 
-    control m_control_type { control::rpn };
+    struct info
+    {
+        /**
+         *  Indicates if this object represents an NRPN rather than an
+         *  RPN. Or is being used to append the parameter value.
+         */
 
-    /**
-     *  Indicates which RPN is in force.
-     */
+        control rpn_control_type { control::rpn };
 
-    parameter m_parameter_type { parameter::pitchbend_range };
+        /**
+         *  Indicates which RPN is in force.
+         */
 
-    /**
-     *  Indicates the intended time of the control insertion.
-     */
+        parameter rpn_parameter_type { parameter::pitchbend_range };
 
-    midipulse m_time_stamp;
+        /**
+         *  Indicates the intended time of the control insertion.
+         */
 
-    /**
-     *  Holds the RPN or NRPN parameter selection. If negative, the
-     *  selection has not yet been made. If RPN is in force,
-     *  this number is the integer version of the parameter type.
-     */
+        midipulse rpn_time_stamp;
 
-    midishort m_rpn_parameter_number { c_midishort_14_bad };
+        /**
+         *  Holds the RPN or NRPN parameter selection. If negative, the
+         *  selection has not yet been made. If RPN is in force,
+         *  this number is the integer version of the parameter type.
+         */
 
-    /**
-     *  Holds the parameter value to be set. It ranged from 0 to 16383
-     *  (14-bits). The default value represents the pitch-bend range
-     *  parameter.
-     */
+        midishort rpn_parameter_number { c_midishort_14_bad };
 
-    midishort m_rpn_parameter_value { 0 };
+        /**
+         *  Holds the parameter value to be set. It ranged from 0 to 16383
+         *  (14-bits). The default value represents the pitch-bend range
+         *  parameter.
+         */
 
-    /**
-     *  The string representation of the parameter value. We
-     *  need this to set a suitable default for the value.
-     */
+        midishort rpn_parameter_value { 0 };
 
-    std::string m_rpn_parameter_string { "0.0" };
+        /**
+         *  The string representation of the parameter value. We
+         *  need this to set a suitable default for the value.
+         */
 
-    /**
-     *  Indicates that the data-entry slider or increment/decrment
-     *  will be applied.
-     */
+        std::string rpn_parameter_string { "0.0" };
 
-    bool m_append_data { true };
+        /**
+         *  Indicates that the data-entry slider or increment/decrment
+         *  will be applied.
+         */
 
-    /**
-     *  Indicates that the recommended RPN reset parameter is
-     *  to be applied.
-     */
+        bool rpn_append_data { true };
 
-    bool m_append_reset { true };
+        /**
+         *  Indicates that the recommended RPN reset parameter is
+         *  to be applied.
+         */
 
-    /**
-     *  Indicates to apply the "fine" (e.g. cents) data settings.
-     */
+        bool rpn_append_reset { true };
 
-    bool m_use_fine_rpn { true };
+        /**
+         *  Indicates to apply the "fine" (e.g. cents) data settings.
+         */
+
+        bool rpn_use_fine_rpn { true };
+
+    };              // struct info
+
+    info m_info { };
 
 public:
 
+    rpn () = default;
+    rpn (const info & rinfo);
     rpn
     (
         control control_type,
@@ -158,6 +175,10 @@ public:
         bool append_reset               = true,
         bool use_fine_rpn               = true
     );
+    rpn (const rpn &) = default;
+    rpn (rpn &&) = default;
+    rpn & operator = (const rpn &) = default;
+    rpn & operator = (rpn &&) = default;
     virtual ~rpn ();
 
     static midishort parameter_to_short (parameter p)
@@ -169,50 +190,56 @@ public:
 
     midipulse time_stamp () const
     {
-        return m_time_stamp;
+        return m_info.rpn_time_stamp;
     }
 
     control control_type () const
     {
-        return m_control_type;
+        return m_info.rpn_control_type;
     }
 
     parameter parameter_type () const
     {
-        return m_parameter_type;
+        return m_info.rpn_parameter_type;
     }
 
     midishort parameter_number ()
     {
-        return m_rpn_parameter_number;
+        return m_info.rpn_parameter_number;
     }
 
     midishort parameter_value () const
     {
-        return m_rpn_parameter_value;
+        return m_info.rpn_parameter_value;
     }
 
     std::string parameter_string () const
     {
-        return m_rpn_parameter_string;
+        return m_info.rpn_parameter_string;
     }
 
     bool append_data () const
     {
-        return m_append_data;
+        return m_info.rpn_append_data;
     }
 
     bool append_reset () const
     {
-        return m_append_reset;
+        return m_info.rpn_append_reset;
     }
 
     bool use_fine_rpn () const
     {
-        return m_use_fine_rpn;
+        return m_info.rpn_use_fine_rpn;
+    }
+
+    const std::string & macro_name () const
+    {
+        return name();
     }
 
     midimacro::events create_parameter_events (int channel);
+    std::string create_macro_string (const midimacro::events & evlist);
 
 private:
 

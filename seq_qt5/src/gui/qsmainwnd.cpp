@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-22
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1043,13 +1043,11 @@ qsmainwnd::qsmainwnd
 
     /*
      * CONNECT the menu actions to show_midi_learn_frame
+     *
+     * TODO:
+     *
+     *      #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
      */
-
-// #if defined QT_VERSION_5
-
-// #error Qt 5 not yet done
-
-// #elif defined QT_VERSION_6 || defined QT_VERSION_7
 
     connect
     (

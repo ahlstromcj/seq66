@@ -159,6 +159,16 @@ private:
         m_bytes = b;
     }
 
+    events & event_bytes_list ()
+    {
+        return m_event_bytes;
+    }
+
+    const events & event_bytes_list () const
+    {
+        return m_event_bytes;
+    }
+
     void push_bytes (const midibytes & b)
     {
         m_event_bytes.push_back(b);

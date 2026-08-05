@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2022-04-10
- * \updates       2026-01-23
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *  This file is meant to be included in the C++ "cpp" modules, after any
@@ -46,6 +46,15 @@
 #undef QT_VERSION_6
 #undef QT_VERSION_7
 #undef QT5_HELPER_RADIO_SIGNAL
+
+/*
+ * These are not reliable because one must remember to include
+ * qt5_helper.h.  Use the following instead:
+ *
+ * #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+ * #else
+ * #endif
+ */
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
 #define QT_VERSION_L58
@@ -73,4 +82,3 @@
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

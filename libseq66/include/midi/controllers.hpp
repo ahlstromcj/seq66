@@ -190,6 +190,7 @@ extern void set_controller_name
 extern std::string rpn_name (int value);
 extern midibytes rpn_number_to_bytes (midishort rpnn);
 extern midishort bytes_to_rpn_number (const midibytes & in);
+extern midishort string_to_rpn_number (const std::string & s);
 
 }           // namespace seq66
 

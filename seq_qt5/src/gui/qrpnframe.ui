@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
-    <height>408</height>
+    <width>799</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -280,7 +280,7 @@ to the 'ctrl' file.</string>
     <rect>
      <x>30</x>
      <y>10</y>
-     <width>281</width>
+     <width>301</width>
      <height>24</height>
     </rect>
    </property>
@@ -298,14 +298,17 @@ to the 'ctrl' file.</string>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_6">
+     <widget class="QLabel" name="label_pattern_no">
       <property name="font">
        <font>
         <italic>true</italic>
        </font>
       </property>
       <property name="text">
-       <string>pattern #xxxx</string>
+       <string>Pattern #xxxx</string>
+      </property>
+      <property name="indent">
+       <number>1</number>
       </property>
      </widget>
     </item>

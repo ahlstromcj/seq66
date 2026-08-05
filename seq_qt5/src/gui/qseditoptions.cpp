@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-24
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -853,21 +853,21 @@ qseditoptions::setup_tab_jack ()
      * Obsolete in Qt 6:
      */
 
-#if defined QT_VERSION_5
-
-    connect
-    (
-        m_live_song_buttons, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_jack_mode(int))
-    );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
     auto lambdafunc = [this] (QAbstractButton * abutton)
     {
         slot_jack_mode(m_live_song_buttons->id(abutton));
     };
     connect(m_live_song_buttons, &QButtonGroup::buttonClicked, lambdafunc);
+
+#else
+
+    connect
+    (
+        m_live_song_buttons, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_jack_mode(int))
+    );
 
 #endif
 
@@ -966,21 +966,21 @@ qseditoptions::setup_tab_play_options ()
      * Obsolete in Qt 6:
      */
 
-#if defined QT_VERSION_5
-
-    connect
-    (
-        rgroup, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_sets_mode(int))
-    );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
     auto lambdafunc = [this, rgroup] (QAbstractButton * abutton)
     {
         slot_sets_mode(rgroup->id(abutton));
     };
     connect(rgroup, &QButtonGroup::buttonClicked, lambdafunc);
+
+#else
+
+    connect
+    (
+        rgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_sets_mode(int))
+    );
 
 #endif
 
@@ -997,21 +997,21 @@ qseditoptions::setup_tab_play_options ()
      * Obsolete in Qt 6:
      */
 
-#if defined QT_VERSION_5
-
-    connect
-    (
-        rgroup2, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_start_mode(int))
-    );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
     auto lambdafunc2 = [this, rgroup2] (QAbstractButton * abutton)
     {
         slot_start_mode(rgroup2->id(abutton));
     };
     connect(rgroup2, &QButtonGroup::buttonClicked, lambdafunc2);
+
+#else
+
+    connect
+    (
+        rgroup2, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_start_mode(int))
+    );
 
 #endif
 
@@ -1077,7 +1077,7 @@ qseditoptions::setup_tab_metronome ()
         if (rc().investigate())
         {
             std::string olist { opm.to_string("Metro/Thru out") };
-            printf(olist.c_str());
+            printf("%s\n", olist.c_str());
         }
         for (int b = 0; b < buses; ++b)
         {
@@ -1170,7 +1170,7 @@ qseditoptions::setup_tab_metronome ()
         if (rc().investigate())
         {
             std::string olist { ipm.to_string("Scratchpad Record out") };
-            printf(olist.c_str());
+            printf("%s\n", olist.c_str());
         }
         for (int b = 0; b < buses; ++b)
         {
@@ -2073,25 +2073,21 @@ qseditoptions::setup_tab_session ()
         ui->radio_session_jack, static_cast<int>(usrsettings::session::jack)
     );
 
-    /*
-     * Obsolete in Qt 6:
-     */
-
-#if defined QT_VERSION_5
-
-    connect
-    (
-        sgroup, SIGNAL(buttonClicked(int)),
-        this, SLOT(slot_session(int))
-    );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
     auto lambdafunc = [this, sgroup] (QAbstractButton * abutton)
     {
         slot_session(sgroup->id(abutton));
     };
     connect(sgroup, &QButtonGroup::buttonClicked, lambdafunc);
+
+#else
+
+    connect
+    (
+        sgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_session(int))
+    );
 
 #endif
 

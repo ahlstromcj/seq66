@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-06-26
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -285,20 +285,7 @@ qt (const std::string & text)
  *  essentially duplicate the inline code here.
  */
 
-#if defined QT_VERSION_5
-
-int
-qt_mouse_x (QMouseEvent * ev)
-{
-    return ev->x();
-}
-int
-qt_mouse_y (QMouseEvent * ev)
-{
-    return ev->y();
-}
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
 int
 qt_mouse_x (QMouseEvent * ev)
@@ -310,6 +297,19 @@ int
 qt_mouse_y (QMouseEvent * ev)
 {
     return qRound(ev->position().y());
+}
+
+#else
+
+int
+qt_mouse_x (QMouseEvent * ev)
+{
+    return ev->x();
+}
+int
+qt_mouse_y (QMouseEvent * ev)
+{
+    return ev->y();
 }
 
 #endif

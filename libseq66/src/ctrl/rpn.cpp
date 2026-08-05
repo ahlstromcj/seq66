@@ -25,9 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-03
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
+ *  This class represents all the RPN and NRPN events needed to change
+ *  a MIDI parameter.
  */
 
 #include "midi/controllers.hpp"         /* RPN number<-->bytes functions    */
@@ -35,6 +37,13 @@
 
 namespace seq66
 {
+
+rpn::rpn (const info & rinfo) :
+    midimacro   { },
+    m_info      { rinfo }
+{
+    // no code
+}
 
 rpn::rpn
 (
@@ -48,16 +57,17 @@ rpn::rpn
     bool use_fine_rpn
 ) :
     midimacro               { },
-    m_control_type          { control_type },
-    m_parameter_type        { parameter_type },
-    m_time_stamp            { time_stamp },
-    m_rpn_parameter_number  { rpn_parameter_number },
-    m_rpn_parameter_value   { rpn_parameter_value },
-    m_append_data           { append_data },
-    m_append_reset          { append_reset },
-    m_use_fine_rpn          { use_fine_rpn }
+    m_info                  { }
 {
-    // no code yet
+    m_info.rpn_control_type     = control_type;
+    m_info.rpn_parameter_type   = parameter_type;
+    m_info.rpn_time_stamp       = time_stamp;
+    m_info.rpn_parameter_number = rpn_parameter_number;
+    m_info.rpn_parameter_value  = rpn_parameter_value;
+    m_info.rpn_parameter_string = "0.0";
+    m_info.rpn_append_data      = append_data;
+    m_info.rpn_append_reset     = append_reset;
+    m_info.rpn_use_fine_rpn     = use_fine_rpn;
 }
 
 /**
@@ -74,11 +84,11 @@ bool
 rpn::fix_settings ()
 {
     bool result { true };
-    switch (m_control_type)
+    switch (control_type())
     {
     case control::rpn:
 
-        m_rpn_parameter_number = parameter_to_short(m_parameter_type);
+        m_info.rpn_parameter_number = parameter_to_short(parameter_type());
         break;
 
     case control::nrpn:
@@ -88,17 +98,17 @@ rpn::fix_settings ()
 
     case control::slider:
 
-        m_append_data = true;
+        m_info.rpn_append_data = true;
         break;
 
     case control::increment:
 
-        m_append_data = true;
+        m_info.rpn_append_data = true;
         break;
 
     case control::decrement:
 
-        m_append_data = true;
+        m_info.rpn_append_data = true;
         break;
 
     default:
@@ -190,6 +200,39 @@ rpn::create_parameter_events (int channel)
             midibytes reset_lsb { cc, 0x64, 0x7f };     /* (N)RPN reset LSB */
             result.push_back(reset_msb);
             result.push_back(reset_lsb);
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function takes the name and the array of events (and their bytes)
+ *  and generates the data needed to add these events to the midimacros
+ *  set as a midimacro.
+ *
+ *  This line should have the format "macnam = bytes "|" bytes ....
+ *  This matches the format read from the 'ctrl' file.
+ */
+
+std::string
+rpn::create_macro_string (const midimacro::events & evlist)
+{
+    std::string result { macro_name() };
+    if (! result.empty())
+    {
+        int sz { int(evlist.size()) };
+        int count { 0 };
+        result += " =";
+        for (const auto & evbyts : evlist)
+        {
+            for (auto b : evbyts)
+            {
+                char tmp[8];
+                snprintf(tmp, sizeof tmp, " 0x%02x", b);
+            }
+            ++count;
+            if (count < sz)
+                result += " | ";
         }
     }
     return result;

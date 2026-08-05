@@ -17,14 +17,14 @@
  */
 
 /**
- * \file          controllers.hpp
+ * \file          controllers.cpp
  *
  *  This module defines the array of MIDI controller names.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-08-02
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -33,6 +33,7 @@
  */
 
 #include "midi/controllers.hpp"         /* seq66::controller_name(), etc.   */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int(), etc.     */
 
 namespace seq66
 {
@@ -236,9 +237,9 @@ s_rpn_names [c_rpn_value_count]
     {   0x0003,     "Tuning program change"         },
     {   0x0004,     "Tuning bank select"            },
     {   0x0005,     "Modulation depth range"        },
-    {   0x0006,     "Channel range"                 },        // ???
+//  {   0x0006,     "Channel range"                 },      // ???
     {   0x007F,     "RPN parameter reset"           },
-    {   0x3FFF,     "RPN null"                      }
+    {   0x3FFF,     "RPN null"                      }       // ???
 };
 
 std::string
@@ -253,19 +254,6 @@ rpn_name (int value)
             break;
         }
     }
-
-#if 0
-    if (index == 0x3FFFF)
-        index = c_rpn_value_count - 1;
-
-    if (index >= 0 && index < c_rpn_value_count)
-    {
-        std::string name = s_rpn_names[index].name;
-        result = std::to_string(index);
-        result += " ";
-        result += name;
-    }
-#endif
     return result;
 }
 
@@ -325,10 +313,56 @@ bytes_to_rpn_number (const midibytes & in)
     return result;
 }
 
+/**
+ *  Converts a string to a 14-bit RPN number from 0 to 16383. Conversions
+ *  outside this range are rejected. Formats:
+ *
+ *      -   "0x0" to "0x3FFF. Hexadecimal format.
+ *      -   "0" to "16383". Decimal format.
+ *      -   "12.2".  This format provides, not a decimal number, but
+ *          two numbers, the MSB and LSB, which are combined into a
+ *          14-bit value. Other formats are "12:2", "12/2", and "12 2".
+ *          Hex digits can be used as well.
+ *
+ * \param s
+ *      Provides the number(s) to be converted.
+ *
+ * \returns
+ *      Returns the 14-bit number, or 16384 (c_midishort_14_bad) if
+ *      there was a error.
+ */
+
+midishort
+string_to_rpn_number (const std::string & s)
+{
+    midishort result { c_midishort_14_bad };
+    tokenization t { tokenize(s, ".:/ ") };
+    if (t.size() == 1)
+    {
+        int value { string_to_int(t[0], c_midishort_14_bad) };
+        if (value >= 0 && value < int(c_midishort_14_bad))
+            result = midishort(value);
+    }
+    else if (t.size() == 2)
+    {
+        int msb { string_to_int(t[0], -1) };
+        int lsb { string_to_int(t[0], -1) };
+        bool ok { (msb >= 0 && msb < 0x40) && (lsb >= 0 && lsb < 0x100) };
+        if (ok)
+        {
+            midibytes byts;
+            byts.push_back(midibyte(lsb));
+            byts.push_back(midibyte(msb));
+            result = bytes_to_rpn_number(byts);
+        }
+    }
+    return result;
+}
+
 }           // namespace seq66
 
 /*
- * controllers.hpp
+ * controllers.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

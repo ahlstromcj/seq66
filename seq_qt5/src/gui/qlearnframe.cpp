@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-06-25
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to combine the following pattern adjustments:
@@ -144,16 +144,7 @@ qlearnframe::qlearnframe
         );
         select_category(opcat);
 
-#if defined QT_VERSION_5
-
-        connect
-        (
-            m_learn_button_group, SIGNAL(buttonClicked(int)),
-            this, SLOT(slot_select_category(int))
-        );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
-
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         auto lambdafunc = [this] (QAbstractButton * abutton)
         {
             slot_select_category(m_learn_button_group->id(abutton));
@@ -162,7 +153,12 @@ qlearnframe::qlearnframe
         (
             m_learn_button_group, &QButtonGroup::buttonClicked, lambdafunc
         );
-
+#else
+        connect
+        (
+            m_learn_button_group, SIGNAL(buttonClicked(int)),
+            this, SLOT(slot_select_category(int))
+        );
 #endif
 
     }
@@ -199,21 +195,21 @@ qlearnframe::qlearnframe
         );
         select_action(midi_learn().automation_action());
 
-#if defined QT_VERSION_5
-
-        connect
-        (
-            m_action_button_group, SIGNAL(buttonClicked(int)),
-            this, SLOT(slot_select_action(int))
-        );
-
-#elif defined QT_VERSION_6 || defined QT_VERSION_7
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
         auto actionfunc = [this] (QAbstractButton * abutton)
         {
             slot_select_action(m_action_button_group->id(abutton));
         };
         connect(m_action_button_group, &QButtonGroup::buttonClicked, actionfunc);
+
+#else
+
+        connect
+        (
+            m_action_button_group, SIGNAL(buttonClicked(int)),
+            this, SLOT(slot_select_action(int))
+        );
 
 #endif
 
