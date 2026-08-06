@@ -93,7 +93,8 @@ private:
 
     /**
      *  Provides the midibytes for each separate event in a multiple-event
-     *  macro. Populated only if the separator bar ("|") was present.
+     *  macro. Populated multiply if the separator bar ("|") was present.
+     *  Also includes expanded macros' bytes.
      */
 
     events m_event_bytes;

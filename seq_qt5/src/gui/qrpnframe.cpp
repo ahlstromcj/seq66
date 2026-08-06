@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-05
+ * \updates       2026-08-06
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -34,6 +34,7 @@
 
 #include <QButtonGroup>
 
+#include "midi/controllers.hpp"         /* seq66::string_to_rpn_number()    */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
@@ -73,6 +74,12 @@ enum rpn_select_t
 
 /**
  *  Constructor. Some members are initialized in-class.
+ *
+ *      m_select_control_group  { nullptr }
+ *      m_select_value_group    { nullptr }
+ *      m_rpn_info              { }
+ *      m_rpn_channel           { 0 }
+ *      m_time_format           { timeformat::bbt }
  */
 
 qrpnframe::qrpnframe
@@ -81,10 +88,17 @@ qrpnframe::qrpnframe
     sequence & s,
     QWidget * parent
 ) :
-    QFrame  (parent),
-    ui      (new Ui::qrpnframe),
-    m_perf  (p),
-    m_seq   (s)
+    QFrame          (parent),
+    ui              (new Ui::qrpnframe),
+    m_perf          (p),                    /* accessor: perf()     */
+    m_seq           (s),                    /* accessor: track()    */
+    m_midi_timing
+    (
+        perf().bpm(),
+        track().get_beats_per_bar(),
+        track().get_beat_width(),
+        track().get_ppqn()
+    )
 {
     ui->setupUi(this);
 
@@ -146,6 +160,50 @@ qrpnframe::qrpnframe
     }
 
     /*
+     * Populate the channel combo box, and default to the pattern's
+     * current channel selection.
+     */
+
+    int ch { int(track().seq_midi_channel()) }; /* track().midi_channel()   */
+    int b { int(track().seq_midi_bus()) };
+    if (populate_midich_combo(ui->combo_box_channel, b, ch, false))
+    {
+        /*
+         * That function selects the current channel. Now connect the
+         * combo-box. Note that this setting does not affect the
+         * pattern associated with this dialog; it affects only the
+         * data in the (N)RPN-related events created.
+         */
+
+        connect
+        (
+            ui->combo_box_channel, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_midi_channel(int))
+        );
+    }
+
+    /*
+     * The checkboxes in the middle of the frame.
+     */
+
+    set_rpn_option_checkboxes ();
+    connect
+    (
+        ui->check_box_rpn_append_data, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_rpn_append_data(int))
+    );
+    connect
+    (
+        ui->check_box_rpn_append_reset, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_rpn_append_reset(int))
+    );
+    connect
+    (
+        ui->check_box_rpn_use_fine, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_rpn_use_fine_rpn(int))
+    );
+
+    /*
      * Create a button group to manage the mutual status of the Select
      * Control buttons.
      */
@@ -202,7 +260,75 @@ qrpnframe::qrpnframe
 
 #endif
     }
+
+
+    /*
+     * Set the timestamp. The BBT utton shows the current time format
+     * and changes to the next one when clicked: B:B:T, H:M:S, and ticks.
+     */
+
+    set_time_stamp(track().get_tick());
+    connect
+    (
+        ui->button_bbt, SIGNAL(clicked(bool)),
+        this, SLOT(slot_next_time_format())
+    );
+    connect
+    (
+        ui->line_edit_rpn_timestamp, SIGNAL(editingFinished()),
+        this, SLOT(slot_timestamp_text_changed())
+    );
+
+    /*
+     * Line-edit for the parameter number.
+     */
+
+    connect
+    (
+        ui->line_edit_nrpn_param_number, SIGNAL(editingFinished()),
+        this, SLOT(slot_param_number_text_changed())
+    );
+
+    /*
+     * Line-edit for the parameter value.
+     */
+
+    connect
+    (
+        ui->line_edit_rpn_param_value, SIGNAL(editingFinished()),
+        this, SLOT(slot_param_value_text_changed())
+    );
+
+    /*
+     * Create Macro button and line-edit.
+     */
+
+    connect
+    (
+        ui->line_edit_rpn_macro_name, SIGNAL(editingFinished()),
+        this, SLOT(slot_macro_name_changed())
+    );
+    connect
+    (
+        ui->button_rpn_macro, SIGNAL(clicked(bool)),
+        this, SLOT(slot_create_macro())
+    );
+    ui->button_rpn_macro->setEnabled(false);
+
+    /*
+     * Insert/Append button.
+     */
+
+    connect
+    (
+        ui->button_rpn_insert, SIGNAL(clicked(bool)),
+        this, SLOT(slot_rpn_insert())
+    );
 }
+
+/**
+ *  The destructor.
+ */
 
 qrpnframe::~qrpnframe()
 {
@@ -212,8 +338,6 @@ qrpnframe::~qrpnframe()
 void
 qrpnframe::select_rpn (int rpncontrol)
 {
-    printf("Controller (index) %d\n", rpncontrol);
-
     switch (rpncontrol)
     {
     case rpn_control_rpn:
@@ -247,7 +371,6 @@ qrpnframe::select_rpn (int rpncontrol)
 void
 qrpnframe::select_rpn_value_type (int rpnvalue)
 {
-    printf("RPN value type (index) %d\n", rpnvalue);
     switch (rpnvalue)
     {
     case rpn_select_pitchbend_range:
@@ -317,9 +440,180 @@ qrpnframe::slot_select_rpn (int r)
 }
 
 void
+qrpnframe::slot_midi_channel (int c)
+{
+    m_rpn_channel = c;
+}
+
+void
+qrpnframe::set_rpn_option_checkboxes ()
+{
+    bool appenddata { rpn_info().rpn_append_data };
+    bool appendreset { rpn_info().rpn_append_reset };
+    bool usefinerpn { rpn_info().rpn_use_fine_rpn };
+    ui->check_box_rpn_append_data->setChecked(appenddata);
+    ui->check_box_rpn_append_reset->setChecked(appendreset);
+    ui->check_box_rpn_use_fine->setChecked(usefinerpn);
+}
+
+void
+qrpnframe::slot_rpn_append_data (int state)
+{
+    bool checked { state == Qt::Checked };
+    rpn_info().rpn_append_data = checked;
+    set_rpn_option_checkboxes();
+}
+
+void
+qrpnframe::slot_rpn_append_reset (int state)
+{
+    bool checked { state == Qt::Checked };
+    rpn_info().rpn_append_reset = checked;
+    set_rpn_option_checkboxes();
+}
+
+void
+qrpnframe::slot_rpn_use_fine_rpn (int state)
+{
+    bool checked { state == Qt::Checked };
+    rpn_info().rpn_use_fine_rpn = checked;
+    set_rpn_option_checkboxes();
+}
+
+void
 qrpnframe::slot_select_rpn_value_type (int v)
 {
     select_rpn_value_type(v);
+}
+
+void
+qrpnframe::set_time_stamp (midipulse ts)
+{
+    std::string tf;
+    rpn_info().rpn_time_stamp = ts;
+    switch (m_time_format)
+    {
+    case timeformat::bbt:
+
+        tf = pulses_to_measurestring(ts, m_midi_timing);
+        break;
+
+    case timeformat::hms:
+
+        tf = pulses_to_time_string(ts, m_midi_timing);
+        break;
+
+    case timeformat::ticks:
+
+        tf = pulses_to_string(ts);
+        break;
+    }
+    ui->line_edit_rpn_timestamp->setText(qt(tf));
+}
+
+/**
+ *  Gets to the next time format.
+ */
+
+void
+qrpnframe::slot_next_time_format ()
+{
+    m_time_format = next_time_format(m_time_format);
+
+    midipulse ts { rpn_info().rpn_time_stamp };
+    std::string tf { time_format_name(m_time_format) };
+    ui->button_bbt->setText(qt(tf));
+    set_time_stamp(ts);
+}
+
+void
+qrpnframe::slot_timestamp_text_changed ()
+{
+    QString t { ui->line_edit_rpn_timestamp->text() };
+    std::string ts { t.toStdString() };
+    midipulse ticks { string_to_pulses(ts, m_midi_timing, m_time_format) };
+    rpn_info().rpn_time_stamp = ticks;
+}
+
+void
+qrpnframe::slot_param_number_text_changed ()
+{
+    QString p { ui->line_edit_nrpn_param_number->text() };
+    std::string pnumstring { p.toStdString() };
+    midishort pnumber { string_to_rpn_number(pnumstring) };
+    rpn_info().rpn_parameter_number = pnumber;
+
+    /*
+     * If > 6 and not 7F, select NRPN, else select (check) an RPN parameter.
+     */
+
+    if (pnumber < 6 || pnumber == 0x7F)
+    {
+        select_rpn(rpn_control_rpn);
+        select_rpn_value_type(pnumber);
+    }
+    else
+    {
+        select_rpn(rpn_control_nrpn);
+    }
+}
+
+void
+qrpnframe::slot_param_value_text_changed ()
+{
+    QString v { ui->line_edit_rpn_param_value->text() };
+    std::string valstring { v.toStdString() };
+    midishort value { string_to_rpn_number(valstring) };
+    rpn_info().rpn_parameter_value = value;
+}
+
+void
+qrpnframe::slot_macro_name_changed ()
+{
+    QString v { ui->line_edit_rpn_macro_name->text() };
+    std::string macnam { v.toStdString() };
+    bool isempty { macnam.empty() };
+    ui->button_rpn_macro->setEnabled(! isempty);
+    m_macro_name = macnam;
+}
+
+/**
+ *  For the next two slots, we first need to create an rpn object with the
+ *  current rpn::info data supplied in the constructor in by editing
+ *  the various user-interface elements in the qrpnframe.
+ *
+ */
+
+void
+qrpnframe::slot_create_macro ()
+{
+    std::string macnam { m_macro_name };
+    rpn r(rpn_info());
+    tokenization name_and_data { r.create_macro_string(macnam) };
+    bool ok { false };
+    if (name_and_data.size() == 2)
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        ok = mco.add_macro(name_and_data);
+    }
+    if (! ok)
+        printf("ERROR creating macro\n");
+}
+
+/*
+ * Compare this function to qseqeditframe64::insert_macro().
+ */
+
+void
+qrpnframe::slot_rpn_insert ()
+{
+    rpn r(rpn_info());
+    midipulse tick { rpn_info().rpn_time_stamp };
+    bool ok { track().add_macro(tick, r) };
+    if (! ok)
+    {
+        printf("ERROR in rpn_insert()\n");
+    }
 }
 
 }               // namespace seq66

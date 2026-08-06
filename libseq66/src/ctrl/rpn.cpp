@@ -150,10 +150,10 @@ rpn::fix_settings ()
  *      event. If empty, the function failed.
  */
 
-midimacro::events
+const midimacro::events &
 rpn::create_parameter_events (int channel)
 {
-    midimacro::events result;
+    midimacro::events & result { event_bytes_list() };
     bool ok { channel >= 0 && channel < 16 };
     if (ok)
         ok = fix_settings();
@@ -214,26 +214,30 @@ rpn::create_parameter_events (int channel)
  *  This matches the format read from the 'ctrl' file.
  */
 
-std::string
-rpn::create_macro_string (const midimacro::events & evlist)
+tokenization
+rpn::create_macro_string (const std::string & macnam)
 {
-    std::string result { macro_name() };
-    if (! result.empty())
+    const midimacro::events & evlist { event_bytes_list() };
+    int sz { int(evlist.size()) };
+    tokenization result;
+    if (sz > 0)
     {
-        int sz { int(evlist.size()) };
+        std::string tokens;
         int count { 0 };
-        result += " =";
+        result.push_back(macnam);
         for (const auto & evbyts : evlist)
         {
             for (auto b : evbyts)
             {
                 char tmp[8];
                 snprintf(tmp, sizeof tmp, " 0x%02x", b);
+                tokens += tmp;
             }
             ++count;
             if (count < sz)
-                result += " | ";
+                tokens += " | ";
         }
+        result.push_back(tokens);
     }
     return result;
 }

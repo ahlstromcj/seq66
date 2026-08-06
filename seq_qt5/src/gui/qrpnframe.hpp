@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-05
+ * \updates       2026-08-06
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -36,6 +36,7 @@
 #include <QFrame>
 
 #include "ctrl/rpn.hpp"                 /* seq66::rpn "macro" class         */
+#include "midi/calculations.hpp"        /* seq66::timeformat enumeration    */
 
 /*
  *  Forward declarations for Qt.
@@ -101,13 +102,26 @@ public:
 private:
 
     void select_rpn (int rpncontrol);
+    void set_rpn_option_checkboxes ();
     void select_rpn_value_type (int rpnvalue);
     void set_rpn_value_type_text (bool is_rpn, midishort pv);
+    void set_time_stamp (midipulse ts);
 
 private slots:
 
     void slot_select_rpn (int r);
+    void slot_midi_channel (int c);
+    void slot_rpn_append_data (int state);
+    void slot_rpn_append_reset (int state);
+    void slot_rpn_use_fine_rpn (int state);
     void slot_select_rpn_value_type (int v);
+    void slot_next_time_format ();
+    void slot_timestamp_text_changed ();
+    void slot_param_number_text_changed ();
+    void slot_param_value_text_changed ();
+    void slot_macro_name_changed ();
+    void slot_create_macro ();
+    void slot_rpn_insert ();
 
 private:
 
@@ -144,12 +158,32 @@ private:
     rpn::info m_rpn_info { };
 
     /**
-     *  Selects RPN, NRPN, or the data controllers.
-     *
-
-    rpn::control m_rpn_control { rpn::control::rpn };
-    rpn::parameter m_rpn_parameter { rpn::parameter::pitchbend_range };
+     *  The channel is set here instead of in rpn::info.
+     *  Does this make sense?
      */
+
+    int m_rpn_channel { 0 };
+
+    /**
+     *  Holds the current time-format. See the calculations header
+     *  file.
+     */
+
+    timeformat m_time_format { timeformat::bbt };
+
+    /**
+     *  Holds timing information from the performer and the sequence.
+     *  Needed for converting between pulses and B:B:T format.
+     */
+
+    midi_timing m_midi_timing { };
+
+    /**
+     *  Holds the name of the macro to be created. Otherwise it
+     *  is empty.
+     */
+
+    std::string m_macro_name { };
 
 };          // class qrpnframe
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Frame</string>
+   <string>RPN Editor</string>
   </property>
   <widget class="QGroupBox" name="group_box_rpn">
    <property name="geometry">
@@ -439,7 +439,7 @@ macro.</string>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="buitton_rpn_insert">
+     <widget class="QPushButton" name="button_rpn_insert">
       <property name="toolTip">
        <string>Inserts the controller events at the given timestamp.</string>
       </property>

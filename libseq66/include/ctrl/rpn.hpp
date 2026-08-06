@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-05
+ * \updates       2026-08-06
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -179,7 +179,7 @@ public:
     rpn (rpn &&) = default;
     rpn & operator = (const rpn &) = default;
     rpn & operator = (rpn &&) = default;
-    virtual ~rpn ();
+    virtual ~rpn () = default;
 
     static midishort parameter_to_short (parameter p)
     {
@@ -238,8 +238,8 @@ public:
         return name();
     }
 
-    midimacro::events create_parameter_events (int channel);
-    std::string create_macro_string (const midimacro::events & evlist);
+    const midimacro::events & create_parameter_events (int channel);
+    tokenization create_macro_string (const std::string & macnam);
 
 private:
 

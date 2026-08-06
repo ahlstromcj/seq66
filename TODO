@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-08-03
+2019-04-13 to 2026-08-05
 
     -   Follow up on RPN:
         -   controllers module
@@ -29,6 +29,8 @@ Chris Ahlstrom
         -   Also, can paste a long selection into a short pattern.
             Either warn about it or change the length.
     -   controllers.cpp: Fix the code commented by THIS_CODE_IS_READY.
+    -   Pattern editor. Add Ctrl-T to bring up the Tools menu, and
+        maybe some other Ctrl-shortcuts.
 
 Back burner:
 

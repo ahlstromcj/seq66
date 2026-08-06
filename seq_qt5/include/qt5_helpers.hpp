@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-06-13
+ * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -159,7 +159,8 @@ extern void set_combobox_item
 extern bool populate_midich_combo
 (
     QComboBox * combo,
-    int buss, int channel
+    int buss, int channel,
+    bool add_free = true
 );
 extern bool fill_combobox
 (

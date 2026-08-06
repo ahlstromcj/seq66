@@ -547,7 +547,7 @@ midicontrolout::send_macro (const midibytes & byts, bool flush)
 {
     bool result = is_enabled() && not_nullptr(m_master_bus);
     if (result)
-        result = m_macro_events.active() && !byts.empty();
+        result = m_macro_events.active() && ! byts.empty();
 
     if (result)
     {

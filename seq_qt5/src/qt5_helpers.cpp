@@ -548,10 +548,22 @@ set_combobox_item
  * \param buss
  *      The new value for the buss from which to get the [user-instrument-N]
  *      settings in the [user-instrument-definitions] section.
+ *
+ * \param add_free
+ *      If true (which is the default), then add a last entry "Free"
+ *      to indicate no channel is assigned.
+ *
+ * \return
+ *      Returns true if successful. Always successful.
  */
 
 bool
-populate_midich_combo (QComboBox * combo, int buss, int ch)
+populate_midich_combo
+(
+    QComboBox * combo,
+    int buss, int ch,
+    bool add_free
+)
 {
     bool result { false };
     tokenization chlist;
@@ -562,7 +574,11 @@ populate_midich_combo (QComboBox * combo, int buss, int ch)
         std::string name = std::string(b);
         if (channel == c_midichannel_max)               /* i.e. 16          */
         {
-            name = "Free";
+            if (add_free)
+            {
+                name = "Free";
+                chlist.push_back(name);
+            }
         }
         else
         {
@@ -573,8 +589,8 @@ populate_midich_combo (QComboBox * combo, int buss, int ch)
                 name += s;
                 name += "]";
             }
+            chlist.push_back(name);
         }
-        chlist.push_back(name);
         result = true;
     }
     if (result)

@@ -378,8 +378,8 @@ qseqeventframe::qseqeventframe
     );
 
     /*
-     * Button show the current time format and change to
-     * the next one: B:B:T, H:M:S, and Ticks.
+     * Button shows the current time format and changes to
+     * the next one when clicked: B:B:T, H:M:S, and Ticks.
      */
 
     connect
@@ -1065,10 +1065,8 @@ qseqeventframe::set_event_category (const std::string & c)
 }
 
 /**
- * TODO:
- *
  *  When the user has edited the string, we need to use the time-format
- *  to figures out how to convert the time-string to ticks.
+ *  to figure out how to convert the time-string to ticks.
  */
 
 void
