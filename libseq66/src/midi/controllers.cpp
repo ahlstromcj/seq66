@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-08-05
+ * \updates       2026-08-07
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -274,15 +274,18 @@ rpn_name (int value)
  *        0MMMMMMM0LLLLLLL
  *                01111111 0x7F
  *
+ *  Standard MIDI Files adopted the Motorola big-endian standard (also
+ *  known as network byte order, which is most significant byte first).
+ *
  * \param rpnn
  *      The 14-bit RPN number. It must be greater than zero and less
  *      than 16364 (0x4000).
  *
- * \param [out] out
- *
  * \return
- *      Returns the converted bytes. Holds the two bytes, with result[0]
- *      being the LSB, and result[1] being the MSB.
+ *      Returns the converted bytes. Holds the two bytes:
+ *
+ *          MSB: result[0]
+ *          LSB: result[1]
  */
 
 midibytes
@@ -294,11 +297,25 @@ rpn_number_to_bytes (midishort rpnn)
     {
         midishort rpnn_lsb { midishort(rpnn & 0x7F) };
         midishort rpnn_msb { midishort((rpnn >> 7) & 0x7F) };
-        result.push_back(midibyte(rpnn_lsb));
         result.push_back(midibyte(rpnn_msb));
+        result.push_back(midibyte(rpnn_lsb));
     }
     return result;
 }
+
+/**
+ *  Converts the first two bytes to a 14-bit short value.
+ *
+ * \param in
+ *      A vector containing two bytes:
+ *
+ *          MSB: in[0]
+ *          LSB: in[1]
+ *
+ * \return
+ *  Returns the 14-bit value, or c_midishort_14_bad (16384) if an error
+ *  occurred.
+ */
 
 midishort
 bytes_to_rpn_number (const midibytes & in)
@@ -306,9 +323,9 @@ bytes_to_rpn_number (const midibytes & in)
     midishort result { c_midishort_14_bad };    /* 0x4000 in midibytes.hpp  */
     if (in.size() > 1)
     {
-        result = midishort(in[1] & 0x7F);       /* the MSB 7 bits           */
+        result = midishort(in[0] & 0x7F);       /* the MSB 7 bits           */
         result <<= 7;                           /* multiply by 128          */
-        result += midishort(in[0]);
+        result += midishort(in[1]);             /* the LSB 7 bits           */
     }
     return result;
 }
@@ -343,16 +360,16 @@ string_to_rpn_number (const std::string & s)
         if (value >= 0 && value < int(c_midishort_14_bad))
             result = midishort(value);
     }
-    else if (t.size() == 2)
+    else if (t.size() == 2)             /* e.g. "12.0" --> { "12", "0" }    */
     {
-        int msb { string_to_int(t[0], -1) };
-        int lsb { string_to_int(t[0], -1) };
+        int msb { string_to_int(t[0], -1) };                    /* "12"     */
+        int lsb { string_to_int(t[1], -1) };                    /* "0"      */
         bool ok { (msb >= 0 && msb < 0x40) && (lsb >= 0 && lsb < 0x100) };
         if (ok)
         {
             midibytes byts;
-            byts.push_back(midibyte(lsb));
-            byts.push_back(midibyte(msb));
+            byts.push_back(midibyte(msb));                      /* byte 0   */
+            byts.push_back(midibyte(lsb));                      /* byte 1   */
             result = bytes_to_rpn_number(byts);
         }
     }

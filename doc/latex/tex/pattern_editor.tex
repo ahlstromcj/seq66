@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-08-01
+% \update      2026-08-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -55,7 +55,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=1.00]{pattern-editor/pattern-edit-window-additions.png}
-   \caption{External Pattern Editor Window Additions for 0.99.24}
+   \caption{External Pattern Editor Window Additions}
    \label{fig:pattern_editor_window_additions}
 \end{figure}
   
@@ -367,9 +367,9 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=1.00]{pattern-editor/selection_options.png}
-   \caption{Pattern Editor Selection Options}
-   \label{fig:pattern_editor_window_selection_options}
+   \includegraphics[scale=1.00]{pattern-editor/rpn-option.png}
+   \caption{Pattern Editor Tool Options}
+   \label{fig:pattern_editor_window_tool_options}
 \end{figure}
 
    \begin{enumber}
@@ -404,8 +404,8 @@
                Also, an existing selection can be added to using
                this menu entry.
          \end{itemize}
-      \item \textbf{Note timing/velocity...}. This menu
-            offers four ways to tweak the timing of the selected notes:
+      \item \textbf{Note timing/velocity...}.
+         This menu offers four ways to tweak the timing of the selected notes:
          \begin{itemize}
             \item \textbf{Quantize}.
                \index{quantize}
@@ -423,18 +423,27 @@
                This operation modifies the velocity of a note by a small
                amount.
          \end{itemize}
-      \item \textbf{Pitch transpose}. Allows uniform transpostion
+      \item \textbf{Pitch transpose}.
+         Allows uniform transpostion
          regardless of the key and scale in force for the pattern.
          \index{modify pitch}
          Selecting this item entry brings up a sub-menu.
-      \item \textbf{Harmonic transpose}. Makes sure
+      \item \textbf{Harmonic transpose}.
+         Makes sure
          that all transpositions stay on the selected scale.
          If the scale selection is \textbf{Off}, this is the same as plain
          pitch transpose, and so is not enabled.
-      \item \textbf{LFO}. Allows for modulating of control values with a
+      \item \textbf{LFO}.
+         Allows for modulating of control values with a
          low-frequency oscillator.
          See \sectionref{subsec:pattern_editor_bottom}.
-      \item \textbf{Pattern fix}. Allows for fixing up a new pattern
+      \item \textbf{RPN/NRPN}.
+         This entry allows for the creation of a complete RPN or NRPN
+         series of parameter change events, from the start to the data
+         to the ending "reset" event.
+         See \sectionref{subsec:pattern_editor_rpn_nrpn_dialog}.
+      \item \textbf{Pattern fix}.
+         Allows for fixing up a new pattern
          that was recorded with some timing errors, or transforming the
          pattern in various ways.
          The pattern fix dialog provides a way for more control over the
@@ -2342,6 +2351,84 @@
    In addition to the \textbf{Reset Data} button, Ctrl-Z can be applied
    multiple times to undo changes one at a time.  Every motion of a control
    causes a complete change.
+
+\subsection{Pattern Editor / RPN/NRPN Dialog}
+\label{subsec:pattern_editor_rpn_nrpn_dialog}
+
+   This dialog provides a way to insert parameter changes much more
+   easily than using the event editor.
+   It inserts multiple events at once based on the settings in the dialog.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{pattern-editor/rpnframe.png}
+   \caption{RPN/NRPN Dialog}
+   \label{fig:pattern_editor_rpn_nrpn_dialog}
+\end{figure}
+
+   The following text walks through the dialog elements.
+
+   \begin{itemize}
+      \item \textbf{Select Control}.
+         The main purpose of this group is to select either an RPN or an
+         NPRN event.
+         One can also choose to enter a data event alone, but
+         there is not much reason to do that.
+      \item \textbf{Select RPN}.
+         On the other side, this group selects a specific RPN from
+         the small set provided by the MIDI specification.
+      \item \textbf{Channel}.
+         Provides the channel (1 to 16) to be applied to the RPN/NRPN
+         controller events.
+      \item \textbf{Append data entry slider}.
+         If checked (recommended) then, after the RPN/NPRN event
+         bytes are created, the bytes need to set the parameter
+         are appended.
+      \item \textbf{Append RPN reset}.
+         If checked (recommended) then, add the RPN parameter reset
+         event at the end.
+      \item \textbf{Use "fine" events}.
+         If checked, also insert the "fine" version of the selected controller.
+         The "fine" controllers are supplied by General MIDI version 2.
+      \item \textbf{Timestamp (BBT)}.
+         This text box displays, in B:B:T format by default,
+         the timestamp at which the events will be inserted into the
+         pattern.
+      \item \textbf{BBT}.
+         Clicking on this button toggles the timestamp display between
+         B:B:T, H:M:S, and ticks (pulses).
+      \item \textbf{Hex}.
+         Clicking on this button toggles between showing the parameter numbers
+         and parameter values in hexadecimal versus decimal format.
+      \item \textbf{(N)RPN parameter no.}.
+         This items displays the RPN number if RPN is selected, and that
+         cannot be edited.
+         If NRPN is selected, then the number of the parameter can be
+         typed here.
+         Note that parameter numbers are limit to 14-bits (0 to 16383).
+      \item \textbf{(name of macro)}.
+         Entering a short name into this text box enables the
+         \textbf{Create Macro} button.
+      \item \textbf{RPN/NRPN parameter value}.
+         Type the desired parameter value here.
+         It can be a single number (e.g. 1583 or 0x0600)
+         or two numbers separated by a decimal point.
+         An example is "12.50".
+         For general parameters, "12" is the MSB value,
+         and "50" is the LSB value.
+         For pitchbend range, "12" is the semitone value, and
+         "50" is the cents value.
+         Note that parameter values are limited to 14-bits (0 to 16383).
+      \item \textbf{Create Macro}.
+         If enabled and click, then the macro is added to the list of
+         macros in the 'ctrl' configuration file, and that file is marked to be
+         saved at exit.
+      \item \textbf{Insert/Append}.
+         Clicking this button adds the RPN/NRPN event at the timestamp
+         shown in the timestamp text box.
+      \item \textbf{Cancel}.
+         All this button does is closed the dialog.
+   \end{itemize}
 
 \subsection{Pattern Editor / Common Actions}
 \label{subsec:pattern_editor_common}

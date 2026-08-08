@@ -255,8 +255,8 @@
     <rect>
      <x>371</x>
      <y>306</y>
-     <width>131</width>
-     <height>28</height>
+     <width>126</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="font">
@@ -269,7 +269,7 @@
 to the 'ctrl' file.</string>
    </property>
    <property name="text">
-    <string>(Name of macro)</string>
+    <string/>
    </property>
    <property name="frame">
     <bool>true</bool>
@@ -341,7 +341,7 @@ default (recommended).</string>
     <rect>
      <x>370</x>
      <y>265</y>
-     <width>61</width>
+     <width>60</width>
      <height>30</height>
     </rect>
    </property>
@@ -449,7 +449,7 @@ macro.</string>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="button_rpn">
+     <widget class="QPushButton" name="button_rpn_cancel">
       <property name="toolTip">
        <string>Close the dialog.</string>
       </property>
@@ -503,7 +503,7 @@ as well as the &quot;coarse&quot; version.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="label_warning">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -523,7 +523,23 @@ as well as the &quot;coarse&quot; version.</string>
     </font>
    </property>
    <property name="text">
-    <string>This dialog is not yet ready for use. Work in progress.</string>
+    <string></string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_hex">
+   <property name="geometry">
+    <rect>
+     <x>436</x>
+     <y>265</y>
+     <width>60</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Hex</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

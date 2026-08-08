@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-06
+ * \updates       2026-08-08
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -42,12 +42,12 @@
  *  Forward declarations for Qt.
  */
 
-class QButtonGroup;
-
 namespace Ui
 {
     class qrpnframe;
 }
+
+class QButtonGroup;
 
 namespace seq66
 {
@@ -58,6 +58,10 @@ class sequence;
 class qrpnframe : public QFrame
 {
     Q_OBJECT
+
+#if defined SEQ66_PLATFORM_DEBUG
+    static rpn::info sm_rpn_test_info;
+#endif
 
 public:
 
@@ -91,37 +95,48 @@ public:
 
     rpn::info & rpn_info ()
     {
+#if defined SEQ66_PLATFORM_DEBUG
+        return sm_rpn_test_info;
+#else
         return m_rpn_info;
+#endif
     }
 
     const rpn::info & rpn_info () const
     {
+#if defined SEQ66_PLATFORM_DEBUG
+        return sm_rpn_test_info;
+#else
         return m_rpn_info;
+#endif
     }
 
 private:
 
-    void select_rpn (int rpncontrol);
+    void select_rpn_control (int rpncontrol);
     void set_rpn_option_checkboxes ();
-    void select_rpn_value_type (int rpnvalue);
-    void set_rpn_value_type_text (bool is_rpn, midishort pv);
+    void select_rpn_parameter_type (int rpnvalue);
+    void set_rpn_parameter_number (bool is_rpn, midishort pv);
+    void set_rpn_parameter_value (midishort pv);
     void set_time_stamp (midipulse ts);
 
 private slots:
 
-    void slot_select_rpn (int r);
+    void slot_select_rpn_control (int r);
     void slot_midi_channel (int c);
     void slot_rpn_append_data (int state);
     void slot_rpn_append_reset (int state);
     void slot_rpn_use_fine_rpn (int state);
-    void slot_select_rpn_value_type (int v);
+    void slot_select_rpn_parameter_type (int v);
     void slot_next_time_format ();
     void slot_timestamp_text_changed ();
     void slot_param_number_text_changed ();
     void slot_param_value_text_changed ();
+    void slot_show_in_hex ();
     void slot_macro_name_changed ();
     void slot_create_macro ();
     void slot_rpn_insert ();
+    void slot_rpn_cancel ();
 
 private:
 
@@ -184,6 +199,12 @@ private:
      */
 
     std::string m_macro_name { };
+
+    /**
+     *  Indicates to show numbers in hexadecimal format.
+     */
+
+    bool m_show_in_hex { false };
 
 };          // class qrpnframe
 

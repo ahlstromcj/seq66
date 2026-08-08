@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-06
+ * \updates       2026-08-08
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -34,6 +34,7 @@
 
 #include <QButtonGroup>
 
+#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/controllers.hpp"         /* seq66::string_to_rpn_number()    */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
@@ -72,6 +73,25 @@ enum rpn_select_t
     rpn_select_parameter_reset
 };
 
+/*
+ * For testing.
+ */
+
+#if defined SEQ66_PLATFORM_DEBUG
+
+rpn::info qrpnframe::sm_rpn_test_info
+{
+    rpn::control::rpn,
+    rpn::parameter::pitchbend_range,
+    0,                                  /* time-stamp                       */
+    0,                                  /* same as the pitchbend range      */
+    1536,                               /* twelve semitones (12 << 7)       */
+    "12.0",                             /* the string version of the above  */
+    true, true, true
+};
+
+#endif
+
 /**
  *  Constructor. Some members are initialized in-class.
  *
@@ -90,9 +110,9 @@ qrpnframe::qrpnframe
 ) :
     QFrame          (parent),
     ui              (new Ui::qrpnframe),
-    m_perf          (p),                    /* accessor: perf()     */
-    m_seq           (s),                    /* accessor: track()    */
-    m_midi_timing
+    m_perf          (p),                    /* accessor: perf()             */
+    m_seq           (s),                    /* accessor: track()            */
+    m_midi_timing                           /* used in time calculations    */
     (
         perf().bpm(),
         track().get_beats_per_bar(),
@@ -138,12 +158,12 @@ qrpnframe::qrpnframe
         (
             ui->radio_button_rpn_data_decr, rpn_control_data_decr
         );
-        select_rpn(rpn_control_rpn);
+        select_rpn_control(rpn_control_rpn);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         auto lambdafunc = [this] (QAbstractButton * abutton)
         {
-            slot_select_rpn(m_select_control_group->id(abutton));
+            slot_select_rpn_control(m_select_control_group->id(abutton));
         };
         connect
         (
@@ -154,7 +174,7 @@ qrpnframe::qrpnframe
         connect
         (
             m_select_control_group, SIGNAL(buttonClicked(int)),
-            this, SLOT(slot_select_rpn(int))
+            this, SLOT(slot_select_rpn_control(int))
         );
 #endif
     }
@@ -239,12 +259,12 @@ qrpnframe::qrpnframe
         (
             ui->radio_rpn_parameter_reset, rpn_select_parameter_reset
         );
-        select_rpn_value_type(rpn_select_pitchbend_range);
+        select_rpn_parameter_type(rpn_select_pitchbend_range);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         auto lambdafunc = [this] (QAbstractButton * abutton)
         {
-            slot_select_rpn_value_type(m_select_value_group->id(abutton));
+            slot_select_rpn_parameter_type(m_select_value_group->id(abutton));
         };
         connect
         (
@@ -255,12 +275,11 @@ qrpnframe::qrpnframe
         connect
         (
             m_select_value_group, SIGNAL(buttonClicked(int)),
-            this, SLOT(slot_select_rpn_value_type(int))
+            this, SLOT(slot_select_rpn_parameter_type(int))
         );
 
 #endif
     }
-
 
     /*
      * Set the timestamp. The BBT utton shows the current time format
@@ -280,9 +299,22 @@ qrpnframe::qrpnframe
     );
 
     /*
+     * Show hex status.
+     */
+
+    ui->button_hex->setChecked(m_show_in_hex);
+    connect
+    (
+        ui->button_hex, SIGNAL(clicked(bool)),
+        this, SLOT(slot_show_in_hex())
+    );
+
+    /*
      * Line-edit for the parameter number.
      */
 
+    int tempnumber { int(rpn_info().rpn_parameter_number) };
+    set_rpn_parameter_number(true, tempnumber);
     connect
     (
         ui->line_edit_nrpn_param_number, SIGNAL(editingFinished()),
@@ -293,6 +325,8 @@ qrpnframe::qrpnframe
      * Line-edit for the parameter value.
      */
 
+    int tempvalue { int(rpn_info().rpn_parameter_value) };
+    set_rpn_parameter_value(tempvalue);
     connect
     (
         ui->line_edit_rpn_param_value, SIGNAL(editingFinished()),
@@ -301,8 +335,11 @@ qrpnframe::qrpnframe
 
     /*
      * Create Macro button and line-edit.
+     *
+     * ui->line_edit_rpn_macro_name->setText("");
      */
 
+    ui->line_edit_rpn_macro_name->setPlaceholderText("(name of macro)");
     connect
     (
         ui->line_edit_rpn_macro_name, SIGNAL(editingFinished()),
@@ -324,6 +361,16 @@ qrpnframe::qrpnframe
         ui->button_rpn_insert, SIGNAL(clicked(bool)),
         this, SLOT(slot_rpn_insert())
     );
+
+    /*
+     * Cancel button
+     */
+
+    connect
+    (
+        ui->button_rpn_cancel, SIGNAL(clicked(bool)),
+        this, SLOT(slot_rpn_cancel())
+    );
 }
 
 /**
@@ -336,7 +383,7 @@ qrpnframe::~qrpnframe()
 }
 
 void
-qrpnframe::select_rpn (int rpncontrol)
+qrpnframe::select_rpn_control (int rpncontrol)
 {
     switch (rpncontrol)
     {
@@ -348,7 +395,7 @@ qrpnframe::select_rpn (int rpncontrol)
     case rpn_control_nrpn:
         rpn_info().rpn_control_type = rpn::control::nrpn;
         ui->radio_button_nrpn->setChecked(true);
-        set_rpn_value_type_text(false, 0);
+        set_rpn_parameter_number(false, 0);
         break;
 
     case rpn_control_data_slider:
@@ -369,74 +416,94 @@ qrpnframe::select_rpn (int rpncontrol)
 }
 
 void
-qrpnframe::select_rpn_value_type (int rpnvalue)
+qrpnframe::select_rpn_parameter_type (int rpnparamtype)
 {
-    switch (rpnvalue)
+    rpn::parameter paramtype { rpn::parameter::nrpn_active };
+    switch (rpnparamtype)
     {
     case rpn_select_pitchbend_range:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::pitchbend_range;
+        paramtype = rpn::parameter::pitchbend_range;
         ui->radio_rpn_pitch_range->setChecked(true);
         break;
 
     case rpn_select_channel_fine_tuning:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::channel_fine_tuning;
+        paramtype = rpn::parameter::channel_fine_tuning;
         ui->radio_rpn_chan_fine_tuning->setChecked(true);
         break;
 
     case rpn_select_channel_coarse_tuning:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::channel_coarse_tuning;
+        paramtype = rpn::parameter::channel_coarse_tuning;
         ui->radio_rpn_chan_coarse_tuning->setChecked(true);
         break;
 
     case rpn_select_tuning_program_change:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::tuning_program_change;
+        paramtype = rpn::parameter::tuning_program_change;
         ui->radio_rpn_tune_program_change->setChecked(true);
         break;
 
     case rpn_select_tuning_bank_select:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::tuning_bank_select;
+        paramtype = rpn::parameter::tuning_bank_select;
         ui->radio_rpn_tune_bank_select->setChecked(true);
         break;
 
     case rpn_select_modulation_depth_range:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::modulation_depth_range;
+        paramtype = rpn::parameter::modulation_depth_range;
         ui->radio_rpn_mod_depth_range->setChecked(true);
         break;
 
     case rpn_select_parameter_reset:
 
-        rpn_info().rpn_parameter_type = rpn::parameter::parameter_reset;
+        paramtype = rpn::parameter::parameter_reset;
         ui->radio_rpn_parameter_reset->setChecked(true);
         break;
     }
+    rpn_info().rpn_parameter_type = paramtype;
+    rpn_info().rpn_parameter_number = rpn::parameter_to_short(paramtype);
+    select_rpn_control(rpn_control_rpn);
 
-    midishort pv { rpn::parameter_to_short(rpn_info().rpn_parameter_type) };
-    set_rpn_value_type_text(true, pv);
-
-    // TODO set this when NRPN is selected
-    //
-    // rpn_info().rpn_parameter_type = rpn::parameter::nrpn_active;
+    midishort pt { rpn_info().rpn_parameter_number };
+    set_rpn_parameter_number(true, pt);
 }
 
 void
-qrpnframe::set_rpn_value_type_text (bool is_rpn, midishort pv)
+qrpnframe::set_rpn_parameter_number (bool is_rpn, midishort pv)
 {
     std::string pvtext { std::to_string(int(pv)) };
-    rpn_info().rpn_parameter_value = pv;
+    if (m_show_in_hex)
+    {
+        const char * fmt { pv <= 0xFF ? "0x%02x" : "0x%04x" };
+        char tmp[16];
+        snprintf(tmp, sizeof tmp, fmt, pv);
+        pvtext = tmp;
+    }
     ui->line_edit_nrpn_param_number->setText(qt(pvtext));
     ui->line_edit_nrpn_param_number->setReadOnly(is_rpn);
 }
 
 void
-qrpnframe::slot_select_rpn (int r)
+qrpnframe::set_rpn_parameter_value (midishort pv)
 {
-    select_rpn(r);
+    std::string pvtext { std::to_string(int(pv)) };
+    if (m_show_in_hex)
+    {
+        const char * fmt { pv <= 0xFF ? "0x%02x" : "0x%04x" };
+        char tmp[16];
+        snprintf(tmp, sizeof tmp, fmt, pv);
+        pvtext = tmp;
+    }
+    ui->line_edit_rpn_param_value->setText(qt(pvtext));
+}
+
+void
+qrpnframe::slot_select_rpn_control (int r)
+{
+    select_rpn_control(r);
 }
 
 void
@@ -481,9 +548,9 @@ qrpnframe::slot_rpn_use_fine_rpn (int state)
 }
 
 void
-qrpnframe::slot_select_rpn_value_type (int v)
+qrpnframe::slot_select_rpn_parameter_type (int v)
 {
-    select_rpn_value_type(v);
+    select_rpn_parameter_type(v);
 }
 
 void
@@ -549,12 +616,12 @@ qrpnframe::slot_param_number_text_changed ()
 
     if (pnumber < 6 || pnumber == 0x7F)
     {
-        select_rpn(rpn_control_rpn);
-        select_rpn_value_type(pnumber);
+        select_rpn_control(rpn_control_rpn);
+        select_rpn_parameter_type(pnumber);
     }
     else
     {
-        select_rpn(rpn_control_nrpn);
+        select_rpn_control(rpn_control_nrpn);
     }
 }
 
@@ -565,6 +632,18 @@ qrpnframe::slot_param_value_text_changed ()
     std::string valstring { v.toStdString() };
     midishort value { string_to_rpn_number(valstring) };
     rpn_info().rpn_parameter_value = value;
+}
+
+void
+qrpnframe::slot_show_in_hex ()
+{
+    bool isrpn { ui->radio_button_rpn->isChecked() };
+    bool checked { ui->button_hex->isChecked() };
+    midishort pnumber { rpn_info().rpn_parameter_number };
+    m_show_in_hex = checked;
+    set_rpn_parameter_number(isrpn, pnumber);
+    pnumber = rpn_info().rpn_parameter_value;
+    set_rpn_parameter_value(pnumber);
 }
 
 void
@@ -581,23 +660,32 @@ qrpnframe::slot_macro_name_changed ()
  *  For the next two slots, we first need to create an rpn object with the
  *  current rpn::info data supplied in the constructor in by editing
  *  the various user-interface elements in the qrpnframe.
- *
  */
 
 void
 qrpnframe::slot_create_macro ()
 {
     std::string macnam { m_macro_name };
-    rpn r(rpn_info());
-    tokenization name_and_data { r.create_macro_string(macnam) };
-    bool ok { false };
-    if (name_and_data.size() == 2)
+    rpn r { rpn_info() };
+    tokenization name_and_data
+    {
+        r.create_rpn_macro_string(macnam, m_rpn_channel)
+    };
+    bool ok { name_and_data.size() == 2 };
+    if (ok)
     {
         midicontrolout & mco { perf().midi_control_out() };
         ok = mco.add_macro(name_and_data);
     }
-    if (! ok)
-        printf("ERROR creating macro\n");
+    if (ok)
+    {
+        ui->label_warning->setText("Macro created");
+        rc().auto_ctrl_save(true);
+    }
+    else
+    {
+        ui->label_warning->setText("Error creating macro");
+    }
 }
 
 /*
@@ -614,6 +702,12 @@ qrpnframe::slot_rpn_insert ()
     {
         printf("ERROR in rpn_insert()\n");
     }
+}
+
+void
+qrpnframe::slot_rpn_cancel ()
+{
+    close();
 }
 
 }               // namespace seq66

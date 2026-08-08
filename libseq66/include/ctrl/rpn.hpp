@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-06
+ * \updates       2026-08-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -111,7 +111,7 @@ public:
          *  Indicates the intended time of the control insertion.
          */
 
-        midipulse rpn_time_stamp;
+        midipulse rpn_time_stamp { 0 };
 
         /**
          *  Holds the RPN or NRPN parameter selection. If negative, the
@@ -124,7 +124,7 @@ public:
         /**
          *  Holds the parameter value to be set. It ranged from 0 to 16383
          *  (14-bits). The default value represents the pitch-bend range
-         *  parameter.
+         *  parameter value.
          */
 
         midishort rpn_parameter_value { 0 };
@@ -238,8 +238,12 @@ public:
         return name();
     }
 
-    const midimacro::events & create_parameter_events (int channel);
-    tokenization create_macro_string (const std::string & macnam);
+    const midimacro::events & create_rpn_events (int channel);
+    tokenization create_rpn_macro_string
+    (
+        const std::string & macnam,
+        int channel
+    );
 
 private:
 

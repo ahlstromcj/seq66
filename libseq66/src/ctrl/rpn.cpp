@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-05
+ * \updates       2026-08-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -142,6 +142,14 @@ rpn::fix_settings ()
  *
  *  Most parameters are set when the rpn object is constructed.
  *
+ * Note:
+ *
+ *      rpn_number_to_bytes(} returns an array of two midibyte values in
+ *      big-endian style:
+ *
+ *          MSB: result[0]
+ *          LSB: result[1]
+ *
  * \param channel
  *      The channel to use, re 0.
  *
@@ -151,7 +159,7 @@ rpn::fix_settings ()
  */
 
 const midimacro::events &
-rpn::create_parameter_events (int channel)
+rpn::create_rpn_events (int channel)
 {
     midimacro::events & result { event_bytes_list() };
     bool ok { channel >= 0 && channel < 16 };
@@ -169,13 +177,13 @@ rpn::create_parameter_events (int channel)
             cc |= ch;
             evbytes.push_back(cc);                      /* controller event */
             evbytes.push_back(0x65);                    /* RPN MSB flag     */
-            evbytes.push_back(pnbytes[1]);              /* parameter MSB    */
+            evbytes.push_back(pnbytes[0]);              /* parameter MSB    */
             result.push_back(evbytes);                  /* push first event */
 
             evbytes.clear();
             evbytes.push_back(cc);                      /* controller event */
             evbytes.push_back(0x64);                    /* RPN LSB flag     */
-            evbytes.push_back(pnbytes[0]);              /* parameter LSB    */
+            evbytes.push_back(pnbytes[1]);              /* parameter LSB    */
             result.push_back(evbytes);                  /* push next event  */
             if (append_data())
             {
@@ -183,7 +191,7 @@ rpn::create_parameter_events (int channel)
                 evbytes.clear();
                 evbytes.push_back(cc);                  /* controller event */
                 evbytes.push_back(0x06);                /* data slider MSB  */
-                evbytes.push_back(vbytes[1]);           /* value MSB        */
+                evbytes.push_back(vbytes[0]);           /* value MSB        */
                 result.push_back(evbytes);              /* push next event */
 
                 if (use_fine_rpn())
@@ -191,7 +199,7 @@ rpn::create_parameter_events (int channel)
                     evbytes.clear();
                     evbytes.push_back(cc);              /* controller event */
                     evbytes.push_back(0x26);            /* data slider LSB  */
-                    evbytes.push_back(vbytes[0]);       /* value LSB        */
+                    evbytes.push_back(vbytes[1]);       /* value LSB        */
                     result.push_back(evbytes);          /* push next event */
                 }
             }
@@ -212,29 +220,39 @@ rpn::create_parameter_events (int channel)
  *
  *  This line should have the format "macnam = bytes "|" bytes ....
  *  This matches the format read from the 'ctrl' file.
+ *
+ * \param channel
+ *      The channel to use, re 0.
+ *
+ * \return
+ *      Returns a vector of midibytes, each one representing an individual
+ *      event. If empty, the function failed.
  */
 
 tokenization
-rpn::create_macro_string (const std::string & macnam)
+rpn::create_rpn_macro_string (const std::string & macnam, int channel)
 {
-    const midimacro::events & evlist { event_bytes_list() };
+    const midimacro::events & evlist { create_rpn_events(channel) };
     int sz { int(evlist.size()) };
     tokenization result;
     if (sz > 0)
     {
         std::string tokens;
-        int count { 0 };
+        int listcount { 0 };
         result.push_back(macnam);
         for (const auto & evbyts : evlist)
         {
+            int bytecount { 0 };
             for (auto b : evbyts)
             {
+                const char * fmt { bytecount == 0 ? "0x%02x" : " 0x%02x" };
                 char tmp[8];
-                snprintf(tmp, sizeof tmp, " 0x%02x", b);
+                snprintf(tmp, sizeof tmp, fmt, b);
                 tokens += tmp;
+                ++bytecount;
             }
-            ++count;
-            if (count < sz)
+            ++listcount;
+            if (listcount < sz)
                 tokens += " | ";
         }
         result.push_back(tokens);

@@ -79,7 +79,11 @@ namespace seq66
 using midibyte = unsigned char;
 
 /**
- *  Provides an array-like container for midibytes.
+ *  Provides an array-like container for midibytes. In a string of bytes,
+ *  the first byte is element 0.
+ *
+ *  For use with converting two bytes to an integer, the 0th element
+ *  is the MSB, and the next element is the LSB.
  */
 
 using midibytes = std::vector<midibyte>;

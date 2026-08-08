@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>692</width>
-    <height>462</height>
+    <width>694</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -512,9 +512,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QComboBox" name="macroComboBox">
    <property name="geometry">
     <rect>
-     <x>217</x>
+     <x>207</x>
      <y>130</y>
-     <width>381</width>
+     <width>331</width>
      <height>24</height>
     </rect>
    </property>
@@ -539,7 +539,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QCheckBox" name="checkBoxMacrosActive">
    <property name="geometry">
     <rect>
-     <x>189</x>
+     <x>180</x>
      <y>130</y>
      <width>21</width>
      <height>22</height>
@@ -876,7 +876,7 @@ way to undo rerouting standard I/O to file.</string>
   <widget class="QPushButton" name="pushButtonMacroSend">
    <property name="geometry">
     <rect>
-     <x>603</x>
+     <x>544</x>
      <y>130</y>
      <width>56</width>
      <height>28</height>
@@ -896,6 +896,19 @@ way to undo rerouting standard I/O to file.</string>
    </property>
    <property name="text">
     <string>Send</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>603</x>
+     <y>130</y>
+     <width>56</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Delete</string>
    </property>
   </widget>
  </widget>
