@@ -660,6 +660,9 @@ qrpnframe::slot_macro_name_changed ()
  *  For the next two slots, we first need to create an rpn object with the
  *  current rpn::info data supplied in the constructor in by editing
  *  the various user-interface elements in the qrpnframe.
+ *
+ *  TODO: If already present, delete and re-add the macro and
+ *        mark it as "modified".
  */
 
 void
@@ -676,11 +679,20 @@ qrpnframe::slot_create_macro ()
     {
         midicontrolout & mco { perf().midi_control_out() };
         ok = mco.add_macro(name_and_data);
+        if (ok)
+            ok = mco.expand_macros();
     }
     if (ok)
     {
-        ui->label_warning->setText("Macro created");
-        rc().auto_ctrl_save(true);
+        ui->label_warning->setText(qt(name_and_data[1]));
+
+        /*
+         * performer sets this.
+         *
+         * rc().auto_ctrl_save(true);
+         */
+
+        perf().notify_macro_change(m_macro_name, performer::macro::added);
     }
     else
     {
@@ -698,9 +710,13 @@ qrpnframe::slot_rpn_insert ()
     rpn r(rpn_info());
     midipulse tick { rpn_info().rpn_time_stamp };
     bool ok { track().add_macro(tick, r) };
-    if (! ok)
+    if (ok)
     {
-        printf("ERROR in rpn_insert()\n");
+        ui->label_warning->setText("Macro created");
+    }
+    else
+    {
+        ui->label_warning->setText("Error inserting macro");
     }
 }
 

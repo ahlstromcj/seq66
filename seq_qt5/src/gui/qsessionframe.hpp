@@ -1,5 +1,5 @@
-#if ! defined SEQ66_QSESSIONFRAME_H
-#define SEQ66_QSESSIONFRAME_H
+#if ! defined SEQ66_QSESSIONFRAME_HPP
+#define SEQ66_QSESSIONFRAME_HPP
 
 /*
  *  This file is part of seq66.
@@ -27,13 +27,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-08-01
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
  */
 
 #include <QFrame>
+
+#include "play/performer.hpp"           /* seq66::performer                 */
 
 /*
  * This is necessary to keep the compiler from thinking Ui::qsessionframe
@@ -55,7 +57,9 @@ namespace seq66
  *  Provides a frame for the Sessions tab.
  */
 
-class qsessionframe : public QFrame
+class qsessionframe final :
+    public QFrame,
+    protected performer::callbacks
 {
     Q_OBJECT
 
@@ -93,6 +97,14 @@ protected:
     void sync_track_label ();
     void sync_track_high ();
 
+private:
+
+    virtual bool on_macro_change
+    (
+        const std::string & macroname,
+        performer::macro operation
+    ) override;
+
 protected:                          // overrides of event handlers
 
     virtual void keyPressEvent (QKeyEvent *) override;
@@ -109,6 +121,7 @@ private slots:
     void slot_macros_active ();
     void slot_macro_pick (const QString &);
     void slot_macro_send ();
+    void slot_macro_delete ();
     void slot_log_file ();
     void slot_log_file_clear ();
 
@@ -150,11 +163,17 @@ private:
 
     int m_track_high;
 
+    /**
+     *  The currently specified macro name.
+     */
+
+    std::string m_macro_name;
+
 };
 
 }               // namespace seq66
 
-#endif          // SEQ66_QSESSIONFRAME_H
+#endif          // SEQ66_QSESSIONFRAME_HPP
 
 /*
  * qsessionframe.hpp

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-07
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -94,31 +94,54 @@ midimacros::add (const tokenization & tokens)
         auto p = std::make_pair(key, m);
         auto r = m_macros.insert(p);            /* r: pair<iteration, bool> */
         result = r.second;
+        if (result)
+            m_active = count() > 0;
+    }
+    return result;
+}
+
+/**
+ *  Removes a macro.
+ */
+
+bool
+midimacros::remove (const std::string & macnam)
+{
+    bool result { count() > 0 };
+    if (result)
+    {
+        std::string key = macnam;
+        result = m_macros.erase(key) == 1;      /* 1 or 0 can be removed    */
+        if (result)
+            m_active = count() > 0;
     }
     return result;
 }
 
 /**
  *  Converts all the loaded macros into midibytes, expanding macro
- *  references where needed.  References are tokens showing the name of
+ *  variables where needed.  Variables are tokens showing the name of
  *  another macro, e.g. "$header".
+ *
+ *  If a macro uses one of the macro variables, but that does not exist,
+ *  then the macro is skipped, with no error, and showing up as empty in
+ *  the Macro Execution dropdow in the main Session tab. To get them back,
+ *  copy them from data/linux/qseq66.ctrl and restart.
  */
 
 bool
 midimacros::expand ()
 {
-    bool result = count() > 0;
+    bool result { count() > 0 };
     if (result)
     {
         for (auto & m : m_macros)
         {
-            midimacro & mac = m.second;
-            midibytes b = expand(mac);
-            result = ! b.empty();
-            if (result)
+            midimacro & mac { m.second };
+            midibytes b { expand(mac) };
+            bool ok { ! b.empty() };            /* no longer an error       */
+            if (ok)
                 mac.bytes(b);
-            else
-                break;
         }
     }
     return result;
@@ -133,16 +156,16 @@ midimacros::expand (midimacro & m)
 {
     midibytes result;                   /* holds all of the bytes found     */
     midibytes temp;                     /* holds bytes of 1 event if ! N/A  */
-    bool found_events = false;
+    bool found_events { false };
     for (const auto & token : m.tokens())
     {
         if (token[0] == '$')
         {
-            std::string name = token.substr(1);
-            const auto cit = m_macros.find(name);
+            std::string name { token.substr(1) };
+            const auto cit { m_macros.find(name) };
             if (cit != m_macros.end())
             {
-                midibytes xpanded = expand(cit->second);
+                midibytes xpanded { expand(cit->second) };
                 result.insert(result.end(), xpanded.begin(), xpanded.end());
             }
             else
@@ -159,7 +182,7 @@ midimacros::expand (midimacro & m)
         }
         else
         {
-            midibyte b = string_to_midibyte(token);
+            midibyte b { string_to_midibyte(token) };
             result.push_back(b);
             temp.push_back(b);
         }

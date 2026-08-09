@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-07
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -200,14 +200,16 @@ rpn::create_rpn_events (int channel)
                     evbytes.push_back(cc);              /* controller event */
                     evbytes.push_back(0x26);            /* data slider LSB  */
                     evbytes.push_back(vbytes[1]);       /* value LSB        */
-                    result.push_back(evbytes);          /* push next event */
+                    result.push_back(evbytes);          /* push next event  */
                 }
             }
-
-            midibytes reset_msb { cc, 0x65, 0x7f };     /* (N)RPN reset MSB */
-            midibytes reset_lsb { cc, 0x64, 0x7f };     /* (N)RPN reset LSB */
-            result.push_back(reset_msb);
-            result.push_back(reset_lsb);
+            if (append_reset())
+            {
+                midibytes reset_msb { cc, 0x65, 0x7f }; /* (N)RPN reset MSB */
+                midibytes reset_lsb { cc, 0x64, 0x7f }; /* (N)RPN reset LSB */
+                result.push_back(reset_msb);
+                result.push_back(reset_lsb);
+            }
         }
     }
     return result;

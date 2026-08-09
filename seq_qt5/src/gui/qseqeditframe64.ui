@@ -651,7 +651,7 @@ grid-line numbers.</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Shows Tools popup menus.</string>
+        <string>Shows Tools popup menus. [Ctrl-T]</string>
        </property>
        <property name="text">
         <string>T</string>

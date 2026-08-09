@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-08-02
+2015-07-10 to 2026-08-08
 
 # Change Log
 
-## [0.99.27] - 2026-08-02
+## [0.99.27] - 2026-08-08
 
 "Scratchpad Recording"
 
@@ -19,7 +19,8 @@ Chris Ahlstrom
         Could be useful in pasting notes across patterns.
     -   Added a dialog to more easily add RPN or NRPN control events
         to a pattern. They can also be save as a MIDI macro in the
-        'ctrl' file.  IN PROGRESS.
+        'ctrl' file.
+    -   Ctrl-T in the piano roll brings up the Tools menu.
 -   Added functions for splitting and joining 14-bit MIDI values.
 -   Added more default MIDI macros. See the bottom of the file
     data/linux/qseq66.ctrl.

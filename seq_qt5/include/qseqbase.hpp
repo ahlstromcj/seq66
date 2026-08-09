@@ -53,7 +53,7 @@ class qseqbase : public qeditbase
 private:
 
     /**
-     *  Holds a pointer to the edit-frame window.  We now have only one, more
+     *  Holds a pointer to the edit-frame window. We now have only one, more
      *  adaptable, seqedit frame to worry about.
      */
 

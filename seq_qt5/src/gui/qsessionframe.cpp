@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-08-01
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -32,7 +32,6 @@
 #include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
-#include "play/performer.hpp"           /* seq66::performer                 */
 #include "util/filefunctions.hpp"       /* seq66::shorten_file_spec()       */
 #include "util/strfunctions.hpp"        /* seq66::int_to_string()           */
 #include "qsessionframe.hpp"            /* seq66::qsessionframe, this class */
@@ -45,7 +44,7 @@ namespace seq66
 
 /**
  *  Limits for showing macro bytes in the combo-box and the file
- *  line-edits..
+ *  line-edits.
  */
 
 static const int c_macro_byte_max   { 18 };
@@ -62,12 +61,14 @@ qsessionframe::qsessionframe
     QWidget * parent
 ) :
     QFrame                  (parent),
+    performer::callbacks    (p),
     ui                      (new Ui::qsessionframe),
     m_main_window           (mainparent),
     m_performer             (p),
     m_current_track         (0),
     m_current_text_number   (0),
-    m_track_high            (p.sequence_high())
+    m_track_high            (p.sequence_high()),
+    m_macro_name            ()
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -135,10 +136,12 @@ qsessionframe::qsessionframe
         this, SLOT(slot_edit_track_number())
     );
 #endif
+    perf().enregister(this);                                /* notification */
 }
 
 qsessionframe::~qsessionframe()
 {
+    perf().unregister(this);
     delete ui;
 }
 
@@ -277,16 +280,17 @@ qsessionframe::reload_song_info ()
 void
 qsessionframe::populate_macro_combo ()
 {
-    tokenization t = perf().macro_names();
-    bool macrosactive = perf().macros_active();
+    tokenization names { perf().macro_names() };
+    bool macrosactive { perf().macros_active() };
     if (macrosactive)
-        macrosactive = ! t.empty();
+        macrosactive = ! names.empty();
 
-    if (! t.empty())
+    if (! names.empty())
     {
-        int counter = 0;
+        int counter { 0 };
+        int firstenabled { -1 };
         ui->macroComboBox->clear();
-        for (const auto & name : t)
+        for (const auto & name : names)
         {
             if (name.empty())
             {
@@ -294,28 +298,43 @@ qsessionframe::populate_macro_combo ()
             }
             else
             {
-                midibytes bytes = perf().macro_bytes(name);
-                std::string bs = midi_bytes_string(bytes, c_macro_byte_max);
+                midibytes mbytes = perf().macro_bytes(name);
+                std::string bs = midi_bytes_string(mbytes, c_macro_byte_max);
                 std::string combined = name;
+                bool enabled = ! mbytes.empty();
+                if (enabled)
+                {
+                    enabled = name != "header" && name != "footer";
+                    if (enabled && firstenabled == (-1))
+                        firstenabled = counter;
+                }
+
                 combined += ": ";
                 combined += bs;
                 QString combotext(qt(combined));
-                ui->macroComboBox->insertItem(counter++, combotext);
+                ui->macroComboBox->insertItem(counter, combotext);
+                enable_combobox_item(ui->macroComboBox, counter, enabled);
+                ++counter;
             }
         }
-#if defined SEQ66_USE_SEND_ON_SELECTION
+        if (firstenabled != (-1))
+            ui->macroComboBox->setCurrentIndex(firstenabled);
+
         connect
         (
             ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
             this, SLOT(slot_macro_pick(const QString &))
         );
-#else
         connect
         (
             ui->pushButtonMacroSend, SIGNAL(clicked(bool)),
             this, SLOT(slot_macro_send())
         );
-#endif
+        connect
+        (
+            ui->pushButtonMacroDelete, SIGNAL(clicked(bool)),
+            this, SLOT(slot_macro_delete())
+        );
     }
     if (macrosactive)
     {
@@ -330,7 +349,7 @@ qsessionframe::populate_macro_combo ()
     {
         ui->checkBoxMacrosActive->setChecked(false);
         ui->macroComboBox->setEnabled(false);
-        if (t.empty())
+        if (names.empty())
             ui->checkBoxMacrosActive->setEnabled(false);
     }
 
@@ -354,20 +373,41 @@ qsessionframe::slot_macros_active()
 void
 qsessionframe::slot_macro_pick (const QString & name)
 {
-    if (! name.isEmpty())
-    {
-        std::string line = name.toStdString();
-        size_t pos = line.find_first_of(":");
-        line = line.substr(0, pos);
-        perf().send_macro(line);
-    }
+    std::string line = name.toStdString();
+    size_t pos = line.find_first_of(":");
+    m_macro_name = line.substr(0, pos);             /* could be empty   */
 }
 
 void
 qsessionframe::slot_macro_send ()
 {
     QString name = ui->macroComboBox->currentText();
-    slot_macro_pick(name);
+    std::string line = name.toStdString();
+    size_t pos = line.find_first_of(":");
+    line = line.substr(0, pos);
+    perf().send_macro(line);
+}
+
+void
+qsessionframe::slot_macro_delete ()
+{
+    QString name = ui->macroComboBox->currentText();
+    if (! name.isEmpty())
+    {
+        std::string line = name.toStdString();
+        size_t pos = line.find_first_of(":");
+        line = line.substr(0, pos);
+
+        midicontrolout & mco { perf().midi_control_out() };
+        bool ok = mco.delete_macro(line);
+        if (ok)
+        {
+            perf().notify_macro_change
+            (
+                m_macro_name, performer::macro::removed
+            );
+        }
+    }
 }
 
 void
@@ -462,6 +502,21 @@ void
 qsessionframe::keyReleaseEvent (QKeyEvent * event)
 {
     event->accept();
+}
+
+bool
+qsessionframe::on_macro_change
+(
+    const std::string & /* macroname */,
+    performer::macro operation
+)
+{
+    bool result { operation != performer::macro::sent };
+    if (result)
+    {
+        populate_macro_combo();
+    }
+    return result;
 }
 
 }               // namespace seq66

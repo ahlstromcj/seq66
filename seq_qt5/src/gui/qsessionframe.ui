@@ -898,7 +898,7 @@ way to undo rerouting standard I/O to file.</string>
     <string>Send</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="pushButtonMacroDelete">
    <property name="geometry">
     <rect>
      <x>603</x>

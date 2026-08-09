@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-08-03
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -165,6 +165,21 @@ public:
     };
 
     /**
+     *  A relatively new enumeration devoted to the handling of macros,
+     *  as we move to edit them in the app as well as in the 'ctrl'
+     *  file.
+     */
+
+    enum class macro
+    {
+        removed,        /**< The macro was removed.                         */
+        added,          /**< The macro was added (see the qrpnframe class). */
+        modified,       /**< Duty now for the future!                       */
+        inserted,       /**< Events added to a sequence/loop/pattern.       */
+        sent            /**< Might be useful in the future.                 */
+    };
+
+    /**
      *  A nested class to provide an implementation of the synchronizer
      *  class.  This small class is used to simplify the usage of a condition
      *  variable to coordinate the output function and the inner-start
@@ -245,7 +260,11 @@ public:
             trigger_change,         /**< A trigger changed pattern muting.  */
             resolution_change,      /**< A change in PPQN or BPM.           */
             song_change,            /**< A different MIDI tune was loaded.  */
-            midi_learn              /**< The MIDI event to be learned       */
+            midi_learn,             /**< The MIDI event to be learned       */
+#if defined USE_ON_SIGNAL_ACTION
+            signal_action,          /**< We need to send a signal instead   */
+#endif
+            macro_change            /**< Macro added, modified, or deleted  */
         };
 
     public:
@@ -338,6 +357,15 @@ public:
         }
 
 #endif
+
+        virtual bool on_macro_change
+        (
+            const std::string & /* macroname */,
+            macro /* operation */
+        )
+        {
+            return false;
+        }
 
         performer & cb_perf ()
         {
@@ -1179,6 +1207,7 @@ public:
     void unregister (callbacks * pfcb);
     void notify_sequence_change (seq::number seqno, change mod = change::yes);
     void notify_sequence_removal (seq::number seqno, change mod = change::yes);
+    void notify_macro_change (const std::string & macroname, macro operation);
 
 private:
 

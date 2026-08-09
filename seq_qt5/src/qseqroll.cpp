@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-25
+ * \updates       2026-08-08
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1971,6 +1971,11 @@ qseqroll::keyPressEvent (QKeyEvent * ev)
                         (void) get_selected_box();
                         break;
 
+                    case Qt::Key_T:
+
+                        frame64()->tools();
+                        break;
+
                     case Qt::Key_V:
 
                         done = true;
@@ -2214,7 +2219,7 @@ qseqroll::sizeHint () const
 {
     int w = frame64()->width();
     int h = total_height();
-    int len = z().tix_to_pix(track().get_length_plus()); /* was get_length())   */
+    int len = z().tix_to_pix(track().get_length_plus()); /* get_length())   */
     if (len > 0 && len < w)
         len = w;
 

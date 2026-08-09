@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-07-31
+ * \updates       2026-08-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -188,6 +188,11 @@ private:        /* performer::callback overrides    */
     virtual bool on_resolution_change
     (
         int ppqn, midibpm bp, performer::change ch
+    ) override;
+    virtual bool on_macro_change
+    (
+        const std::string & macroname,
+        performer::macro operation
     ) override;
 
 private:        /* qbase and qseqframe overrides    */

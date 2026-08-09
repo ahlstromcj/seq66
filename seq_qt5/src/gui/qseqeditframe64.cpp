@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-05
+ * \updates       2026-08-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -758,9 +758,12 @@ qseqeditframe64::qseqeditframe64
      * events.  Note the usage of std::bind()... this feature requires C++11.
      * Also see q_record_change(), which handles on-the-fly quantization while
      * recording.
+     *
+     * Wrong button, Sutton:
+     *
+     *      tooltip_with_keystroke(ui->m_button_undo, "q");
      */
 
-    tooltip_with_keystroke(ui->m_button_undo, "q");
     qt_set_icon
     (
         usr().dark_theme() ? quantize_inv_xpm : quantize_xpm,
@@ -3669,6 +3672,23 @@ qseqeditframe64::change_ppqn (int ppqn)
 
     set_zoom(zoom);
     return true;
+}
+
+bool
+qseqeditframe64::on_macro_change
+(
+    const std::string & macroname,
+    performer::macro operation
+)
+{
+    bool result { operation != performer::macro::sent };
+    if (result)
+    {
+        delete m_tools_popup;
+        m_tools_popup = nullptr;
+        popup_tool_menu();
+    }
+    return result;
 }
 
 /**

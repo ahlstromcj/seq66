@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-03
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -629,6 +629,42 @@ performer::modified () const
         result = set_mapper().any_modified_sequences();
 
     return result;
+}
+
+/**
+ *
+ * \param macroname
+ *      Provides the name of the macro. Should it be a copy?
+ *
+ * \param operation
+ *      The action performed on the macro: removed, added, modified,
+ *      inserted, or sent.
+ */
+
+void
+performer::notify_macro_change
+(
+    const std::string & macroname,
+    macro operation
+)
+{
+    bool modify_song { operation == performer::macro::inserted };
+    if (modify_song)
+    {
+        modify();
+    }
+    else
+    {
+        bool modify_ctrl
+        {
+            operation == performer::macro::removed ||
+            operation == performer::macro::added ||
+            operation == performer::macro::modified
+        };
+        rc().auto_ctrl_save(true);
+    }
+    for (auto notify : m_notify)
+        (void) notify->on_macro_change(macroname, operation);
 }
 
 void

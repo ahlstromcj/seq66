@@ -95,6 +95,7 @@ public:
     }
 
     bool add (const tokenization & tokens);     /* data from 'ctrl' file    */
+    bool remove (const std::string & macnam);
 
     int count () const
     {

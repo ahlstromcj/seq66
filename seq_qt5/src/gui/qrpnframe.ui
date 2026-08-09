@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>799</width>
-    <height>410</height>
+    <width>805</width>
+    <height>416</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -280,7 +280,7 @@ to the 'ctrl' file.</string>
     <rect>
      <x>30</x>
      <y>10</y>
-     <width>301</width>
+     <width>251</width>
      <height>24</height>
     </rect>
    </property>
@@ -509,21 +509,30 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>10</y>
-     <width>421</width>
+     <x>290</x>
+     <y>11</y>
+     <width>481</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <pointsize>9</pointsize>
      <italic>true</italic>
      <bold>true</bold>
     </font>
    </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::NoFrame</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Sunken</enum>
+   </property>
    <property name="text">
-    <string></string>
+    <string/>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextEditable</set>
    </property>
   </widget>
   <widget class="QPushButton" name="button_hex">
