@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2026-07-30
+# \update      2026-08-10
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -86,6 +86,7 @@ HEADERS += include/seq66_features.h \
  include/ctrl/midioperation.hpp \
  include/ctrl/opcontainer.hpp \
  include/ctrl/opcontrol.hpp \
+ include/ctrl/rpn.hpp \
  include/midi/busarray.hpp \
  include/midi/businfo.hpp \
  include/midi/calculations.hpp \
@@ -175,6 +176,7 @@ SOURCES += src/seq66_features.cpp \
  src/ctrl/midioperation.cpp \
  src/ctrl/opcontainer.cpp \
  src/ctrl/opcontrol.cpp \
+ src/ctrl/rpn.cpp \
  src/midi/busarray.cpp \
  src/midi/businfo.cpp \
  src/midi/calculations.cpp \

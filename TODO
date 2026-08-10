@@ -25,6 +25,11 @@ Chris Ahlstrom
             flags from its events.
         -   Also, can paste a long selection into a short pattern.
             Either warn about it or change the length.
+    -   qmake.
+        -   Check for Clang and add -W-no-c++26-extensions.
+        -   For GNU add -W-no-sfinae-incomplete.
+    -   Tweak ./work.sh --window --nsis to copy the generated
+        qpseq66.exe to release/, and make the 7z pack as well.
 
 Back burner:
 
