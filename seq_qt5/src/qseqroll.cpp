@@ -32,17 +32,6 @@
  *  seqroll.
  */
 
-#include <QApplication>                 /* QApplication keyboardModifiers() */
-#include <QFrame>                       /* base class for seqedit frame(s)  */
-#include <QLabel>                       /* used as a tool-tip for notes     */
-#include <QMessageBox>
-#include <QMouseEvent>
-#include <QPainter>
-#include <QPalette>                     /* for recoloring the tool-tip      */
-#include <QPen>
-#include <QScrollBar>                   /* used in scrolling for progress   */
-#include <QTimer>
-
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */

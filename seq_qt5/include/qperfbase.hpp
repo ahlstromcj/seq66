@@ -34,6 +34,8 @@
  *  This class is the base class for qperfroll, qperfnames, and qperftime.
  */
 
+#include <QWidget>                      /* QWidget::resize()                */
+
 #include "qeditbase.hpp"                /* seq66:qeditbase base class     */
 
 namespace seq66

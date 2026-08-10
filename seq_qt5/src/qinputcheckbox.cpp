@@ -31,7 +31,6 @@
  *  This class is used in the qseditoptions settings-dialog class.
  */
 
-#include <QtWidgets/QCheckBox>
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui/qseditoptions.hpp"        /* seq66::qseditoptions class       */

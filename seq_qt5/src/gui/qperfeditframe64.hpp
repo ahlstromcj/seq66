@@ -36,6 +36,9 @@
  */
 
 #include <QFrame>
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
+#include <QScrollBar>
+#include <QWidget>
 
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */

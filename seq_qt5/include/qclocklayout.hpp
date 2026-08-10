@@ -36,18 +36,14 @@
  *  setup.
  */
 
+#include <QButtonGroup>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QRadioButton>
+#include <QSpacerItem>
+#include <QWidget>
+
 #include "qportwidget.hpp"              /* seq66::qportwidget base class    */
-
-/*
- *  Forward references.
- */
-
-class QButtonGroup;
-class QGroupBox;
-class QHBoxLayout;
-class QLabel;
-class QRadioButton;
-class QSpacerItem;
 
 namespace seq66
 {

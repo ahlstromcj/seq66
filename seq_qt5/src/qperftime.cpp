@@ -31,10 +31,6 @@
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
  */
 
-#include <QMouseEvent>
-#include <QPainter>
-#include <QTimer>
-
 #include "cfg/settings.hpp"
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui/qperfeditframe64.hpp"

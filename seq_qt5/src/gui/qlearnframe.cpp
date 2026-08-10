@@ -19,7 +19,7 @@
 /**
  * \file          qlearnframe.cpp
  *
- *  This module declares/defines the base class for the pattern-fix window.
+ *  This module declares/defines the MIDI Learn dialog.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -27,21 +27,9 @@
  * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
- *  This dialog provides a way to combine the following pattern adjustments:
- *
- *      -   Left-alignment.
- *      -   Fitting to a given number of measures.
- *      -   Arbitrary scaling for compression and expansion over time.
- *      -   Quantization or tightening.
- *
- *  It acts on all events in the track; no selection needed.  In this, it is
- *  similar to the LFO dialog.
- *
- *  This dialog was inspired by Ahlstrom's poor playing and timing skills.
+ *  This dialog provides a way to initiate the MIDI learning of some
+ *  of our controls.
  */
-
-#include <QButtonGroup>
-#include <QTimer>
 
 #include "ctrl/automation.hpp"          /* seq66::slot_to_string()          */
 #include "ctrl/midilearn.hpp"           /* seq66::midilearn class           */

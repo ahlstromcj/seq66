@@ -32,12 +32,6 @@
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
  */
 
-#include <QButtonGroup>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QRadioButton>
-#include <QSpacerItem>
-
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui/qseditoptions.hpp"        /* seq66::qseditoptions class       */
 #include "qclocklayout.hpp"             /* seq66::qclocklayout class        */

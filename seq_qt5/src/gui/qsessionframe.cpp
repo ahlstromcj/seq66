@@ -29,8 +29,6 @@
  *
  */
 
-#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
-
 #include "os/daemonize.hpp"             /* seq66::signal_for_restart()      */
 #include "util/filefunctions.hpp"       /* seq66::shorten_file_spec()       */
 #include "util/strfunctions.hpp"        /* seq66::int_to_string()           */

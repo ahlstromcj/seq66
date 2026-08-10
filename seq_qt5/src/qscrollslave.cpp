@@ -31,11 +31,6 @@
  *  qperfnames::keyPressEvent().
  */
 
-#include <QApplication>
-#include <QResizeEvent>
-#include <QScrollBar>
-#include <QWheelEvent>
-
 #include "qscrollslave.h"               /* ::qscrollslave class             */
 #include "qscrollmaster.h"              /* ::qscrollmaster class            */
 #include "util/basic_macros.h"          /* not_nullptr() test macro         */

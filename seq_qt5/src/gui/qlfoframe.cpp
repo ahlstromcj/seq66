@@ -34,9 +34,6 @@
  *  and frequency of modulating, including a DC offset.
  */
 
-#include <QButtonGroup>
-#include <QSlider>
-
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qlfoframe.hpp"                /* seq66::qlfoframe class           */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */

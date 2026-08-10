@@ -33,16 +33,13 @@
  *  Provides a way to modulate MIDI controller events.
  */
 
+#include <QButtonGroup>
 #include <QFrame>
+#include <QLineEdit>
+#include <QRegularExpression>           /* SFINAE?                          */
+#include <QSlider>
 
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
-
-/*
- *  Forward declarations for Qt.
- */
-
-class QButtonGroup;
-class QLineEdit;
 
 /*
  * This is necessary to keep the compiler from thinking Ui::qlfoframe

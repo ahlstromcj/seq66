@@ -35,13 +35,13 @@
  *  performance/song editor.
  */
 
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QTimer>
 #include <QWidget>
 
 #include "qperfbase.hpp"                /* seq66::qperfbase base class      */
-
-/*
- *  Forward references.
- */
 
 class QKeyEvent;
 class QMouseEvent;

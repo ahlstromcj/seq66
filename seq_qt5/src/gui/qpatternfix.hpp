@@ -33,7 +33,9 @@
  *  Provides a way to modulate MIDI controller events.
  */
 
+#include <QButtonGroup>
 #include <QFrame>
+#include <QWidget>
 
 #include "midi/calculations.hpp"        /* seq66::lengthfix, alteration     */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */

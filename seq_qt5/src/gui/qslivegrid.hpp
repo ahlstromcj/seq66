@@ -32,10 +32,17 @@
  * \license       GNU GPLv2 or above
  *
  *
- *  The qslivegrid is Sequencer66's alternative to the qsliveframe class (now
+ *  The qslivegrid is Seq66's alternative to the qsliveframe class (now
  *  moved to contrib/code for posterity).  But instead of a large pixmap, it
  *  consists of a grid of pushbuttons.
  */
+
+#include <QMenu>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QTimer>
 
 #include <functional>                   /* std::function, function objects  */
 #include <vector>                       /* std::vector<>                    */

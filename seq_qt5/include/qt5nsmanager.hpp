@@ -35,7 +35,11 @@
  *  would style it, "eldritch") gtkmm-2.4 implementation of Seq66.
  */
 
+#include <QApplication>                 /* QApplication etc.                */
+#include <QFile>
 #include <QObject>                      /* Qt 5 QObject class               */
+#include <QTimer>                       /* QTimer                           */
+
 #include <memory>                       /* std::unique_ptr<>                */
 
 #include "gui/qsmainwnd.hpp"            /* seq66::qsmainwnd (main window)   */

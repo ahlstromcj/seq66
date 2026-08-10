@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-08
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -88,10 +88,6 @@
 \endverbatim
  *
  */
-
-#include <QMenu>
-#include <QPaintEvent>
-#include <QScrollBar>
 
 #include "midi/controllers.hpp"         /* seq66::controller_name()         */
 #include "play/performer.hpp"           /* seq66::performer reference       */
@@ -3677,7 +3673,7 @@ qseqeditframe64::change_ppqn (int ppqn)
 bool
 qseqeditframe64::on_macro_change
 (
-    const std::string & macroname,
+    const std::string & /*macroname*/,
     performer::macro operation
 )
 {

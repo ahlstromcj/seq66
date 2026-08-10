@@ -33,13 +33,10 @@
  *
  */
 
+#include <QtWidgets/QCheckBox>
+#include <QWidget>
+
 #include "qportwidget.hpp"              /* seq66::qportwidget base class    */
-
-/*
- *  Forward reference.
- */
-
-class QCheckBox;
 
 namespace seq66
 {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>428</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -154,7 +154,7 @@
    <property name="geometry">
     <rect>
      <x>510</x>
-     <y>288</y>
+     <y>291</y>
      <width>331</width>
      <height>61</height>
     </rect>
@@ -354,9 +354,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="horizLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>500</x>
+     <x>510</x>
      <y>12</y>
-     <width>331</width>
+     <width>321</width>
      <height>32</height>
     </rect>
    </property>
@@ -433,9 +433,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="dataLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>499</x>
+     <x>509</x>
      <y>48</y>
-     <width>331</width>
+     <width>321</width>
      <height>52</height>
     </rect>
    </property>
@@ -586,19 +586,19 @@ same time.</string>
     <rect>
      <x>511</x>
      <y>260</y>
-     <width>288</width>
-     <height>28</height>
+     <width>331</width>
+     <height>31</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,0,0,0">
+   <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,0,0,0,0">
     <property name="sizeConstraint">
      <enum>QLayout::SizeConstraint::SetFixedSize</enum>
     </property>
     <property name="horizontalSpacing">
      <number>8</number>
     </property>
-    <item row="0" column="3">
-     <widget class="QLineEdit" name="entry_ev_data_1">
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="entry_ev_data_0">
       <property name="minimumSize">
        <size>
         <width>40</width>
@@ -612,10 +612,42 @@ same time.</string>
        </size>
       </property>
       <property name="statusTip">
-       <string>The second data byte, if applicable.  Change using decimal or hex (0xnn) notation.</string>
+       <string>The first data byte, if applicable. Change using decimal or hex (0xnn) notation.</string>
       </property>
       <property name="text">
        <string>0x00</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QCheckBox" name="hex_data_check_box">
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Hex</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QCheckBox" name="pulse_time_check_box">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Ticks</string>
       </property>
      </widget>
     </item>
@@ -646,35 +678,25 @@ same time.</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="4">
-     <widget class="QCheckBox" name="pulse_time_check_box">
+    <item row="0" column="3">
+     <widget class="QLineEdit" name="entry_ev_data_1">
       <property name="minimumSize">
        <size>
-        <width>64</width>
+        <width>40</width>
         <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>64</width>
+        <width>40</width>
         <height>24</height>
        </size>
       </property>
-      <property name="text">
-       <string>Ticks</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QCheckBox" name="hex_data_check_box">
-      <property name="maximumSize">
-       <size>
-        <width>64</width>
-        <height>16777215</height>
-       </size>
+      <property name="statusTip">
+       <string>The second data byte, if applicable.  Change using decimal or hex (0xnn) notation.</string>
       </property>
       <property name="text">
-       <string>Hex</string>
+       <string>0x00</string>
       </property>
      </widget>
     </item>
@@ -705,25 +727,10 @@ same time.</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="entry_ev_data_0">
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="statusTip">
-       <string>The first data byte, if applicable. Change using decimal or hex (0xnn) notation.</string>
-      </property>
+    <item row="0" column="6">
+     <widget class="QPushButton" name="macro_button">
       <property name="text">
-       <string>0x00</string>
+       <string>Macro</string>
       </property>
      </widget>
     </item>
@@ -732,9 +739,9 @@ same time.</string>
   <widget class="QWidget" name="dLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>502</x>
+     <x>512</x>
      <y>109</y>
-     <width>321</width>
+     <width>311</width>
      <height>150</height>
     </rect>
    </property>

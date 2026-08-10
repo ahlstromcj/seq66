@@ -31,10 +31,6 @@
  *
  */
 
-#include <QErrorMessage>                /* QErrorMessage                    */
-#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
-#include <QTimer>
-
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */

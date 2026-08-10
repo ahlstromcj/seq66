@@ -1,10 +1,10 @@
 readme.windows for Seq66 0.99.27
 Chris Ahlstrom
-2018-05-13 to 2026-07-17
+2018-05-13 to 2026-08-10
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
-Windows.  We mostly use Windows 10; some features might differ in Windows 7 or
+Windows.  We mostly use Windows 11; some features might differ in Windows 7 or
 Windows 2012 Server. Note that Seq66 is a 64-bit application for Windows.
 This release fixes known issues and adds other work as noted in NEWS and
 RELNOTES.

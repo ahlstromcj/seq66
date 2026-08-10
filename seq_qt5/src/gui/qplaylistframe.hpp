@@ -33,16 +33,13 @@
  *
  */
 
+#include <QErrorMessage>                /* QErrorMessage                    */
 #include <QFrame>
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
+#include <QTableWidgetItem>
+#include <QTimer>
 
 #include "util/basic_macros.hpp"        /* nullptr and related macros       */
-
-/*
- * Qt forward references.
- */
-
-class QTableWidgetItem;
-class QTimer;
 
 namespace Ui
 {

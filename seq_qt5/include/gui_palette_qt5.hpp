@@ -37,9 +37,10 @@
  *  Note that the color names come from /usr/share/X11/rgb.txt as Qt requires.
  */
 
-#include <memory>                       /* std::unique_ptr<>                */
 #include <QBrush>
 #include <QColor>
+
+#include <memory>                       /* std::unique_ptr<>                */
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "util/palette.hpp"             /* seq66::palette map class         */

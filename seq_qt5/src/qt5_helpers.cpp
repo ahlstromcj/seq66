@@ -53,30 +53,6 @@
  *      -   show_file_select_dialog()
  */
 
-#include <QAction>
-#include <QComboBox>
-#include <QColor>
-#include <QErrorMessage>
-#include <QFileDialog>                  /* prompt for full MIDI file's path */
-#include <QIcon>
-#include <QInputDialog>                 /* prompt for a simple string       */
-#include <QLabel>
-#include <QLayout>
-#include <QLayoutItem>
-#include <QLineEdit>
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QMenu>
-#include <QMessageBox>
-#include <QPalette>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QScrollBar>
-#include <QSpinBox>
-#include <QStandardItemModel>
-#include <QTimer>
-#include <QToolTip>
-
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
 #include "util/strfunctions.hpp"        /* seq66::toupper() and tolower     */

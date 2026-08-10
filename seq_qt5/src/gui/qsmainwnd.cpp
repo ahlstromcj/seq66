@@ -65,14 +65,6 @@
  *                  show_qslogview()        Show the configured log file.
  */
 
-#include <QErrorMessage>                /* QErrorMessage                    */
-#include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
-#include <QGuiApplication>              /* used for QScreen geometry() call */
-#include <QMessageBox>                  /* QMessageBox                      */
-#include <QResizeEvent>                 /* QResizeEvent                     */
-#include <QScreen>                      /* QScreen                          */
-#include <QTextBrowser>                 /* QTextBrowser                     */
-
 #undef USE_QDESKTOPSERVICES
 #if defined USE_QDESKTOPSERVICES
 #include <QDesktopServices>             /* used for opening a URL           */

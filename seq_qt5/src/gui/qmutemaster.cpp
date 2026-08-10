@@ -29,11 +29,6 @@
  *
  */
 
-#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
-#include <QPushButton>
-#include <QTableWidgetItem>
-#include <QTimer>
-
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */

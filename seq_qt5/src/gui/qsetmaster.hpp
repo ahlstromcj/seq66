@@ -39,6 +39,11 @@
  */
 
 #include <QFrame>
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
+#include <QPushButton>
+#include <QTableWidgetItem>
+#include <QTimer>
+
 #include <vector>                       /* std::vector container            */
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */

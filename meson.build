@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-23
-# \updates     2026-07-17
+# \updates     2026-08-10
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the seq66 application and library.
@@ -126,6 +126,27 @@ fs = import('fs')                      # for copying resources
 cc = meson.get_compiler('cpp')         # C++ compiler
 
 #-----------------------------------------------------------------------------
+# Clang now gives warning in Qt headers using descriptions of
+# "= delete" constructs.
+#
+# G++ 16 gives warnings in Qt header about "defining ‘QRegularExpression’
+# that failed to be complete in a SFINAE context". We've moved the Qt
+# headers from cpp files to the hpp files, but still get some long and
+# annoying warnings.
+#
+# We don't make a separate seq_qt5 library, so the options have to
+# be global.
+#-----------------------------------------------------------------------------
+
+if (cc.get_id() == 'clang')            # Clang warnings in Qt headers
+   add_project_arguments(['-Wno-c++26-extensions'], language: 'cpp')
+   message('Clang [-Wno-c++26-extensions]')
+elif (cc.get_id() == 'gcc')            # GNU C++ warnings in Qt headers
+   add_project_arguments(['-Wno-sfinae-incomplete'], language: 'cpp')
+   message('G++ [-Wno-sfinae-incomplete]')
+endif
+
+#-----------------------------------------------------------------------------
 # Conditional enabling of the Potext translation library.
 #-----------------------------------------------------------------------------
 
@@ -150,7 +171,7 @@ seq66_pkg_description = 'Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
 seq66_version = '0.99.27'
 seq66_api_version = '0.99'
-seq66_info_date = '2026-07-17'
+seq66_info_date = '2026-08-10'
 seq66_info_build_type = get_option('buildtype')
 seq66_info_build_root = meson.project_build_root()
 seq66_info_lib_type = get_option('default_library')

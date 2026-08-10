@@ -37,13 +37,9 @@
  *  perfedit class.
  */
 
+#include <QCloseEvent>
+#include <QGridLayout>
 #include <QWidget>
-
-/*
- * Forward reference.
- */
-
-class QCloseEvent;
 
 namespace Ui
 {

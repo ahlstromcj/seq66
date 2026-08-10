@@ -38,8 +38,15 @@
  *  events, playlists, and information about the current session.
  */
 
-#include <QMainWindow>
+#include <QErrorMessage>                /* QErrorMessage                    */
+#include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
+#include <QGuiApplication>              /* used for QScreen geometry() call */
 #include <QList>
+#include <QMainWindow>
+#include <QMessageBox>                  /* QMessageBox                      */
+#include <QResizeEvent>                 /* QResizeEvent                     */
+#include <QScreen>                      /* QScreen                          */
+#include <QTextBrowser>                 /* QTextBrowser                     */
 
 #include "cfg/settings.hpp"             /* seq66::combolist helper class    */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */

@@ -38,16 +38,11 @@
  */
 
 #include <QFrame>
+#include <QWidget>
 
 #include "qeditbase.hpp"                /* seq66:qeditbase super base class */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 #include "play/sequence.hpp"            /* seq66::seq::pointer & sequence   */
-
-/*
- *  Forward declarations.  Some Qt header files are in the cpp file.
- */
-
-class QWidget;
 
 namespace Ui
 {

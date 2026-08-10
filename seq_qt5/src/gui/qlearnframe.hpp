@@ -33,7 +33,9 @@
  *  Provides a way to modulate MIDI controller events.
  */
 
+#include <QButtonGroup>
 #include <QFrame>
+#include <QTimer>
 
 #include "ctrl/opcontrol.hpp"           /* seq66::optcontrol and automation */
 #include "midi/event.hpp"               /* seq66::event                     */

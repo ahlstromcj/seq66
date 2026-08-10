@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-09
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -661,7 +661,8 @@ performer::notify_macro_change
             operation == performer::macro::added ||
             operation == performer::macro::modified
         };
-        rc().auto_ctrl_save(true);
+        if (modify_ctrl)
+            rc().auto_ctrl_save(true);
     }
     for (auto notify : m_notify)
         (void) notify->on_macro_change(macroname, operation);

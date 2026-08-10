@@ -34,6 +34,7 @@
  */
 
 #include <QFrame>
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
 
 #include "play/performer.hpp"           /* seq66::performer                 */
 

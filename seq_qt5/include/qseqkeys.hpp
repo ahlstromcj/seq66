@@ -34,8 +34,16 @@
  *      We've added the feature of a right-click toggling between showing the
  *      main octave values (e.g. "C1" or "C#1") versus the numerical MIDI
  *      values of the keys.
+ *
+ * Note:
+ *
+ *      We moved these #includes to here to avoid SFINAE warning with
+ *      Qt using gcc 16.
  */
 
+#include <QMouseEvent>
+#include <QPainter>                     /* QPainter, QPen, QBrush, ...      */
+#include <QResizeEvent>
 #include <QWidget>
 
 #include "cfg/usrsettings.hpp"          /* seq66::show enum class           */

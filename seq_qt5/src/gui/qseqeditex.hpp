@@ -37,6 +37,8 @@
  *  seqedit class.
  */
 
+#include <QCloseEvent>
+#include <QGridLayout>
 #include <QWidget>
 
 class QCloseEvent;

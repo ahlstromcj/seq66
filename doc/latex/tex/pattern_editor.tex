@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-08-08
+% \update      2026-08-10
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -364,10 +364,11 @@
    This button brings up a nested menu of tools for modifying selected
    events and notes. Shown below are selection options, and the
    small dialog to select a pitch range.
+   It can also be brought up by the \texttt{Ctrl-T} keystroke.
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=1.00]{pattern-editor/rpn-option.png}
+   \includegraphics[scale=0.75]{pattern-editor/rpn-option.png}
    \caption{Pattern Editor Tool Options}
    \label{fig:pattern_editor_window_tool_options}
 \end{figure}
@@ -441,6 +442,8 @@
          This entry allows for the creation of a complete RPN or NRPN
          series of parameter change events, from the start to the data
          to the ending "reset" event.
+         The events can be inserted into the pattern or
+         be used to create a macro in the 'ctrl' file.
          See \sectionref{subsec:pattern_editor_rpn_nrpn_dialog}.
       \item \textbf{Pattern fix}.
          Allows for fixing up a new pattern
@@ -2361,7 +2364,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{pattern-editor/rpnframe.png}
+   \includegraphics[scale=0.50]{pattern-editor/rpnframe.png}
    \caption{RPN/NRPN Dialog}
    \label{fig:pattern_editor_rpn_nrpn_dialog}
 \end{figure}
@@ -2389,7 +2392,7 @@
          event at the end.
       \item \textbf{Use "fine" events}.
          If checked, also insert the "fine" version of the selected controller.
-         The "fine" controllers are supplied by General MIDI version 2.
+         The "fine" controllers are supported by General MIDI version 2.
       \item \textbf{Timestamp (BBT)}.
          This text box displays, in B:B:T format by default,
          the timestamp at which the events will be inserted into the
@@ -2403,8 +2406,8 @@
       \item \textbf{(N)RPN parameter no.}.
          This items displays the RPN number if RPN is selected, and that
          cannot be edited.
-         If NRPN is selected, then the number of the parameter can be
-         typed here.
+         If NRPN is selected, then the number of the desired
+         parameter can be typed here.
          Note that parameter numbers are limit to 14-bits (0 to 16383).
       \item \textbf{(name of macro)}.
          Entering a short name into this text box enables the
@@ -2423,10 +2426,10 @@
          If enabled and click, then the macro is added to the list of
          macros in the 'ctrl' configuration file, and that file is marked to be
          saved at exit.
-      \item \textbf{Insert/Append}.
-         Clicking this button adds the RPN/NRPN event at the timestamp
-         shown in the timestamp text box.
-      \item \textbf{Cancel}.
+      \item \textbf{Insert (N)RPN}.
+         Clicking this button adds the RPN/NRPN event to the pattern
+         at the timestamp shown in the timestamp text box.
+      \item \textbf{Close}.
          All this button does is closed the dialog.
    \end{itemize}
 

@@ -50,8 +50,6 @@
  *  intact.
  */
 
-#include <QPainter>
-#include <QPaintEvent>
 #include <cmath>                        /* std::sin(radians)                */
 #include <cstring>                      /* std::strcat()                    */
 

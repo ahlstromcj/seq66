@@ -1,32 +1,45 @@
-Release Notes for Seq66 v. 0.99.27 2026-07-30 "Scratchpad Recording"
+Release Notes for Seq66 v. 0.99.27 2026-08-10 "Scratchpad Recording"
 
 This version refactors the metronome code to support "scratchpad
 recording", similar to background recording but with visual feedback.
-Background recording when one wants to improvise.
+It is background recording when one wants to improvise.
 
 Another "big" addition is a dialog for adding RPN/NRPN controls.
+This dialog is brought up from a pattern's Tools button. It
+makes it easy to create multi-event RPN settings, insert them
+in the pattern, or create an RPN macro.
 
-Also many fixes,
-tweaks, and minor updates.
+Also many fixes, tweaks, and minor updates.
 
 - Main window.
-  Fixed disabling unavailable ports in the global buss dropdown.
+  - Fixed disabling unavailable ports in the global buss dropdown.
+  - Edit / Preferences / Metronome
+    - Added check-boxes to activate the Metro, Record, and Thru ports.
+    - Added a Set Defaults button for the metronome.
+    - The metronome and scratchpad statuses (enabled/disabled) are
+      reflected in the buttons.
 - Pattern editor.
   - Fixed the left-align and right-align pattern-fix actions by
     bypassing initial meta events.
   - Added a dialog to provide a way to create an RPN and NRPN
     controller event in a pattern, or to add it as a MIDI
     macro.
+  - Macros now inserted at progress location, not at the "L"
+    marker. Set the progress play-head by right-clicking on the upper
+    half of the time pane.
+  - Macros now require clicking the Send button after selection.
+  - Ctrl-T in the piano roll brings up the Tools menu.
+  - Fixed minor bugs sending macros via MIDI-control-out.
 - Event editor.
-- Build system.
-- Command-line.
+  - Some minor updates to the dialog layout.
 - Miscellaneous.
   - Background recording. This feature has been fixed and upgraded to
     do "scratchpad recording". See the NEWS file and the user
     manual.
-  - Port-mapping.
-    - The Recreate button clears the port map and recreates it,
-      including any devices plugged in while Seq66 runs.
+  - Added functions for splitting and joining 14-bit MIDI values.
+- Port-mapping.
+  - The Recreate button clears the port map and recreates it,
+    including any devices plugged in while Seq66 runs.
 - Documentation updated.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

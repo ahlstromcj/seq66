@@ -31,10 +31,6 @@
  *  Duty now for the future! Join the Smart Patrol!
  */
 
-#include <QApplication>                 /* QApplication etc.                */
-#include <QTimer>                       /* QTimer                           */
-#include <QFile>
-
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */

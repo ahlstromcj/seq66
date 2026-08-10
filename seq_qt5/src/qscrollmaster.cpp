@@ -66,10 +66,6 @@
  *  -   setSingleStep()
  */
 
-#include <QResizeEvent>
-#include <QScrollBar>
-#include <QWheelEvent>
-
 #include "qscrollmaster.h"              /* ::qscrollmaster class            */
 #include "util/basic_macros.hpp"        /* nullptr and other macros         */
 

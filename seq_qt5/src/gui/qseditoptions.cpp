@@ -48,8 +48,6 @@
  *  needed/useful.
  */
 
-#include <QButtonGroup>
-
 #include "cfg/patchesfile.hpp"          /* seq66::patchesfile class         */
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "midi/jack_assistant.hpp"      /* seq66::jack_assistant statics    */

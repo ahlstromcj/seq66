@@ -33,6 +33,9 @@
  */
 
 #include <QFrame>                       /* used as a base class             */
+#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
+#include <QMenu>                        /* for usage with select_button     */
+
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 
 #include "play/performer.hpp"           /* seq66::performer::callbacks base */

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.27
 Chris Ahlstrom
-2015-07-10 to 2026-08-08
+2015-07-10 to 2026-08-10
 
 # Change Log
 
-## [0.99.27] - 2026-08-08
+## [0.99.27] - 2026-08-10
 
 "Scratchpad Recording"
 
@@ -12,7 +12,7 @@ Chris Ahlstrom
 
 -   Edit / Preferences / Metronome
     -   Added check-boxes to activate the Metro, Record, and Thru ports.
-    -   Added a button set the metronome to the internal hard-wired
+    -   Added a button to set the metronome to the internal hard-wired
         settings, which uses the drum channel.
 -   Pattern editor.
     -   Added an "owning sequence number" member to eventlist.
@@ -62,6 +62,8 @@ Chris Ahlstrom
     -   Fixed minor bugs sending macros via MIDI-control-out.
 
 ### Removed
+
+-   Nothing removed.
 
 ## [0.99.26] - 2026-07-15
 

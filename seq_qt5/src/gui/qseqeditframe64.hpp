@@ -27,10 +27,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-08
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  */
+
+#include <QComboBox>                    /* tritto                           */
+#include <QMenu>                        /* here to avoid a SFINAE warning   */
+#include <QPaintEvent>                  /* ditto                            */
+#include <QScrollBar>
 
 #include "qscrollmaster.h"              /* qscrollmaster::dir enum class    */
 #include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
@@ -75,11 +80,14 @@
 
 /*
  *  A few forward declarations.  The Qt header files are in the cpp file.
+ *  Now we include them here to avoid SFINAE warning with Qt using gcc 16.
+ *
+ *      class QIcon;
+ *      class QWidget;
  */
 
-class QIcon;
-class QMenu;
-class QWidget;
+#include <QIcon>
+#include <QWidget>
 
 namespace Ui
 {

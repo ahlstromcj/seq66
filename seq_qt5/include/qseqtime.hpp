@@ -31,12 +31,17 @@
  * \updates       2024-11-18
  * \license       GNU GPLv2 or above
  *
+ * Note:
+ *
+ *      We moved some #includes to here to avoid SFINAE warning with
+ *      Qt using gcc 16.
  */
 
-#include <QWidget>
-#include <QTimer>
 #include <QPainter>
 #include <QPen>
+#include <QResizeEvent>                 /* SFINAE?                          */
+#include <QTimer>
+#include <QWidget>
 
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 

@@ -32,6 +32,9 @@
  *
  */
 
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPen>
 #include <QWidget>
 
 #include "qperfbase.hpp"                /* for constants and base class     */

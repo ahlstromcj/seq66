@@ -31,11 +31,6 @@
  *  of the play-screen (playing set), see the setmapper class.
  */
 
-#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
-#include <QPushButton>
-#include <QTableWidgetItem>
-#include <QTimer>
-
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qsetmaster.hpp"               /* seq66::qsetmaster tab class      */

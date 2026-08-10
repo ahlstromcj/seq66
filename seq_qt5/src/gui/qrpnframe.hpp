@@ -33,7 +33,9 @@
  *  Provides a way to more easily add NRPN and RPN controller events.
  */
 
+#include <QButtonGroup>
 #include <QFrame>
+#include <QWidget>
 
 #include "ctrl/rpn.hpp"                 /* seq66::rpn "macro" class         */
 #include "midi/calculations.hpp"        /* seq66::timeformat enumeration    */

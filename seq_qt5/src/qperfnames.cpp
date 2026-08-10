@@ -37,10 +37,6 @@
  *  the build with the "--disable-highlight" option.
  */
 
-#include <QMouseEvent>
-#include <QPainter>
-#include <QPen>
-
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */

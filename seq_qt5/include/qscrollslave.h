@@ -32,16 +32,20 @@
  *
  */
 
+#include <QApplication>
+#include <QFrame>
+#include <QResizeEvent>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSize>
+#include <QWheelEvent>
+
 #include <list>                         /* std::list container class        */
 
 /*
- *  Forward declarations.  The Qt header files are moved into the cpp file.
+ *  Forward declarations
  */
 
-class QFrame;
-class QScrollBar;
 class qscrollmaster;
 
 /*

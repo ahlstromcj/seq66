@@ -23,12 +23,14 @@
  * \file          shellexecute.hpp
  * \author        Chris Ahlstrom
  * \date          2022-05-19
- * \updates       2025-01-22
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  *    This module provides functions for executing commands from within
  *    the application.
  */
+
+#include <string>                       /* std::string                      */
 
 namespace seq66
 {
@@ -55,4 +57,3 @@ extern bool copy_directory_recursive
 /*
  * vim: ts=4 sw=4 et ft=cpp
  */
-

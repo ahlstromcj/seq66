@@ -33,9 +33,9 @@
  *
  */
 
-#include <QWidget>
 #include <QPainter>
 #include <QTimer>
+#include <QWidget>
 
 namespace seq66
 {

@@ -31,7 +31,52 @@
  * \updates       2026-08-05
  * \license       GNU GPLv2 or above
  *
+ * Note:
+ *
+ *      We moved some #includes to here to avoid SFINAE warning with
+ *      Qt using gcc 16.
+ *
+ *      class QAction;
+ *      class QComboBox;
+ *      class QIcon;
+ *      class QInputEvent;
+ *      class QKeyEvent;
+ *      class QLabel;
+ *      class QLayoutItem;
+ *      class QLineEdit;
+ *      class QMenu;
+ *      class QMouseEvent;
+ *      class QPushButton;
+ *      class QScrollArea;
+ *      class QSpinBox;
+ *      class QTimer;
+ *      class QWidget;
  */
+
+#include <QAction>
+#include <QComboBox>
+#include <QColor>
+#include <QErrorMessage>
+#include <QFileDialog>                  /* prompt for full MIDI file's path */
+#include <QIcon>
+#include <QInputDialog>                 /* prompt for a simple string       */
+#include <QLabel>
+#include <QLayout>
+#include <QLayoutItem>
+#include <QLineEdit>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QMenu>
+#include <QMessageBox>
+#include <QPalette>
+#include <QPushButton>
+#include <QRegularExpression>           /* SFINAE?                          */
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QSpinBox>
+#include <QStandardItemModel>
+#include <QTimer>
+#include <QToolTip>
 
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
@@ -49,22 +94,6 @@
  */
 
 #undef  SEQ66_INSTALL_SCROLL_FILTER
-
-class QAction;
-class QComboBox;
-class QIcon;
-class QInputEvent;
-class QKeyEvent;
-class QLabel;
-class QLayoutItem;
-class QLineEdit;
-class QMenu;
-class QMouseEvent;
-class QPushButton;
-class QScrollArea;
-class QSpinBox;
-class QTimer;
-class QWidget;
 
 namespace seq66
 {

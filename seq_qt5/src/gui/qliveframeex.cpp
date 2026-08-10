@@ -32,8 +32,6 @@
  *  for each set in the Seq66 MIDI file.
  */
 
-#include <QGridLayout>
-
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */

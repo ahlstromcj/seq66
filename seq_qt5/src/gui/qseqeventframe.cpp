@@ -32,9 +32,6 @@
  *  This class is the "Event Editor".
  */
 
-#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
-#include <QMenu>                        /* for usage with select_button     */
-
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::rc()         */
 #include "midi/controllers.hpp"         /* seq66::controller_name() etc.    */
 #include "midi/patches.hpp"             /* seq66::program_name() etc.       */
@@ -249,7 +246,13 @@ qseqeventframe::qseqeventframe
         this, SLOT(slot_hex_data_state(int))
     );
 
+    /*
+     * The first one is no longer need due to the BBT button.
+     * Might have a use for the Macro button later.
+     */
+
     ui->pulse_time_check_box->hide();
+    ui->macro_button->hide();
 
     /*
      *  Experimental. Monitor the D0 field for changes via user edit.

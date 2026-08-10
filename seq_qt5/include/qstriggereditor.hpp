@@ -34,13 +34,21 @@
  *  This class represents the central piano-roll user-interface area of the
  *  performance/song editor. It is the Qt version of the seqevent class, and
  *  is used in qseqeditframe64.
+ *
+ * Note:
+ *
+ *      We moved some #includes to here to avoid SFINAE warning with
+ *      Qt using gcc 16.
  */
 
-#include <QWidget>
-#include <QPainter>
+#include <QKeyEvent>
 #include <QMouseEvent>
-#include <QTimer>
+#include <QPainter>
 #include <QPen>
+#include <QResizeEvent>
+#include <QTimer>
+#include <QWheelEvent>
+#include <QWidget>
 
 #include "midi/midibytes.hpp"           /* seq66::midibyte, other aliases   */
 #include "qseqbase.hpp"                 /* seq66::qseqbase base class       */

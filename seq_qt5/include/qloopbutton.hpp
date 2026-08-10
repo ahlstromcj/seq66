@@ -34,6 +34,9 @@
  */
 
 #include <QFont>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QWidget>
 
 #include "qslotbutton.hpp"              /* seq66::qslotbutton base class    */
 

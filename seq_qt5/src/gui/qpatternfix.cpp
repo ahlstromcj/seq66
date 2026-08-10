@@ -40,8 +40,6 @@
  *  This dialog was inspired by Ahlstrom's poor playing and timing skills.
  */
 
-#include <QButtonGroup>
-
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qpatternfix.hpp"              /* seq66::qpatternfix class         */
 #include "qseqdata.hpp"                 /* seq66::qseqdata for status, CC   */

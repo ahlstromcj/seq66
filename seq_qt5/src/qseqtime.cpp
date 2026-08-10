@@ -30,7 +30,6 @@
  *
  */
 
-#include <QResizeEvent>
 #include <cstring>                      /* std::strcat()                    */
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */

@@ -33,10 +33,6 @@
  *  keys.
  */
 
-#include <QMouseEvent>
-#include <QPainter>                     /* QPainter, QPen, QBrush, ...      */
-#include <QResizeEvent>
-
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui/qseqeditframe64.hpp"      /* seq66::qseqeditframe64 class     */

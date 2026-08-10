@@ -37,11 +37,6 @@
  *  handle.  That is, if moving or growing, snap the tick.
  */
 
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QPainter>
-#include <QTimer>
-
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */

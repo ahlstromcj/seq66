@@ -33,6 +33,9 @@
  *
  */
 
+#include <QMouseEvent>
+#include <QPainter>
+#include <QTimer>
 #include <QWidget>
 
 #include "qperfbase.hpp"

@@ -30,8 +30,6 @@
  *
  */
 
-#include <QGridLayout>
-
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqeditex.hpp"               /* seq66::qseqeditex container      */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 editor    */

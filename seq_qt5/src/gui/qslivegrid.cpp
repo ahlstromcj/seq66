@@ -66,13 +66,6 @@
  *             menu." Code supplied by phuel 2023-02-26.
  */
 
-#include <QMenu>
-#include <QMessageBox>
-#include <QMimeData>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QTimer>
-
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 class     */

@@ -44,8 +44,6 @@
  *
  */
 
-#include <QScrollBar>
-
 #include "cfg/settings.hpp"             /* seq66::open_share_doc_file()     */
 #include "util/filefunctions.hpp"       /* seq66::file_read_string()        */
 #include "qslogview.hpp"                /* seq66::qslogview dialog class    */

@@ -32,8 +32,6 @@
  *
  */
 
-#include <QButtonGroup>
-
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/controllers.hpp"         /* seq66::string_to_rpn_number()    */
 #include "play/performer.hpp"           /* seq66::performer                 */

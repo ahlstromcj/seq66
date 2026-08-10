@@ -32,9 +32,6 @@
  *  patterns already created using the Pattern editor.
  */
 
-#include <QKeyEvent>                    /* Needed for QKeyEvent::accept()   */
-#include <QScrollBar>
-
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfeditframe64.hpp"
 #include "qperfnames.hpp"

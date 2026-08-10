@@ -34,8 +34,6 @@
  *  progress bar during playback.  See the seqroll::m_progress_follow member.
  */
 
-#include <QWidget>                      /* QWidget::resize()                */
-
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfbase.hpp"                /* seq66::qperfbase class           */

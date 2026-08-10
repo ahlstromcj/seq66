@@ -39,6 +39,9 @@
  */
 
 #include <QPushButton>
+#include <QRegularExpression>           /* SFINAE?                          */
+#include <QWidget>
+
 #include <string>
 
 #include "gui_palette_qt5.hpp"          /* seq66::Color                     */
@@ -343,4 +346,3 @@ protected:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

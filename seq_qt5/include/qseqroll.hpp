@@ -35,8 +35,27 @@
  *
  *  User jean-emmanual added support for disabling the following of the
  *  progress bar during playback.  See the qseqbase::m_progress_follow member.
+ *
+ * Note:
+ *
+ *      We moved these #includes to here to avoid SFINAE warning with
+ *      Qt using gcc 16.
+ *
+ *      class QLabel;
+ *      class QMessageBox;
+ *      class QTimer;
  */
 
+#include <QApplication>                 /* QApplication keyboardModifiers() */
+#include <QFrame>                       /* base class for seqedit frame(s)  */
+#include <QLabel>                       /* used as a tool-tip for notes     */
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPalette>                     /* for recoloring the tool-tip      */
+#include <QPen>
+#include <QScrollBar>                   /* used in scrolling for progress   */
+#include <QTimer>
 #include <QWidget>
 
 #include "cfg/scales.hpp"               /* seq66::scales enum class         */
@@ -48,10 +67,7 @@
  * Forward references
  */
 
-class QLabel;
-class QMessageBox;
 class qscrollmaster;
-class QTimer;
 
 namespace seq66
 {

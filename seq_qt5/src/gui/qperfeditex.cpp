@@ -30,8 +30,6 @@
  *
  */
 
-#include <QGridLayout>
-
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
 #include "qperfeditex.hpp"

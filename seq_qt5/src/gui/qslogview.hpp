@@ -33,6 +33,7 @@
  */
 
 #include <QDialog>
+#include <QScrollBar>
 
 namespace Ui
 {

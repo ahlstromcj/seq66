@@ -33,8 +33,12 @@
  *
  */
 
+#include <QResizeEvent>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSize>
+#include <QWheelEvent>
+
 #include <list>                         /* std::list container class        */
 
 /*
