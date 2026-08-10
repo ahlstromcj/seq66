@@ -1,5 +1,273 @@
+2026-08-10  Chris <ahlstromcj@gmail.com>
+
+	* TODO, VERSION, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/libseq66.pro: Release
+	Notes for Seq66 v. 0.99.27 2026-08-10 "Scratchpad Recording" This version refactors the metronome code to support "scratchpad
+	recording", similar to background recording but with visual
+	feedback.  It is background recording when one wants to improvise.  Another "big" addition is a dialog for adding RPN/NRPN controls.
+	This dialog is brought up from a pattern's Tools button. It makes it
+	easy to create multi-event RPN settings, insert them in the pattern,
+	or create an RPN macro.  Also many fixes, tweaks, and minor updates.  - Main window.    - Fixed disabling unavailable ports in the global buss dropdown.    - Edit / Preferences / Metronome     - Added check-boxes to activate the Metro, Record, and Thru
+	    ports.  - Added a Set Defaults button for the metronome.      - The metronome and scratchpad statuses (enabled/disabled) are       reflected in the buttons.  - Pattern editor.    - Fixed the left-align and right-align pattern-fix actions by     bypassing initial meta events.    - Added a dialog to provide a way to create an RPN and NRPN     controller event in a pattern, or to add it as a MIDI     macro.    - Macros now inserted at progress location, not at the "L"     marker. Set the progress play-head by right-clicking on the
+	    upper half of the time pane.    - Macros now require clicking the Send button after selection.    - Ctrl-T in the piano roll brings up the Tools menu.    - Fixed minor bugs sending macros via MIDI-control-out.  - Event editor.    - Some minor updates to the dialog layout.  - Miscellaneous.    - Background recording. This feature has been fixed and upgraded
+	    to do "scratchpad recording". See the NEWS file and the user     manual.    - Added functions for splitting and joining 14-bit MIDI values.  - Port-mapping.    - The Recreate button clears the port map and recreates it,     including any devices plugged in while Seq66 runs.  - Documentation updated.
+	* NEWS, RELNOTES, data/license.text, data/readme.text,
+	data/readme.windows, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/recording.tex, libseq66/include/os/shellexecute.hpp,
+	libseq66/src/play/performer.cpp, meson.build,
+	nsis/build_release_package.bat,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/include/qclocklayout.hpp,
+	seq_qt5/include/qinputcheckbox.hpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/include/qperfbase.hpp,
+	seq_qt5/include/qperfnames.hpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/include/qperftime.hpp, seq_qt5/include/qscrollmaster.h,
+	seq_qt5/include/qscrollslave.h, seq_qt5/include/qseqbase.hpp,
+	seq_qt5/include/qseqframe.hpp, seq_qt5/include/qseqkeys.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/include/qseqtime.hpp,
+	seq_qt5/include/qslotbutton.hpp, seq_qt5/include/qsmaintime.hpp,
+	seq_qt5/include/qstriggereditor.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/include/qt5nsmanager.hpp,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qlfoframe.cpp, seq_qt5/src/gui/qlfoframe.hpp,
+	seq_qt5/src/gui/qliveframeex.cpp, seq_qt5/src/gui/qliveframeex.hpp,
+	seq_qt5/src/gui/qmutemaster.cpp, seq_qt5/src/gui/qmutemaster.hpp,
+	seq_qt5/src/gui/qpatternfix.cpp, seq_qt5/src/gui/qpatternfix.hpp,
+	seq_qt5/src/gui/qperfeditex.cpp, seq_qt5/src/gui/qperfeditex.hpp,
+	seq_qt5/src/gui/qperfeditframe64.cpp,
+	seq_qt5/src/gui/qperfeditframe64.hpp,
+	seq_qt5/src/gui/qplaylistframe.cpp,
+	seq_qt5/src/gui/qplaylistframe.hpp, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.hpp, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseqeditex.cpp, seq_qt5/src/gui/qseqeditex.hpp,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qseqeditframe64.hpp,
+	seq_qt5/src/gui/qseqeventframe.cpp,
+	seq_qt5/src/gui/qseqeventframe.hpp,
+	seq_qt5/src/gui/qseqeventframe.ui,
+	seq_qt5/src/gui/qsessionframe.cpp,
+	seq_qt5/src/gui/qsessionframe.hpp, seq_qt5/src/gui/qsetmaster.cpp,
+	seq_qt5/src/gui/qsetmaster.hpp, seq_qt5/src/gui/qslivegrid.cpp,
+	seq_qt5/src/gui/qslivegrid.hpp, seq_qt5/src/gui/qslogview.cpp,
+	seq_qt5/src/gui/qslogview.hpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/gui/qsmainwnd.hpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qinputcheckbox.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfbase.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qperftime.cpp,
+	seq_qt5/src/qscrollmaster.cpp, seq_qt5/src/qscrollslave.cpp,
+	seq_qt5/src/qseqkeys.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp, seq_qt5/src/qslotbutton.cpp,
+	seq_qt5/src/qt5_helpers.cpp, seq_qt5/src/qt5nsmanager.cpp: Fixed
+	massive Qt warnings with the newest clang and g++ programs.
+	* README.md, TODO, libseq66/include/ctrl/midimacro.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/ctrl/rpn.cpp,
+	libseq66/src/midi/controllers.cpp, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.hpp, seq_qt5/src/gui/qrpnframe.ui,
+	seq_qt5/src/gui/qsmainwnd.cpp: The insertion of RPN into a loop noew
+	works.
+
+2026-08-09  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/ctrl/midimacros.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/midimacros.cpp, libseq66/src/ctrl/rpn.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qseqbase.hpp,
+	seq_qt5/src/gui/qrpnframe.cpp, seq_qt5/src/gui/qrpnframe.ui,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qseqeditframe64.hpp,
+	seq_qt5/src/gui/qseqeditframe64.ui,
+	seq_qt5/src/gui/qsessionframe.cpp,
+	seq_qt5/src/gui/qsessionframe.hpp,
+	seq_qt5/src/gui/qsessionframe.ui, seq_qt5/src/qseqroll.cpp: Got the
+	macro dropdowns to sync when a macro is added or deleted.
+
+2026-08-08  Chris <ahlstromcj@gmail.com>
+
+	* : Forgot to add rpn-option.png
+	* TODO, doc/latex/tex/pattern_editor.tex,
+	libseq66/include/ctrl/rpn.hpp, libseq66/include/midi/midibytes.hpp,
+	libseq66/src/ctrl/midimacros.cpp, libseq66/src/ctrl/rpn.cpp,
+	libseq66/src/midi/controllers.cpp, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.hpp, seq_qt5/src/gui/qrpnframe.ui,
+	seq_qt5/src/gui/qsessionframe.ui: Added a hex button and fixed
+	creating RPN bytes.
+
+2026-08-06  Chris <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/ctrl/midimacro.hpp,
+	libseq66/include/ctrl/rpn.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp, libseq66/src/ctrl/rpn.cpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.hpp, seq_qt5/src/gui/qrpnframe.ui,
+	seq_qt5/src/gui/qseqeventframe.cpp, seq_qt5/src/qt5_helpers.cpp: 
+	Finished initial coding for qrpnframe, testing coming up.
+
+2026-08-05  Chris <ahlstromcj@gmail.com>
+
+	* libseq66/include/ctrl/midimacro.hpp,
+	libseq66/include/ctrl/rpn.hpp,
+	libseq66/include/midi/controllers.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp, libseq66/src/ctrl/rpn.cpp,
+	libseq66/src/midi/controllers.cpp, seq_qt5/include/qt5_helper.h,
+	seq_qt5/src/gui/qlearnframe.cpp, seq_qt5/src/gui/qlearnframe.hpp,
+	seq_qt5/src/gui/qrpnframe.cpp, seq_qt5/src/gui/qrpnframe.hpp,
+	seq_qt5/src/gui/qrpnframe.ui, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseqeditframe64.cpp, seq_qt5/src/gui/qsmainwnd.cpp,
+	seq_qt5/src/qclocklayout.cpp, seq_qt5/src/qt5_helpers.cpp: Added
+	Control Selection and RPN selection to qrpnframe.
+
+2026-08-03  Chris <ahlstromcj@gmail.com>
+
+	* TODO, contrib/notes/backports-list.text,
+	contrib/vim-syntax/cpp.vim, data/linux/qseq66.ctrl,
+	libseq66/include/ctrl/midicontrolbase.hpp,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/ctrl/midimacro.hpp,
+	libseq66/include/ctrl/midimacros.hpp,
+	libseq66/include/ctrl/rpn.hpp,
+	libseq66/include/play/notemapper.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/ctrl/midimacro.cpp, libseq66/src/ctrl/rpn.cpp,
+	libseq66/src/play/performer.cpp, seq_portmidi/include/pmerrmm.h,
+	seq_portmidi/include/pminternal.h, seq_portmidi/include/pmlinux.h,
+	seq_portmidi/include/pmlinuxalsa.h, seq_portmidi/include/pmmac.h,
+	seq_portmidi/include/pmutil.h, seq_portmidi/include/pmwinmm.h,
+	seq_portmidi/include/portmidi.h, seq_portmidi/include/porttime.h,
+	seq_portmidi/src/pmwinmm.c, seq_qt5/include/qscrollmaster.h,
+	seq_qt5/include/qscrollslave.h,
+	seq_rtmidi/include/seq66_rtmidi_features.h: Many little tweaks plus
+	more rpn-related code.
+	* libseq66/include/ctrl/midimacro.hpp, libseq66/include/{midi =>
+	ctrl}/rpn.hpp, libseq66/include/meson.build, libseq66/src/{midi =>
+	ctrl}/rpn.cpp, libseq66/src/meson.build: Moved rpn to the ctrl
+	directory.
+
+2026-08-02  Chris <ahlstromcj@gmail.com>
+
+	* contrib/notes/backports-list.text, libseq66/include/meson.build,
+	libseq66/include/midi/controllers.hpp,
+	libseq66/include/midi/midibytes.hpp, libseq66/include/midi/rpn.hpp,
+	libseq66/src/meson.build, libseq66/src/midi/controllers.cpp,
+	libseq66/src/midi/rpn.cpp, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.ui: Added the beginnings of an rpn class
+	and support for it.
+	* NEWS, README.md, TODO, contrib/notes/backports-list.text,
+	data/linux/qseq66.ctrl, doc/latex/tex/configuration.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/preferences.tex,
+	doc/latex/tex/sessions.tex, libseq66/include/cfg/configfile.hpp,
+	libseq66/include/midi/calculations.hpp,
+	libseq66/include/midi/controllers.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/ctrl/midimacro.cpp, libseq66/src/ctrl/midimacros.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	seq_qt5/src/gui/qplaylistframe.cpp, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.hpp, seq_qt5/src/gui/qrpnframe.ui,
+	seq_qt5/src/gui/qseditoptions.ui,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qseqeditframe64.hpp,
+	seq_qt5/src/gui/qseqeventframe.ui,
+	seq_qt5/src/gui/qsessionframe.cpp,
+	seq_qt5/src/gui/qsessionframe.hpp, seq_qt5/src/gui/qsessionframe.ui: 
+	Interim check-in of macros, path shortening, calculations, and
+	documentation.
+
+2026-07-30  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, TODO, contrib/notes/RPN.text,
+	libseq66/libseq66.pro, libseq66/src/ctrl/midimacros.cpp,
+	libseq66/src/midi/controllers.cpp, seq_qt5/meson.build,
+	seq_qt5/seq_qt5.pro, seq_qt5/src/gui/qlfoframe.hpp,
+	seq_qt5/src/gui/qplaylistframe.ui, seq_qt5/src/gui/qrpnframe.cpp,
+	seq_qt5/src/gui/qrpnframe.hpp, seq_qt5/src/gui/qrpnframe.ui,
+	seq_qt5/src/gui/qseqeventframe.ui, seq_qt5/src/gui/qsetmaster.ui,
+	seq_qt5/src/qseqdata.cpp, seq_rtmidi/src/midi_alsa_info.cpp: Added
+	initial RPN dialog, plus ui tweaks.
+
+2026-07-28  Chris <ahlstromcj@gmail.com>
+
+	* TODO, contrib/notes/backports-list.text,
+	doc/latex/tex/patterns_panel.tex, doc/latex/tex/preferences.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/scratchpad.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/gui/qseditoptions.ui,
+	seq_qt5/src/gui/qseqeditframe64.cpp,
+	seq_qt5/src/gui/qslivegrid.cpp,
+	seq_rtmidi/include/midi_alsa_info.hpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: More fixes to metronome/count-in.
+
+2026-07-25  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/backports-list.text,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/preferences.tex, doc/latex/tex/recording.tex,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/calculations.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/qseqroll.cpp: Added a paste box for cross-pattern
+	pasting.
+
+2026-07-23  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, RELNOTES, TODO, contrib/notes/backports-list.text,
+	doc/latex/tex/preferences.tex,
+	libseq66/include/midi/midibus_common.hpp,
+	libseq66/include/play/portslist.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/businfo.cpp, libseq66/src/midi/midibase.cpp,
+	libseq66/src/play/clockslist.cpp, libseq66/src/play/metro.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/portslist.cpp,
+	seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseditoptions.hpp,
+	seq_qt5/src/gui/qseditoptions.ui, seq_qt5/src/gui/qslivegrid.cpp,
+	seq_qt5/src/gui/qsmainwnd.cpp, seq_qt5/src/qclocklayout.cpp: Added
+	metronome set-defaults button, more cleanup.
+
+2026-07-21  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, TODO, contrib/notes/backports-list.text,
+	doc/latex/tex/patterns_panel.tex, doc/latex/tex/preferences.tex,
+	libseq66/include/midi/midibus_common.hpp,
+	libseq66/include/play/metro.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/scratchpad.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/scratchpad.cpp,
+	seq_qt5/src/gui/qseditoptions.cpp,
+	seq_qt5/src/gui/qseditoptions.hpp,
+	seq_qt5/src/gui/qseditoptions.ui, seq_qt5/src/gui/qsmainwnd.cpp: 
+	Interim check-in, refactoring metronome settings.
+
+2026-07-18  Chris <ahlstromcj@gmail.com>
+
+	* NEWS, README.md, RELNOTES, TODO, VERSION, data/license.text,
+	data/readme.text, data/readme.windows, data/samples/incrypt-66.qss,
+	doc/latex/tex/pattern_editor.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/include/meson.build,
+	libseq66/include/play/metro.hpp,
+	libseq66/include/play/scratchpad.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/meson.build,
+	libseq66/src/midi/eventlist.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/metro.cpp, libseq66/src/play/scratchpad.cpp,
+	meson.build, nsis/MesonSetup.nsi, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/src/gui/qseditoptions.ui, seq_qt5/src/gui/qsmainwnd.ui,
+	work.sh: Version bump, started work on recording scratchpad.
+
 2026-07-15  Chris <ahlstromcj@gmail.com>
 
+	* ChangeLog: Release Notes for Seq66 v. 0.99.26 2026-07-15 "MIDI
+	Learn".  This version introduces the Seq66 flavor of MIDI Learn. See NEWS,
+	the Help menu, and the user manual. It works differently from other
+	implementations of MIDI Learn.  - MIDI Learn.    - Control actions via keys and buttons have been added     to augment MIDI Learn.    - Remove the automation::slot::mod_LR_loop slot.  - Main window and song editor.    - The time-display now cycles through B:B:T, H:M:S, and ticks.  - Pattern editor.  - Added "Jitter" to the pattern editor tools.  - Event editor.    - Added a button to enlarge the pattern by one measure.    - Replaced the "Ticks" check-box with a button to cycle through     display of time in B:B:T, H:M:S, or ticks.    - Fixes to some event handling, such as pitch-wheel.    - Added filling in of some data depending on the event selected.  - Build system.    - A missing "makensis" application no longer causes a build error.  - Command-line:   - The --investigate option turns off the log file for easier     debugging.    - Added a --new option to avoid loading the most-recent     file for the current run.    - Fixed --help and --version abbreviations so that the application     stops after, say, options --hel, for example.  - Miscellaneous:   - Most of the 'qss' files have been tweaked.    - The new "font-fix.qss" style sheet can be used to correct font     sizes. Other style sheets have been updated, as well..    - Beefed up the tool-tips.    - Changed the shortcut (accelerator key) for Import / Project     Configuration from Ctrl-J ("LF") to Ctrl-G ("BEL").    - Fixed some notable errors. See "Fixed" in NEWS. Also     fixed quite a few minor errors.  - Documentation updated to explain the MIDI Learn Manager.
 	* NEWS, RELNOTES, VERSION, doc/latex/tex/midi_learn.tex,
 	libseq66/src/cfg/settings.cpp, meson.build, nsis/MesonSetup.nsi,
 	nsis/Seq66Constants.nsh, nsis/Seq66Setup.nsi,
