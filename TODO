@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.27
 Chris Ahlstrom
-2019-04-13 to 2026-08-09
+2019-04-13 to 2026-08-10
 
     -   Follow up on RPN:
         -   program-banks.text (issue #138)
@@ -10,11 +10,8 @@ Chris Ahlstrom
     -   The ":" key is available (as well as some other keys). How
         can we use them?
     -   Reinvestigate the MIDI macros.
-        -   Also, leaving off reset and find does not seem to work.
-        -   Add a way to delete a macro (in Session tab).
-        -   In qseqeditframe64 and qsessionframe, add on_macro_change()
-            overrides. Add notify_macro_change() to performer.
         -   Delete, re-add, and mark an existing macro as "modified".
+        -   Can we add a general macro editor to the event editor?
     -   Background recording / Metronome.
         -   Finish testing scratchpad recording.
         -   Can we show the patch name, and if drums, the drum name?
@@ -28,8 +25,6 @@ Chris Ahlstrom
             flags from its events.
         -   Also, can paste a long selection into a short pattern.
             Either warn about it or change the length.
-    -   Pattern editor. Add Ctrl-T to bring up the Tools menu, and
-        maybe some other Ctrl-shortcuts.
 
 Back burner:
 

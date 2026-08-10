@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-03
+ * \updates       2026-08-09
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -144,6 +144,17 @@ public:
     bool is_valid () const
     {
         return m_is_valid;
+    }
+
+protected:
+
+    /*
+     * Specifically for use in rpn::create_rpn_events().
+     */
+
+    void is_valid (bool flag)
+    {
+        m_is_valid = flag;
     }
 
 private:

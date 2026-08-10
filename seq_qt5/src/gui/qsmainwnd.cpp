@@ -1076,7 +1076,7 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * This is the same as the "L" button.
+     * This is the same function as the "L" button.
      */
 
     connect
@@ -1087,8 +1087,6 @@ qsmainwnd::qsmainwnd
             learn_toggle();
         }
     );
-
-// #endif          // QT
 
 #else
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-08
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -73,11 +73,11 @@ enum rpn_select_t
     rpn_select_parameter_reset
 };
 
-/*
- * For testing.
- */
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
-#if defined SEQ66_PLATFORM_DEBUG
+/*
+ * For testing only.
+ */
 
 rpn::info qrpnframe::sm_rpn_test_info
 {
@@ -353,7 +353,14 @@ qrpnframe::qrpnframe
     ui->button_rpn_macro->setEnabled(false);
 
     /*
-     * Insert/Append button.
+     * Hide the "Reserved" buttons.
+     */
+
+    ui->button_reserved_1->hide();
+    ui->button_reserved_2->hide();
+
+    /*
+     * Insert (N)RPN button.
      */
 
     connect
@@ -661,6 +668,8 @@ qrpnframe::slot_macro_name_changed ()
  *  current rpn::info data supplied in the constructor in by editing
  *  the various user-interface elements in the qrpnframe.
  *
+ *  performer sets this: rc().auto_ctrl_save(true);
+ *
  *  TODO: If already present, delete and re-add the macro and
  *        mark it as "modified".
  */
@@ -669,10 +678,11 @@ void
 qrpnframe::slot_create_macro ()
 {
     std::string macnam { m_macro_name };
+    int macchannel { m_rpn_channel };
     rpn r { rpn_info() };
     tokenization name_and_data
     {
-        r.create_rpn_macro_string(macnam, m_rpn_channel)
+        r.create_rpn_macro_string(macnam, macchannel)
     };
     bool ok { name_and_data.size() == 2 };
     if (ok)
@@ -685,23 +695,18 @@ qrpnframe::slot_create_macro ()
     if (ok)
     {
         ui->label_warning->setText(qt(name_and_data[1]));
-
-        /*
-         * performer sets this.
-         *
-         * rc().auto_ctrl_save(true);
-         */
-
         perf().notify_macro_change(m_macro_name, performer::macro::added);
     }
     else
     {
-        ui->label_warning->setText("Error creating macro");
+        ui->label_warning->setText("Error creating macro; duplicate name?");
     }
 }
 
 /*
- * Compare this function to qseqeditframe64::insert_macro().
+ *  Compare this function to qseqeditframe64::insert_macro(). But we
+ *  need to make sure that the vector of events-bytes is made. We also
+ *  need to create the macro string for display.
  */
 
 void
@@ -709,10 +714,20 @@ qrpnframe::slot_rpn_insert ()
 {
     rpn r(rpn_info());
     midipulse tick { rpn_info().rpn_time_stamp };
-    bool ok { track().add_macro(tick, r) };
+    std::string macnam { m_macro_name };
+    int macchannel { m_rpn_channel };
+    tokenization name_and_data
+    {
+        r.create_rpn_macro_string(macnam, macchannel)
+    };
+    bool ok { name_and_data.size() == 2 };
+    if (ok)
+       ok = track().add_macro(tick, r);
+
     if (ok)
     {
-        ui->label_warning->setText("Macro created");
+        ui->label_warning->setText(qt(name_and_data[1]));
+        perf().notify_macro_change(m_macro_name, performer::macro::inserted);
     }
     else
     {

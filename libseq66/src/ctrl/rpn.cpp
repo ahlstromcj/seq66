@@ -168,6 +168,7 @@ rpn::create_rpn_events (int channel)
 
     if (ok)
     {
+        int evcount { 0 };
         midibyte cc { 0xB0 };
         midibyte ch { midibyte(channel) };
         midibytes pnbytes { rpn_number_to_bytes(parameter_number()) };
@@ -179,12 +180,15 @@ rpn::create_rpn_events (int channel)
             evbytes.push_back(0x65);                    /* RPN MSB flag     */
             evbytes.push_back(pnbytes[0]);              /* parameter MSB    */
             result.push_back(evbytes);                  /* push first event */
+            ++evcount;
 
             evbytes.clear();
             evbytes.push_back(cc);                      /* controller event */
             evbytes.push_back(0x64);                    /* RPN LSB flag     */
             evbytes.push_back(pnbytes[1]);              /* parameter LSB    */
             result.push_back(evbytes);                  /* push next event  */
+            ++evcount;
+            is_valid(true);                             /* a bit tricky     */
             if (append_data())
             {
                 midibytes vbytes { rpn_number_to_bytes(parameter_value()) };
@@ -193,6 +197,7 @@ rpn::create_rpn_events (int channel)
                 evbytes.push_back(0x06);                /* data slider MSB  */
                 evbytes.push_back(vbytes[0]);           /* value MSB        */
                 result.push_back(evbytes);              /* push next event */
+                ++evcount;
 
                 if (use_fine_rpn())
                 {
@@ -201,6 +206,7 @@ rpn::create_rpn_events (int channel)
                     evbytes.push_back(0x26);            /* data slider LSB  */
                     evbytes.push_back(vbytes[1]);       /* value LSB        */
                     result.push_back(evbytes);          /* push next event  */
+                    ++evcount;
                 }
             }
             if (append_reset())
@@ -208,9 +214,12 @@ rpn::create_rpn_events (int channel)
                 midibytes reset_msb { cc, 0x65, 0x7f }; /* (N)RPN reset MSB */
                 midibytes reset_lsb { cc, 0x64, 0x7f }; /* (N)RPN reset LSB */
                 result.push_back(reset_msb);
+                ++evcount;
                 result.push_back(reset_lsb);
+                ++evcount;
             }
         }
+        m_event_count = evcount;
     }
     return result;
 }

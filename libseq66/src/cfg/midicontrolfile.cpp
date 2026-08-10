@@ -481,8 +481,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     bussbyte buss { get_buss_number(file, true, mctag, "output-buss") };
     bool enabled { false };
     bool new_version { false };
-//  std::string v { parse_version(file) };
-//  if (v.empty() || file_version_is_old(file))
     if (file_version_is_old(file))
         new_version = true;
 

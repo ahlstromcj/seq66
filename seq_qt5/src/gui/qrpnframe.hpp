@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-08
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -59,7 +59,7 @@ class qrpnframe : public QFrame
 {
     Q_OBJECT
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     static rpn::info sm_rpn_test_info;
 #endif
 
@@ -95,7 +95,7 @@ public:
 
     rpn::info & rpn_info ()
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         return sm_rpn_test_info;
 #else
         return m_rpn_info;
@@ -104,7 +104,7 @@ public:
 
     const rpn::info & rpn_info () const
     {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         return sm_rpn_test_info;
 #else
         return m_rpn_info;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-08-07
+ * \updates       2026-08-10
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -37,6 +37,10 @@
 
 namespace seq66
 {
+
+/**
+ *  Internal structure used below.
+ */
 
 using namepair = struct
 {
@@ -237,9 +241,8 @@ s_rpn_names [c_rpn_value_count]
     {   0x0003,     "Tuning program change"         },
     {   0x0004,     "Tuning bank select"            },
     {   0x0005,     "Modulation depth range"        },
-//  {   0x0006,     "Channel range"                 },      // ???
     {   0x007F,     "RPN parameter reset"           },
-    {   0x3FFF,     "RPN null"                      }       // ???
+    {   0x3FFF,     "RPN null"                      }       /* terminator?  */
 };
 
 std::string

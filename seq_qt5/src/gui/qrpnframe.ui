@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>805</width>
-    <height>416</height>
+    <width>794</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,6 +79,9 @@
      </item>
      <item>
       <widget class="QRadioButton" name="radio_button_rpn_data_incr">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <bold>false</bold>
@@ -91,6 +94,9 @@
      </item>
      <item>
       <widget class="QRadioButton" name="radio_button_rpn_data_decr">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <bold>false</bold>
@@ -110,7 +116,7 @@
      <x>510</x>
      <y>40</y>
      <width>261</width>
-     <height>271</height>
+     <height>261</height>
     </rect>
    </property>
    <property name="font">
@@ -319,7 +325,7 @@ to the 'ctrl' file.</string>
     <rect>
      <x>280</x>
      <y>190</y>
-     <width>161</width>
+     <width>211</width>
      <height>61</height>
     </rect>
    </property>
@@ -330,10 +336,9 @@ to the 'ctrl' file.</string>
     </font>
    </property>
    <property name="text">
-    <string>RPN and NRPN use the 
-data entry slider by default.
-RPN reset is added by 
-default (recommended).</string>
+    <string>RPN and NRPN use the data entry
+slider by default. RPN reset is
+added by default (recommended).</string>
    </property>
   </widget>
   <widget class="QPushButton" name="button_bbt">
@@ -444,7 +449,7 @@ macro.</string>
        <string>Inserts the controller events at the given timestamp.</string>
       </property>
       <property name="text">
-       <string>&amp;Insert/Append</string>
+       <string>&amp;Insert (N)RPN</string>
       </property>
      </widget>
     </item>
@@ -454,7 +459,7 @@ macro.</string>
        <string>Close the dialog.</string>
       </property>
       <property name="text">
-       <string>Cancel</string>
+       <string>Close</string>
       </property>
      </widget>
     </item>
@@ -464,7 +469,7 @@ macro.</string>
    <property name="geometry">
     <rect>
      <x>280</x>
-     <y>80</y>
+     <y>81</y>
      <width>212</width>
      <height>95</height>
     </rect>
@@ -511,7 +516,7 @@ as well as the &quot;coarse&quot; version.</string>
     <rect>
      <x>290</x>
      <y>11</y>
-     <width>481</width>
+     <width>491</width>
      <height>21</height>
     </rect>
    </property>
@@ -549,6 +554,38 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="checkable">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_reserved_1">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>504</x>
+     <y>307</y>
+     <width>125</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reserved</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_reserved_2">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>634</x>
+     <y>307</y>
+     <width>126</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reserved</string>
    </property>
   </widget>
  </widget>

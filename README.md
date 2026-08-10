@@ -1,4 +1,4 @@
-# README for Seq66 0.99.27 2026-08-02
+# README for Seq66 0.99.27 2026-08-10
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -29,7 +29,7 @@ See NEWS for updates and RELNOTES for the latest highlights.
 See the two "INSTALL" files for installation.
 
 The figure below shows Seq66 with modified palette and a style-sheet
-in force. Otherwise the application uses the current Qt theme.
+in force. Otherwise Seq66 uses the current Qt theme.
 
 ![Alt text](doc/latex/images/main-window/main-windows-perstfic.png?raw=true "Seq66")
 
@@ -39,16 +39,18 @@ in force. Otherwise the application uses the current Qt theme.
 
     *   Qt 5 or Qt 6 (cross-platform). Loop-button grid. Qt style-sheet
         support.
-    *   Colorable pattern slots; the palette can be saved in a '*.palette' file.
+    *   Colorful loop slots; colors can be saved in a '*.palette' file.
     *   Drag-and-drop a MIDI file onto the main grid to load it.
     *   Tabs and external windows for patterns, sets, mute-groups, song
         layout, event-editing, play-lists, and session information.
     *   Low-frequency oscillator (LFO) to modify continuous controller
         and velocity values.
-    *   "Pattern fixer" for expansion/compression/alignment of note patterns.
+    *   "Pattern fixer" for expansion/compression/alignment of note
+        patterns.
     *   "MIDI learn" manager for easily setting up a grid controller.
-    *   "RPN/NRPN" editor for sending out multiple MIDI device configuration
-        events.
+    *   "RPN/NRPN" editor for inserting out multiple MIDI device
+        configuration events and saving them as macros.
+    *   Event editor for detailed inspection and editing of events.
     *   Horizontal and vertical zoom in the pattern and song editors.
     *   Extremely resizable.
     *   A headless/daemon/command-line version to use with a MIDI grid
