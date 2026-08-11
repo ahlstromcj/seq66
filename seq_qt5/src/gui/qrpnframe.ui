@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>794</width>
-    <height>405</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,7 +116,7 @@
      <x>510</x>
      <y>40</y>
      <width>261</width>
-     <height>261</height>
+     <height>301</height>
     </rect>
    </property>
    <property name="font">
@@ -132,8 +132,8 @@
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>241</width>
-      <height>227</height>
+      <width>248</width>
+      <height>260</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -210,6 +210,18 @@
       </widget>
      </item>
      <item>
+      <widget class="QRadioButton" name="radio_rpn_mpe_config_msg">
+       <property name="font">
+        <font>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>MPE configuration message</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QRadioButton" name="radio_rpn_parameter_reset">
        <property name="font">
         <font>
@@ -260,7 +272,7 @@
    <property name="geometry">
     <rect>
      <x>371</x>
-     <y>306</y>
+     <y>345</y>
      <width>126</width>
      <height>30</height>
     </rect>
@@ -345,7 +357,7 @@ added by default (recommended).</string>
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>265</y>
+     <y>306</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -362,7 +374,7 @@ and ticks.</string>
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>260</y>
+     <y>300</y>
      <width>341</width>
      <height>121</height>
     </rect>
@@ -426,7 +438,7 @@ specify a pitch change of 12 semitones and
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>342</y>
+     <y>383</y>
      <width>391</width>
      <height>36</height>
     </rect>
@@ -544,7 +556,7 @@ as well as the &quot;coarse&quot; version.</string>
    <property name="geometry">
     <rect>
      <x>436</x>
-     <y>265</y>
+     <y>306</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -556,20 +568,20 @@ as well as the &quot;coarse&quot; version.</string>
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="button_reserved_1">
+  <widget class="QPushButton" name="button_rpn_send">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="geometry">
     <rect>
      <x>504</x>
-     <y>307</y>
+     <y>346</y>
      <width>125</width>
      <height>30</height>
     </rect>
    </property>
    <property name="text">
-    <string>Reserved</string>
+    <string>Send (N)RPN</string>
    </property>
   </widget>
   <widget class="QPushButton" name="button_reserved_2">
@@ -579,13 +591,29 @@ as well as the &quot;coarse&quot; version.</string>
    <property name="geometry">
     <rect>
      <x>634</x>
-     <y>307</y>
+     <y>346</y>
      <width>126</width>
      <height>30</height>
     </rect>
    </property>
    <property name="text">
     <string>Reserved</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_reserved_1">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>25</x>
+     <y>260</y>
+     <width>471</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>

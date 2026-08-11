@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-10
+ * \updates       2026-08-11
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -68,6 +68,7 @@ enum rpn_select_t
     rpn_select_tuning_program_change,
     rpn_select_tuning_bank_select,
     rpn_select_modulation_depth_range,
+    rpn_select_mpe_configuration_message,
     rpn_select_parameter_reset
 };
 
@@ -255,6 +256,10 @@ qrpnframe::qrpnframe
         );
         m_select_value_group->addButton
         (
+            ui->radio_rpn_mpe_config_msg, rpn_select_mpe_configuration_message
+        );
+        m_select_value_group->addButton
+        (
             ui->radio_rpn_parameter_reset, rpn_select_parameter_reset
         );
         select_rpn_parameter_type(rpn_select_pitchbend_range);
@@ -352,9 +357,16 @@ qrpnframe::qrpnframe
 
     /*
      * Hide the "Reserved" buttons.
+     *
+     *  ui->button_reserved_1->hide() now used to send (N)RPN
      */
 
-    ui->button_reserved_1->hide();
+    connect
+    (
+        ui->button_rpn_send, SIGNAL(clicked(bool)),
+        this, SLOT(slot_rpn_send())
+    );
+
     ui->button_reserved_2->hide();
 
     /*
@@ -460,6 +472,12 @@ qrpnframe::select_rpn_parameter_type (int rpnparamtype)
 
         paramtype = rpn::parameter::modulation_depth_range;
         ui->radio_rpn_mod_depth_range->setChecked(true);
+        break;
+
+    case rpn_select_mpe_configuration_message:
+
+        paramtype = rpn::parameter::mpe_configuration_msg;
+        ui->radio_rpn_mpe_config_msg->setChecked(true);
         break;
 
     case rpn_select_parameter_reset:
@@ -700,6 +718,36 @@ qrpnframe::slot_create_macro ()
         ui->label_warning->setText("Error creating macro; duplicate name?");
     }
 }
+
+/**
+ *  Send the (N)RPN message out on the MIDI Control Out buss.
+ */
+
+void
+qrpnframe::slot_rpn_send ()
+{
+    rpn r(rpn_info());
+    std::string macnam { m_macro_name };
+    int macchannel { m_rpn_channel };
+    tokenization name_and_data
+    {
+        r.create_rpn_macro_string(macnam, macchannel)
+    };
+    bool ok { name_and_data.size() == 2 };
+    if (ok)
+       ok = perf().send_macro_bytes(r);     /* uses the bytes, not the name */
+
+    if (ok)
+    {
+        ui->label_warning->setText(qt(name_and_data[1]));
+        perf().notify_macro_change(m_macro_name, performer::macro::sent);
+    }
+    else
+    {
+        ui->label_warning->setText("Error sending macro");
+    }
+}
+
 
 /*
  *  Compare this function to qseqeditframe64::insert_macro(). But we

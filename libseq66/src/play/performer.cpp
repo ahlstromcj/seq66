@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-10
+ * \updates       2026-08-11
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7365,6 +7365,28 @@ performer::send_onoff_play_states (midicontrolout::uiaction a)
         send_onoff_event(a, true);
     else
         announce_automation();
+}
+
+/**
+ *  This function is used by the RPN frame dialog to send all the
+ *  byte in the (perhaps not yet named and saved) macro.
+ */
+
+bool
+performer::send_macro_bytes (const midimacro & macro)
+{
+    bool result = macro.is_valid();
+    if (result)
+    {
+        for (int i = 0; i < macro.event_count(); ++i)
+        {
+            const midibytes & dbytes = macro.bytes(i);
+            result = midi_control_out().send_macro(dbytes);
+            if (! result)
+                break;
+        }
+    }
+    return result;
 }
 
 /**

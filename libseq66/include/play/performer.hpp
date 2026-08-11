@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-08-09
+ * \updates       2026-08-11
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -176,7 +176,7 @@ public:
         added,          /**< The macro was added (see the qrpnframe class). */
         modified,       /**< Duty now for the future!                       */
         inserted,       /**< Events added to a sequence/loop/pattern.       */
-        sent            /**< Might be useful in the future.                 */
+        sent            /**< Might be useful in the future (i.e. now!)      */
     };
 
     /**
@@ -3147,6 +3147,8 @@ public:
     {
         return midi_control_out().send_macro(name);
     }
+
+    bool send_macro_bytes (const midimacro & mac);
 
     bool send_macro (const midibytes & byts)
     {

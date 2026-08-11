@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-08-10
+ * \updates       2026-08-11
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -232,6 +232,12 @@ using rpnpair = struct
 
 static const int c_rpn_value_count { 9 };
 
+/*
+ * An MPE Configuration Message (MCM) is a specialized MIDI message used to
+ * define and set up MIDI Polyphonic Expression (MPE) zones on compatible
+ * hardware and software.
+ */
+
 static rpnpair
 s_rpn_names [c_rpn_value_count]
 {
@@ -241,6 +247,7 @@ s_rpn_names [c_rpn_value_count]
     {   0x0003,     "Tuning program change"         },
     {   0x0004,     "Tuning bank select"            },
     {   0x0005,     "Modulation depth range"        },
+    {   0x0005,     "MPE configuration message"     },      /* see above    */
     {   0x007F,     "RPN parameter reset"           },
     {   0x3FFF,     "RPN null"                      }       /* terminator?  */
 };
