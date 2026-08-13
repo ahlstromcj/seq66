@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-11
+ * \updates       2026-08-12
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -126,6 +126,7 @@ private slots:
 
     void slot_select_rpn_control (int r);
     void slot_midi_channel (int c);
+    void slot_midi_buss (int b);
     void slot_rpn_append_data (int state);
     void slot_rpn_append_reset (int state);
     void slot_rpn_use_fine_rpn (int state);
@@ -181,6 +182,13 @@ private:
      */
 
     int m_rpn_channel { 0 };
+
+    /**
+     *  The default buss is the MIDI Control Out buss.
+     *  The user can select other busses.
+     */
+
+    int m_rpn_buss { null_buss() };     /* 0xFF */
 
     /**
      *  Holds the current time-format. See the calculations header

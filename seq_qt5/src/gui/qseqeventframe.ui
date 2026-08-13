@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>430</height>
+    <height>432</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,7 +42,7 @@
     <rect>
      <x>9</x>
      <y>17</y>
-     <width>491</width>
+     <width>451</width>
      <height>391</height>
     </rect>
    </property>
@@ -153,8 +153,8 @@
   <widget class="QPlainTextEdit" name="data_text_edit">
    <property name="geometry">
     <rect>
-     <x>510</x>
-     <y>291</y>
+     <x>479</x>
+     <y>273</y>
      <width>331</width>
      <height>61</height>
     </rect>
@@ -178,20 +178,17 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>520</x>
-     <y>356</y>
-     <width>261</width>
-     <height>52</height>
+     <x>475</x>
+     <y>338</y>
+     <width>331</width>
+     <height>58</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <property name="sizeConstraint">
      <enum>QLayout::SizeConstraint::SetFixedSize</enum>
     </property>
-    <property name="horizontalSpacing">
-     <number>20</number>
-    </property>
-    <property name="verticalSpacing">
+    <property name="spacing">
      <number>2</number>
     </property>
     <item row="0" column="2">
@@ -216,31 +213,6 @@
       </property>
       <property name="text">
        <string>Modif&amp;y</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="button_del">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>64</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>90</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Deletes the currently-selected MIDI event.</string>
-      </property>
-      <property name="text">
-       <string>&amp;Delete</string>
       </property>
      </widget>
     </item>
@@ -299,31 +271,6 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="button_ins">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>64</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>90</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Inserts a new event at the time shown above, with the data items shown above.</string>
-      </property>
-      <property name="text">
-       <string>&amp;Insert</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="button_clear">
       <property name="enabled">
@@ -349,12 +296,94 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       </property>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="button_del">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>90</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Deletes the currently-selected MIDI event.</string>
+      </property>
+      <property name="text">
+       <string>&amp;Delete</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="button_ins">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>90</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Inserts a new event at the time shown above, with the data items shown above.</string>
+      </property>
+      <property name="text">
+       <string>&amp;Insert</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="button_rpn">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>(N)RPN</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QPushButton" name="macro_button">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Macro</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QWidget" name="horizLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>479</x>
      <y>12</y>
      <width>321</width>
      <height>32</height>
@@ -433,9 +462,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="dataLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>509</x>
+     <x>478</x>
      <y>48</y>
-     <width>321</width>
+     <width>324</width>
      <height>52</height>
     </rect>
    </property>
@@ -581,168 +610,13 @@ same time.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="countsLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>511</x>
-     <y>260</y>
-     <width>331</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,0,0,0,0">
-    <property name="sizeConstraint">
-     <enum>QLayout::SizeConstraint::SetFixedSize</enum>
-    </property>
-    <property name="horizontalSpacing">
-     <number>8</number>
-    </property>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="entry_ev_data_0">
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="statusTip">
-       <string>The first data byte, if applicable. Change using decimal or hex (0xnn) notation.</string>
-      </property>
-      <property name="text">
-       <string>0x00</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <widget class="QCheckBox" name="hex_data_check_box">
-      <property name="maximumSize">
-       <size>
-        <width>64</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Hex</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4">
-     <widget class="QCheckBox" name="pulse_time_check_box">
-      <property name="minimumSize">
-       <size>
-        <width>64</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>64</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Ticks</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="d1_label">
-      <property name="minimumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>D1</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <widget class="QLineEdit" name="entry_ev_data_1">
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>40</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="statusTip">
-       <string>The second data byte, if applicable.  Change using decimal or hex (0xnn) notation.</string>
-      </property>
-      <property name="text">
-       <string>0x00</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="d0_label">
-      <property name="minimumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>D0</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="6">
-     <widget class="QPushButton" name="macro_button">
-      <property name="text">
-       <string>Macro</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="dLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>512</x>
-     <y>109</y>
+     <x>481</x>
+     <y>104</y>
      <width>311</width>
-     <height>150</height>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -790,7 +664,7 @@ same time.</string>
       <property name="maximumSize">
        <size>
         <width>180</width>
-        <height>24</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maxVisibleItems">
@@ -917,13 +791,13 @@ pattern length.</string>
       <property name="minimumSize">
        <size>
         <width>52</width>
-        <height>0</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>16777215</height>
+        <height>28</height>
        </size>
       </property>
       <property name="toolTip">
@@ -1001,13 +875,13 @@ by name.</string>
       <property name="minimumSize">
        <size>
         <width>52</width>
-        <height>0</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>16777215</height>
+        <height>28</height>
        </size>
       </property>
       <property name="toolTip">
@@ -1023,13 +897,13 @@ by name.</string>
       <property name="minimumSize">
        <size>
         <width>52</width>
-        <height>0</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>16777215</height>
+        <height>28</height>
        </size>
       </property>
       <property name="toolTip">
@@ -1047,13 +921,13 @@ the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
       <property name="minimumSize">
        <size>
         <width>52</width>
-        <height>0</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>16777215</height>
+        <height>28</height>
        </size>
       </property>
       <property name="toolTip">
@@ -1061,6 +935,148 @@ the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
       </property>
       <property name="text">
        <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>492</x>
+     <y>241</y>
+     <width>301</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="d0_label">
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>D0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="entry_ev_data_0">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="statusTip">
+       <string>The first data byte, if applicable. Change using decimal or hex (0xnn) notation.</string>
+      </property>
+      <property name="text">
+       <string>0x00</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="d1_label">
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>D1</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="entry_ev_data_1">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>40</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="statusTip">
+       <string>The second data byte, if applicable.  Change using decimal or hex (0xnn) notation.</string>
+      </property>
+      <property name="text">
+       <string>0x00</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="hex_data_check_box">
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Hex</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="pulse_time_check_box">
+      <property name="minimumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Ticks</string>
       </property>
      </widget>
     </item>

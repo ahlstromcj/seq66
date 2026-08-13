@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-08-11
+ * \updates       2026-08-12
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -3148,12 +3148,17 @@ public:
         return midi_control_out().send_macro(name);
     }
 
-    bool send_macro_bytes (const midimacro & mac);
-
     bool send_macro (const midibytes & byts)
     {
         return midi_control_out().send_macro(byts);
     }
+
+    bool send_macro_bytes
+    (
+        const midimacro & mac,
+        int b = int(null_buss()),
+        int ch = int(null_channel())
+    );
 
     bool macros_active () const
     {

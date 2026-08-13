@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2026-08-02
+% \update      2026-08-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -571,8 +571,15 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    session manager.  It will detect the absense of the session manager and run
    normally.
 
-\subsubsection{Session Management / Sessions Tab}
-\label{subsubsec:sessions_tab}
+   Note that there are many implementations of NSM clients:
+   \textsl{Agordejo} \cite{agordejo},
+   \textsl{RaySession} \cite{raysession},
+   and the
+   \textsl{New/Non Session Manager} \cite{nsm}
+   with the JACK project's \texttt{nsm-legacy-gui}.
+
+\subsection{Session Management / Sessions Tab}
+\label{subsec:sessions_tab}
 
    The \textsl{Session} tab is a mostly \textsl{read-only} tab
    provided to orient the user to the setup supported by the session.
@@ -586,15 +593,23 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    It is meant to display information to
    help the user understand what is happening in the run.
    Two screenshots are shown below.
+
 %  The first shows a \textbf{Session Log} pane, but this has been removed
 %  as non-functional.
+
+   Other than status display, there a also some changes and action
+   that can be performed, as described below.
 
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.65]{tabs/session/session-song-info.png}
-   \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab.png}
+%  \includegraphics[scale=0.65]{tabs/session/qseq66-session-tab.png}
+   \includegraphics[scale=0.65]{tabs/session/main-session-tab.png}
    \caption*{Session Tab}
 \end{figure}
+
+\subsubsection{Session Management / Sessions Tab / Interface Items}
+\label{subsubsec:sessions_tab}
 
    \index{sessions!ui}
    This section describes the \textsl{Session} tab in the main
@@ -635,7 +650,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          the base name of the main configuration file,
          such as \texttt{qseq66.rc}.
       \item The generated \textbf{client ID/UUID} for the session.
-      \item \textbf{Macro Execution}.
+      \item \textbf{Macros}.
          This drop-down contains all of the named MIDI macros
          defined in the 'ctrl' file's
          \texttt{[macro-control-out]} section.
@@ -647,6 +662,17 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          a MIDI controller into the proper mode for controlling and displaying
          information in \textsl{Seq66}, and "shutdown" can return the controller
          to its normal operating mode.
+      \item \textbf{Ctrl Out}.
+         The drop-down contains this item as the first, and default one.
+         It specifies the MIDI control out port.
+         After this item, all of the available output ports are 
+         shown. This makes it easy to direct a macro to another
+         device.
+      \item \textbf{Send}.
+         This button sends the selected macro to the selected bus.
+      \item \textbf{Delete}.
+         This button deletes the selected macro and marks the 'ctrl'
+         file for saving at exit.
       \item \textbf{Session Log File}.
          The editable name of the log file
          to which to redirect warning
@@ -701,12 +727,29 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
          made here.
    \end{itemize}
 
-   Note that there are many implementations of NSM clients:
-   \textsl{Agordejo} \cite{agordejo},
-   \textsl{RaySession} \cite{raysession},
-   and the
-   \textsl{New/Non Session Manager} \cite{nsm}
-   with the JACK project's \texttt{nsm-legacy-gui}.
+\subsubsection{Session Management / Sessions Tab / Notes About Macros}
+
+   First, there are a handful of hardwired macros.
+   (See \sectionref{subsubsec:configuration_ctrl_macro_control_out}).
+   Additional macros can currently be added in two ways:
+
+   \begin{itemize}
+      \item \textbf{Editing the 'ctrl' file}.
+         This method involves back up the old 'ctrl' file, then
+         adding the desired macro (names and bytes) to a line in the
+         \texttt{[macro-control-out]} section.
+         Of course, macros can also be deleted from this section,
+         or modified.
+         See \sectionref{subsubsec:configuration_ctrl_macro_control_out}.
+      \item \textbf{The (N)RPN dialog}.
+         For adding the RPN or NRPN controller, this dialog is handy,
+         as it can add up to six controller events at once, which would
+         be tedious to do in the event event editor.
+         See \sectionref{subsec:pattern_editor_rpn_nrpn_dialog}.
+   \end{itemize}
+
+   In the future, we might write a small user-interface to make
+   macro creation, editing, and deletion more foolproof.
 
 \subsubsection{Seq66 Session Management / NSM / File Menu}
 \label{subsubsec:sessions_file_menu}
@@ -727,8 +770,9 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    options for import and export.
    (See \sectionref{subsec:menu_file}.)
 
-   This has been changed for 0.98.6; the \textbf{Quit} menu entry becomes
-   \textbf{Hide}, as per the NSM protocol.  Also have fixed a bug that disables
+   This has been changed; the \textbf{Quit} menu entry becomes
+   \textbf{Hide}, as per the NSM protocol.
+   Also have fixed a bug that disables
    the load-most-recent option under NSM.
    We will update the figure above eventually.
    The following items describe the menu entries.

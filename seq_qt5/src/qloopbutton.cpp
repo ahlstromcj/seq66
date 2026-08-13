@@ -82,10 +82,10 @@ static const int s_alpha_popup      =  32;
  *  other sizes.
  */
 
-static const int s_fontsize_main    =  8;       // 7;
-static const int s_fontsize_large   = 10;       // for usr:progress-bar-thick
-static const int s_fontsize_record  =  8;       // 5;
-static const int s_radius_record    =  8;       // 9, 8;
+static const int s_fontsize_main    =  8;
+static const int s_fontsize_large   = 10;   /* for usr:progress-bar-thick   */
+static const int s_fontsize_record  =  8;
+static const int s_radius_record    =  8;
 
 namespace seq66
 {

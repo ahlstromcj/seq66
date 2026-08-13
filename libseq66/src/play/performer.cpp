@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-11
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7370,20 +7370,66 @@ performer::send_onoff_play_states (midicontrolout::uiaction a)
 /**
  *  This function is used by the RPN frame dialog to send all the
  *  byte in the (perhaps not yet named and saved) macro.
+ *
+ * \param macro
+ *      A Seq66 MIDI macro holding one or more sets of
+ *      event bytes.
+ *
+ * \param busbyte
+ *      An optional nominal bus number, which should be obtained
+ *      from the buss selector. Defaults to 0xFF (null-buss).
+ *      Useful to send to a buss besides the MIDI Control Out buss.
+ *      A different method is used for sending.
+ *
+ * \param channel
+ *      An optional channel number, ....
+ *
+ * \return
+ *      Returns true if the send succeeded for all event, or
+ *      a particular buss is provided. (That method does not
+ *      provide a success return.
  */
 
 bool
-performer::send_macro_bytes (const midimacro & macro)
+performer::send_macro_bytes
+(
+    const midimacro & macro,
+    int busbyte,
+    int channel
+)
 {
+    (void) channel;                     /* obtained from the status byte    */
+
     bool result = macro.is_valid();
     if (result)
     {
-        for (int i = 0; i < macro.event_count(); ++i)
+        bussbyte b { bussbyte(busbyte) };
+        if (is_null_buss(b))
         {
-            const midibytes & dbytes = macro.bytes(i);
-            result = midi_control_out().send_macro(dbytes);
-            if (! result)
-                break;
+            for (int i = 0; i < macro.event_count(); ++i)
+            {
+                const midibytes & dbytes { macro.bytes(i) };
+                result = midi_control_out().send_macro(dbytes);
+                if (! result)
+                    break;
+            }
+        }
+        else
+        {
+            /*
+             * This works for 3-byte MIDI messages, such as an RPN
+             * controller event. Compare to midicontrolout::send_macro().
+             * Get the true bus if port-mapped.
+             */
+
+            bussbyte truebus { true_output_bus(b) };
+            const midipulse ts { 0 };       /* timestamp does not matter    */
+            for (int i = 0; i < macro.event_count(); ++i)
+            {
+                const midibytes & dbytes { macro.bytes(i) };
+                event ev(ts, dbytes[0], dbytes[1], dbytes[2]);
+                m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+            }
         }
     }
     return result;

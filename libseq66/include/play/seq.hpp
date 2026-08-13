@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2024-11-17
+ * \updates       2026-08-12
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -225,9 +225,18 @@ public:
      *  testing right now, we leave the old limit in place.
      */
 
-    static int maximum ()
+    static number maximum ()
     {
         return sequence::maximum();             /* 1024 */
+    }
+
+    /**
+     *  A pattern used for "scratchpad recording".
+     */
+
+    static number recorder ()
+    {
+        return sequence::recorder();            /* 2040 */
     }
 
     /**

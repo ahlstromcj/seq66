@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-08-09
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -323,6 +323,45 @@ qsessionframe::populate_macro_combo ()
             ui->macroComboBox, SIGNAL(currentTextChanged(const QString &)),
             this, SLOT(slot_macro_pick(const QString &))
         );
+
+        /*
+         * Populate the buss combo box.
+         */
+
+        const clockslist & opm = output_port_map();
+        mastermidibus * mmb = perf().master_bus();
+        ui->bussComboBox->addItem("Ctrl Out");    /* the default */
+        if (not_nullptr(mmb))
+        {
+            int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
+            for (int b = 0; b < buses; ++b)
+            {
+                e_clock ec;
+                std::string busname;
+                if (perf().ui_get_clock(bussbyte(b), ec, busname))
+                {
+                    ui->bussComboBox->addItem(qt(busname));
+                    if (port_unusable(ec))
+                        enable_combobox_item(ui->bussComboBox, b + 1, false);
+                }
+            }
+
+            /*
+             * Buss combo-box.  If we set a buss, we have to add
+             * 1 to it to allow for the "Ctrl Out" entry.
+             */
+
+            connect
+            (
+                ui->bussComboBox, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(slot_midi_buss(int))
+            );
+        }
+
+        /*
+         * Send and Delete buttons.
+         */
+
         connect
         (
             ui->pushButtonMacroSend, SIGNAL(clicked(bool)),
@@ -347,6 +386,7 @@ qsessionframe::populate_macro_combo ()
     {
         ui->checkBoxMacrosActive->setChecked(false);
         ui->macroComboBox->setEnabled(false);
+        ui->bussComboBox->setEnabled(false);
         if (names.empty())
             ui->checkBoxMacrosActive->setEnabled(false);
     }
@@ -373,7 +413,13 @@ qsessionframe::slot_macro_pick (const QString & name)
 {
     std::string line = name.toStdString();
     size_t pos = line.find_first_of(":");
-    m_macro_name = line.substr(0, pos);             /* could be empty   */
+    m_macro_name = line.substr(0, pos);             /* could be empty       */
+}
+
+void
+qsessionframe::slot_midi_buss (int b)
+{
+    m_rpn_buss = b == 0 ? null_buss() : b - 1 ;
 }
 
 void
@@ -383,7 +429,15 @@ qsessionframe::slot_macro_send ()
     std::string line = name.toStdString();
     size_t pos = line.find_first_of(":");
     line = line.substr(0, pos);
-    perf().send_macro(line);
+    if (is_null_buss(m_rpn_buss))
+    {
+        (void) perf().send_macro(line);             /* use midicontrolout   */
+    }
+    else
+    {
+        const midimacro & mac { perf().get_macro(line) };
+        (void) perf().send_macro_bytes(mac, m_rpn_buss);
+    }
 }
 
 void
@@ -458,7 +512,12 @@ qsessionframe::slot_log_file ()
         rc().auto_usr_save(true);
         usr().modify();
         enable_reload_button(true);
-        ui->pushButtonLogFileClear->setEnabled(! temp.empty());
+
+        /*
+         * Unecessary.
+         *
+         * ui->pushButtonLogFileClear->setEnabled(! temp.empty());
+         */
     }
 }
 

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-07-11
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -38,6 +38,7 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_midi_bytes()    */
+#include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
 #include "ui_qseqeventframe.h"
@@ -89,6 +90,7 @@ qseqeventframe::qseqeventframe
     QFrame                  (parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeventframe),
+    m_perf                  (p),
     m_seq                   (s),
     m_eventslots            (new qseventslots(p, *this, s)),
     m_linked_selection      (false),
@@ -102,6 +104,7 @@ qseqeventframe::qseqeventframe
     m_is_dirty              (false),
     m_no_channel_index      (c_midichannel_max),
     m_current_timestamp     (),
+    m_rpn_wnd               (nullptr),
     m_select_popup          (nullptr)
 {
     ui->setupUi(this);
@@ -327,6 +330,16 @@ qseqeventframe::qseqeventframe
     ui->button_modify->setEnabled(false);
 
     /*
+     * (N)RPN button to bring up the qrpnframe.
+     */
+
+    connect
+    (
+        ui->button_rpn, SIGNAL(clicked(bool)),
+        this, SLOT(slot_rpn_frame())
+    );
+
+    /*
      * Save button, now labelled less misleadingly as "Store".
      */
 
@@ -403,6 +416,9 @@ qseqeventframe::qseqeventframe
 
 qseqeventframe::~qseqeventframe()
 {
+    if (not_nullptr(m_rpn_wnd))
+        delete m_rpn_wnd;
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1681,6 +1697,19 @@ qseqeventframe::slot_modify ()
     set_selection_multi(false);
 }
 
+void
+qseqeventframe::slot_rpn_frame ()
+{
+    if (is_nullptr(m_rpn_wnd))
+    {
+        m_rpn_wnd = new (std::nothrow) qrpnframe(perf(), track());
+        if (not_nullptr(m_rpn_wnd))
+            m_rpn_wnd->show();
+    }
+    else
+        m_rpn_wnd->show();
+}
+
 /**
  *  Handles saving the edited data back to the original sequence, now called
  *  "Store".
@@ -1803,13 +1832,19 @@ qseqeventframe::slot_dump ()
  *  Cancels the edits and closes the dialog box.  In order for removing the
  *  current-highlighting in the mainwd or perfedit windows, some of the work
  *  of slot_close() needs to be done here as well.
+ *
+ *  Not used.
  */
+
+#if 0
 
 void
 qseqeventframe::slot_cancel ()
 {
     set_selection_multi(false);
 }
+
+#endif
 
 /**
  *  Adds one measure to the length. We also need to prohibit entering

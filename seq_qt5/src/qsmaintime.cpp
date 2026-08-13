@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-10-15
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  *  This class implements the strip of boxes at the top of the main window
@@ -46,6 +46,7 @@ namespace seq66
  *  maximized horizontally.
  */
 
+static const int s_font_size                =   9;
 static const int s_max_box_width            = 120;
 static const int s_width_hint               = 150;
 static const double s_height_hint_factor    = 2.4;
@@ -74,7 +75,7 @@ qsmaintime::qsmaintime
     m_last_metro        (0)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_font.setPointSize(9);
+    m_font.setPointSize(s_font_size);
     m_font.setBold(true);
 #if defined SEQ66_USE_METRONOME_FADE
     m_color.setAlpha(m_alpha);

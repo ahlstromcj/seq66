@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>694</width>
-    <height>464</height>
+    <width>698</width>
+    <height>468</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QLabel" name="sessionNameLabel">
    <property name="geometry">
     <rect>
-     <x>17</x>
+     <x>10</x>
      <y>42</y>
-     <width>149</width>
-     <height>18</height>
+     <width>131</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -47,9 +47,9 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>189</x>
+     <x>160</x>
      <y>38</y>
-     <width>480</width>
+     <width>500</width>
      <height>28</height>
     </rect>
    </property>
@@ -61,13 +61,13 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>480</width>
+     <width>500</width>
      <height>28</height>
     </size>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
@@ -86,17 +86,17 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="sessionServerUrl">
    <property name="geometry">
     <rect>
-     <x>29</x>
+     <x>9</x>
      <y>72</y>
-     <width>137</width>
-     <height>18</height>
+     <width>132</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -124,9 +124,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>189</x>
+     <x>160</x>
      <y>68</y>
-     <width>480</width>
+     <width>500</width>
      <height>28</height>
     </rect>
    </property>
@@ -138,13 +138,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="maximumSize">
     <size>
-     <width>480</width>
+     <width>500</width>
      <height>30</height>
     </size>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
@@ -163,23 +163,23 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="sessionLogLabel">
    <property name="geometry">
     <rect>
-     <x>21</x>
-     <y>158</y>
-     <width>145</width>
-     <height>32</height>
+     <x>10</x>
+     <y>162</y>
+     <width>131</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>80</width>
-     <height>32</height>
+     <height>20</height>
     </size>
    </property>
    <property name="font">
@@ -237,9 +237,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>189</x>
+     <x>160</x>
      <y>8</y>
-     <width>480</width>
+     <width>500</width>
      <height>28</height>
     </rect>
    </property>
@@ -251,13 +251,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="maximumSize">
     <size>
-     <width>480</width>
+     <width>500</width>
      <height>30</height>
     </size>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
@@ -276,17 +276,17 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;Normal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;Normal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="sessionManagerNameLabel">
    <property name="geometry">
     <rect>
-     <x>9</x>
+     <x>4</x>
      <y>10</y>
-     <width>161</width>
-     <height>18</height>
+     <width>141</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -305,10 +305,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLabel" name="displayNameLabel">
    <property name="geometry">
     <rect>
-     <x>21</x>
+     <x>10</x>
      <y>102</y>
-     <width>145</width>
-     <height>18</height>
+     <width>131</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -327,7 +327,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLabel" name="clientIdLabel">
    <property name="geometry">
     <rect>
-     <x>373</x>
+     <x>344</x>
      <y>102</y>
      <width>125</width>
      <height>18</height>
@@ -352,7 +352,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>189</x>
+     <x>160</x>
      <y>98</y>
      <width>160</width>
      <height>28</height>
@@ -372,7 +372,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
@@ -391,8 +391,8 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QTextEdit" name="clientIdText">
@@ -401,9 +401,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>513</x>
+     <x>489</x>
      <y>98</y>
-     <width>156</width>
+     <width>171</width>
      <height>28</height>
     </rect>
    </property>
@@ -421,7 +421,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="verticalScrollBarPolicy">
@@ -440,8 +440,8 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-size:10pt; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'WenQuanYi Zen Hei'; font-weight:456;&quot;&gt;None&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="songPathText">
@@ -450,9 +450,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>179</x>
+     <x>150</x>
      <y>190</y>
-     <width>480</width>
+     <width>511</width>
      <height>28</height>
     </rect>
    </property>
@@ -470,7 +470,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
      <italic>true</italic>
     </font>
    </property>
@@ -490,9 +490,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>15</x>
-     <y>130</y>
-     <width>151</width>
+     <x>26</x>
+     <y>132</y>
+     <width>91</width>
      <height>20</height>
     </rect>
    </property>
@@ -503,7 +503,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </font>
    </property>
    <property name="text">
-    <string>Macro Execution</string>
+    <string>Macros</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -512,10 +512,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QComboBox" name="macroComboBox">
    <property name="geometry">
     <rect>
-     <x>207</x>
+     <x>150</x>
      <y>130</y>
-     <width>331</width>
-     <height>24</height>
+     <width>248</width>
+     <height>28</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -524,10 +524,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <height>24</height>
     </size>
    </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>28</height>
+    </size>
+   </property>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>Selects the macro to be sent.</string>
    </property>
    <property name="currentText">
     <string/>
@@ -539,8 +548,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QCheckBox" name="checkBoxMacrosActive">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>130</y>
+     <x>125</x>
+     <y>132</y>
      <width>21</width>
      <height>22</height>
     </rect>
@@ -552,9 +561,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLineEdit" name="lineEditLogFile">
    <property name="geometry">
     <rect>
-     <x>179</x>
+     <x>150</x>
      <y>160</y>
-     <width>421</width>
+     <width>452</width>
      <height>28</height>
     </rect>
    </property>
@@ -566,7 +575,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="toolTip">
@@ -584,13 +593,13 @@ remove this filename.</string>
     <rect>
      <x>31</x>
      <y>280</y>
-     <width>501</width>
+     <width>511</width>
      <height>91</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="toolTip">
@@ -629,7 +638,7 @@ author and dates.</string>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
      <italic>true</italic>
     </font>
    </property>
@@ -681,7 +690,7 @@ author and dates.</string>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
      <italic>true</italic>
     </font>
    </property>
@@ -746,9 +755,9 @@ then the first one is shown.</string>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>25</x>
+     <x>20</x>
      <y>220</y>
-     <width>141</width>
+     <width>121</width>
      <height>22</height>
     </rect>
    </property>
@@ -771,9 +780,9 @@ then the first one is shown.</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>179</x>
+     <x>150</x>
      <y>220</y>
-     <width>480</width>
+     <width>511</width>
      <height>28</height>
     </rect>
    </property>
@@ -785,7 +794,7 @@ then the first one is shown.</string>
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
      <italic>true</italic>
     </font>
    </property>
@@ -799,7 +808,7 @@ then the first one is shown.</string>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>55</x>
+     <x>30</x>
      <y>194</y>
      <width>111</width>
      <height>22</height>
@@ -840,7 +849,7 @@ then the first one is shown.</string>
   <widget class="QPushButton" name="pushButtonLogFileClear">
    <property name="geometry">
     <rect>
-     <x>603</x>
+     <x>605</x>
      <y>160</y>
      <width>56</width>
      <height>28</height>
@@ -876,23 +885,28 @@ way to undo rerouting standard I/O to file.</string>
   <widget class="QPushButton" name="pushButtonMacroSend">
    <property name="geometry">
     <rect>
-     <x>544</x>
+     <x>554</x>
      <y>130</y>
-     <width>56</width>
+     <width>48</width>
      <height>28</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>56</width>
+     <width>48</width>
      <height>0</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>56</width>
+     <width>48</width>
      <height>16777215</height>
     </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Send</string>
@@ -901,14 +915,46 @@ way to undo rerouting standard I/O to file.</string>
   <widget class="QPushButton" name="pushButtonMacroDelete">
    <property name="geometry">
     <rect>
-     <x>603</x>
+     <x>605</x>
      <y>130</y>
      <width>56</width>
      <height>28</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>Delete</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="bussComboBox">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>130</y>
+     <width>151</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>28</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>28</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>Selects the buss (MIDI port) to which to
+send the macro. The default is the MIDI
+Control Out buss.</string>
    </property>
   </widget>
  </widget>

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-11
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -34,6 +34,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/controllers.hpp"         /* seq66::string_to_rpn_number()    */
+#include "play/clockslist.hpp"          /* seq66::clockslist                */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
@@ -202,6 +203,40 @@ qrpnframe::qrpnframe
     }
 
     /*
+     * Populate the buss combo box.
+     */
+
+    const clockslist & opm = output_port_map();
+    mastermidibus * mmb = perf().master_bus();
+    ui->combo_box_buss->addItem("Ctrl Out");    /* the default */
+    if (not_nullptr(mmb))
+    {
+        int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
+        for (int b = 0; b < buses; ++b)
+        {
+            e_clock ec;
+            std::string busname;
+            if (perf().ui_get_clock(bussbyte(b), ec, busname))
+            {
+                ui->combo_box_buss->addItem(qt(busname));
+                if (port_unusable(ec))
+                    enable_combobox_item(ui->combo_box_buss, b + 1, false);
+            }
+        }
+
+        /*
+         * Buss combo-box.  If we set a buss, we have to add
+         * 1 to it to allow for the "Ctrl Out" entry.
+         */
+
+        connect
+        (
+            ui->combo_box_buss, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slot_midi_buss(int))
+        );
+    }
+
+    /*
      * The checkboxes in the middle of the frame.
      */
 
@@ -340,9 +375,9 @@ qrpnframe::qrpnframe
      * Create Macro button and line-edit.
      *
      * ui->line_edit_rpn_macro_name->setText("");
+     * ui->line_edit_rpn_macro_name->setPlaceholderText("(name of macro)");
      */
 
-    ui->line_edit_rpn_macro_name->setPlaceholderText("(name of macro)");
     connect
     (
         ui->line_edit_rpn_macro_name, SIGNAL(editingFinished()),
@@ -533,6 +568,12 @@ void
 qrpnframe::slot_midi_channel (int c)
 {
     m_rpn_channel = c;
+}
+
+void
+qrpnframe::slot_midi_buss (int b)
+{
+    m_rpn_buss = b == 0 ? null_buss() : b - 1 ;
 }
 
 void
@@ -729,13 +770,24 @@ qrpnframe::slot_rpn_send ()
     rpn r(rpn_info());
     std::string macnam { m_macro_name };
     int macchannel { m_rpn_channel };
+    int macbuss { m_rpn_buss };
     tokenization name_and_data
     {
         r.create_rpn_macro_string(macnam, macchannel)
     };
     bool ok { name_and_data.size() == 2 };
     if (ok)
-       ok = perf().send_macro_bytes(r);     /* uses the bytes, not the name */
+    {
+       /*
+        * This call uses the macro bytes, not the macro name. If macbuss
+        * is null (0xFF), then midicontrolout::send_macro() is called,
+        * and it uses it's true_buss() function to call
+        * masterbus::play_and_flush(). Otherwise, we need to call
+        * true_buss() here.
+        */
+
+       ok = perf().send_macro_bytes(r, macbuss);
+    }
 
     if (ok)
     {
@@ -748,8 +800,7 @@ qrpnframe::slot_rpn_send ()
     }
 }
 
-
-/*
+/**
  *  Compare this function to qseqeditframe64::insert_macro(). But we
  *  need to make sure that the vector of events-bytes is made. We also
  *  need to create the macro string for display.

@@ -1712,7 +1712,7 @@ sequence::play
 
         if (song_recording())                       /* song-record triggers */
         {
-            (void) perf()->calculate_snap(tick);  /* issue #44 redux      */
+            (void) perf()->calculate_snap(tick);    /* issue #44 redux      */
 
             bool added = grow_trigger(song_record_tick(), tick);
             if (added)

@@ -130,9 +130,9 @@ event::event () :
  *      Provides the timestamp of this event.
  *
  * \param status
- *      Provides the status value.  The channel nybble is cleared, since the
- *      channel is generally provided by the settings of the sequence.
- *      However, this value should include the channel if applicable!
+ *      Provides the status value.  The channel is generally provided by
+ *      the settings of the sequence. However, this value should include
+ *      the channel nybble, 0x0 to 0xF.
  *
  * \param d0
  *      Provides the first data byte.  There is no default value.
@@ -142,7 +142,7 @@ event::event () :
  */
 
 event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
-    m_input_buss    (null_buss()),          /* 0xFF                 */
+    m_input_buss    (null_buss()),          /* 0xFF                         */
     m_timestamp     (tstamp),
     m_status        (status),               /* keep the channel 2021-08-09  */
     m_channel       (mask_channel(status)),

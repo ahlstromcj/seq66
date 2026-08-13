@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-10
+ * \updates       2026-08-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -283,6 +283,8 @@ private:        /* combo-box list accessors */
         return m_rec_vol_list;
     }
 
+    void show_pattern_fix ();
+
 signals:
 
 private slots:
@@ -355,9 +357,8 @@ private slots:
     void loop_mode (bool ischecked);
     void events ();
     void data ();
-    void show_lfo_frame ();
-    void show_rpn_frame ();
-    void show_pattern_fix ();
+    void slot_lfo_frame ();
+    void slot_rpn_frame ();
     void slot_play_change (bool ischecked);
     void slot_thru_change (bool ischecked);
     void slot_record_change (bool ischecked);

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-07-11
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,6 +64,7 @@ namespace Ui
 
 namespace seq66
 {
+    class qrpnframe;
     class qseventslots;
 
 class qseqeventframe final :
@@ -192,6 +193,11 @@ private:
     std::string channel_msg (int index);
 #endif
 
+    performer & perf ()
+    {
+        return m_perf;
+    }
+
     sequence & track ()
     {
         return m_seq;
@@ -238,10 +244,15 @@ private slots:
     void slot_delete ();
     void slot_insert ();
     void slot_modify ();
+    void slot_rpn_frame ();
     void slot_save ();
     void slot_clear ();
     void slot_dump ();
-    void slot_cancel ();
+
+    /*
+     * Not used: void slot_cancel ();
+     */
+
     void update_seq_name ();
     void slot_midi_channel (int index);
     void slot_event_name (int index);
@@ -259,6 +270,13 @@ private:
     Ui::qseqeventframe * ui;
 
 private:
+
+    /**
+     *  Provides a reference to the performer. Currently needed only for
+     *  support of calling up the qrpnframe.
+     */
+
+    performer & m_perf;
 
     /**
      *  Provides a reference to the sequence that this dialog is meant to view
@@ -336,10 +354,17 @@ private:
     std::string m_current_timestamp;
 
     /**
+     *  The RPN window object for handling RPN and NRPN more
+     *  systematically.
+     */
+
+    qrpnframe * m_rpn_wnd { nullptr };
+
+    /**
      *  The popup onto which submenus are tacked.
      */
 
-    QMenu * m_select_popup;
+    QMenu * m_select_popup { nullptr };
 
 };          // class qseqeventframe
 
@@ -352,4 +377,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

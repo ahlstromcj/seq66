@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
-    <height>439</height>
+    <width>852</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,7 +80,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <italic>true</italic>
            </font>
           </property>
@@ -263,7 +263,7 @@ and Format</string>
            <widget class="QCheckBox" name="m_check_to_midi">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="toolTip">
@@ -278,7 +278,7 @@ and Format</string>
            <widget class="QCheckBox" name="m_check_to_mutes">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="toolTip">
@@ -300,7 +300,7 @@ and Format</string>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="toolTip">
@@ -322,7 +322,7 @@ Useful if set-size is larger than 4 x 8.</string>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="toolTip">
@@ -338,7 +338,7 @@ and 0's. Default setting.</string>
            <widget class="QCheckBox" name="m_check_from_midi">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="toolTip">
@@ -354,7 +354,7 @@ file. Takes precedence over the 'mutes' file.</string>
            <widget class="QCheckBox" name="m_check_from_mutes">
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="toolTip">
@@ -383,7 +383,7 @@ a common 'mutes' file. Superceded by
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -406,7 +406,7 @@ Legacy behavior toggles mute-group and armed patterns.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -446,7 +446,7 @@ do not save them to the MIDI file.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="alternatingRowColors">
@@ -523,7 +523,7 @@ do not save them to the MIDI file.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -545,7 +545,7 @@ can toggle the mute-groups.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -594,7 +594,7 @@ can toggle the mute-groups.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -616,7 +616,7 @@ configuration.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">

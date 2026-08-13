@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-08-09
+ * \updates       2026-08-13
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -121,6 +121,7 @@ private slots:
     void slot_track_number (int trk);
     void slot_macros_active ();
     void slot_macro_pick (const QString &);
+    void slot_midi_buss (int b);
     void slot_macro_send ();
     void slot_macro_delete ();
     void slot_log_file ();
@@ -169,6 +170,13 @@ private:
      */
 
     std::string m_macro_name;
+
+    /**
+     *  The default buss is the MIDI Control Out buss.
+     *  The user can select other busses.
+     */
+
+    int m_rpn_buss { null_buss() };     /* 0xFF */
 
 };
 

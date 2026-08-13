@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2026-07-10
+% \update      2026-08-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -65,7 +65,8 @@
 
 \begin{figure}[H]
    \centering
-   \includegraphics[scale=0.65]{event-editor/event-editor-tab.png}
+%  \includegraphics[scale=0.65]{event-editor/event-editor-tab.png}
+   \includegraphics[scale=0.65]{event-editor/event-editor-tab-rpn.png}
    \caption{Event Editor Window}
    \label{fig:event_editor_window}
 \end{figure}
@@ -249,13 +250,12 @@
    changing an event, adding a new event, or deleting the currently-selected
    event. These have been greatly updated for user convenience in the last
    few releases of \textsl{Seq66}.
-   The next figure shows version 0.99.22's state.
 
 \begin{figure}[H]
    \centering
    \includegraphics[scale=0.65]{event-editor/event-editor-new.png}
-   \caption{Event Editor / New Arrangement}
-   \label{fig:event_editor_new_arrangement}
+   \caption{Event Editor / Latest Arrangement}
+   \label{fig:event_editor_latest_arrangement}
 \end{figure}
 
    \begin{enumber}
@@ -272,7 +272,7 @@
       \item \textbf{Time}.
          Shows the event timestamp in B:B:T notation.
          It can be edited to move an event in time.
-         The button next to it can be used to increase the length
+         The "arrow" button next to it can be used to increase the length
          of the pattern by one measure.
          The time format can also be changed to H:M:S and ticks
          (i.e. pulses or divisions).
@@ -514,6 +514,12 @@
          Create a new event based on the data in the fields.
       \item \textbf{Modify}.
          Officially modify the selected event.
+      \item \textbf{(N)RPN}.
+         Brings up the same RPN/NRPN dialog as available via
+         the pattern editor "tools" button.
+         It is easier to use this dialog than to enter the multiple
+         controller events needed to set an RPN/NRPN parameter.
+         See \sectionref{subsec:pattern_editor_rpn_nrpn_dialog}.
       \item \textbf{Clear}.
          Clear all events.
       \item \textbf{Save}.

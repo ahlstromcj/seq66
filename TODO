@@ -1,17 +1,22 @@
-TO DO for Seq66 0.99.27
+TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-08-10
+2019-04-13 to 2026-08-12
 
     -   Follow up on RPN:
         -   program-banks.text (issue #138)
         -   akai-mpk-mini-play.text
         -   RPN.text
         -   24stones.mid and 2stones.mid
-    -   The ":" key is available (as well as some other keys). How
-        can we use them?
+        -   Verify the proper sorting of (N)RPN messages.
+        -   CHeck with valgrind again.
     -   Reinvestigate the MIDI macros.
         -   Delete, re-add, and mark an existing macro as "modified".
         -   Can we add a general macro editor to the event editor?
+        -   Add a non-pattern way to get the RPN dialog.
+        -   Can we have a separate macro buss, worth it? Well, we
+            can do an RPN send to the pattern buss, perhaps.
+    -   The ":" key is available (as well as some other keys). How
+        can we use them?
     -   Background recording / Metronome.
         -   Finish testing scratchpad recording.
         -   Can we show the patch name, and if drums, the drum name?

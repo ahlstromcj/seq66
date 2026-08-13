@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-10
+ * \updates       2026-08-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1038,7 +1038,7 @@ qseqeditframe64::qseqeditframe64
         connect
         (
             ui->m_button_lfo, SIGNAL(clicked(bool)),
-            this, SLOT(show_lfo_frame())
+            this, SLOT(slot_lfo_frame())
         );
     }
 
@@ -2915,19 +2915,19 @@ qseqeditframe64::popup_tool_menu ()
         QAction * lfobox = new_qaction("&LFO...", m_tools_popup);
         connect
         (
-            lfobox, SIGNAL(triggered(bool)), this, SLOT(show_lfo_frame())
+            lfobox, SIGNAL(triggered(bool)), this, SLOT(slot_lfo_frame())
         );
 
         QAction * rpnbox = new_qaction("RPN/NRPN...", m_tools_popup);
         connect
         (
-            rpnbox, SIGNAL(triggered(bool)), this, SLOT(show_rpn_frame())
+            rpnbox, SIGNAL(triggered(bool)), this, SLOT(slot_rpn_frame())
         );
 
         QAction * fixbox = new_qaction("Pattern &fix...", m_tools_popup);
         connect
         (
-            fixbox, SIGNAL(triggered(bool)), this, SLOT(show_pattern_fix())
+            fixbox, SIGNAL(triggered(bool)), this, SLOT(slot_pattern_fix())
         );
 
         QAction * transpose[2 * c_octave_size];     /* pitch transpose      */
@@ -4386,7 +4386,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
  */
 
 void
-qseqeditframe64::show_lfo_frame ()
+qseqeditframe64::slot_lfo_frame ()
 {
     if (is_nullptr(m_lfo_wnd))
     {
@@ -4414,7 +4414,7 @@ qseqeditframe64::show_lfo_frame ()
 }
 
 void
-qseqeditframe64::show_rpn_frame ()
+qseqeditframe64::slot_rpn_frame ()
 {
     if (is_nullptr(m_rpn_wnd))
     {

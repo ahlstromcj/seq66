@@ -1,13 +1,14 @@
 Notes on RPN
 Chris Ahlstrom
-2025-01-13 to 2026-07-29
+2025-01-13 to 2026-08-11
 
 https://www.recordingblogs.com/wiki/midi-registered-parameter-number-rpn
 
 NRPN = Non-Registered Parameter Number.
 RPN = Registered Parameter Number.
 
-Consider a scenario in which a MIDI device receives the following two messages.
+Consider a scenario in which a MIDI device receives the following two
+controller messages.
 
     0xB0 0x64 0x00          # RPN, fine, pitch bend range (0x64 == 100dec)
     0xB0 0x65 0x00          # RPN, coarse, ditto (0x65 == 101dec)
@@ -33,10 +34,7 @@ follow. Suppose that the MIDI device then receives the following messages.
 Since the MIDI device is waiting for a pitch range change, it interprets the
 third byte of each message as follows: The coarse data entry is 0x02 -- the
 pitch wheel will move by +/-2 semitones. The fine data entry is 0x03 -- the
-pitch wheel will move by +/- 3 cents.
-
-The pitch shift can move two semitones and three cents down to 0x0000 or two
-semitones and three cents up to 0x3FFF.
+pitch wheel will move by +/-3 cents.
 
 According to the MIDI protocol, the MIDI device should also receive the
 following two (optional) messages:

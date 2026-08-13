@@ -525,6 +525,10 @@ set_combobox_item
  *      The new value for the buss from which to get the [user-instrument-N]
  *      settings in the [user-instrument-definitions] section.
  *
+ * \param ch
+ *      Provides the channel to be automatically selected. Ranges from
+ *      0 to 16.
+ *
  * \param add_free
  *      If true (which is the default), then add a last entry "Free"
  *      to indicate no channel is assigned.

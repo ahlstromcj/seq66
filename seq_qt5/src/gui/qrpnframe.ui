@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>450</height>
+    <width>793</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -240,22 +240,24 @@
   <widget class="QComboBox" name="combo_box_channel">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>40</y>
-     <width>86</width>
+     <x>280</x>
+     <y>65</y>
+     <width>61</width>
      <height>30</height>
     </rect>
    </property>
    <property name="toolTip">
-    <string>Selects the channel number to use with the controller.</string>
+    <string>Selects the channel number to specify in the
+controller events. By default the pattern's
+channel is specified.</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="label_channel">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>40</y>
-     <width>71</width>
+     <x>280</x>
+     <y>41</y>
+     <width>61</width>
      <height>22</height>
     </rect>
    </property>
@@ -265,7 +267,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Channel</string>
+    <string>Chan</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="line_edit_rpn_macro_name">
@@ -273,7 +275,7 @@
     <rect>
      <x>371</x>
      <y>345</y>
-     <width>126</width>
+     <width>128</width>
      <height>30</height>
     </rect>
    </property>
@@ -291,6 +293,9 @@ to the 'ctrl' file.</string>
    </property>
    <property name="frame">
     <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>(name of macro)</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidgetAppendRPNrest">
@@ -332,11 +337,11 @@ to the 'ctrl' file.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="label_7">
+  <widget class="QLabel" name="label_explanation">
    <property name="geometry">
     <rect>
      <x>280</x>
-     <y>190</y>
+     <y>196</y>
      <width>211</width>
      <height>61</height>
     </rect>
@@ -407,38 +412,44 @@ and ticks.</string>
     <item row="1" column="1">
      <widget class="QLineEdit" name="line_edit_nrpn_param_number">
       <property name="text">
-       <string>0x00</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>(0-16383)</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>RPN/NRPN parameter value</string>
+       <string>(N)RPN value</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
      <widget class="QLineEdit" name="line_edit_rpn_param_value">
       <property name="toolTip">
-       <string>Supply the parameter value as an integer
-or, to also set the &quot;fine&quot; values or the &quot;cents&quot;
-value, type a real number, e.g. 12.90 to
-specify a pitch change of 12 semitones and
+       <string>Supply the  value as an integer up to 16383
+(14 bits)  or as two numbers to provide the
+MSB:LSB or coarse:fine values, such as &quot;12:90&quot;
+to specify a pitch change of 12 semitones and
 90 cents.</string>
       </property>
       <property name="text">
-       <string>0.0</string>
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>(0-16383 or msb:lsb)</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetButtons">
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>383</y>
+     <y>380</y>
      <width>391</width>
      <height>36</height>
     </rect>
@@ -477,11 +488,11 @@ macro.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidgetCheckBoxes">
    <property name="geometry">
     <rect>
      <x>280</x>
-     <y>81</y>
+     <y>100</y>
      <width>212</width>
      <height>95</height>
     </rect>
@@ -527,7 +538,7 @@ as well as the &quot;coarse&quot; version.</string>
    <property name="geometry">
     <rect>
      <x>290</x>
-     <y>11</y>
+     <y>10</y>
      <width>491</width>
      <height>21</height>
     </rect>
@@ -555,7 +566,7 @@ as well as the &quot;coarse&quot; version.</string>
   <widget class="QPushButton" name="button_hex">
    <property name="geometry">
     <rect>
-     <x>436</x>
+     <x>439</x>
      <y>306</y>
      <width>60</width>
      <height>30</height>
@@ -574,9 +585,9 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>504</x>
-     <y>346</y>
-     <width>125</width>
+     <x>502</x>
+     <y>345</y>
+     <width>127</width>
      <height>30</height>
     </rect>
    </property>
@@ -590,9 +601,9 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>634</x>
-     <y>346</y>
-     <width>126</width>
+     <x>632</x>
+     <y>345</y>
+     <width>128</width>
      <height>30</height>
     </rect>
    </property>
@@ -614,6 +625,40 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_buss">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>40</y>
+     <width>71</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Bus</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="combo_box_buss">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>65</y>
+     <width>141</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Specifies the buss (MIDI port) to which the
+events will be sent. &quot;Ctrl Out&quot; is the MIDI
+Control Out port, but any existing output
+port can be used.</string>
    </property>
   </widget>
  </widget>

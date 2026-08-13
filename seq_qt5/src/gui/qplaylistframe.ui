@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>827</width>
-    <height>427</height>
+    <width>831</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -122,7 +122,7 @@ name in the edit control to the left.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -154,7 +154,7 @@ name in the edit control to the left.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -191,7 +191,7 @@ the file.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -216,7 +216,7 @@ the file.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -248,7 +248,7 @@ for this play-list, when added. Ranges from
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -260,7 +260,7 @@ for this play-list, when added. Ranges from
        <widget class="QLabel" name="labelCurrentSong">
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -323,7 +323,7 @@ for this play-list, when added. Ranges from
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
@@ -350,7 +350,7 @@ for this play-list, when added. Ranges from
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -384,7 +384,7 @@ Edit to enable &quot;Add List&quot; and &quot;Modify List&quot;.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -419,7 +419,7 @@ to select an existing song.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -453,7 +453,7 @@ Read-only.  Use the Load Song button to modify this entry.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
           <italic>true</italic>
          </font>
         </property>
@@ -488,7 +488,7 @@ Read-only.  Use the Load Song button to modify this entry.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -636,7 +636,7 @@ add it to the song table.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -725,7 +725,7 @@ add it to the song table.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -755,7 +755,7 @@ add it to the song table.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -785,7 +785,7 @@ add it to the song table.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -812,7 +812,7 @@ add it to the song table.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -842,7 +842,7 @@ add it to the song table.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -872,7 +872,7 @@ information.</string>
         </property>
         <property name="font">
          <font>
-          <pointsize>11</pointsize>
+          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="toolTip">
@@ -952,7 +952,7 @@ information.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -985,7 +985,7 @@ imported.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -1017,7 +1017,7 @@ to use &quot;Load Song&quot;.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -1048,7 +1048,7 @@ in the 3 entry fields above.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -1076,7 +1076,7 @@ the song itself is not deleted.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
            </font>
           </property>
           <property name="toolTip">
@@ -1261,7 +1261,7 @@ Read-only.</string>
      <widget class="QCheckBox" name="checkBoxAutoArm">
       <property name="font">
        <font>
-        <pointsize>11</pointsize>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="toolTip">
@@ -1286,7 +1286,7 @@ Song layout.</string>
      <widget class="QCheckBox" name="checkBoxAutoPlay">
       <property name="font">
        <font>
-        <pointsize>11</pointsize>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="toolTip">
@@ -1310,7 +1310,7 @@ also load the next song and keep going!)</string>
      <widget class="QCheckBox" name="checkBoxAutoAdvance">
       <property name="font">
        <font>
-        <pointsize>11</pointsize>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="toolTip">
