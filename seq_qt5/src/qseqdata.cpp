@@ -315,7 +315,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             painter.drawText(0, minline, minnumber);
         }
     }
-    pen.setColor(fore_color());
+    pen.setColor(data_line_color());                    /* fore_color())    */
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.drawLine(0, maxline, width() - 1, maxline);
@@ -377,7 +377,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             }
             if (data_event)
             {
-                pen.setColor(selected ? sel_color() : fore_color());
+                pen.setColor(selected ? sel_color() : data_line_color());
                 painter.setPen(pen);
                 event_x -= 3;
                 if (is_pitchbend())

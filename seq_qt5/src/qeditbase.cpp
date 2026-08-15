@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2025-07-21
+ * \updates       2028-08-15
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -92,7 +92,7 @@ qeditbase::qeditbase
     m_note_out_color        (note_out_paint()),
     m_tempo_color           (tempo_paint()),
     m_grey_color            (grey_paint()),
-    m_extra_color           (extra_paint()),
+    m_data_line_color       (data_line_paint()),
     m_blank_brush           (gui_empty_brush()),
     m_note_brush            (gui_note_brush()),
     m_scale_brush           (gui_scale_brush()),

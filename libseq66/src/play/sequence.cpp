@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-07-25
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -7043,7 +7043,10 @@ sequence::set_thru (bool thruon, bool toggle)
             result = master_bus()->set_sequence_input(thruon, this);
 
         if (result)
+        {
             m_thru = thruon;
+            notify_trigger();
+        }
     }
     return result;
 }

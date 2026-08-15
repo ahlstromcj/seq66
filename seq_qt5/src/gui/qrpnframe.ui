@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>793</width>
-    <height>440</height>
+    <width>795</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -270,34 +270,6 @@ channel is specified.</string>
     <string>Chan</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="line_edit_rpn_macro_name">
-   <property name="geometry">
-    <rect>
-     <x>371</x>
-     <y>345</y>
-     <width>128</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <italic>true</italic>
-    </font>
-   </property>
-   <property name="toolTip">
-    <string>The name of the macro to add
-to the 'ctrl' file.</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="placeholderText">
-    <string>(name of macro)</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="layoutWidgetAppendRPNrest">
    <property name="geometry">
     <rect>
@@ -445,49 +417,6 @@ to specify a pitch change of 12 semitones and
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidgetButtons">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>380</y>
-     <width>391</width>
-     <height>36</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QPushButton" name="button_rpn_macro">
-      <property name="toolTip">
-       <string>Copy the event data to a MIDI-control-out
-macro.</string>
-      </property>
-      <property name="text">
-       <string>Create Macro</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="button_rpn_insert">
-      <property name="toolTip">
-       <string>Inserts the controller events at the given timestamp.</string>
-      </property>
-      <property name="text">
-       <string>&amp;Insert (N)RPN</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="button_rpn_cancel">
-      <property name="toolTip">
-       <string>Close the dialog.</string>
-      </property>
-      <property name="text">
-       <string>Close</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="layoutWidgetCheckBoxes">
    <property name="geometry">
     <rect>
@@ -579,38 +508,6 @@ as well as the &quot;coarse&quot; version.</string>
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="button_rpn_send">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>502</x>
-     <y>345</y>
-     <width>127</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Send (N)RPN</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="button_reserved_2">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>632</x>
-     <y>345</y>
-     <width>128</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Reserved</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="button_reserved_1">
    <property name="enabled">
     <bool>false</bool>
@@ -660,6 +557,97 @@ events will be sent. &quot;Ctrl Out&quot; is the MIDI
 Control Out port, but any existing output
 port can be used.</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>371</x>
+     <y>341</y>
+     <width>391</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QLineEdit" name="line_edit_rpn_macro_name">
+      <property name="maximumSize">
+       <size>
+        <width>128</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>The name of the macro to add
+to the 'ctrl' file.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+      <property name="placeholderText">
+       <string>(name of macro)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="button_rpn_delete">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Delete Macro</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="button_rpn_cancel">
+      <property name="toolTip">
+       <string>Close the dialog.</string>
+      </property>
+      <property name="text">
+       <string>Close</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QPushButton" name="button_rpn_macro">
+      <property name="toolTip">
+       <string>Copy the event data to a MIDI-control-out
+macro.</string>
+      </property>
+      <property name="text">
+       <string>Create Macro</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="button_rpn_insert">
+      <property name="toolTip">
+       <string>Inserts the controller events at the given timestamp.</string>
+      </property>
+      <property name="text">
+       <string>&amp;Insert (N)RPN</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="button_rpn_send">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Send (N)RPN</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

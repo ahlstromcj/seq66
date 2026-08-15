@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-07-22
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1464,6 +1464,34 @@ qslivegrid::record_sequence ()
     }
 }
 
+/**
+ *  Toggle on MIDI Thru (useful with a MIDI controller feeding an external
+ *  sound generator) without needed to open a pattern editor.
+ *
+ *  Passes the MIDI Thru status to performer, which passes it to the sequence.
+ *
+ *      perf().set_thru(*sp, true, true);
+ *                            ^     ^
+ *                            |     |
+ *                            |     |
+ *                            |      ---- indicates to toggle
+ *                             ---------- ignored since last parameter is true
+ */
+
+void
+qslivegrid::thru_toggle ()
+{
+    bool ok { false };
+    seq::pointer sp { perf().get_sequence(current_seq()) };
+    if (sp)
+        ok = perf().set_thru(*sp, true, true);
+
+    if (! ok)
+    {
+        // todo?
+    }
+}
+
 void
 qslivegrid::flatten_sequence ()
 {
@@ -1874,6 +1902,15 @@ qslivegrid::popup_menu ()
                 actionRecord, SIGNAL(triggered(bool)),
                 this, SLOT(record_sequence())
             );
+
+            QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
+            m_popup->addAction(actionThru);
+            connect
+            (
+                actionThru, SIGNAL(triggered(bool)),
+                this, SLOT(thru_toggle())
+            );
+
             QAction * editseqex
             {
                 new_qaction("Pattern in &window", menuEdit)
@@ -1926,6 +1963,15 @@ qslivegrid::popup_menu ()
                 actionRecord, SIGNAL(triggered(bool)),
                 this, SLOT(record_sequence())
             );
+
+            QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
+            m_popup->addAction(actionThru);
+            connect
+            (
+                actionRecord, SIGNAL(triggered(bool)),
+                this, SLOT(thru_toggle())
+            );
+
             QAction * editseqex
             {
                 new_qaction("Edit pattern in &window", m_popup)

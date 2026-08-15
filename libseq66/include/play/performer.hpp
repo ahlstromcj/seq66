@@ -219,8 +219,8 @@ public:
      *  as we will not copy the user-interface classes anyway.  For an
      *  example, see one of the user-interface classes, such as qsmainwnd.
      *
-     *  In each of the callbacks declared/defined below, the \a state
-     *  parameter indicates the state to which the object is transitioning.
+     *  In each of the callbacks declared/defined below, the state
+     *  parameter(s) indicate(s) to what the object is transitioning.
      */
 
     class callbacks

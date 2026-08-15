@@ -229,8 +229,11 @@ eventlist::add (const event & e)
 
 /**
  *  Sorts the event list.  For the vector, equivalent elements are not
- *  guaranteed to keep their original relative order [see
- *  std::stable_sort(), which we could try at some point].
+ *  guaranteed to keep their original relative order, so we use
+ *  std::stable_sort(), which sorts the elements in the range [first, last)
+ *  in non-descending order. The order of equivalent elements is guaranteed
+ *  to be preserved. Elements are sorted via operator < (until C++20) or
+ *  std::less{} (since C++20).
  */
 
 void

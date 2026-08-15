@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2025-06-03
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -64,28 +64,29 @@
  *  'palette' file instead.  The background border can look garish, too.
  */
 
-static bool s_elliptical_prog_box   = false;
+static bool s_elliptical_prog_box   { false };
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
-static const int s_alpha_playing    = 255;
-static const int s_alpha_muted      = 100;
-static const int s_alpha_qsnap      = 180;
-static const int s_alpha_queued     =  64;
-static const int s_alpha_oneshot    =  64;
-static const int s_alpha_popup      =  32;
+static const int s_alpha_playing    { 255 };
+static const int s_alpha_muted      { 100 };
+static const int s_alpha_qsnap      { 180 };
+static const int s_alpha_queued     {  64 };
+static const int s_alpha_oneshot    {  64 };
+static const int s_alpha_popup      {  32 };
 
 /**
  *  Font and annunciator sizes.  These are for normal size, and get scaled for
  *  other sizes.
  */
 
-static const int s_fontsize_main    =  8;
-static const int s_fontsize_large   = 10;   /* for usr:progress-bar-thick   */
-static const int s_fontsize_record  =  8;
-static const int s_radius_record    =  8;
+static const int s_fontsize_main    {  8 };
+static const int s_fontsize_large   { 10 }; /* for usr:progress-bar-thick   */
+static const int s_fontsize_record  {  8 };
+static const int s_radius_record    {  8 };
+static const int s_radius_thru      {  4 };
 
 namespace seq66
 {
@@ -666,6 +667,29 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 
                     painter.drawText(tlx, tly, rlabel);
                 }
+                painter.restore();
+            }
+            if (loop()->thru())
+            {
+                int radius = usr().scale_size(s_radius_thru);
+                int clx = m_top_right.m_x + m_top_right.m_w - radius - 2;
+                int cly = m_top_right.m_y + m_top_right.m_h + radius;
+                QPen pen2(Qt::yellow);
+                painter.save();
+                if (use_gradient())
+                {
+                    QRadialGradient rgrad(clx, cly, radius);
+                    rgrad.setColorAt(0, Qt::black);
+                    rgrad.setColorAt(1, Qt::yellow);
+                    painter.setBrush(QBrush(rgrad));
+                }
+                else
+                {
+                    QBrush brush(drum_paint(), Qt::SolidPattern);
+                    painter.setBrush(brush);
+                }
+                painter.setPen(pen2);
+                painter.drawEllipse(clx, cly, radius, radius);
                 painter.restore();
             }
             if (m_draw_text)

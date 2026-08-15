@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-13
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -360,11 +360,13 @@ qrpnframe::qrpnframe
     );
 
     /*
-     * Line-edit for the parameter value.
+     * Line-edit for the parameter value. We need the place-holder
+     * text to be shown.
+     *
+     *      int tempvalue { int(rpn_info().rpn_parameter_value) };
+     *      set_rpn_parameter_value(tempvalue);
      */
 
-    int tempvalue { int(rpn_info().rpn_parameter_value) };
-    set_rpn_parameter_value(tempvalue);
     connect
     (
         ui->line_edit_rpn_param_value, SIGNAL(editingFinished()),
@@ -372,7 +374,7 @@ qrpnframe::qrpnframe
     );
 
     /*
-     * Create Macro button and line-edit.
+     * Create Macro button, Macro Name line-edit, and Delete Macro button.
      *
      * ui->line_edit_rpn_macro_name->setText("");
      * ui->line_edit_rpn_macro_name->setPlaceholderText("(name of macro)");
@@ -388,12 +390,19 @@ qrpnframe::qrpnframe
         ui->button_rpn_macro, SIGNAL(clicked(bool)),
         this, SLOT(slot_create_macro())
     );
+    connect
+    (
+        ui->button_rpn_delete, SIGNAL(clicked(bool)),
+        this, SLOT(slot_delete_macro())
+    );
     ui->button_rpn_macro->setEnabled(false);
+    ui->button_rpn_delete->setEnabled(false);
 
     /*
      * Hide the "Reserved" buttons.
      *
      *  ui->button_reserved_1->hide() now used to send (N)RPN
+     *  ui->button_reserved_2->hide() now used to delete a macro.
      */
 
     connect
@@ -401,8 +410,6 @@ qrpnframe::qrpnframe
         ui->button_rpn_send, SIGNAL(clicked(bool)),
         this, SLOT(slot_rpn_send())
     );
-
-    ui->button_reserved_2->hide();
 
     /*
      * Insert (N)RPN button.
@@ -710,14 +717,39 @@ qrpnframe::slot_show_in_hex ()
     set_rpn_parameter_value(pnumber);
 }
 
+/**
+ * Handles the interaction between the macro-buttons.
+ */
+
 void
 qrpnframe::slot_macro_name_changed ()
 {
     QString v { ui->line_edit_rpn_macro_name->text() };
     std::string macnam { v.toStdString() };
     bool isempty { macnam.empty() };
-    ui->button_rpn_macro->setEnabled(! isempty);
-    m_macro_name = macnam;
+    if (isempty)
+    {
+        ui->button_rpn_macro->setText("Create Macro");
+        ui->button_rpn_delete->setEnabled(false);
+        ui->button_rpn_macro->setEnabled(false);
+        m_macro_name.clear();
+    }
+    else
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        bool found { mco.find_macro(macnam) };
+        ui->button_rpn_macro->setEnabled(true);
+        m_macro_name = macnam;
+        if (found)
+        {
+            ui->button_rpn_delete->setEnabled(true);
+            ui->button_rpn_macro->setText("Modify Macro");
+        }
+        else
+            ui->button_rpn_macro->setText("Create Macro");
+
+        ui->button_rpn_macro->setEnabled(true);
+    }
 }
 
 /**
@@ -745,7 +777,72 @@ qrpnframe::slot_create_macro ()
     if (ok)
     {
         midicontrolout & mco { perf().midi_control_out() };
-        ok = mco.add_macro(name_and_data);
+        bool found { mco.find_macro(macnam) };
+        if (found)
+        {
+        }
+        else
+        {
+            ok = mco.add_macro(name_and_data);
+            if (ok)
+                ok = mco.expand_macros();
+        }
+    }
+    if (ok)
+    {
+        ui->label_warning->setText(qt(name_and_data[1]));
+        perf().notify_macro_change(m_macro_name, performer::macro::added);
+    }
+    else
+    {
+        ui->label_warning->setText("Error creating macro; duplicate name?");
+    }
+}
+
+void
+qrpnframe::slot_delete_macro ()
+{
+    std::string macnam { m_macro_name };
+    int macchannel { m_rpn_channel };
+    rpn r { rpn_info() };
+    tokenization name_and_data
+    {
+        r.create_rpn_macro_string(macnam, macchannel)
+    };
+    bool ok { name_and_data.size() == 2 };
+    if (ok)
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        ok = mco.delete_macro(name_and_data[0]);
+        if (ok)
+            ok = mco.expand_macros();
+    }
+    if (ok)
+    {
+        ui->label_warning->setText(qt(name_and_data[1]));
+        perf().notify_macro_change(m_macro_name, performer::macro::added);
+    }
+    else
+    {
+        ui->label_warning->setText("Error creating macro; duplicate name?");
+    }
+}
+
+void
+qrpnframe::modify_macro ()
+{
+    std::string macnam { m_macro_name };
+    int macchannel { m_rpn_channel };
+    rpn r { rpn_info() };
+    tokenization name_and_data
+    {
+        r.create_rpn_macro_string(macnam, macchannel)
+    };
+    bool ok { name_and_data.size() == 2 };
+    if (ok)
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        ok = mco.modify_macro(name_and_data);
         if (ok)
             ok = mco.expand_macros();
     }

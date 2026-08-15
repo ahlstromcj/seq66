@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2022-07-12
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -95,7 +95,9 @@ public:
     }
 
     bool add (const tokenization & tokens);     /* data from 'ctrl' file    */
+    bool modify (const tokenization & tokens);
     bool remove (const std::string & macnam);
+    bool find (const std::string & macnam) const;
 
     int count () const
     {

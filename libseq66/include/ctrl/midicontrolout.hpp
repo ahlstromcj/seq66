@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2026-08-08
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -345,9 +345,19 @@ public:
         return m_macro_events.add(tokens);
     }
 
+    bool modify_macro (const tokenization & tokens)
+    {
+        return m_macro_events.modify(tokens);
+    }
+
     bool delete_macro (const std::string & macnam)
     {
         return m_macro_events.remove(macnam);
+    }
+
+    bool find_macro (const std::string & macnam) const
+    {
+        return m_macro_events.find(macnam);
     }
 
     int macro_count () const

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-09
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -82,20 +82,35 @@ midimacros::midimacros () :
 bool
 midimacros::add (const tokenization & tokens)
 {
-    bool result = tokens.size() == 2;           /* the name, then the data  */
+    bool result { tokens.size() == 2 };         /* the name, then the data  */
     if (result)
     {
-        std::string key = tokens[0];
-        std::string data;
-        if (tokens.size() > 1)                  /* any data?                */
-            data = tokens[1];
+        std::string key { tokens[0] };
+        std::string data { tokens[1] };
 
         midimacro m(key, data);                 /* further tokenizes        */
-        auto p = std::make_pair(key, m);
-        auto r = m_macros.insert(p);            /* r: pair<iteration, bool> */
+        auto p { std::make_pair(key, m) };
+        auto r { m_macros.insert(p) };          /* r: pair<iteration, bool> */
         result = r.second;
         if (result)
             m_active = count() > 0;
+    }
+    return result;
+}
+
+/**
+ *  It doesn't matter if the token is found to be removed, just if it
+ *  can be added.
+ */
+
+bool
+midimacros::modify (const tokenization & tokens)
+{
+    bool result { tokens.size() == 2 };         /* the name, then the data  */
+    if (result)
+    {
+        (void) remove(tokens[0]);               /* use name, find, & delete */
+        result = add(tokens);
     }
     return result;
 }
@@ -114,6 +129,23 @@ midimacros::remove (const std::string & macnam)
         result = m_macros.erase(key) == 1;      /* 1 or 0 can be removed    */
         if (result)
             m_active = count() > 0;
+    }
+    return result;
+}
+
+/**
+ *  Detects if a macro is present.
+ */
+
+bool
+midimacros::find (const std::string & macnam) const
+{
+    bool result { count() > 0 };
+    if (result)
+    {
+        std::string key { macnam };
+        auto it { m_macros.find(key) };
+        result = it != m_macros.end();
     }
     return result;
 }

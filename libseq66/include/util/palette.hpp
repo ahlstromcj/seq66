@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2025-01-14
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -134,7 +134,7 @@ enum class InvertibleColor
     textnames,          /**< Used for the text of perf names pane.          */
     textslots,          /**< Used for the text of the grid/pattern slots.   */
     scale,              /**< Provides the color for drawing scale notes.    */
-    extra,              /**< Reserved for expansion.                        */
+    linedata,           /**< Used for lines in the data pane.               */
     max                 /**< First illegal palette value, not in color set. */
 };
 

@@ -1,16 +1,40 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-08-11
+2015-07-10 to 2026-08-15
 
 # Change Log
 
-## [0.99.28] - 2026-08-11
+## [0.99.28] - 2026-08-15
 
 ### Added
 
--   RPN/NRPN.
+-   RPN/NRPN dialog.
     -   Added MPE Configuration Message (no. 6) to the RPN set.
-    -   Added a Send (N)RPN button to the RPN dialog..
+    -   Added a Send (N)RPN button to the RPN dialog.
+    -   Added a select output buss combo-box to the dialog.
+        The default selection is "Ctrl Out" (MIDI Control Out configured
+        buss), but other output ports/devices can be selected.
+-   Macros.
+    -   Added functions to delete and modify MIDI macros. Used
+        in the RPN dialog noted above.
+-   Pattern editor.
+    -   Changed the "Extra" color to "Data Line" and use it
+        [instead of fore\_color()] to draw in the data pane.
+    -   Changed the drawings of beat lines from the "Extra" color
+        to the "Beat" color.
+    -   Some user palettes might need to be adjusted.
+-   Pattern slot.
+    -   Added a Thru toggle to the right-click slot menu.
+    -   Added a yellow Thru indicator, too.
+-   Event editor.
+    -   Added a button to bring up the RPN/NRPN dialog.
+-   Main window Session tab.
+    -   Added a select output buss combo-box to the dialog.
+        The default selection is "Ctrl Out" (MIDI Control Out);
+        other output ports/devices can be selected.
+-   Performer.
+    -   The send\_macro\_bytes() function can direct the bytes of
+        a multi-event macro to a selected buss.
 
 ### Changed
 

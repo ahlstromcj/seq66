@@ -1286,8 +1286,6 @@ event::rescale (int newppqn, int oldppqn)
  *  We also now consider SysEx and Meta event. Meta comes first, SysEx comes
  *  last.
  *
- * ca 2025-07-02, 07-03
- *
  *  Considering that bank select control values (coarse and fine) would be
  *  followed by a program change. Can they occur simultaneously?
  *  Just in case, we should give control change the higher priority.

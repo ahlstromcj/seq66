@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2025-10-13
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -343,9 +343,9 @@ scale_paint ()
 }
 
 Color
-extra_paint ()
+data_line_paint ()
 {
-    return global_palette().get_color(InvertibleColor::extra);
+    return global_palette().get_color(InvertibleColor::linedata);
 }
 
 Brush
@@ -749,7 +749,7 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::textnames, m_black,    "Names Text");
     m_nrm_palette.add(InvertibleColor::textslots, m_black,    "Slots Text");
     m_nrm_palette.add(InvertibleColor::scale,     m_lt_grey,  "Scale Brush");
-    m_nrm_palette.add(InvertibleColor::extra,     m_black,    "Extra");
+    m_nrm_palette.add(InvertibleColor::linedata,  m_black,    "Data Line");
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,     m_white,    "Foreground");
@@ -783,7 +783,7 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::textnames, m_white,    "Names Text");
     m_inv_palette.add(InvertibleColor::textslots, m_white,    "Slots Text");
     m_inv_palette.add(InvertibleColor::scale,     m_lt_grey,  "Scale Brush");
-    m_inv_palette.add(InvertibleColor::extra,     m_white,    "Extra");
+    m_inv_palette.add(InvertibleColor::linedata,  m_white,    "Data Line");
 
     m_empty_brush->setColor(get_color(InvertibleColor::white));
     m_empty_brush->setStyle(m_empty_brush_style);

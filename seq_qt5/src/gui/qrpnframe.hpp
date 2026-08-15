@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-12
+ * \updates       2026-08-15
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -121,6 +121,7 @@ private:
     void set_rpn_parameter_number (bool is_rpn, midishort pv);
     void set_rpn_parameter_value (midishort pv);
     void set_time_stamp (midipulse ts);
+    void modify_macro ();
 
 private slots:
 
@@ -138,6 +139,7 @@ private slots:
     void slot_show_in_hex ();
     void slot_macro_name_changed ();
     void slot_create_macro ();
+    void slot_delete_macro ();
     void slot_rpn_send ();
     void slot_rpn_insert ();
     void slot_rpn_cancel ();
