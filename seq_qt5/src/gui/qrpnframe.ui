@@ -2,16 +2,19 @@
 <ui version="4.0">
  <class>qrpnframe</class>
  <widget class="QFrame" name="qrpnframe">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>442</height>
+    <width>803</width>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RPN Editor</string>
+   <string>RPN/Macro Editor</string>
   </property>
   <widget class="QGroupBox" name="group_box_rpn">
    <property name="geometry">
@@ -19,7 +22,7 @@
      <x>20</x>
      <y>40</y>
      <width>241</width>
-     <height>211</height>
+     <height>241</height>
     </rect>
    </property>
    <property name="font">
@@ -36,7 +39,7 @@
       <x>10</x>
       <y>40</y>
       <width>221</width>
-      <height>161</height>
+      <height>194</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -46,6 +49,10 @@
         <font>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="toolTip">
+        <string>Allows generation of parameter-change
+events.</string>
        </property>
        <property name="text">
         <string>&amp;RPN</string>
@@ -59,6 +66,10 @@
          <bold>false</bold>
         </font>
        </property>
+       <property name="toolTip">
+        <string>Allows generation of non-registered
+parameter-change events.</string>
+       </property>
        <property name="text">
         <string>&amp;NRPN</string>
        </property>
@@ -71,6 +82,10 @@
          <italic>true</italic>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="toolTip">
+        <string>Allows entering data values separately.
+Useful?</string>
        </property>
        <property name="text">
         <string>&amp;Data entry slider</string>
@@ -107,6 +122,22 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QRadioButton" name="radio_button_other">
+       <property name="font">
+        <font>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>Allows for entry of arbitrary bytes, such
+as System Exclusive for a MIDI device.</string>
+       </property>
+       <property name="text">
+        <string>Other (arbitrary data)</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -116,7 +147,7 @@
      <x>510</x>
      <y>40</y>
      <width>261</width>
-     <height>301</height>
+     <height>291</height>
     </rect>
    </property>
    <property name="font">
@@ -133,7 +164,7 @@
       <x>10</x>
       <y>30</y>
       <width>248</width>
-      <height>260</height>
+      <height>251</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -240,7 +271,7 @@
   <widget class="QComboBox" name="combo_box_channel">
    <property name="geometry">
     <rect>
-     <x>280</x>
+     <x>260</x>
      <y>65</y>
      <width>61</width>
      <height>30</height>
@@ -275,7 +306,7 @@ channel is specified.</string>
     <rect>
      <x>30</x>
      <y>10</y>
-     <width>251</width>
+     <width>301</width>
      <height>24</height>
     </rect>
    </property>
@@ -288,7 +319,7 @@ channel is specified.</string>
        </font>
       </property>
       <property name="text">
-       <string>RPN/NRPN Editor</string>
+       <string>(N)RPN/Macro Editor</string>
       </property>
      </widget>
     </item>
@@ -313,7 +344,7 @@ channel is specified.</string>
    <property name="geometry">
     <rect>
      <x>280</x>
-     <y>196</y>
+     <y>200</y>
      <width>211</width>
      <height>61</height>
     </rect>
@@ -326,15 +357,16 @@ channel is specified.</string>
    </property>
    <property name="text">
     <string>RPN and NRPN use the data entry
-slider by default. RPN reset is
-added by default (recommended).</string>
+slider by default. RPN reset is added
+by default (recommended). Up to 6
+controller events will be generated.</string>
    </property>
   </widget>
   <widget class="QPushButton" name="button_bbt">
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>306</y>
+     <y>300</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -351,7 +383,7 @@ and ticks.</string>
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>300</y>
+     <y>297</y>
      <width>341</width>
      <height>121</height>
     </rect>
@@ -420,9 +452,9 @@ to specify a pitch change of 12 semitones and
   <widget class="QWidget" name="layoutWidgetCheckBoxes">
    <property name="geometry">
     <rect>
-     <x>280</x>
+     <x>270</x>
      <y>100</y>
-     <width>212</width>
+     <width>231</width>
      <height>95</height>
     </rect>
    </property>
@@ -460,43 +492,11 @@ as well as the &quot;coarse&quot; version.</string>
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="label_warning">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>10</y>
-     <width>491</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-     <italic>true</italic>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::Shape::NoFrame</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Shadow::Sunken</enum>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="textInteractionFlags">
-    <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextEditable</set>
-   </property>
-  </widget>
   <widget class="QPushButton" name="button_hex">
    <property name="geometry">
     <rect>
      <x>439</x>
-     <y>306</y>
+     <y>300</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -506,22 +506,6 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="checkable">
     <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="button_reserved_1">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>25</x>
-     <y>260</y>
-     <width>471</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
    </property>
   </widget>
   <widget class="QLabel" name="label_buss">
@@ -545,9 +529,9 @@ as well as the &quot;coarse&quot; version.</string>
   <widget class="QComboBox" name="combo_box_buss">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>330</x>
      <y>65</y>
-     <width>141</width>
+     <width>171</width>
      <height>30</height>
     </rect>
    </property>
@@ -558,44 +542,16 @@ Control Out port, but any existing output
 port can be used.</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>371</x>
-     <y>341</y>
-     <width>391</width>
+     <y>337</y>
+     <width>401</width>
      <height>81</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QLineEdit" name="line_edit_rpn_macro_name">
-      <property name="maximumSize">
-       <size>
-        <width>128</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <italic>true</italic>
-       </font>
-      </property>
-      <property name="toolTip">
-       <string>The name of the macro to add
-to the 'ctrl' file.</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="frame">
-       <bool>true</bool>
-      </property>
-      <property name="placeholderText">
-       <string>(name of macro)</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1">
      <widget class="QPushButton" name="button_rpn_delete">
       <property name="enabled">
@@ -630,10 +586,11 @@ macro.</string>
     <item row="1" column="1">
      <widget class="QPushButton" name="button_rpn_insert">
       <property name="toolTip">
-       <string>Inserts the controller events at the given timestamp.</string>
+       <string>Inserts the controller/macro events
+at the given timestamp.</string>
       </property>
       <property name="text">
-       <string>&amp;Insert (N)RPN</string>
+       <string>&amp;Insert Events</string>
       </property>
      </widget>
     </item>
@@ -642,12 +599,168 @@ macro.</string>
       <property name="enabled">
        <bool>true</bool>
       </property>
+      <property name="toolTip">
+       <string>Sends the controller/macro data to
+the selected bus.</string>
+      </property>
       <property name="text">
-       <string>Send (N)RPN</string>
+       <string>Send Events</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QComboBox" name="combo_box_macro_name">
+      <property name="toolTip">
+       <string>Select a macro or type macro name</string>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="maxCount">
+       <number>256</number>
+      </property>
+      <property name="minimumContentsLength">
+       <number>0</number>
+      </property>
+      <property name="placeholderText">
+       <string>(name of macro)</string>
+      </property>
+      <property name="frame">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLineEdit" name="line_edit_other">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>427</y>
+     <width>671</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <italic>true</italic>
+    </font>
+   </property>
+   <property name="maxLength">
+    <number>2048</number>
+   </property>
+   <property name="placeholderText">
+    <string>(set a macro name and enter its bytes in hex or decimal here)</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>493</y>
+     <width>71</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Info</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>427</y>
+     <width>71</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Other's
+Data  </string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QPlainTextEdit" name="plain_text_edit_msg">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>483</y>
+     <width>671</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <italic>true</italic>
+     <bold>true</bold>
+     <hintingpreference>PreferDefaultHinting</hintingpreference>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Shows error message and the current
+generated data line.</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="line_edit_rpn_macro_name">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>372</x>
+     <y>270</y>
+     <width>124</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>128</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+     <italic>true</italic>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>The name of the macro to add
+to the 'ctrl' file.</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="maxLength">
+    <number>64</number>
+   </property>
+   <property name="frame">
+    <bool>false</bool>
+   </property>
+   <property name="placeholderText">
+    <string>(name of macro)</string>
+   </property>
   </widget>
  </widget>
  <resources/>

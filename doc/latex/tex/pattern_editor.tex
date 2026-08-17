@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-08-10
+% \update      2026-08-17
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2373,16 +2373,25 @@
 
    \begin{itemize}
       \item \textbf{Select Control}.
-         The main purpose of this group is to select either an RPN or an
-         NPRN event.
-         One can also choose to enter a data event alone, but
-         there is not much reason to do that.
+         The main purpose of this group is to select either an
+         \textbf{RPN} or an
+         \textbf{NPRN} event.
+         One can also choose to enter a \textbf{Data} event alone, but
+         there is not much reason to do that (yet).
+         The \textbf{Data button increment/decrment} buttons
+         are not yet implement.
+         The \textbf{Other (arbitrary data)} allows typing or
+         pasting events into the \textbf{Other's Data} field.
       \item \textbf{Select RPN}.
          On the other side, this group selects a specific RPN from
          the small set provided by the MIDI specification.
       \item \textbf{Channel}.
          Provides the channel (1 to 16) to be applied to the RPN/NRPN
          controller events.
+      \item \textbf{Buss}.
+         Normally, the configured MIDI Control Out port is used for
+         sending events. This dropdown allows the selection of another
+         destination MIDI device.
       \item \textbf{Append data entry slider}.
          If checked (recommended) then, after the RPN/NPRN event
          bytes are created, the bytes need to set the parameter
@@ -2393,6 +2402,8 @@
       \item \textbf{Use "fine" events}.
          If checked, also insert the "fine" version of the selected controller.
          The "fine" controllers are supported by General MIDI version 2.
+      \item \textbf{macro name}.
+         Simply shows the selected/edited macro name. Not editable.
       \item \textbf{Timestamp (BBT)}.
          This text box displays, in B:B:T format by default,
          the timestamp at which the events will be inserted into the
@@ -2409,9 +2420,10 @@
          If NRPN is selected, then the number of the desired
          parameter can be typed here.
          Note that parameter numbers are limit to 14-bits (0 to 16383).
-      \item \textbf{(name of macro)}.
-         Entering a short name into this text box enables the
-         \textbf{Create Macro} button.
+      \item \textbf{Select macro}.
+         Entering a short name into this editable combo-box enables the
+         \textbf{Create Macro} button, or, if the macro exists,
+         the \textbf{Modify Macro} button.
       \item \textbf{RPN/NRPN parameter value}.
          Type the desired parameter value here.
          It can be a single number (e.g. 1583 or 0x0600)
@@ -2422,19 +2434,38 @@
          For pitchbend range, "12" is the semitone value, and
          "50" is the cents value.
          Note that parameter values are limited to 14-bits (0 to 16383).
-      \item \textbf{Create Macro}.
-         If enabled and click, then the RPN events are added as a macro
+      \item \textbf{Create Macro} or \textbf{Modify Macro}.
+         If enabled and clicked, then the RPN events are added as a macro
          to the list of macros in the 'ctrl' configuration file,
-         and that file is marked to be saved at exit.
-      \item \textbf{Send (N)RPN}.
-         Clicking this button sends the RPN/NRPN events to the
-         MIDI Control Out (display) buss.
+         or modifies an existing macro.
+         That file is marked to be saved at exit.
       \item \textbf{Insert (N)RPN}.
-         Clicking this button adds the RPN/NRPN events to the pattern
+         Clicking this button adds the RPN/NRPN or "other" events to the pattern
          at the timestamp shown in the timestamp text box.
+      \item \textbf{Send (N)RPN}.
+         Clicking this button sends the RPN/NRPN or "other" events to the
+         MIDI Control Out (display) buss or the selected alternate buss.
       \item \textbf{Close}.
-         All this button does is closed the dialog.
+         All this button does is close the dialog.
+      \item \textbf{Other's Data}.
+         When \textbf{Other} is selected, this text editor field is enabled.
+         One can type in the data bytes in either hexadecimal or decimal
+         format. To create more than one event, separate the events
+         with a pipe ("|"). Spaces \textsl{must} separate each token,
+         including the pipe.
+      \item \textbf{Info}.
+         This text-box shows the generated data, always in hexadecimal.
+         We might fix that later.
+         If an error occurs, a message is shown in this box.
    \end{itemize}
+
+   There is a lot more that could be done with this macro editor.
+   One thing is adding other controllers that have "coarse" and "fine"
+   values, such as the controller and program events needed to
+   select a patch bank and a particular patch.
+   However, to be really useful, we would need incorporate the
+   reading of MIDINAM files.
+   This is something we are only thinking about at present.
 
 \subsection{Pattern Editor / Common Actions}
 \label{subsec:pattern_editor_common}

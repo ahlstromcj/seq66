@@ -380,6 +380,11 @@ public:
         return m_macro_events.expand();
     }
 
+    bool expand_macro (const std::string & name)
+    {
+        return m_macro_events.expand(name);
+    }
+
     bool send_macro (const std::string & name, bool flush = true);
     bool send_macro (const midibytes & byts, bool flush = true);
 

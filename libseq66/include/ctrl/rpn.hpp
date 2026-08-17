@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-11
+ * \updates       2026-08-16
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -64,6 +64,7 @@ public:
         slider,                         /* Data entry slider                */
         increment,                      /* Data button increment            */
         decrement,                      /* Data button decrement            */
+        other,                          /* An arbitrary set of bytes        */
         max                             /* terminator and illegal value     */
     };
 

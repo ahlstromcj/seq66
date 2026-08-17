@@ -275,6 +275,10 @@ qsessionframe::reload_song_info ()
     ui->pushButtonSaveInfo->setEnabled(false);
 }
 
+/**
+ * Compare this function to qrpnframe::populate_macro_combo().
+ */
+
 void
 qsessionframe::populate_macro_combo ()
 {

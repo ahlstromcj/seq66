@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-12
+ * \updates       2026-08-17
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2918,7 +2918,7 @@ qseqeditframe64::popup_tool_menu ()
             lfobox, SIGNAL(triggered(bool)), this, SLOT(slot_lfo_frame())
         );
 
-        QAction * rpnbox = new_qaction("RPN/NRPN...", m_tools_popup);
+        QAction * rpnbox = new_qaction("(N)RPN/Macros...", m_tools_popup);
         connect
         (
             rpnbox, SIGNAL(triggered(bool)), this, SLOT(slot_rpn_frame())

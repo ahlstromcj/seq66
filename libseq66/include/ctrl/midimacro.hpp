@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-09
+ * \updates       2026-08-17
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -65,7 +65,7 @@ private:
      *  midimacro in a container.
      */
 
-    std::string m_name;
+    std::string m_name { };
 
     /**
      *  This is a list of tokens making up the macro. Although it can take up
@@ -75,21 +75,28 @@ private:
      *  Also see the tokenize() function in the strfunctions module.
      */
 
-    tokenization m_tokens;
+    tokenization m_tokens { };
 
     /**
      *  Provides the full list of midibytes to be sent via this macro after
      *  expanding any macros it includes.
      */
 
-    midibytes m_bytes;
+    midibytes m_bytes { };
+
+    /**
+     *  Indicates the macro has already been expanded and the bytes
+     *  are fine as is.
+     */
+
+    bool m_is_expanded { false };
 
     /**
      *  The number of events in the macro. Normally just one, unless
      *  the vertical bar ("|") occurs in the list of tokens.
      */
 
-    int m_event_count;
+    int m_event_count { 0 };
 
     /**
      *  Provides the midibytes for each separate event in a multiple-event
@@ -97,7 +104,7 @@ private:
      *  Also includes expanded macros' bytes.
      */
 
-    events m_event_bytes;
+    events m_event_bytes { };
 
     /**
      *  Is the macro good?  It is good if there is a name, if there's at least
@@ -105,7 +112,7 @@ private:
      *  Even if invalid, the macro will be loaded and saved.
      */
 
-    bool m_is_valid;
+    bool m_is_valid { false };
 
 public:
 
@@ -141,12 +148,22 @@ public:
         return m_event_count;
     }
 
+    bool is_expanded () const
+    {
+        return m_is_expanded;
+    }
+
     bool is_valid () const
     {
         return m_is_valid;
     }
 
 protected:
+
+    void is_expanded (bool flag)
+    {
+        m_is_expanded = flag;
+    }
 
     /*
      * Specifically for use in rpn::create_rpn_events().

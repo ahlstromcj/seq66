@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-15
+ * \updates       2026-08-17
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -77,6 +77,9 @@ midimacros::midimacros () :
  *  file to a two-element vector of tokens:  tokens[0] = name, tokens[1] =
  *  <data bytes>, which is a space-separated list of midibyte-strings in
  *  hex format.
+ *
+ *  What should we do if the macro already exists? We could delete the
+ *  existing macro and add the new one via modify(), or just return false.
  */
 
 bool
@@ -87,13 +90,26 @@ midimacros::add (const tokenization & tokens)
     {
         std::string key { tokens[0] };
         std::string data { tokens[1] };
+        if (find(key))                          /* the macro already exists */
+        {
+            /*
+             * What to do? The previous behavior was to report an error,
+             * so let's keep it that way.
+             *
+             * result = modify(tokens);
+             */
 
-        midimacro m(key, data);                 /* further tokenizes        */
-        auto p { std::make_pair(key, m) };
-        auto r { m_macros.insert(p) };          /* r: pair<iteration, bool> */
-        result = r.second;
-        if (result)
-            m_active = count() > 0;
+            result = false;
+        }
+        else
+        {
+            midimacro m(key, data);             /* further tokenizes        */
+            auto p { std::make_pair(key, m) };
+            auto r { m_macros.insert(p) };      /* r: pair<iteration, bool> */
+            result = r.second;
+            if (result)
+                m_active = count() > 0;
+        }
     }
     return result;
 }
@@ -125,7 +141,7 @@ midimacros::remove (const std::string & macnam)
     bool result { count() > 0 };
     if (result)
     {
-        std::string key = macnam;
+        std::string key { macnam };
         result = m_macros.erase(key) == 1;      /* 1 or 0 can be removed    */
         if (result)
             m_active = count() > 0;
@@ -145,14 +161,14 @@ midimacros::find (const std::string & macnam) const
     {
         std::string key { macnam };
         auto it { m_macros.find(key) };
-        result = it != m_macros.end();
+        result = it != m_macros.end();          /* else "bad macnam" :-)    */
     }
     return result;
 }
 
 /**
  *  Converts all the loaded macros into midibytes, expanding macro
- *  variables where needed.  Variables are tokens showing the name of
+ *  variables where needed. Variables are tokens showing the name of
  *  another macro, e.g. "$header".
  *
  *  If a macro uses one of the macro variables, but that does not exist,
@@ -180,7 +196,42 @@ midimacros::expand ()
 }
 
 /**
- *  Recursively expands macro variables (e.g. "$footer")
+ *  Expands an existing named macro. The call sequence necessary is:
+ *
+ *      -   add(tokens) to make a provisional macro and add it to
+ *          midimacros.
+ *      -   expand(tokens[0] to expand just this new macro to obtain
+ *          all the bytes of that macro.
+ *      -   bytes(tokens[0] to get access to those expanded bytes when
+ *          needed.
+ */
+
+bool
+midimacros::expand (const std::string & macnam)
+{
+    bool result { false };
+    const auto cit { m_macros.find(macnam) };
+    if (cit != m_macros.end())
+    {
+        midimacro & mac { cit->second };
+        if (! mac.is_expanded())
+        {
+            midibytes temp { expand(mac) };
+            result = temp.size() > 0;
+            mac.is_expanded(result);
+            if (result)
+                mac.bytes(temp);
+        }
+    }
+    return result;
+}
+
+/**
+ *  Recursively expands macro variables (e.g. "$footer") into the
+ *  other bytes of a macro.
+ *
+ *  If a pipe ('|'), then there are multiple events, i.e. multiple sets
+ *  of event bytes.
  */
 
 midibytes
@@ -193,11 +244,12 @@ midimacros::expand (midimacro & m)
     {
         if (token[0] == '$')
         {
-            std::string name { token.substr(1) };
-            const auto cit { m_macros.find(name) };
-            if (cit != m_macros.end())
+            std::string macnam { token.substr(1) };
+            const auto cit { m_macros.find(macnam) };
+            if (cit != m_macros.end())  //  && ! cit->second.is_expanded)
             {
-                midibytes xpanded { expand(cit->second) };
+                midimacro & variable { cit->second };
+                midibytes xpanded { expand(variable) };
                 result.insert(result.end(), xpanded.begin(), xpanded.end());
             }
             else
@@ -226,10 +278,10 @@ midimacros::expand (midimacro & m)
 }
 
 midibytes
-midimacros::bytes (const std::string & name) const
+midimacros::bytes (const std::string & macnam) const
 {
     midibytes result;
-    const auto cit = m_macros.find(name);
+    const auto cit = m_macros.find(macnam);
     if (cit != m_macros.end())
     {
         const midimacro & m = cit->second;
@@ -240,10 +292,10 @@ midimacros::bytes (const std::string & name) const
 }
 
 const midimacro &
-midimacros::macro (const std::string & name) const
+midimacros::macro (const std::string & macnam) const
 {
     static midimacro s_dummy;           /* is_valid() will return false     */
-    const auto cit = m_macros.find(name);
+    const auto cit = m_macros.find(macnam);
     return cit != m_macros.end() ? cit->second : s_dummy ;
 }
 

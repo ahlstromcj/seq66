@@ -1,6 +1,6 @@
 TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-08-15
+2019-04-13 to 2026-08-17
 
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
@@ -12,14 +12,14 @@ Chris Ahlstrom
         -   24stones.mid and 2stones.mid
         -   Verify the proper sorting of (N)RPN messages.
         -   Check with valgrind again.
-        -   A single number is treated as the LSB or "fine" value,
-            making the MSB 0. This is not desireable.
         -   We can add detailed macro editing.
         -   Add opening the dialog to the right click menu.
     -   Reinvestigate the MIDI macros.
         -   Delete, re-add, and mark an existing macro as "modified".
         -   Can we add a general macro editor to the event editor?
         -   Add a non-pattern way to get the RPN dialog.
+        -   Add a way to insert a non-RPN macro.
+        -   Copy the Tools menu to the slot menu?
     -   The ":" key is available (as well as some other keys). How
         can we use them?
     -   Background recording / Metronome.

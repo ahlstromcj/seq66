@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-15
+ * \updates       2026-08-16
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -121,6 +121,8 @@ private:
     void set_rpn_parameter_number (bool is_rpn, midishort pv);
     void set_rpn_parameter_value (midishort pv);
     void set_time_stamp (midipulse ts);
+    void populate_macro_combo ();
+    void set_macro_name (const QString & name);
     void modify_macro ();
 
 private slots:
@@ -132,13 +134,16 @@ private slots:
     void slot_rpn_append_reset (int state);
     void slot_rpn_use_fine_rpn (int state);
     void slot_select_rpn_parameter_type (int v);
+    void slot_macro_other_changed ();
     void slot_next_time_format ();
     void slot_timestamp_text_changed ();
     void slot_param_number_text_changed ();
     void slot_param_value_text_changed ();
     void slot_show_in_hex ();
-    void slot_macro_name_changed ();
+    void slot_macro_name_changed ();        // should make it a non-slot
     void slot_create_macro ();
+    void slot_pick_macro (int);
+    void slot_macro_text ();
     void slot_delete_macro ();
     void slot_rpn_send ();
     void slot_rpn_insert ();
@@ -212,6 +217,14 @@ private:
      */
 
     std::string m_macro_name { };
+
+    /**
+     *  We can add arbitrary macros (i.e. not RPN/NPRM) represented
+     *  as bytes. We flag this setup and store the macro.
+     */
+
+    bool m_arbitrary_macro_in_force { false };
+    tokenization m_arbitrary_macro_tokens { };
 
     /**
      *  Indicates to show numbers in hexadecimal format.
