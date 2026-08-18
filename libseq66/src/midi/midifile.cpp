@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-07-10
+ * \updates       2026-08-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2972,17 +2972,7 @@ midifile::write (performer & p, bool doseqspec)
             bool result = write_header(numtracks, smfformat);
             if (result)
             {
-#if 0           // Moved to write_midi_file() to reduce verbosity.
-
-                std::string temp = "Writing ";
-                temp += doseqspec ? "Seq66" : "Normal" ;
-                temp += " SMF ";
-                temp += std::to_string(smfformat);
-                temp += " MIDI file ";
-                temp += std::to_string(m_ppqn);
-                temp += " PPQN";
-                file_message(temp, m_name);
-#endif
+                // Code moved to write_midi_file() to reduce verbosity.
             }
             else
                 m_error_message = "Failed to write header.";
@@ -3044,8 +3034,9 @@ midifile::write (performer & p, bool doseqspec)
                 file.write(&kc, 1);
                 if (file.fail())
                 {
-                    m_error_message = "Error writing byte.";
                     result = false;
+                    m_error_message = "Error writing byte.";
+                    break;
                 }
             }
             m_char_list.clear();
@@ -3863,6 +3854,79 @@ write_midi_file
     return result;
 }
 
+/**
+ *  Reads a MIDI-related file into a vector of unsigned characters.
+ *  Useful for reading files of System Exclusive data.
+ *
+ *  Minimal error checking.
+ *
+ * \param fn
+ *      Provides the file-specification of an existing file.
+ *
+ * \return
+ *      Returns a copy of the bytes read from that file. If
+ *      empty, that's probably an error.
+ */
+
+midibytes
+read_raw_midi (const std::string & fn)
+{
+    midibytes result;                       /* an empty vector of bytes     */
+    bool ok { file_readable(fn) };
+    if (ok)
+    {
+        midifile f(fn, 192);                /* PPQN value irrelevant        */
+        ok = f.grab_input_stream("RAW");    /* or SYX, SYS, sysex?          */
+        if (ok)
+        {
+            result = f.data();              /* get the raw bytes            */
+        }
+        else
+        {
+            file_error(fn, "Raw read failed");
+        }
+    }
+    return result;
+}
+
+/**
+ *  This code is extracted from midifile::write().
+ */
+
+bool
+write_raw_midi (const std::string & fn, const midibytes & databytes)
+{
+    bool result { ! databytes.empty() };
+    if (result)
+        result = ! file_exists(fn) || file_writable(fn);
+
+    if (result)
+    {
+        std::ofstream file
+        (
+            fn.c_str(), std::ios::out | std::ios::binary | std::ios::trunc
+        );
+        result = file.is_open();
+        if (result)
+        {
+            for (auto b : databytes)
+            {
+                char kc = char(b);
+                file.write(&kc, 1);
+                if (file.fail())
+                {
+                    result = false;
+                    file_error(fn, "Error writing byte.");
+                    break;
+                }
+            }
+        }
+        else
+            file_error(fn, "Open failed");
+    }
+    return result;
+}
+
 }           // namespace seq66
 
 /*
@@ -3870,4 +3934,3 @@ write_midi_file
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

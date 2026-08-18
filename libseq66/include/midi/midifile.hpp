@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-10-16
+ * \updates       2026-08-18
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -67,6 +67,8 @@ namespace seq66
 
 class midifile
 {
+
+    friend midibytes read_raw_midi (const std::string &);
 
 public:
 
@@ -402,6 +404,11 @@ protected:
     );
     void read_gap (size_t sz);
 
+    const midibytes & data () const
+    {
+        return m_data;
+    }
+
     midibyte peek (size_t ahead = 0) const
     {
         return m_data[m_pos + ahead];
@@ -521,6 +528,12 @@ extern bool write_midi_file
     const std::string & fn,
     std::string & errmsg
 );
+extern midibytes read_raw_file (const std::string & fname);
+extern bool write_raw_midi
+(
+    const std::string & fn,
+    const midibytes & databytes
+);
 
 }           // namespace seq66
 
@@ -531,4 +544,3 @@ extern bool write_midi_file
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

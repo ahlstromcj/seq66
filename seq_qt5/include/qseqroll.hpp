@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2025-10-14
+ * \updates       2026-08-18
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -103,8 +103,13 @@ public:
 
     virtual ~qseqroll ();
 
-    bool follow_progress (qscrollmaster * qsm, bool expand = false);
+    int note_width () const
+    {
+        return m_note_width;
+    }
+
     int note_height () const;
+    bool follow_progress (qscrollmaster * qsm, bool expand = false);
     bool v_zoom_in ();
     bool v_zoom_out ();
     bool reset_v_zoom ();

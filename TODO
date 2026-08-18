@@ -1,9 +1,13 @@
 TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-08-17
+2019-04-13 to 2026-08-18
 
+    -   BSD. Boot to it and test out the latest meson build.
+    -   Restart. Try to figure out why somethings show up only after
+        exiting and running again.
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
+            Individual selection of notes seems fine.
         -   Horizontal gets better with zoom, vertical gets worse.
     -   Follow up on RPN:
         -   program-banks.text (issue #138)
@@ -12,28 +16,19 @@ Chris Ahlstrom
         -   24stones.mid and 2stones.mid
         -   Verify the proper sorting of (N)RPN messages.
         -   Check with valgrind again.
-        -   We can add detailed macro editing.
         -   Add opening the dialog to the right click menu.
+        -   Add a button to read a *.SYS (SysEx) file.
     -   Reinvestigate the MIDI macros.
-        -   Delete, re-add, and mark an existing macro as "modified".
-        -   Can we add a general macro editor to the event editor?
-        -   Add a non-pattern way to get the RPN dialog.
-        -   Add a way to insert a non-RPN macro.
+        -   Mark an existing macro as "modified". How?
+        -   Add a non-pattern way to get the RPN dialog. Would disable
+            Send and Insert buttons. Only macros could be handled.
         -   Copy the Tools menu to the slot menu?
     -   The ":" key is available (as well as some other keys). How
-        can we use them?
+        can we use them? Metronome toggle as noted in "Back burner".
     -   Background recording / Metronome.
         -   Finish testing scratchpad recording.
-        -   Can we show the patch name, and if drums, the drum name?
-            Can we use dropdowns for selection?
     -   Copy paste:
-        -   Does not show the ghost notes unless selected
-            in the current pattern and pasted in that same pattern.
-            Partially fixed; can conjure up cases where neither
-            the ghost notes or even the box are drawn. One issue
-            is that clicking into a pattern removes the selection
-            flags from its events.
-        -   Also, can paste a long selection into a short pattern.
+        -   Can paste a long selection into a short pattern.
             Either warn about it or change the length.
     -   qmake.
         -   Check for Clang and add -W-no-c++26-extensions.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-08-15
+ * \updates       2026-08-18
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -828,7 +828,7 @@ qseqroll::draw_notes
             else
                 painter.setBrush(note_brush());
 
-            painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
+            painter.drawRect(m_note_x, m_note_y, note_width(), noteheight);
             if (use_gradient())
             {
                 if (background)
@@ -837,14 +837,14 @@ qseqroll::draw_notes
                     painter.setBrush(backseq_brush());
                     painter.drawRect
                     (
-                        m_note_x, m_note_y, m_note_width, noteheight
+                        m_note_x, m_note_y, note_width(), noteheight
                     );
                 }
                 else
                 {
                     painter.fillRect
                     (
-                        m_note_x + 1, m_note_y + 1, m_note_width - 1,
+                        m_note_x + 1, m_note_y + 1, note_width() - 1,
                         noteheight - 1, m_note_grad
                     );
                 }
@@ -876,7 +876,7 @@ qseqroll::draw_notes
              * red if drum mode, otherwise plain white.
              */
 
-            if (m_note_width > 3)
+            if (note_width() > 3)
             {
                 if (! background)
                 {
@@ -889,7 +889,7 @@ qseqroll::draw_notes
                             painter.fillRect
                             (
                                 x_shift, m_note_y,
-                                m_note_width + length_add, h_minus, m_sel_grad
+                                note_width() + length_add, h_minus, m_sel_grad
                             );
                         }
                     }
@@ -910,7 +910,7 @@ qseqroll::draw_notes
                             painter.drawRect
                             (
                                 x_shift, m_note_y,
-                                m_note_width + length_add - 1, h_minus
+                                note_width() + length_add - 1, h_minus
                             );
                         }
                         else
@@ -918,7 +918,7 @@ qseqroll::draw_notes
                             int w = z().tix_to_pix(ni.finish()) + length_add - 3;
                             painter.drawRect
                             (
-                                x_shift, m_note_y, m_note_width, h_minus
+                                x_shift, m_note_y, note_width(), h_minus
                             );
                             painter.drawRect
                             (
@@ -1058,7 +1058,7 @@ qseqroll::draw_ghost_notes
                 if (m_note_width < 1)
                     m_note_width = 1;
 
-                painter.drawRect(xi, yi, m_note_width, unit_height() - 2);
+                painter.drawRect(xi, yi, note_width(), unit_height() - 2);
             }
         }
     }
@@ -1317,6 +1317,12 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
 
 /**
  *  If it was a button press, set values for dragging.
+ *
+ *  Note 1. The key-padding messes with snap_x(), we think. Instead use
+ *          the progress-bar's initial location.
+ *
+ *              snapped_x = norm_x = ev->x() - m_keypadding_x;
+ *
  */
 
 void
@@ -1326,10 +1332,7 @@ qseqroll::mousePressEvent (QMouseEvent * ev)
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
 
     /*
-     * The key-padding messes with snap_x(), we think. Instead use
-     * the progress-bar's initial location.
-     *
-     *      snapped_x = norm_x = ev->x() - m_keypadding_x;
+     * Note 1.
      */
 
     snapped_x = norm_x = qt_mouse_x(ev) - xoffset(0);
@@ -1382,12 +1385,6 @@ qseqroll::mousePressEvent (QMouseEvent * ev)
                 drop_x(snapped_x);                  /* adding, snapped x    */
 
                 /*
-                 * ca 2025-07-21. Already done above.
-                 *
-                 *      convert_xy(drop_x(), drop_y(), tick_s, note);
-                 */
-
-                /*
                  * Test if a note is already there. Fake select, if so, don't
                  * add, else add a note, length = little less than snap.
                  */
@@ -1404,12 +1401,6 @@ qseqroll::mousePressEvent (QMouseEvent * ev)
             }
             else                                    /* we're selecting anew */
             {
-                /*
-                 *  In drum mode, we were using "is_onset", but this breaks
-                 *  moving the selected drum events. So we leave it at
-                 *  "selected".
-                 */
-
                 eventlist::select selmode = eventlist::select::selected;
                 int selcount = track().select_note_events
                 (
@@ -1423,7 +1414,6 @@ qseqroll::mousePressEvent (QMouseEvent * ev)
                         moving_init(true);          /* moving; L-click only */
 
                         /*
-                         * ca 2025-07-07
                          * Store the selection to show the single-note
                          * "ghost note" while moving.
                          */
@@ -1450,21 +1440,6 @@ qseqroll::mousePressEvent (QMouseEvent * ev)
                         move_snap_offset_x(selection().x() - adj_selected_x);
                         current_x(snapped_x);
                         drop_x(snapped_x);
-
-                        /*
-                         * EXPERIMENTAL. Get pixel coordinates of selected notes.
-                         * Subtract them from the current mouse location.
-
-                        if (selcount > 1)
-                        {
-                            m_sel_offset_x = current_x() - selection().x();
-                            m_sel_offset_y = current_y() - selection().y();
-                        }
-                        else
-                            m_sel_offset_x = m_sel_offset_y = 0;
-                         *
-                         */
-
                         m_sel_offset_x = current_x() - selection().x();
                         m_sel_offset_y = current_y() - selection().y();
                     }
@@ -1565,10 +1540,21 @@ qseqroll::mouseReleaseEvent (QMouseEvent * ev)
             int note_h, note_l;         /* high and low notes in window     */
             int x, y, w, h;             /* window dimensions                */
             eventlist::select selmode = eventlist::select::selecting;
+
+            (void) snap_current_x();
+
             rect::xy_to_rect_get        /* copy drop dimensions to xywh     */
             (
                 drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
             );
+
+            /*
+             * We need to adjust for snapping. Still needs work.
+             */
+
+            int x2 { x + w - 8 };
+            --y;
+
             convert_xy(x, y, tick_s, note_h);
             convert_xy(x + w, y + h, tick_f, note_l);
 
@@ -1679,16 +1665,34 @@ qseqroll::snapped_x (int x)
 
 /**
  *  Handles a mouse movement, including selection and note-painting.
+ *
+ *  Notes:
+ *
+ *      1.  The key-padding messes with snap_x(), we think. Instead use
+ *          the progress-bar's initial location.
+ *
+ *              current_x(int(ev->x()) - m_keypadding_x);
+ *
+ *      2.  This change broke note-painting during mouse movement,
+ *          causing notes to be added at the next snap, not the current
+ *          snap:
+ *
+ *                  x = snapped_x(current_x());
+ *
+ *          However, using "if (snap_current_x())" broke drawing at
+ *          PPQN > 192.
+ *
+ *          ca 2025-10-23 Gets snapped properly in add_painted_note().
+ *          Same issue as above, doh!
+ *
+ *                  x = snapped_x(x);
  */
 
 void
 qseqroll::mouseMoveEvent (QMouseEvent * ev)
 {
     /*
-     * The key-padding messes with snap_x(), we think. Instead use
-     * the progress-bar's initial location.
-     *
-     *      current_x(int(ev->x()) - m_keypadding_x);
+     * Note 1.
      */
 
     current_x(qt_mouse_x(ev) - xoffset(0));
@@ -1719,19 +1723,7 @@ qseqroll::mouseMoveEvent (QMouseEvent * ev)
     if (painting())
     {
         /*
-         * This change broke note-painted during mouse movement,
-         * causing notes to be added at the next snap, not the current
-         * snap:
-         *
-         *      x = snapped_x(current_x());
-         *
-         * However, using "if (snap_current_x())" broke drawing at
-         * PPQN > 192.
-         *
-         * ca 2025-10-23 Gets snapped properly in add_painted_note().
-         * Same issue as above, doh!
-         *
-         *      x = snapped_x(x);
+         * Note 2.
          */
 
         convert_xy(x, y, tick, note);
@@ -2410,6 +2402,9 @@ qseqroll::follow_progress (qscrollmaster * qsm, bool expand)
  *
  *  The odd thing is that the font is bold in the main window, but
  *  regular in the external window.
+ *
+ *  Consider adding a note-length parameter and showing the length
+ *  in ticks. Also consider respecting the hex button.
  */
 
 void
@@ -2421,23 +2416,22 @@ qseqroll::show_note_tooltip (int mx, int my)
     sequence::note_info ni = track().find_note(tick, note);
     if (ni.valid())
     {
-        std::string s = perf().pulses_to_measure_string(ni.start());
-        std::string f = perf().pulses_to_measure_string(ni.finish());
-        std::string temp = "#";
-        temp += std::to_string(ni.note());
-        temp += ": ";
-        temp += s;
-        temp += "-";
-        temp += f;
-        temp += " Vel ";
-        temp += std::to_string(ni.velocity());
+        std::string s { perf().pulses_to_measure_string(ni.start()) };
+        std::string f { perf().pulses_to_measure_string(ni.finish()) };
+        char temp[64];
+        (void) snprintf
+        (
+            temp, sizeof temp,
+            "(%d, %d) #%d: %s to %s Vel %d",
+            mx, my, ni.note(), s.c_str(), f.c_str(), ni.velocity()
+        );
 #if defined SEQ66_SHOW_GENERIC_TOOLTIPS
         generic_tooltip(this, temp, mx, my);
 #else
         if (not_nullptr(m_note_tooltip))
             delete m_note_tooltip;
 
-        m_note_tooltip = new QLabel(qt(temp), this);
+        m_note_tooltip = new QLabel(temp, this);
 
         /*
          *  Using the existing style might render the text the same color
@@ -2450,7 +2444,7 @@ qseqroll::show_note_tooltip (int mx, int my)
         p.setColor(m_note_tooltip->foregroundRole(), fore_color());
         m_note_tooltip->setPalette(p);
         m_note_tooltip->show();
-        m_note_tooltip->move(mx + 3, my - note_height() - 3);
+        m_note_tooltip->move(mx + 16, my + note_height());
 #endif
     }
     else

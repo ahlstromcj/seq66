@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>803</width>
-    <height>555</height>
+    <width>807</width>
+    <height>559</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -640,8 +640,8 @@ the selected bus.</string>
     <rect>
      <x>100</x>
      <y>427</y>
-     <width>671</width>
-     <height>51</height>
+     <width>611</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="font">
@@ -651,7 +651,7 @@ the selected bus.</string>
     </font>
    </property>
    <property name="maxLength">
-    <number>2048</number>
+    <number>65536</number>
    </property>
    <property name="placeholderText">
     <string>(set a macro name and enter its bytes in hex or decimal here)</string>
@@ -679,7 +679,7 @@ the selected bus.</string>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>18</x>
      <y>427</y>
      <width>71</width>
      <height>51</height>
@@ -702,7 +702,7 @@ Data  </string>
      <x>100</x>
      <y>483</y>
      <width>671</width>
-     <height>51</height>
+     <height>50</height>
     </rect>
    </property>
    <property name="font">
@@ -756,10 +756,28 @@ to the 'ctrl' file.</string>
     <number>64</number>
    </property>
    <property name="frame">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="placeholderText">
     <string>(name of macro)</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_load_file">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>427</y>
+     <width>51</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Loads a file of raw bytes, such as a file
+containing only MIDI SysEx data.</string>
+   </property>
+   <property name="text">
+    <string>&amp;Load
+File</string>
    </property>
   </widget>
  </widget>

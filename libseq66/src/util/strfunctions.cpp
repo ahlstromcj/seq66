@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-05-20
+ * \updates       2026-08-18
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -674,6 +674,27 @@ midi_bytes_to_string (const std::string & s)
     }
     else
         return s;
+}
+
+std::string
+expand_byte_vector
+(
+    const std::vector<unsigned char> & vbytes,
+    bool usehex
+)
+{
+    std::string result;
+    int count { -1 };
+    const char * fmt { usehex ? "0x%02ux" : "%ud" };
+    char tmp [8];
+    for (auto b : vbytes)
+    {
+        if (++ count> 0)
+            result.push_back(' ');
+
+        (void) snprintf(tmp, sizeof tmp, fmt, unsigned(b));
+    }
+    return result;
 }
 
 /**
