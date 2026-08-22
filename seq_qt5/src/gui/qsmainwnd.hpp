@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-06-23
+ * \updates       2026-08-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -91,6 +91,7 @@ namespace seq66
     class qperfeditex;
     class qperfeditframe64;
     class qplaylistframe;
+    class qrpnframe;
     class qsabout;
     class qsappinfo;
     class qsbuildinfo;
@@ -366,6 +367,13 @@ private:
     qlearnframe * m_midi_learn_frame;
 #endif
 
+    /**
+     *  The RPN window object for handling RPN and NRPN more
+     *  systematically.
+     */
+
+    qrpnframe * m_rpn_wnd;
+
     combolist m_ppqn_list;
     combolist m_beatwidth_list;
     combolist m_beats_per_bar_list;
@@ -546,6 +554,7 @@ private slots:
     void set_song_mute_on ();
     void set_song_mute_off ();
     void set_song_mute_toggle ();
+    void set_macros ();
     void set_playscreen_copy ();
     void set_playscreen_paste ();
     void learn_toggle ();

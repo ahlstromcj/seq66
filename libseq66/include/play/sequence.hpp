@@ -249,6 +249,7 @@ class sequence
 {
     friend class performer;             /* access to set_parent()   */
     friend class triggers;
+    friend class qrpnframe;
 
 public:
 

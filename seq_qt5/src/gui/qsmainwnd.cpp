@@ -90,6 +90,7 @@
 #include "qperfnames.hpp"               /* seq66::qperfnames pointer access */
 #include "qperfroll.hpp"                /* seq66::qperfroll pointer access  */
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe class      */
+#include "qrpnframe.hpp"                /* seq66::qrpnframe dialog class    */
 #include "qsabout.hpp"                  /* seq66::qsabout dialog class      */
 #include "qsappinfo.hpp"                /* seq66::qsappinfo dialog class    */
 #include "qslogview.hpp"                /* seq66::qslogview dialog class    */
@@ -255,6 +256,7 @@ qsmainwnd::qsmainwnd
 #if SEQ66_MIDI_LEARN_SUPPORT
     m_midi_learn_frame      (nullptr),
 #endif
+    m_rpn_wnd               (nullptr),
     m_ppqn_list             (supported_ppqns(), true),  /* add a blank slot */
     m_beatwidth_list        (beatwidth_items()),        /* settings module  */
     m_beats_per_bar_list    (beats_per_bar_items()),    /* ditto            */
@@ -617,6 +619,12 @@ qsmainwnd::qsmainwnd
     (
         ui->actionToggleAllTracks, SIGNAL(triggered(bool)),
         this, SLOT(set_song_mute_toggle())
+    );
+
+    connect
+    (
+        ui->actionMacros, SIGNAL(triggered(bool)),
+        this, SLOT(set_macros())
     );
 
     std::string keyname
@@ -1162,6 +1170,9 @@ qsmainwnd::closeEvent (QCloseEvent * event)
     if (not_nullptr(m_midi_learn_frame))
         m_midi_learn_frame->close();        /* just signal to close         */
 #endif
+
+    if (not_nullptr(m_rpn_wnd))
+        delete m_rpn_wnd;
 
     if (usr().in_nsm_session())
     {
@@ -4381,6 +4392,19 @@ qsmainwnd::set_song_mute_toggle ()
     cb_perf().last_automation_slot(automation::slot::toggle_mutes);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
+}
+
+void
+qsmainwnd::set_macros ()
+{
+    if (is_nullptr(m_rpn_wnd))
+    {
+        m_rpn_wnd = new (std::nothrow) qrpnframe(cb_perf());
+        if (not_nullptr(m_rpn_wnd))
+            m_rpn_wnd->show();
+    }
+    else
+        m_rpn_wnd->show();
 }
 
 void

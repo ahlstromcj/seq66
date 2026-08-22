@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-17
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -60,6 +60,7 @@ public:
     static const std::string reset;
     static const std::string startup;
     static const std::string shutdown;
+    static const std::string macro_header;
 
     using container = std::map<std::string, midimacro>;
 
@@ -116,17 +117,25 @@ public:
 
     bool expand ();
     bool expand (const std::string & name);
+    midibytes expand_macro (midimacro & m);
     midibytes bytes (const std::string & name) const;
     const midimacro & macro (const std::string & name) const;
     std::string lines () const;
     tokenization names () const;
     std::string byte_strings () const;
     bool make_defaults ();
-
-private:
-
-    void tokenize ();
-    midibytes expand (midimacro & m);
+    midimacro read_midi_data (const std::string & fn);
+    midimacro read_macro_file (const std::string & fn);
+    bool write_midi_data
+    (
+        const midimacro & macro,
+        const std::string & fn = ""
+    );
+    bool write_macro_file
+    (
+        const midimacro & macro,
+        const std::string & fn = ""
+    );
 
 };          // class midimacros
 
@@ -139,4 +148,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>906</width>
-    <height>624</height>
+    <width>910</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1780,8 +1780,8 @@ beats/minute.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>906</width>
-     <height>26</height>
+     <width>910</width>
+     <height>28</height>
     </rect>
    </property>
    <property name="font">
@@ -1860,6 +1860,7 @@ beats/minute.</string>
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionPreferences"/>
+    <addaction name="actionMacros"/>
     <addaction name="separator"/>
     <addaction name="actionSongEditor"/>
     <addaction name="actionSongTranspose"/>
@@ -2304,6 +2305,11 @@ in the same directory as the original, with the extension
   <action name="actionMIDILearn">
    <property name="text">
     <string>MIDI &amp;Learn</string>
+   </property>
+  </action>
+  <action name="actionMacros">
+   <property name="text">
+    <string>M&amp;acros...</string>
    </property>
   </action>
  </widget>

@@ -1,15 +1,22 @@
 TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-08-18
+2019-04-13 to 2026-08-22
 
     -   BSD. Boot to it and test out the latest meson build.
-    -   Restart. Try to figure out why somethings show up only after
-        exiting and running again.
+    -   Restart.
+        -   Try to figure out why somethings show up only after
+            exiting and running again.
+        -   Maybe need a way enable all (new) ports without
+            doing a (destructive of configuration) remapping.
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
             Individual selection of notes seems fine.
         -   Horizontal gets better with zoom, vertical gets worse.
     -   Follow up on RPN:
+        -   Need to generated tokens for the rpn class so it
+            can save a *.macro file.
+        -   Need to have the save dialog show the types of
+            file extensions: .macro(s), .sys, .raw.
         -   program-banks.text (issue #138)
         -   akai-mpk-mini-play.text
         -   RPN.text

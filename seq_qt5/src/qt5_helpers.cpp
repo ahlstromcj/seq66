@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-08-05
+ * \updates       2026-08-21
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -51,6 +51,7 @@
  *      -   show_file_dialog()
  *      -   show_folder_dialog()
  *      -   show_file_select_dialog()
+ *      -   show_filespec_select_dialog()
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
@@ -959,7 +960,13 @@ show_exe_file_dialog (QWidget * parent, std::string & selectedfile)
 }
 
 /**
- *  Meant to handle many more situations.
+ *  Meant to handle many more situations. For a good example, see
+ *  show_import_midi_file_dialog(), which uses only the first four
+ *  parameters, the last being this filter-list:
+ *
+ *      "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
+ *      "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All files (*)"
+ *
  *
  * QString QFileDialog::getSaveFileName
  * (
@@ -983,27 +990,31 @@ show_exe_file_dialog (QWidget * parent, std::string & selectedfile)
  *      The initial file option and the final selected file option.
  *
  * \param prompt
- *      The string to show in the caption.
+ *      The string to show in the caption. Defaults to "".
  *
  * \param filterlist
- *      The types of files (file extensions) that can be selected.
+ *      The types of files (file extensions) that can be selected. Defaults to
+ *      "".
  *
  * \param saving
  *      indicates if the dialog is meant for saving a file. The constants
  *      that apply are SavingFile (true) and OpeningFile (false).
  *      If the former, we call QFileDialog::getSaveFileName().
  *      If the latter, we call QFileDialog::getOpenFileName().
+ *      Defaults to false.
  *
  * \param forceconfig
  *      Indicates if the dialog is meant for a configuration file. The
  *      constants that apply are ConfigFile (true) and NormalFile (false).
  *      forceconfig selects either rc().home_config_directory() or selectedfile.
+ *      Defaults to false.
  *
  * \param extension
- *      The main extension that applies.
+ *      The main extension that applies. Defaults to "".
  *
  * \param promptoverwrite
- *      If true, a prompt for an overwrite operation is shown.
+ *      If true, a prompt for an overwrite operation is shown. Defaults to
+ *      true.
  */
 
 bool
@@ -1105,6 +1116,12 @@ show_file_dialog
  *
  * \param extension
  *      The file-extension of interest. If empty, all files are shown.
+ *      It should include the '.'; if not, then it is used as a filter,
+ *      like the following example:
+ *
+ *      "Map files (*.drums *.notemap);;Drums (*.drums)"
+ *
+ *      ;;All files (*) is also appended in this case.
  *
  * \param [inout] selecteddir
  *      The initial path and the final selected path. This is the starting
@@ -1136,11 +1153,20 @@ show_file_select_dialog
     }
     else
     {
-        filter = capitalize(extension);
-        filter += " (*.";
-        filter += tolower(extension);
-        filter += ")";
-        filter += ";;All files (*)";
+        if (extension[0] == '.')
+        {
+            std::string e_no_dot { extension.substr(1) };
+            filter = capitalize(e_no_dot);
+            filter += " (*";
+            filter += tolower(extension);
+            filter += ")";
+            filter += ";;All files (*)";
+        }
+        else
+        {
+            filter += extension;
+            filter += ";;All files (*)";
+        }
     }
 
     bool result = show_file_dialog
@@ -1168,6 +1194,42 @@ show_file_select_dialog
         selecteddir.clear();
         selectedfile.clear();
     }
+    return result;
+}
+
+/**
+ * The same as show_file_select_dialog(), except that it concatenates
+ * the directory and filename, and returns the full file-specification
+ * instead of the separate path and file-name.
+ *
+ * \param parent
+ *      The owner of this dialog.
+ *
+ * \param extensions
+ *      See show_file_select_dialog().
+ *
+ * \return
+ *      Returns the full file-specification selected, or an empty string
+ *      if not successful.
+ */
+
+std::string
+show_filespec_select_dialog
+(
+    QWidget * parent,
+    const std::string & extension
+)
+{
+    std::string result;
+    std::string selecteddir;
+    std::string selectedfile;
+    bool ok
+    {
+        show_file_select_dialog(parent, extension, selecteddir, selectedfile)
+    };
+    if (ok)
+        result = filename_concatenate(selecteddir, selectedfile);
+
     return result;
 }
 

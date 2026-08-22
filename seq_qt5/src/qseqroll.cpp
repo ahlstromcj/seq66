@@ -1550,9 +1550,10 @@ qseqroll::mouseReleaseEvent (QMouseEvent * ev)
 
             /*
              * We need to adjust for snapping. Still needs work.
+             *
+             * int x2 { x + w - 8 };
              */
 
-            int x2 { x + w - 8 };
             --y;
 
             convert_xy(x, y, tick_s, note_h);

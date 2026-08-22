@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-08-18
+ * \updates       2026-08-19
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -528,7 +528,7 @@ extern bool write_midi_file
     const std::string & fn,
     std::string & errmsg
 );
-extern midibytes read_raw_file (const std::string & fname);
+extern midibytes read_raw_midi (const std::string & fname);
 extern bool write_raw_midi
 (
     const std::string & fn,

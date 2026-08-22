@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-06-01
+ * \updates       2026-08-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -2163,9 +2163,25 @@ file_extension (const std::string & path)
     auto ppos = path.find_last_of(".");
     if (ppos != std::string::npos)
     {
-        auto len = path.length() - 2;
-        result = path.substr(ppos + 1, len);
+//      auto len = path.length() - 2;
+//      result = path.substr(ppos + 1, len);
+        result = path.substr(ppos + 1);
     }
+    return result;
+}
+
+/**
+ *  Same as above, except the '.' is preserved.
+ */
+
+std::string
+file_dot_extension (const std::string & path)
+{
+    std::string result;
+    auto ppos = path.find_last_of(".");
+    if (ppos != std::string::npos)
+        result = path.substr(ppos);
+
     return result;
 }
 

@@ -276,8 +276,8 @@ static const int c_thread_trigger_width_us = 4 * 1000;
  *  buzzing.  So after we stop the current tune, we delay a little bit to
  *  allow JACK playback to exit.
  *
- *  Actually also an issue with ALSA, finding null events or deleted sequences in
- *  the middle of play().
+ *  Actually also an issue with ALSA, finding null events or deleted sequences
+ *  in the middle of play().
  */
 
 static const int c_delay_start = 1000;

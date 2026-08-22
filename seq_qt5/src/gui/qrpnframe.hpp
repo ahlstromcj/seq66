@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-16
+ * \updates       2026-08-20
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -67,10 +67,15 @@ class qrpnframe : public QFrame
 
 public:
 
-    explicit qrpnframe
+    qrpnframe
     (
         performer & p,
         sequence & s,
+        QWidget * parent = nullptr
+    );
+    qrpnframe
+    (
+        performer & p,
         QWidget * parent = nullptr
     );
     ~qrpnframe ();
@@ -95,6 +100,11 @@ public:
         return m_seq;
     }
 
+    bool not_null_sequence () const
+    {
+        return ! m_null_sequence;
+    }
+
     rpn::info & rpn_info ()
     {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -113,6 +123,21 @@ public:
 #endif
     }
 
+    std::string & macro_name ()
+    {
+        return m_macro_name;
+    }
+
+    const std::string & macro_name () const
+    {
+        return m_macro_name;
+    }
+
+    const std::string & macro_filename () const
+    {
+        return m_macro_filename;
+    }
+
 private:
 
     void select_rpn_control (int rpncontrol);
@@ -124,6 +149,25 @@ private:
     void populate_macro_combo ();
     void set_macro_name (const QString & name);
     void modify_macro ();
+    bool send_rpn_macro ();
+    bool insert_rpn_macro ();
+    bool send_other_macro ();
+    bool insert_other_macro ();
+
+    void macro_name (const std::string & s)
+    {
+        m_macro_name = s;
+    }
+
+    void macro_filename (const std::string & s)
+    {
+        m_macro_filename = s;
+    }
+
+    bool other_macro_in_force () const
+    {
+        return m_other_macro_in_force;
+    }
 
 private slots:
 
@@ -135,6 +179,8 @@ private slots:
     void slot_rpn_use_fine_rpn (int state);
     void slot_select_rpn_parameter_type (int v);
     void slot_macro_other_changed ();
+    void slot_load_file ();
+    void slot_save_file ();
     void slot_next_time_format ();
     void slot_timestamp_text_changed ();
     void slot_param_number_text_changed ();
@@ -145,9 +191,9 @@ private slots:
     void slot_pick_macro (int);
     void slot_macro_text ();
     void slot_delete_macro ();
-    void slot_rpn_send ();
-    void slot_rpn_insert ();
-    void slot_rpn_cancel ();
+    void slot_send ();
+    void slot_insert ();
+    void slot_cancel ();
 
 private:
 
@@ -219,18 +265,34 @@ private:
     std::string m_macro_name { };
 
     /**
+     *  Holds the file-name, if any, that is the source or destination
+     *  of the macro data.
+     */
+
+    std::string m_macro_filename { };
+
+    /**
      *  We can add arbitrary macros (i.e. not RPN/NPRM) represented
      *  as bytes. We flag this setup and store the macro.
      */
 
-    bool m_arbitrary_macro_in_force { false };
-    tokenization m_arbitrary_macro_tokens { };
+    bool m_other_macro_in_force { false };
+    tokenization m_other_macro_tokens { };
 
     /**
      *  Indicates to show numbers in hexadecimal format.
      */
 
     bool m_show_in_hex { false };
+
+    /**
+     *  Indicates that the dialog is not associated with a normal
+     *  sequence, therefore the Insert operation will be disabled.
+     *  This class will provide an unused private sequence which
+     *  has a sequence number of "unassigned()".
+     */
+
+    bool m_null_sequence { false };
 
 };          // class qrpnframe
 

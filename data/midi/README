@@ -1,6 +1,6 @@
-Data/Midi Directory for Seq66 0.99.11
+Data/Midi Directory for Seq66 0.99.28
 Chris Ahlstrom
-2021-04-14 to 2023-11-22
+2021-04-14 to 2026-08-19
 
 This directory contains sample MIDI files to be installed for instructional
 purposes and for detecting issues in loading files.
@@ -69,6 +69,10 @@ purposes and for detecting issues in loading files.
 
         This MIDI file is another, simpler and short reconstruction, as
         described in the text file.
+
+    roland-empty.syx
+
+        Contains 18555 bytes of SysEx data for the Roland MT-32.
 
     FM and PSS-790 directories
 

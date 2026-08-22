@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-17
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -52,7 +52,6 @@ namespace seq66
 class midimacro
 {
     friend class midimacros;
-    friend class rpn;
 
 public:
 
@@ -80,9 +79,9 @@ private:
     /**
      *  Provides the full list of midibytes to be sent via this macro after
      *  expanding any macros it includes.
-     */
 
     midibytes m_bytes { };
+     */
 
     /**
      *  Indicates the macro has already been expanded and the bytes
@@ -93,7 +92,10 @@ private:
 
     /**
      *  The number of events in the macro. Normally just one, unless
-     *  the vertical bar ("|") occurs in the list of tokens.
+     *  the vertical bar ("|") occurs in the list of tokens. If
+     *  data comes from a raw file, then this count is 1, and
+     *  m_events_bytes[0] contains the full list of midibytes to be
+     *  sent via this macro after expanding any macros it includes.
      */
 
     int m_event_count { 0 };
@@ -114,6 +116,35 @@ private:
 
     bool m_is_valid { false };
 
+    /**
+     *  If true, the first token in m_tokens[0] is "file:", and the
+     *  second is the file-name for storage of the data.
+     *
+     *  It can indicate that the data is too large, more than 6 x 3 bytes,
+     *  and needs to be saved to a file. We test the number of
+     *  expanded bytes (that would be saved to a line in the 'ctrl' file)
+     *  against this value. It's about 2 * 72.
+     *
+     *  But even small data can use a file, if the user wants it.
+     */
+
+    bool m_use_file_storage { false };
+
+    /**
+     *  Active file specification. Saved for the "Save" function.
+     *  Normally this will be a raw data file, not an ASCII text file.
+     *
+     *  Though we could support a file of this format:
+     *
+     *      Line 1:     "Macro rpnpitch"
+     *      Line > 1:   A long string of ASCII byte values ("0xff"),
+     *                  concatenated into one super long line, newlines
+     *                  ignored, with optional variables that can be
+     *                  expanded to get the bytes. Stored in m_tokens.
+     */
+
+    std::string m_file_name { };
+
 public:
 
     midimacro () = default;
@@ -123,6 +154,8 @@ public:
     midimacro (midimacro &&) = default;
     midimacro & operator = (midimacro &&) = default;
     virtual ~midimacro () = default;
+
+    static const std::string & file_marker ();
 
     const std::string & name () const
     {
@@ -141,7 +174,23 @@ public:
 
     std::string line () const;
 
-    const midibytes & bytes (int index = (-1)) const;
+    const midibytes & bytes (int index = 0) const;
+
+    bool use_file_storage () const
+    {
+        return m_use_file_storage;
+    }
+
+    const std::string & file_name () const
+    {
+        return m_file_name;
+    }
+
+    void file_name (const std::string & s)
+    {
+        m_file_name = s;
+        use_file_storage(! s.empty());
+    }
 
     int event_count () const
     {
@@ -160,6 +209,8 @@ public:
 
 protected:
 
+    std::string bytes_to_lines () const;
+
     void is_expanded (bool flag)
     {
         m_is_expanded = flag;
@@ -174,7 +225,19 @@ protected:
         m_is_valid = flag;
     }
 
-private:
+    void use_file_storage (bool flag)
+    {
+        m_use_file_storage = flag;
+    }
+
+    /*
+     * Used only in rpn::create_rpn_events() [so far].
+     */
+
+    void event_count (int c)
+    {
+        m_event_count = c;
+    }
 
     bool tokenize (const std::string & values);
 
@@ -185,7 +248,7 @@ private:
 
     void bytes (const midibytes & b)
     {
-        m_bytes = b;
+        push_bytes(b);
     }
 
     events & event_bytes_list ()
@@ -201,6 +264,7 @@ private:
     void push_bytes (const midibytes & b)
     {
         m_event_bytes.push_back(b);
+        ++m_event_count;
     }
 
 };          // class midimacro
@@ -214,4 +278,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

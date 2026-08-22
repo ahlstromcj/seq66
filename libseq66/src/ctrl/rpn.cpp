@@ -219,7 +219,7 @@ rpn::create_rpn_events (int channel)
                 ++evcount;
             }
         }
-        m_event_count = evcount;
+        event_count(evcount);
     }
     return result;
 }
@@ -250,17 +250,15 @@ rpn::create_rpn_macro_string (const std::string & macnam, int channel)
     {
         std::string tokens;
         int listcount { 0 };
+        const char * fmt { "0x%02x" };
         result.push_back(macnam);
         for (const auto & evbyts : evlist)
         {
-            int bytecount { 0 };
             for (auto b : evbyts)
             {
-                const char * fmt { bytecount == 0 ? "0x%02x" : " 0x%02x" };
                 char tmp[8];
                 snprintf(tmp, sizeof tmp, fmt, b);
                 tokens += tmp;
-                ++bytecount;
             }
             ++listcount;
             if (listcount < sz)

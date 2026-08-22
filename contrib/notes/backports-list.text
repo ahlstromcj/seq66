@@ -19,6 +19,7 @@
         libseq66/include/midi/calculations.hpp      More changes to port!
         libseq66/include/midi/controllers.hpp
         libseq66/include/midi/editable_event.hpp
+        libseq66/include/midi/event.hpp
         libseq66/include/midi/eventlist.hpp
         libseq66/include/midi/mastermidibus.hpp
         libseq66/include/midi/midibus.hpp
@@ -52,6 +53,7 @@
         libseq66/src/midi/calculations.cpp          More changes to port!
         libseq66/src/midi/controllers.cpp
         libseq66/src/midi/editable_event.cpp
+        libseq66/src/midi/event.cpp
         libseq66/src/midi/eventlist.cpp
         libseq66/src/midi/mastermidibase.cpp
         libseq66/src/midi/midifile.cpp

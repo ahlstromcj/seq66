@@ -247,7 +247,7 @@ public:
         int channel
     );
 
-private:
+protected:
 
     /*
      * qrpnframe is a friend who needs these, but for the most part

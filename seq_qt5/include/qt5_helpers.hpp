@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-08-05
+ * \updates       2026-08-19
  * \license       GNU GPLv2 or above
  *
  * Note:
@@ -256,6 +256,11 @@ extern bool show_file_select_dialog
     const std::string & extension,
     std::string & selecteddir,
     std::string & selectedfile
+);
+extern std::string show_filespec_select_dialog
+(
+    QWidget * parent,
+    const std::string & extension
 );
 extern bool show_folder_dialog
 (

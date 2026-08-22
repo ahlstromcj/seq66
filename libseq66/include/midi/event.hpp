@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-13
+ * \updates       2026-08-20
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -446,6 +446,7 @@ public:
     );
     event (midipulse tstamp, midibpm tempo);
     event (midipulse tstamp, midibyte metatype, const midibytes & data);
+    event (midipulse tstamp, const midibytes & data);
     event
     (
         midipulse tstamp, midibyte notekind, midibyte channel,
@@ -574,6 +575,16 @@ public:
     static bool is_system_msg (midibyte m)
     {
         return m >= EVENT_MIDI_SYSEX;
+    }
+
+    /**
+     *  Handles the SysEx start or continue bytes.
+     */
+
+    static bool is_sysex_msg (midibyte m)
+    {
+        return m == EVENT_MIDI_SYSEX ||
+            m == EVENT_MIDI_SYSEX_CONTINUE;     /* 0xF7 as SysEx Continue   */
     }
 
     static bool is_meta_msg (midibyte m)
@@ -765,16 +776,6 @@ public:
     static bool is_time_signature_status (midibyte m)
     {
         return m == EVENT_META_TIME_SIGNATURE;
-    }
-
-    /**
-     *  Handles the SysEx start or continue bytes.
-     */
-
-    static bool is_sysex_msg (midibyte m)
-    {
-        return m == EVENT_MIDI_SYSEX ||
-            m == EVENT_MIDI_SYSEX_CONTINUE;     /* 0xF7 as SysEx Continue   */
     }
 
     /**

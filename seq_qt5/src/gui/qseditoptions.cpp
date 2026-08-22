@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-08-05
+ * \updates       2026-08-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -3495,6 +3495,7 @@ qseditoptions::slot_fingerprint_size ()
  * \param fileextension
  *      The desired file-extension for filtering in the file dialog.
  *      If empty, all files will be shown in the dialog.
+ *      The file extension should include the '.'.
  *
  * \return
  *      Returns true if the path/file selection succeeded.
@@ -3621,7 +3622,7 @@ qseditoptions::slot_patches_filename ()
 void
 qseditoptions::slot_load_patches_filename ()
 {
-    if (load_file_name(ui->lineEditPatches, "patches"))
+    if (load_file_name(ui->lineEditPatches, ".patches"))
     {
         const QString qs = ui->lineEditPatches->text();
         std::string text = qs.toStdString();
@@ -3683,7 +3684,7 @@ qseditoptions::slot_palette_filename ()
 void
 qseditoptions::slot_load_palette_filename ()
 {
-    if (load_file_name(ui->lineEditPalette, "palette"))
+    if (load_file_name(ui->lineEditPalette, ".palette"))
     {
         const QString qs = ui->lineEditPalette->text();
         std::string text = qs.toStdString();
@@ -3931,7 +3932,7 @@ qseditoptions::slot_rc_filename ()
 void
 qseditoptions::slot_load_rc_filename ()
 {
-    if (load_file_name(ui->lineEditRc, "rc"))
+    if (load_file_name(ui->lineEditRc, ".rc"))
         modify_rc();
 }
 
@@ -4035,7 +4036,7 @@ qseditoptions::slot_usr_filename ()
 void
 qseditoptions::slot_load_usr_filename ()
 {
-    if (load_file_name(ui->lineEditUsr, "usr"))
+    if (load_file_name(ui->lineEditUsr, ".usr"))
     {
         const QString qs = ui->lineEditPalette->text();
         std::string text = qs.toStdString();
@@ -4114,7 +4115,7 @@ qseditoptions::slot_mutes_filename ()
 void
 qseditoptions::slot_load_mutes_filename ()
 {
-    if (load_file_name(ui->lineEditMutes, "mutes"))
+    if (load_file_name(ui->lineEditMutes, ".mutes"))
     {
         const QString qs = ui->lineEditMutes->text();   /* ca 2024-10-14    */
         std::string text = qs.toStdString();
@@ -4189,7 +4190,7 @@ qseditoptions::slot_playlist_filename ()
 void
 qseditoptions::slot_load_playlist_filename ()
 {
-    if (load_file_name(ui->lineEditPlaylist, "playlist"))
+    if (load_file_name(ui->lineEditPlaylist, ".playlist"))
         modify_rc();
 }
 
@@ -4267,7 +4268,7 @@ qseditoptions::slot_ctrl_filename ()
 void
 qseditoptions::slot_load_ctrl_filename ()
 {
-    if (load_file_name(ui->lineEditCtrl, "ctrl"))
+    if (load_file_name(ui->lineEditCtrl, ".ctrl"))
     {
         const QString qs = ui->lineEditCtrl->text();
         std::string text = qs.toStdString();
@@ -4335,7 +4336,7 @@ qseditoptions::slot_drums_filename ()
 void
 qseditoptions::slot_load_drums_filename ()
 {
-    if (load_file_name(ui->lineEditDrums, "drums"))
+    if (load_file_name(ui->lineEditDrums, ".drums"))
     {
         QString qtdrum = ui->lineEditDrums->text();
         std::string drum = qtdrum.toStdString();
@@ -4400,7 +4401,7 @@ qseditoptions::slot_stylesheet_filename ()
 void
 qseditoptions::slot_load_stylesheet_filename ()
 {
-    if (load_file_name(ui->lineEditStyleSheet, "qss"))
+    if (load_file_name(ui->lineEditStyleSheet, ".qss"))
     {
         QString qtqss = ui->lineEditStyleSheet->text();
         std::string qss = qtqss.toStdString();

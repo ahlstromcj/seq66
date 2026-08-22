@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2025-07-13
+ * \updates       2026-08-20
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -195,6 +195,28 @@ event::event (midipulse tstamp, midibyte metatype, const midibytes & data) :
     m_painted       (false)
 {
     (void) append_meta_data(metatype, data);
+}
+
+/**
+ *  Creates a SysEx event. Note that the first byte, 0xF0, is included
+ *  in the data.
+ */
+
+event::event (midipulse tstamp, const midibytes & data) :
+    m_input_buss    (null_buss()),
+    m_timestamp     (tstamp),
+    m_status        (EVENT_MIDI_SYSEX),
+    m_channel       (0),
+    m_data          (),                     /* two-element array, midibytes */
+    m_sysex         (),                     /* an std::vector of midibytes  */
+    m_linked        (),                     /* removed nullptr issue #124   */
+    m_has_link      (false),
+    m_selected      (false),
+    m_marked        (false),
+    m_painted       (false)
+{
+    if (event::is_sysex_msg(data[0]))
+        (void) append_sysex(data);
 }
 
 /**
@@ -1120,6 +1142,7 @@ event::append_sysex (const midibytes & data)
     }
     else
     {
+        m_sysex.clear();
         errprint("event::append_sysex(): no data");
     }
     return result;

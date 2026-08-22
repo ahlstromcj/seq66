@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-08-18
+2015-07-10 to 2026-08-21
 
 # Change Log
 
-## [0.99.28] - 2026-08-18
+## [0.99.28] - 2026-08-21
 
 ### Added
 
@@ -35,6 +35,11 @@ Chris Ahlstrom
 -   Performer.
     -   The send\_macro\_bytes() function can direct the bytes of
         a multi-event macro to a selected buss.
+-   Miscellaneous.
+    -   The qseditoptions::load\_file\_name() function adds the '.'
+        to the file-extension for lookup.
+    -   Added show\_filespec\_select\_dialog() to return the
+        full file-specification of the selected file.
 
 ### Changed
 
@@ -46,6 +51,9 @@ Chris Ahlstrom
 
 -   Pattern editor.
     -   Improved the selection of notes in the piano roll.
+-   Miscellaneous.
+    -   Fixed show\_filespec\_dialog() to use the ".ext" form
+        of the file-name as a parameter.
 
 ### Removed
 

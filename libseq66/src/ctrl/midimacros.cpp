@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-17
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -46,6 +46,8 @@
  */
 
 #include "ctrl/midimacros.hpp"          /* seq66::midimacros class          */
+#include "midi/midifile.hpp"            /* seq66::read_raw_midi()           */
+#include "util/filefunctions.hpp"       /* seq66::file_read_lines()         */
 #include "util/strfunctions.hpp"        /* seq66::tokenize()                */
 
 namespace seq66
@@ -55,11 +57,12 @@ namespace seq66
  *  Constant static macro names.
  */
 
-const std::string midimacros::footer    { "footer" };
-const std::string midimacros::header    { "header" };
-const std::string midimacros::reset     { "reset" };
-const std::string midimacros::startup   { "startup" };
-const std::string midimacros::shutdown  { "shutdown" };
+const std::string midimacros::footer        { "footer" };
+const std::string midimacros::header        { "header" };
+const std::string midimacros::reset         { "reset" };
+const std::string midimacros::startup       { "startup" };
+const std::string midimacros::shutdown      { "shutdown" };
+const std::string midimacros::macro_header  { "Seq66 macro: " };
 
 /**
  *  Default constructor.
@@ -80,6 +83,16 @@ midimacros::midimacros () :
  *
  *  What should we do if the macro already exists? We could delete the
  *  existing macro and add the new one via modify(), or just return false.
+ *
+ * \param tokens
+ *      Provides two tokens representing the macro. The first token is the
+ *      name of the macro, and the second is either a string of hexadecimal
+ *      tokens, each represent a byte value, or a string of the form
+ *      "file: <file-specification>".
+ *
+ * \return
+ *      Returns true if the macro did not exist already, and was inserted
+ *      properly.
  */
 
 bool
@@ -186,10 +199,13 @@ midimacros::expand ()
         for (auto & m : m_macros)
         {
             midimacro & mac { m.second };
-            midibytes b { expand(mac) };
+            midibytes b { expand_macro(mac) };  /* sets is_expanded()       */
             bool ok { ! b.empty() };            /* no longer an error       */
             if (ok)
+            {
                 mac.bytes(b);
+                mac.is_valid(true);
+            }
         }
     }
     return result;
@@ -216,9 +232,8 @@ midimacros::expand (const std::string & macnam)
         midimacro & mac { cit->second };
         if (! mac.is_expanded())
         {
-            midibytes temp { expand(mac) };
+            midibytes temp { expand_macro(mac) };   /* sets is_expanded()   */
             result = temp.size() > 0;
-            mac.is_expanded(result);
             if (result)
                 mac.bytes(temp);
         }
@@ -235,7 +250,7 @@ midimacros::expand (const std::string & macnam)
  */
 
 midibytes
-midimacros::expand (midimacro & m)
+midimacros::expand_macro (midimacro & m)
 {
     midibytes result;                   /* holds all of the bytes found     */
     midibytes temp;                     /* holds bytes of 1 event if ! N/A  */
@@ -249,7 +264,7 @@ midimacros::expand (midimacro & m)
             if (cit != m_macros.end())  //  && ! cit->second.is_expanded)
             {
                 midimacro & variable { cit->second };
-                midibytes xpanded { expand(variable) };
+                midibytes xpanded { expand_macro(variable) };
                 result.insert(result.end(), xpanded.begin(), xpanded.end());
             }
             else
@@ -273,6 +288,9 @@ midimacros::expand (midimacro & m)
     }
     if (found_events)
         m.push_bytes(temp);             /* push the bytes of last event     */
+
+    if (! result.empty())
+        m.is_expanded(true);
 
     return result;
 }
@@ -373,6 +391,229 @@ midimacros::make_defaults ()
             if (! add(t))
                 break;
         }
+    }
+    return result;
+}
+
+/**
+ *  This function reads either a raw data file or a Seq66 macro
+ *  file. A raw data file is often one that contains only a SysEx
+ *  message. A Seq66 macro file is ASCII and contains data for a
+ *  macro. We will eventually provide a file that can hold multiple
+ *  macros. The presumed type of file is determined by the file
+ *  extension:
+ *
+ *      -   ".macro". A simple file containing an ASCII specification
+ *          of the macro data. Will eventually be folded into the next
+ *          one;
+ *      -   ".macros". A configfile (INI style) file containing
+ *          multiple macro definitions
+ *      -   ".syx" or ".sysex". This is a raw data file containing
+ *          System Exclusive data. It is more specific.
+ *      -   ".raw". Basically any type of MIDI binary data.
+ *          Could be any other file extension the user selects as raw
+ *          data.
+ *
+ *  Macro data items:
+ *
+ *      -   Macro/Macros file.
+ *          -   Name. The macro name is a single token, no spaces
+ *              or special characters except '-' of '_'. Currently,
+ *              the macro name is at the top of the file
+ *              ("Seq66 macro: <macroname>").
+ *          -   Is valid. Set when expanding works.
+ *          -   Is expanded. By definition, true if it succeeds.
+ *          -   Expanded tokens. These are given by one or more lines
+ *              of hexadecimal value that are collected into one
+ *              tokenization (vector of strings).
+ *          -   Use file storage and file name. True and set by default.
+ *          -   Event count. If '|' characters separate bytes, this
+ *              is greater than one.
+ *      -   Raw file.
+ *          -   Name. We adopt the convention that the base name of
+ *              the file, without the extension, is the name of the
+ *              macro.
+ *          -   Is valid.
+ *          -   Is expanded.
+ *          -   Expanded tokens.
+ *          -   Use file storage and file name.
+ *          -   Event count. This can only be zero; the event list
+ *              is empty, and all the bytes are stored in one midibytes
+ *              vector..
+ */
+
+midimacro
+midimacros::read_midi_data (const std::string & fn)
+{
+    std::string ext { file_dot_extension(fn) };         /* keep the '.'     */
+    if (ext == ".macro")
+    {
+        return read_macro_file(fn);
+    }
+    else if (ext == ".macros")
+    {
+        // TODO when we derive the file from configfile
+        return midimacro();
+    }
+    else                                                /* assume binary    */
+    {
+        midimacro result;
+        std::string base { filename_base(fn, true) };   /* strips the .ext  */
+        midibytes byts { read_raw_midi(fn) };
+        result.name(base);
+        if (byts.size() > 0)
+        {
+            result.file_name(fn);
+            result.bytes(byts);
+            result.is_valid(true);
+        }
+        return result;
+    }
+}
+
+/**
+ *  This functions the macro name and a stream of tokens representing
+ *  data bytes (e.g. "0xF0") and macro variables ("$footer").
+ *
+ *  Format example:
+ *
+ *      Line 1:     "Seq66 macro: <macro name>\n"
+ *      Line 2+i:   "$header 0xab 0xcd ...$footer\n"
+ *
+ *  This function reads a file's lines into a vector of strings, with
+ *  comment lines ("#") ignored, whitespace trimmed, newlines not
+ *  stored.
+ *
+ *  Each line is then tokenized, and the tokens are appended in the
+ *  macro.
+ *
+ *  This file will eventually follow the configfile conventions.
+ */
+
+midimacro
+midimacros::read_macro_file (const std::string & fn)
+{
+    midimacro result;                   /* name() empty, is_valid() false   */
+    bool ok { file_readable(fn) };
+    if (ok)
+    {
+        tokenization & tokens { result.tokens() };
+        tokenization lines;
+        ok = file_read_lines(fn, lines, true);
+        if (ok)
+        {
+            int count { 0 };
+            for (const auto & line : lines)
+            {
+                tokenization linetokens { tokenize(line) };
+                if (count == 0)
+                {
+                    if (linetokens[0] == "Seq66" && linetokens[1] == "macro:")
+                    {
+                        result.name(linetokens[2]);
+                        ++count;
+                        continue;
+                    }
+                    else
+                    {
+                        /*
+                         * Not a Seq66 macro file.
+                         */
+
+                        break;
+                    }
+                }
+                else
+                {
+                    for (const auto & t : linetokens)
+                    {
+                        if (! t.empty() && t[0] != '#')
+                            tokens.push_back(t);
+                    }
+                    ++count;
+                }
+            }
+            if (count > 0)
+            {
+                /*
+                 * This seems wasteful, but it is temporary. The bytes
+                 * are already set in the events-list.
+                 */
+
+                midibytes mbs { expand_macro(result) };
+                if (mbs.size() > 0)
+                {
+                    result.file_name(fn);
+                    result.is_valid(true);
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ * \param macro
+ *      Provides the information to write.
+ *
+ * \param fn
+ *      The filename to write. If empty, the macro's file-name is
+ *      used (if not empty).
+ *
+ * \return
+ *      Returns true if there was data to write and it succeeded.
+ */
+
+bool
+midimacros::write_midi_data
+(
+    const midimacro & macro,
+    const std::string & fn
+)
+{
+    bool result { false };
+    std::string filename { fn.empty() ? macro.file_name() : fn };
+    std::string ext { file_dot_extension(filename) };   /* keep the '.'     */
+    if (ext == ".macro")
+    {
+        result = write_macro_file(macro, fn);
+    }
+    else if (ext == ".macros")
+    {
+        // TODO when we derive the file from configfile
+        result = false;
+    }
+    else                                                /* assume binary    */
+    {
+        std::string fn { macro.file_name() };
+        midibytes byts { macro.bytes() };
+        if (byts.size() > 0 && macro.is_valid())
+            result = write_raw_midi(fn, byts);
+    }
+    return result;
+}
+
+bool
+midimacros::write_macro_file
+(
+    const midimacro & macro,
+    const std::string & fn
+)
+{
+    bool result { macro.is_valid() };
+    if (result)
+    {
+        std::string text { macro_header };
+        text += macro.name();
+        text += "\n\n";
+        text +=
+            "# This file contains data for a single Seq66 macro. Each line\n"
+            "# contains strings that are converted to MIDI bytes.\n\n"
+            ;
+        text += macro.bytes_to_lines();
+        text += "\n\n";
+        text += "# vim: sw=4 ts=4 wm=4 et ft=dosini\n";
+        result = file_write_string(fn, text);
     }
     return result;
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-17
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -45,6 +45,8 @@
  *
  */
 
+#include <cstring>                      /* std::strlen()                    */
+
 #include "ctrl/midimacro.hpp"           /* seq66::midimacro class           */
 #include "util/strfunctions.hpp"        /* seq66::tokenize()                */
 
@@ -52,10 +54,32 @@ namespace seq66
 {
 
 /**
- *  Note that some defaults are defined "in-class".
+ *  Used to note that data must be read from a file.
  */
 
-midimacro::midimacro (const std::string & name, const std::string & values) :
+const std::string &
+midimacro::file_marker ()
+{
+    static const std::string s_file_marker { "file:" };
+    return s_file_marker;
+}
+
+/**
+ *  Note that some defaults are defined "in-class".
+ *
+ * \param name
+ *      Provides the name of the macro, which is also the key value.
+ *
+ * \param values
+ *      Provides either a string of hexadecimal tokens, each represent a byte
+ *      value, or a string of the form "file: <file-specification>".
+ */
+
+midimacro::midimacro
+(
+    const std::string & name,
+    const std::string & values
+) :
     m_name (name)
 {
     m_is_valid = tokenize(values);              /* member function below    */
@@ -65,22 +89,24 @@ const midibytes &
 midimacro::bytes (int index) const
 {
     static midibytes s_dummy { 0 };
-    if (event_count() == 1 || index == (-1))
-    {
-        return m_bytes;
-    }
+    if (index >= 0 && index < m_event_count)
+        return m_event_bytes[index];
     else
-    {
-        if (index >= 0 && index < m_event_count)
-            return m_event_bytes[index];
-        else
-            return s_dummy;
-    }
+        return s_dummy;
 }
 
 /**
  *  We have added the ability to provide multiple "|"-separated events in
- *  one macro.
+ *  one macro. We also have added support for a values string of the form
+ *  "file: <filename>".
+ *
+ * \param values
+ *      Provides a way to get the byte values necessary for the macro.
+ *      In the first form, it is a list of bytes as hex strings, "0xnn",
+ *      separated by spaces or by " | ". Any "|" tokens separate the bytes
+ *      into one event, and this function counts the number of sets of bytes.
+ *      In the second form, "file: <filename>", where an example of a
+ *      filename is "roland-empty.syx" (SysEx file).
  */
 
 bool
@@ -91,13 +117,21 @@ midimacro::tokenize (const std::string & values)
     bool result { m_tokens.size() > 0 };
     if (result)
     {
-        m_event_count = 1;
-        if (m_tokens.size() >= 3)
+        if (m_tokens[0] == file_marker())
         {
-            for (const auto & t : m_tokens)
+            use_file_storage(true);
+            file_name(m_tokens[1]);
+        }
+        else
+        {
+            m_event_count = 1;
+            if (m_tokens.size() >= 3)
             {
-                if (t == "|")
-                    ++m_event_count;
+                for (const auto & t : m_tokens)
+                {
+                    if (t == "|")
+                        ++m_event_count;
+                }
             }
         }
     }
@@ -113,6 +147,35 @@ midimacro::line () const
     {
         result += " ";
         result += t;
+    }
+    return result;
+}
+
+std::string
+midimacro::bytes_to_lines () const
+{
+    std::string result;
+    std::string line;
+    const int limit { 72 };
+    const midibytes & byts { bytes() };
+    int charcount { 0 };
+    const char * fmt;
+    for (auto b : byts)
+    {
+        char tmp[8];
+        if (charcount > limit)
+        {
+            fmt = "0x%02x\n";
+            charcount = 0;
+            result += line;
+            line.clear();
+        }
+        else
+            fmt = "0x%02x ";
+
+        snprintf(tmp, sizeof tmp, fmt, b);
+        charcount += int(std::strlen(tmp));
+        line += tmp;
     }
     return result;
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-17
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -37,9 +37,15 @@
 #include "play/clockslist.hpp"          /* seq66::clockslist                */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "util/strfunctions.hpp"        /* seq66::expand_byte_vector()      */
 #include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
 #include "qt5_helpers.hpp"              /* seq66::qt()                      */
 #include "ui_qrpnframe.h"
+
+namespace
+{
+    seq66::sequence s_dummy_pattern;
+}
 
 namespace seq66
 {
@@ -94,6 +100,21 @@ rpn::info qrpnframe::sm_rpn_test_info
 #endif
 
 /**
+ *  Tricky constructor. It uses a dummy sequence, which requires a
+ *  few handsprings to get right.
+ */
+
+qrpnframe::qrpnframe
+(
+    performer & p,
+    QWidget * parent
+) :
+    qrpnframe (p, s_dummy_pattern, parent)
+{
+    // See the next constructor for some additional tweaks.
+}
+
+/**
  *  Constructor. Some members are initialized in-class.
  *
  *      m_select_control_group  { nullptr }
@@ -124,12 +145,26 @@ qrpnframe::qrpnframe
     ui->setupUi(this);
 
     /*
-     * Show the pattern number
+     * We have to set this in this constructor, not the one above.
      */
 
-    char tmp[24];
-    snprintf(tmp, sizeof tmp, "Pattern #%d", track().seq_number());
-    ui->label_pattern_no->setText(tmp);
+    if (is_nullptr(s.perf()))
+    {
+        s.set_parent(&p);
+        m_null_sequence = true;
+    }
+    if (not_null_sequence())
+    {
+        /*
+         * Show the pattern number.
+         */
+
+        char tmp[24];
+        snprintf(tmp, sizeof tmp, "Pattern #%d", track().seq_number());
+        ui->label_pattern_no->setText(tmp);
+    }
+    else
+        ui->label_pattern_no->clear();
 
     /*
      * Create a button group to manage the mutual status of the Select
@@ -163,7 +198,10 @@ qrpnframe::qrpnframe
         (
             ui->radio_button_other, rpn_control_other
         );
-        select_rpn_control(rpn_control_rpn);
+        if (not_null_sequence())
+            select_rpn_control(rpn_control_rpn);
+        else
+            select_rpn_control(rpn_control_other);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         auto lambdafunc = [this] (QAbstractButton * abutton)
@@ -302,7 +340,10 @@ qrpnframe::qrpnframe
         (
             ui->radio_rpn_parameter_reset, rpn_select_parameter_reset
         );
-        select_rpn_parameter_type(rpn_select_pitchbend_range);
+        if (not_null_sequence())
+            select_rpn_parameter_type(rpn_select_pitchbend_range);
+        else
+            select_rpn_parameter_type(rpn_select_pitchbend_range);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         auto lambdafunc = [this] (QAbstractButton * abutton)
@@ -336,11 +377,35 @@ qrpnframe::qrpnframe
     );
 
     /*
-     * Set the timestamp. The BBT utton shows the current time format
+     * Opens a dialog to load a raw MIDI file, such as a SysEx dump.
+     * Loading is disabled until "Other" is selected (or the alternate
+     * constructor is called), but saving can occur at any time, though useful
+     * mainly for SysEx or Meta messages.
+     */
+
+    ui->button_load_file->setEnabled(! not_null_sequence());
+    ui->button_save_file->setEnabled(true);
+    connect
+    (
+        ui->button_load_file, SIGNAL(clicked(bool)),
+        this, SLOT(slot_load_file())
+    );
+    connect
+    (
+        ui->button_save_file, SIGNAL(clicked(bool)),
+        this, SLOT(slot_save_file())
+    );
+
+    /*
+     * Set the timestamp. The BBT button shows the current time format
      * and changes to the next one when clicked: B:B:T, H:M:S, and ticks.
      */
 
-    set_time_stamp(track().get_tick());
+    if (not_null_sequence())
+        set_time_stamp(track().get_tick());
+    else
+        set_time_stamp(0);
+
     connect
     (
         ui->button_bbt, SIGNAL(clicked(bool)),
@@ -431,18 +496,23 @@ qrpnframe::qrpnframe
     connect
     (
         ui->button_rpn_send, SIGNAL(clicked(bool)),
-        this, SLOT(slot_rpn_send())
+        this, SLOT(slot_send())
     );
 
     /*
      * Insert (N)RPN button.
      */
 
-    connect
-    (
-        ui->button_rpn_insert, SIGNAL(clicked(bool)),
-        this, SLOT(slot_rpn_insert())
-    );
+    if (not_null_sequence())
+    {
+        connect
+        (
+            ui->button_rpn_insert, SIGNAL(clicked(bool)),
+            this, SLOT(slot_insert())
+        );
+    }
+    else
+        ui->button_rpn_insert->setEnabled(false);
 
     /*
      * Cancel button
@@ -451,7 +521,7 @@ qrpnframe::qrpnframe
     connect
     (
         ui->button_rpn_cancel, SIGNAL(clicked(bool)),
-        this, SLOT(slot_rpn_cancel())
+        this, SLOT(slot_cancel())
     );
 }
 
@@ -528,7 +598,7 @@ qrpnframe::populate_macro_combo ()
             }
             else
             {
-                m_macro_name.clear();
+                macro_name().clear();
             }
             connect
             (
@@ -548,7 +618,7 @@ qrpnframe::populate_macro_combo ()
 void
 qrpnframe::select_rpn_control (int rpncontrol)
 {
-    bool use_arbitrary { false };
+    bool use_other { false };
     ui->line_edit_other->setEnabled(false);
     switch (rpncontrol)
     {
@@ -582,11 +652,12 @@ qrpnframe::select_rpn_control (int rpncontrol)
         rpn_info().rpn_control_type = rpn::control::other;
         ui->radio_button_other->setChecked(true);
         ui->line_edit_other->setEnabled(true);
-        use_arbitrary = true;
+        ui->button_load_file->setEnabled(true);
+        use_other = true;
         break;
     }
-    m_arbitrary_macro_in_force = use_arbitrary;
-    m_arbitrary_macro_tokens.clear();
+    m_other_macro_in_force = use_other;
+    m_other_macro_tokens.clear();
 }
 
 void
@@ -645,7 +716,10 @@ qrpnframe::select_rpn_parameter_type (int rpnparamtype)
     }
     rpn_info().rpn_parameter_type = paramtype;
     rpn_info().rpn_parameter_number = rpn::parameter_to_short(paramtype);
-    select_rpn_control(rpn_control_rpn);
+    if (not_null_sequence())
+        select_rpn_control(rpn_control_rpn);
+    else
+        select_rpn_control(rpn_control_other);
 
     midishort pt { rpn_info().rpn_parameter_number };
     set_rpn_parameter_number(true, pt);
@@ -773,6 +847,16 @@ qrpnframe::set_time_stamp (midipulse ts)
  *
  *  We should not enable the "Other data" until Other is checked
  *  and a macro-name is in place.
+ *
+ *  The text in ui->line_edit_other represents the data in two
+ *  human-readable formats:
+ *
+ *      -   A series of bytes, preferaby in hexadecimal format,
+ *          such as "0xF0 ... 0xF7"... if short enough (about 32
+ *          bytes). If longer then...
+ *      -   A file specification of the form
+ *          "file: ~/.config/seq66/roland-empty.syx".
+ *          This is normally filled in by the Load button.
  */
 
 void
@@ -789,9 +873,140 @@ qrpnframe::slot_macro_other_changed ()
     tokenization macpair;
     macpair.push_back(macnam);
     macpair.push_back(byts);
-    m_arbitrary_macro_in_force = true;
-    m_arbitrary_macro_tokens = macpair;
+    m_other_macro_in_force = true;
+    m_other_macro_tokens = macpair;
     ui->button_rpn_macro->setEnabled(true);
+}
+
+/**
+ *  Open the file dialog. The button is enabled only if "Other" is
+ *  selected.
+ *
+ *  Note that the test file, data/midi/roland-empty.syx, is
+ *  18555 bytes long. The string created from this file's data
+ *  could be up to 5 times longer, like 92K bytes.
+ *
+ *  Writing that to a 'ctrl' file will cause issues, such as a huge
+ *  line of data.  One idea is to define a macro line such as the
+ *  following:
+ *
+ *      mt32empty = "file: ~/.config/seq66/roland-empty.sys"
+ *
+ *  Then load the file only when the data is used.
+ */
+
+void
+qrpnframe::slot_load_file ()
+{
+    if (m_other_macro_in_force)             /* "Other" radio button checked */
+    {
+        static const std::string s_filter   /* this may be excessive :-)    */
+        {
+            "Sysex file (*.syx *.sysex)"
+            ";;Raw file (*.raw)"
+            ";;Macro file (*.macro *.macros)"
+        };
+        std::string selectedfile
+        {
+            show_filespec_select_dialog(this, s_filter)
+        };
+        bool ok { ! selectedfile.empty() };
+        if (ok)
+        {
+            midicontrolout & mco { perf().midi_control_out() };
+            midimacro macdata { mco.read_midi_data(selectedfile) };
+            ok = macdata.is_valid();
+            if (ok)
+            {
+                /*
+                 * We don't need to save the data, which might be huge,
+                 * whether it's a ".syx" file or ".macro" file.
+                 *
+                 * We save the file specification.
+                 *
+                 * bool usehex { true };       // later, m_show_in_hex
+                 * std::string s { expand_byte_vector(rawdata, usehex) };
+                 * ui->plain_text_edit_msg->setPlainText(qt(s));
+                 */
+
+                std::string s { "file: " };
+                s += selectedfile;
+                ui->plain_text_edit_msg->setPlainText(qt(s));
+
+                /*
+                 * Select the "Other" button, which sets up the usage
+                 * of "arbitrary macro". Then set the file-name and
+                 * the raw data buffer.
+                 */
+
+                select_rpn_control(rpn_control_other);
+                macro_filename(s);
+            }
+        }
+    }
+}
+
+/**
+ *
+ */
+
+void
+qrpnframe::slot_save_file ()
+{
+    std::string selectedfile { macro_filename() };
+    bool ok
+    {
+        show_file_dialog
+        (
+            this,
+            selectedfile,
+            "Save current (N)RPN/Macro data",
+            "",                                 /* filter list              */
+            true,                               /* we are saving a file     */
+            false,                              /* normal file, not config  */
+            "",                                 /* no default extension     */
+            true                                /* prompt for overwrite     */
+        )
+    };
+    if (ok)
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        if (other_macro_in_force())
+        {
+            midimacro mac(m_other_macro_tokens[0], m_other_macro_tokens[1]);
+            std::string macnam { macro_name() };
+            ok = mco.write_midi_data(mac, selectedfile);
+        }
+        else
+        {
+            /*
+             * TODO: The macro is not yet added to the mco unless we
+             * do a create-macro operation. A mco.expand_macro(macnam)
+             * is not possible until then. Unless we write a function
+             * to use the.....
+             */
+
+            rpn r(rpn_info());
+            std::string macnam { macro_name() };
+            int macchannel { m_rpn_channel };
+            tokenization name_and_data
+            {
+                r.create_rpn_macro_string(macnam, macchannel)
+            };
+            if (name_and_data.size() < 2)
+                return;
+
+//          std::string values { name_and_data[1] };
+
+            /* midibytes temp */ (void) mco.expand_macro(macnam);
+
+            ok = mco.write_midi_data(r, selectedfile);
+        }
+        if (! ok)
+        {
+            ui->plain_text_edit_msg->setPlainText("Error sending macro");
+        }
+    }
 }
 
 /**
@@ -883,16 +1098,16 @@ qrpnframe::slot_macro_name_changed ()
         ui->button_rpn_macro->setEnabled(false);
         ui->line_edit_other->clear();               /* setText(""); */
         ui->line_edit_other->setEnabled(false);
-        m_macro_name.clear();
-        m_arbitrary_macro_in_force = false;
-        m_arbitrary_macro_tokens.clear();
+        macro_name().clear();
+        m_other_macro_in_force = false;
+        m_other_macro_tokens.clear();
     }
     else
     {
         midicontrolout & mco { perf().midi_control_out() };
         bool found { mco.find_macro(macnam) };
         ui->button_rpn_macro->setEnabled(true);
-        m_macro_name = macnam;
+        macro_name(macnam);
         if (found)
         {
             ui->button_rpn_delete->setEnabled(true);
@@ -919,22 +1134,22 @@ qrpnframe::slot_macro_name_changed ()
 void
 qrpnframe::slot_create_macro ()
 {
-    std::string macnam { m_macro_name };        /* selected macro's name    */
+    std::string macnam { macro_name() };        /* selected macro's name    */
     midicontrolout & mco { perf().midi_control_out() };
     bool found { mco.find_macro(macnam) };
     bool ok { false };
-    if (m_arbitrary_macro_in_force)
+    if (m_other_macro_in_force)
     {
-        if (m_arbitrary_macro_tokens.size() < 2)
+        if (m_other_macro_tokens.size() < 2)
             return;
 
-        std::string values { m_arbitrary_macro_tokens[1] };
-        m_arbitrary_macro_tokens[0] = macnam;   /* set the name to be sure  */
+        std::string values { m_other_macro_tokens[1] };
+        m_other_macro_tokens[0] = macnam;   /* set the name to be sure  */
 
         midimacro mac(macnam, values);
         if (found)
         {
-            ok = mco.modify_macro(m_arbitrary_macro_tokens);
+            ok = mco.modify_macro(m_other_macro_tokens);
             if (ok)
                 ok = mco.expand_macro(macnam);
 
@@ -953,7 +1168,7 @@ qrpnframe::slot_create_macro ()
              * See the discussion at midimacros::expand(name).
              */
 
-            ok = mco.add_macro(m_arbitrary_macro_tokens);
+            ok = mco.add_macro(m_other_macro_tokens);
             if (ok)
                 ok = mco.expand_macro(macnam);
 
@@ -1032,7 +1247,7 @@ qrpnframe::set_macro_name (const QString & name)
 {
     std::string macnam { name.toStdString() };
     ui->line_edit_rpn_macro_name->setText(name);
-    m_macro_name = macnam;
+    macro_name(macnam);
 
     /*
      * Rename this function at some point.
@@ -1082,7 +1297,7 @@ qrpnframe::slot_macro_text ()
 void
 qrpnframe::slot_delete_macro ()
 {
-    std::string macnam { m_macro_name };
+    std::string macnam { macro_name() };
     int macchannel { m_rpn_channel };
     rpn r { rpn_info() };
     tokenization name_and_data
@@ -1100,7 +1315,7 @@ qrpnframe::slot_delete_macro ()
     if (ok)
     {
         ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-        perf().notify_macro_change(m_macro_name, performer::macro::added);
+        perf().notify_macro_change(macro_name(), performer::macro::added);
     }
     else
     {
@@ -1114,7 +1329,7 @@ qrpnframe::slot_delete_macro ()
 void
 qrpnframe::modify_macro ()
 {
-    std::string macnam { m_macro_name };
+    std::string macnam { macro_name() };
     int macchannel { m_rpn_channel };
     rpn r { rpn_info() };
     tokenization name_and_data
@@ -1132,7 +1347,7 @@ qrpnframe::modify_macro ()
     if (ok)
     {
         ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-        perf().notify_macro_change(m_macro_name, performer::macro::added);
+        perf().notify_macro_change(macro_name(), performer::macro::added);
     }
     else
     {
@@ -1144,22 +1359,34 @@ qrpnframe::modify_macro ()
 }
 
 /**
- *  Send the (N)RPN message out on the MIDI Control Out buss.
+ *  Send the (N)RPN message or "Other" message out on the MIDI Control Out
+ *  buss (by default) or the selected buss.
  */
 
 void
-qrpnframe::slot_rpn_send ()
+qrpnframe::slot_send ()
 {
+    bool ok { other_macro_in_force() ? send_other_macro() : send_rpn_macro() };
+    if (ok)
+    {
+        // todo
+    }
+}
+
+bool
+qrpnframe::send_rpn_macro ()
+{
+    bool result { false };
     rpn r(rpn_info());
-    std::string macnam { m_macro_name };
+    std::string macnam { macro_name() };
     int macchannel { m_rpn_channel };
     int macbuss { m_rpn_buss };
     tokenization name_and_data
     {
         r.create_rpn_macro_string(macnam, macchannel)
     };
-    bool ok { name_and_data.size() == 2 };
-    if (ok)
+    result = name_and_data.size() == 2;
+    if (result)
     {
        /*
         * This call uses the macro bytes, not the macro name. If macbuss
@@ -1169,82 +1396,114 @@ qrpnframe::slot_rpn_send ()
         * true_buss() here.
         */
 
-       ok = perf().send_macro_bytes(r, macbuss);
+       result = perf().send_macro_bytes(r, macbuss);
     }
-
-    if (ok)
+    if (result)
     {
         ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-        perf().notify_macro_change(m_macro_name, performer::macro::sent);
+        perf().notify_macro_change(macro_name(), performer::macro::sent);
     }
     else
     {
         ui->plain_text_edit_msg->setPlainText("Error sending macro");
     }
+    return result;
 }
+
+bool
+qrpnframe::send_other_macro ()
+{
+    midicontrolout & mco { perf().midi_control_out() };
+    return false;
+}
+
 
 /**
  *  Compare this function to qseqeditframe64::insert_macro(). But we
  *  need to make sure that the vector of events-bytes is made. We also
  *  need to create the macro string for display.
+ *
+ *  This button is disabled and not connected if running as a
+ *  dialog without a real pattern/sequence.
  */
 
 void
-qrpnframe::slot_rpn_insert ()
+qrpnframe::slot_insert ()
 {
-    rpn r(rpn_info());
-    midipulse tick { rpn_info().rpn_time_stamp };
-    std::string macnam { m_macro_name };
-    if (m_arbitrary_macro_in_force)
+    bool ok
     {
-        midimacro mac
-        (
-            m_arbitrary_macro_tokens[0], m_arbitrary_macro_tokens[1]
-        );
-        bool ok { track().add_macro(tick, r) };
-        if (ok)
-        {
-            perf().notify_macro_change
-            (
-                m_macro_name, performer::macro::inserted
-            );
-        }
-        else
-        {
-            ui->plain_text_edit_msg->setPlainText
-            (
-                "Error inserting arbitrary  macro"
-            );
-        }
+        other_macro_in_force() ?
+            insert_other_macro() : insert_rpn_macro()
+    };
+    if (ok)
+    {
+        // set data string
     }
     else
     {
-        int macchannel { m_rpn_channel };
-        tokenization name_and_data
-        {
-            r.create_rpn_macro_string(macnam, macchannel)
-        };
-        bool ok { name_and_data.size() == 2 };
-        if (ok)
-           ok = track().add_macro(tick, r);
-
-        if (ok)
-        {
-            ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-            perf().notify_macro_change
-            (
-                m_macro_name, performer::macro::inserted
-            );
-        }
-        else
-        {
-            ui->plain_text_edit_msg->setPlainText("Error inserting macro");
-        }
+        // set error string
     }
 }
 
+bool
+qrpnframe::insert_rpn_macro ()
+{
+    bool result { false };
+    rpn r(rpn_info());
+    midipulse tick { rpn_info().rpn_time_stamp };
+    std::string macnam { macro_name() };
+    int macchannel { m_rpn_channel };
+    tokenization name_and_data
+    {
+        r.create_rpn_macro_string(macnam, macchannel)
+    };
+    result = name_and_data.size() == 2;
+    if (result)
+       result = track().add_macro(tick, r);
+
+    if (result)
+    {
+        ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
+        perf().notify_macro_change
+        (
+            macro_name(), performer::macro::inserted
+        );
+    }
+    else
+    {
+        ui->plain_text_edit_msg->setPlainText("Error inserting macro");
+    }
+    return result;
+}
+
+bool
+qrpnframe::insert_other_macro ()
+{
+    midimacro mac
+    (
+        m_other_macro_tokens[0], m_other_macro_tokens[1]
+    );
+    midipulse ts { rpn_info().rpn_time_stamp };
+    bool result { track().add_macro(ts, mac) };
+    if (result)
+    {
+        perf().notify_macro_change
+        (
+            macro_name(), performer::macro::inserted
+        );
+    }
+    else
+    {
+        ui->plain_text_edit_msg->setPlainText
+        (
+            "Error inserting arbitrary  macro"
+        );
+    }
+    return result;
+}
+
 void
-qrpnframe::slot_rpn_cancel ()
+qrpnframe::slot_cancel ()
 {
     close();
 }

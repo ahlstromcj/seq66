@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-08-18
+ * \updates       2026-08-19
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -685,14 +685,15 @@ expand_byte_vector
 {
     std::string result;
     int count { -1 };
-    const char * fmt { usehex ? "0x%02ux" : "%ud" };
-    char tmp [8];
+    const char * fmt { usehex ? "0x%02x" : "%u" };
     for (auto b : vbytes)
     {
-        if (++ count> 0)
+        char tmp [8];
+        if (++count> 0)
             result.push_back(' ');
 
         (void) snprintf(tmp, sizeof tmp, fmt, unsigned(b));
+        result += tmp;
     }
     return result;
 }

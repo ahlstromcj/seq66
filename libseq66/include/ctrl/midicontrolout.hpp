@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2026-08-15
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -385,6 +385,11 @@ public:
         return m_macro_events.expand(name);
     }
 
+    midibytes expand_midimacro (midimacro & mac)
+    {
+        return m_macro_events.expand_macro(mac);
+    }
+
     bool send_macro (const std::string & name, bool flush = true);
     bool send_macro (const midibytes & byts, bool flush = true);
 
@@ -418,6 +423,20 @@ public:
         return m_macro_events.make_defaults();
     }
 
+    midimacro read_midi_data (const std::string & fn)
+    {
+        return m_macro_events.read_midi_data(fn);
+    }
+
+    bool write_midi_data
+    (
+        const midimacro & macro,
+        const std::string & fn = ""
+    )
+    {
+        return m_macro_events.write_midi_data(macro, fn);
+    }
+
 };          // class midicontrolout
 
 /*
@@ -437,4 +456,3 @@ extern std::string action_to_string (midicontrolout::uiaction a);
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

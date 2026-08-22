@@ -137,7 +137,7 @@ extern std::string string_to_midi_bytes (const std::string & s, size_t lim = 0);
 extern std::string midi_bytes_to_string (const std::string & s);
 extern std::string expand_byte_vector
 (
-    const std::vector<unsigned char> &,
+    const std::vector<unsigned char> & bytev,
     bool usehex = true
 );
 extern bool string_to_bool (const std::string & s, bool defalt = false);
