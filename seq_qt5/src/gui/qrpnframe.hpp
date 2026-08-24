@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-20
+ * \updates       2026-08-24
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -167,6 +167,21 @@ private:
     bool other_macro_in_force () const
     {
         return m_other_macro_in_force;
+    }
+
+    tokenization & other_macro_tokens ()
+    {
+        return m_other_macro_tokens;
+    }
+
+    void other_macro_in_force (bool f)
+    {
+        m_other_macro_in_force = f;
+    }
+
+    void other_macro_tokens (const tokenization & t)
+    {
+       m_other_macro_tokens = t;
     }
 
 private slots:

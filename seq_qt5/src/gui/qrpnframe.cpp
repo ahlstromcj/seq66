@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-22
+ * \updates       2026-08-24
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -37,6 +37,7 @@
 #include "play/clockslist.hpp"          /* seq66::clockslist                */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "util/strfunctions.hpp"        /* seq66::expand_byte_vector()      */
 #include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
 #include "qt5_helpers.hpp"              /* seq66::qt()                      */
@@ -656,8 +657,8 @@ qrpnframe::select_rpn_control (int rpncontrol)
         use_other = true;
         break;
     }
-    m_other_macro_in_force = use_other;
-    m_other_macro_tokens.clear();
+    other_macro_in_force(use_other);
+    other_macro_tokens().clear();
 }
 
 void
@@ -873,8 +874,8 @@ qrpnframe::slot_macro_other_changed ()
     tokenization macpair;
     macpair.push_back(macnam);
     macpair.push_back(byts);
-    m_other_macro_in_force = true;
-    m_other_macro_tokens = macpair;
+    other_macro_in_force(true);
+    other_macro_tokens(macpair);
     ui->button_rpn_macro->setEnabled(true);
 }
 
@@ -898,7 +899,7 @@ qrpnframe::slot_macro_other_changed ()
 void
 qrpnframe::slot_load_file ()
 {
-    if (m_other_macro_in_force)             /* "Other" radio button checked */
+    if (other_macro_in_force())             /* "Other" radio button checked */
     {
         static const std::string s_filter   /* this may be excessive :-)    */
         {
@@ -929,17 +930,28 @@ qrpnframe::slot_load_file ()
                  * ui->plain_text_edit_msg->setPlainText(qt(s));
                  */
 
+                std::string base    // THIS IS ALREADY SET IN read_midi_data()
+                {
+                    filename_base(selectedfile, true)           /* nix .ext */
+                };
                 std::string s { "file: " };
-                s += selectedfile;
+                s += selectedfile;  // DITTO
                 ui->plain_text_edit_msg->setPlainText(qt(s));
+                other_macro_tokens().clear();                   /* be safe  */
+                other_macro_tokens().push_back(base);           /* macnam   */
+                other_macro_tokens().push_back(s);              /* macfile  */
 
                 /*
                  * Select the "Other" button, which sets up the usage
                  * of "arbitrary macro". Then set the file-name and
-                 * the raw data buffer.
+                 * the raw data buffer. The "other" vector will
+                 * contain the macro-name and the file-name for use
+                 * in saving the data.
                  */
 
-                select_rpn_control(rpn_control_other);
+                // THIS CLEARS the MACRO and is not needed
+                // select_rpn_control(rpn_control_other);
+
                 macro_filename(s);
             }
         }
@@ -947,7 +959,8 @@ qrpnframe::slot_load_file ()
 }
 
 /**
- *
+ *  Whenever we need the data from a macro with a value that is
+ *  a filename, we need to read the file.
  */
 
 void
@@ -973,9 +986,11 @@ qrpnframe::slot_save_file ()
         midicontrolout & mco { perf().midi_control_out() };
         if (other_macro_in_force())
         {
-            midimacro mac(m_other_macro_tokens[0], m_other_macro_tokens[1]);
+            midimacro mac(other_macro_tokens()[0], other_macro_tokens()[1]);
             std::string macnam { macro_name() };
-            ok = mco.write_midi_data(mac, selectedfile);
+            ok = mco.get_midi_data(mac);
+            if (ok)
+                ok = mco.write_midi_data(mac, selectedfile);
         }
         else
         {
@@ -996,10 +1011,14 @@ qrpnframe::slot_save_file ()
             if (name_and_data.size() < 2)
                 return;
 
-//          std::string values { name_and_data[1] };
+            r.name(macnam);
 
-            /* midibytes temp */ (void) mco.expand_macro(macnam);
+            /*
+             * Usually the macro is already expanded, and this
+             * call has no effect.
+             */
 
+            (void) mco.expand_macro(macnam);
             ok = mco.write_midi_data(r, selectedfile);
         }
         if (! ok)
@@ -1099,8 +1118,8 @@ qrpnframe::slot_macro_name_changed ()
         ui->line_edit_other->clear();               /* setText(""); */
         ui->line_edit_other->setEnabled(false);
         macro_name().clear();
-        m_other_macro_in_force = false;
-        m_other_macro_tokens.clear();
+        other_macro_in_force(false);
+        other_macro_tokens().clear();
     }
     else
     {
@@ -1138,18 +1157,18 @@ qrpnframe::slot_create_macro ()
     midicontrolout & mco { perf().midi_control_out() };
     bool found { mco.find_macro(macnam) };
     bool ok { false };
-    if (m_other_macro_in_force)
+    if (other_macro_in_force())
     {
-        if (m_other_macro_tokens.size() < 2)
+        if (other_macro_tokens().size() < 2)
             return;
 
-        std::string values { m_other_macro_tokens[1] };
-        m_other_macro_tokens[0] = macnam;   /* set the name to be sure  */
+        std::string values { other_macro_tokens()[1] };
+        other_macro_tokens()[0] = macnam;   /* set the name to be sure  */
 
         midimacro mac(macnam, values);
         if (found)
         {
-            ok = mco.modify_macro(m_other_macro_tokens);
+            ok = mco.modify_macro(other_macro_tokens());
             if (ok)
                 ok = mco.expand_macro(macnam);
 
@@ -1168,7 +1187,7 @@ qrpnframe::slot_create_macro ()
              * See the discussion at midimacros::expand(name).
              */
 
-            ok = mco.add_macro(m_other_macro_tokens);
+            ok = mco.add_macro(other_macro_tokens());
             if (ok)
                 ok = mco.expand_macro(macnam);
 
@@ -1481,7 +1500,7 @@ qrpnframe::insert_other_macro ()
 {
     midimacro mac
     (
-        m_other_macro_tokens[0], m_other_macro_tokens[1]
+        other_macro_tokens()[0], other_macro_tokens()[1]
     );
     midipulse ts { rpn_info().rpn_time_stamp };
     bool result { track().add_macro(ts, mac) };

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-08-22
+ * \updates       2026-08-23
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -831,6 +831,12 @@ current_date_time ()
 
 /**
  *  Appends a string to file. If it does not exist, it is appended to.
+ *
+ *  Warning:
+ *
+ *      It first writes the file-name and date! If needing to write
+ *      lines (a tokenization vector) without any extras, use
+ *      file_write_lines().
  */
 
 bool
@@ -965,6 +971,66 @@ file_read_lines
         }
         else
             result = false;
+    }
+    return result;
+}
+
+/**
+ *  Writes each string as a newline-terminated string.
+ *
+ * \param fn
+ *      The name of the file to be written to. It can exist already,
+ *      and what happens to it depends on the \a append parameter.
+ *
+ * \param lines
+ *      A vector containing all the strings to be written as a line.
+ *      If the first character is not a newline, then a newline
+ *      is tacked on at the end.
+ *
+ * \param append
+ *      If true (the default is false), then the file is opened
+ *      for appending.
+ *
+ * \return
+ *      Returns true if the file was written successfully.
+ */
+
+bool
+file_write_lines
+(
+    const std::string & fn,
+    tokenization & lines,
+    bool append
+)
+{
+    bool result { file_name_good(fn) && ! lines.empty()};
+    if (result)
+    {
+        const char * mode { append ? "a" : "w" };
+        std::FILE * fptr { file_open(fn, mode) };
+        bool result { not_nullptr(fptr) };
+        if (result)
+        {
+            for (const auto & line : lines)
+            {
+                std::string text { line };
+                if (text[0] != '\n')
+                    text += "\n";
+
+                std::size_t len { text.length() };
+                std::size_t rc
+                {
+                    fwrite(text.c_str(), sizeof(char), len, fptr)
+                };
+                if (rc < len)
+                {
+                    file_error("Write failed", fn);
+                    result = false;
+                    break;
+                }
+            }
+            (void) file_close(fptr, fn);
+        }
     }
     return result;
 }

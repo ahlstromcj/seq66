@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-22
+ * \updates       2026-08-24
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -445,6 +445,7 @@ midimacros::make_defaults ()
 midimacro
 midimacros::read_midi_data (const std::string & fn)
 {
+    midimacro result;
     std::string ext { file_dot_extension(fn) };         /* keep the '.'     */
     if (ext == ".macro")
     {
@@ -469,6 +470,51 @@ midimacros::read_midi_data (const std::string & fn)
         }
         return result;
     }
+}
+
+/**
+ *  This function is like read_midi_data(), but it assumes
+ *  the macro parameter is valid due to a previous reading
+ *  that results in a file-name being in used.
+ */
+
+bool
+midimacros::get_midi_data
+(
+    midimacro & mac,
+    const std::string & fn
+)
+{
+    bool result { false };
+    std::string fname { fn.empty() ? mac.file_name() : fn };
+    std::string ext { file_dot_extension(fname) };  /* keep the '.'     */
+    if (ext == ".macro")
+    {
+        mac = read_macro_file(fname);
+        result = mac.is_valid();
+    }
+    else if (ext == ".macros")
+    {
+        // TODO when we derive the file from configfile
+        result = false;
+    }
+    else                                            /* assume binary    */
+    {
+        std::string base
+        {
+            filename_base(fname, true)              /* strips the .ext  */
+        };
+        midibytes byts { read_raw_midi(fname) };
+        mac.name(base);
+        if (byts.size() > 0)
+        {
+            mac.file_name(fname);
+            mac.bytes(byts);
+            mac.is_valid(true);
+            result = true;
+        }
+    }
+    return result;
 }
 
 /**
@@ -499,6 +545,8 @@ midimacros::read_macro_file (const std::string & fn)
     {
         tokenization & tokens { result.tokens() };
         tokenization lines;
+        bool usefilename { false };   /* file might contain "file: fname" */
+        std::string datafilename { };
         ok = file_read_lines(fn, lines, true);
         if (ok)
         {
@@ -527,24 +575,54 @@ midimacros::read_macro_file (const std::string & fn)
                 {
                     for (const auto & t : linetokens)
                     {
-                        if (! t.empty() && t[0] != '#')
-                            tokens.push_back(t);
+                        /*
+                         * file_read_lines() ignores empty lines and lines
+                         * starting with a '#' (hash-mark).
+                         *
+                         * if (! t.empty() && t[0] != '#')
+                         */
+
+                        tokens.push_back(t);
+                    }
+                    if (tokens[0] == midimacro::file_marker())
+                    {
+                        datafilename = tokens[1];
+                        usefilename = ! datafilename.empty();
                     }
                     ++count;
                 }
             }
             if (count > 0)
             {
-                /*
-                 * This seems wasteful, but it is temporary. The bytes
-                 * are already set in the events-list.
-                 */
-
-                midibytes mbs { expand_macro(result) };
-                if (mbs.size() > 0)
+                if (usefilename)
                 {
-                    result.file_name(fn);
-                    result.is_valid(true);
+                    /*
+                     * This function calls read_file_macro() [again] with
+                     * the file-name stored in the macro file.
+                     *
+                     */
+
+                    (void) get_midi_data(result, datafilename);
+                }
+                else
+                {
+                    /*
+                     * This seems wasteful, but it is temporary. The bytes
+                     * are already set in the events-list.
+                     */
+
+                    midibytes mbs { expand_macro(result) };
+                    if (mbs.size() > 0)
+                    {
+                        /*
+                         * We're not using the "file: <macnam>" since
+                         * byte digits are the tokens.
+                         *
+                         *  result.file_name(fn);
+                         */
+
+                        result.is_valid(true);
+                    }
                 }
             }
         }
@@ -603,17 +681,45 @@ midimacros::write_macro_file
     bool result { macro.is_valid() };
     if (result)
     {
-        std::string text { macro_header };
-        text += macro.name();
-        text += "\n\n";
-        text +=
-            "# This file contains data for a single Seq66 macro. Each line\n"
-            "# contains strings that are converted to MIDI bytes.\n\n"
-            ;
-        text += macro.bytes_to_lines();
-        text += "\n\n";
-        text += "# vim: sw=4 ts=4 wm=4 et ft=dosini\n";
-        result = file_write_string(fn, text);
+        tokenization lines;
+        std::string text { macro_header + macro.name() };
+        lines.push_back(text);
+        lines.push_back("\n");
+        lines.push_back
+        (
+            "# This file contains data for a single Seq66 macro. Each line"
+        );
+        lines.push_back
+        (
+            "# contains strings that are converted to MIDI bytes."
+        );
+        lines.push_back("\n");
+        if (macro.tokens().empty())
+        {
+            tokenization bytelines { macro.bytes_to_lines() };
+            for (auto & bl : bytelines)
+                lines.push_back(bl);
+        }
+        else
+        {
+            tokenization toklines { macro.tokens() };
+            if (toklines[0] == midimacro::file_marker())
+            {
+                std::string tokfilespec { toklines[0] };
+                tokfilespec += " ";
+                tokfilespec += toklines[1];
+                lines.push_back(tokfilespec);
+            }
+            else
+            {
+                // DO WE NEED to assemble the existing macro tokens
+                // into lines and push them all to 'lines'.
+                // I think we do.
+            }
+        }
+        lines.push_back("\n");
+        lines.push_back("# vim: sw=4 ts=4 wm=4 et ft=dosini");
+        result = file_write_lines(fn, lines);
     }
     return result;
 }

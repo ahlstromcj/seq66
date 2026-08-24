@@ -1,20 +1,22 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-08-21
+2015-07-10 to 2026-08-24
 
 # Change Log
 
-## [0.99.28] - 2026-08-21
+## [0.99.28] - 2026-08-24
 
 ### Added
 
--   RPN/NRPN/Macro dialog.
+-   RPN/NRPN/Macro dialog. This dialog is accessible in the pattern
+    and event editors for sequence macros. Access from Edit / Macros
+    for use with macro and SysEx files.
     -   Added MPE Configuration Message (no. 6) to the RPN set.
     -   Added a Send (N)RPN button to the RPN dialog.
     -   Added a select output buss combo-box to the dialog.
         The default selection is "Ctrl Out" (MIDI Control Out configured
         buss), but other output ports/devices can be selected.
-    -   Added arbitrary macro editing.
+    -   Added arbitrary macro editing..
     -   Added functions to delete and modify MIDI macros. Used
         in the RPN dialog.
 -   Pattern editor.

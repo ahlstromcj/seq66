@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-22
+ * \updates       2026-08-23
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -75,13 +75,6 @@ private:
      */
 
     tokenization m_tokens { };
-
-    /**
-     *  Provides the full list of midibytes to be sent via this macro after
-     *  expanding any macros it includes.
-
-    midibytes m_bytes { };
-     */
 
     /**
      *  Indicates the macro has already been expanded and the bytes
@@ -209,7 +202,7 @@ public:
 
 protected:
 
-    std::string bytes_to_lines () const;
+    tokenization bytes_to_lines () const;
 
     void is_expanded (bool flag)
     {

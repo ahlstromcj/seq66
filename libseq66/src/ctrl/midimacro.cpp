@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-22
+ * \updates       2026-08-23
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -96,7 +96,11 @@ midimacro::bytes (int index) const
 }
 
 /**
- *  We have added the ability to provide multiple "|"-separated events in
+ *  This function accepts a string of byte values ("0xF0 0xAB ...")
+ *  and creates a tokenization (vector of strings) from them, and
+ *  stores it in m_tokens.
+ *
+ *  We have added the ability to provide multiple " | "-separated events in
  *  one macro. We also have added support for a values string of the form
  *  "file: <filename>".
  *
@@ -107,6 +111,9 @@ midimacro::bytes (int index) const
  *      into one event, and this function counts the number of sets of bytes.
  *      In the second form, "file: <filename>", where an example of a
  *      filename is "roland-empty.syx" (SysEx file).
+ *
+ * \return
+ *      Returns true if there were tokens.
  */
 
 bool
@@ -130,13 +137,27 @@ midimacro::tokenize (const std::string & values)
                 for (const auto & t : m_tokens)
                 {
                     if (t == "|")
-                        ++m_event_count;
+                        ++m_event_count;        /* no. of "|" sep'd events  */
                 }
             }
         }
     }
     return result;
 }
+
+/**
+ *  Converts the tokens into a single string. Works best for events less
+ *  than 32 bytes, otherwise the line is long.
+ *
+ *  The formats returned by this function are suitable for direct
+ *  appending to a 'ctrl' file.
+ *
+ * \return
+ *      Returns a string in one of these formats:
+ *
+ *          -   "macnam = 0xF0 0xAB ..."
+ *          -   "macnam = file: full-file-specification"
+ */
 
 std::string
 midimacro::line () const
@@ -151,32 +172,46 @@ midimacro::line () const
     return result;
 }
 
-std::string
+/**
+ *  This function is more suitable for larger macros. It converts the
+ *  byte values to strings limited to a decent line length, 72 bytes.
+ *
+ *  It needs to iterate over all of the events this macro contains.
+ *
+ * \return
+ *      Returns one or more lines of the form "0xFF 0xAB ...", which
+ *      are suitable for storage in the simplistic *.macro files.
+ */
+
+tokenization
 midimacro::bytes_to_lines () const
 {
-    std::string result;
+    tokenization result;
     std::string line;
     const int limit { 72 };
-    const midibytes & byts { bytes() };
-    int charcount { 0 };
-    const char * fmt;
-    for (auto b : byts)
+    int count { event_count() };
+    for (int index = 0; index < count; ++index)
     {
-        char tmp[8];
-        if (charcount > limit)
+        const midibytes & byts { bytes(index) };
+        int charcount { 0 };
+        for (auto b : byts)
         {
-            fmt = "0x%02x\n";
-            charcount = 0;
-            result += line;
-            line.clear();
+            char tmp[8];
+            if (charcount > limit)
+            {
+                charcount = 0;
+                result.push_back(line);
+                result.push_back("\n");
+                line.clear();
+            }
+            snprintf(tmp, sizeof tmp, "0x%02x ", b);
+            charcount += int(std::strlen(tmp));
+            line += tmp;
         }
-        else
-            fmt = "0x%02x ";
-
-        snprintf(tmp, sizeof tmp, fmt, b);
-        charcount += int(std::strlen(tmp));
-        line += tmp;
+        if (index < (count - 1))
+            line += " | ";
     }
+    result.push_back(line);
     return result;
 }
 

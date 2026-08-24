@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-09
+ * \updates       2026-08-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -266,6 +266,7 @@ rpn::create_rpn_macro_string (const std::string & macnam, int channel)
         }
         result.push_back(tokens);
     }
+    tokens() = result;                  /* copy to the m_tokens member      */
     return result;
 }
 

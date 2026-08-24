@@ -1,0 +1,8 @@
+Seq66 macro: roland-empty
+
+# This file contains data for a single Seq66 macro. Each line
+# contains strings that are converted to MIDI bytes.
+
+file: /home/ahlstrom/.config/seq66/roland-empty.syx
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini

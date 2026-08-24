@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2026-08-22
+ * \updates       2026-08-24
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -426,6 +426,15 @@ public:
     midimacro read_midi_data (const std::string & fn)
     {
         return m_macro_events.read_midi_data(fn);
+    }
+
+    bool get_midi_data
+    (
+        midimacro & mac,
+        const std::string & fn = ""
+    )
+    {
+        return m_macro_events.get_midi_data(mac, fn);
     }
 
     bool write_midi_data
