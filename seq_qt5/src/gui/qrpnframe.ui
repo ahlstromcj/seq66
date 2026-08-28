@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>807</width>
-    <height>575</height>
+    <width>811</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -306,7 +306,7 @@ channel is specified.</string>
     <rect>
      <x>30</x>
      <y>10</y>
-     <width>301</width>
+     <width>741</width>
      <height>24</height>
     </rect>
    </property>
@@ -335,6 +335,32 @@ channel is specified.</string>
       </property>
       <property name="indent">
        <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_pattern_modified">
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="text">
+       <string>Pattern modified</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_ctrl_modified">
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="text">
+       <string>'ctrl' file modified</string>
       </property>
      </widget>
     </item>

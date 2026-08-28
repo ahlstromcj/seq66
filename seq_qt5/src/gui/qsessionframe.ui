@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>698</width>
-    <height>468</height>
+    <width>795</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>42</y>
+     <y>44</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -47,21 +47,21 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>38</y>
-     <width>500</width>
+     <x>149</x>
+     <y>40</y>
+     <width>631</width>
      <height>28</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>420</width>
+     <width>410</width>
      <height>28</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>500</width>
+     <width>636</width>
      <height>28</height>
     </size>
    </property>
@@ -93,15 +93,15 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLabel" name="sessionServerUrl">
    <property name="geometry">
     <rect>
-     <x>9</x>
-     <y>72</y>
-     <width>132</width>
+     <x>410</x>
+     <y>10</y>
+     <width>116</width>
      <height>20</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>132</width>
+     <width>116</width>
      <height>18</height>
     </size>
    </property>
@@ -124,21 +124,21 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>68</y>
-     <width>500</width>
+     <x>532</x>
+     <y>8</y>
+     <width>248</width>
      <height>28</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>420</width>
+     <width>248</width>
      <height>28</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>500</width>
+     <width>620</width>
      <height>30</height>
     </size>
    </property>
@@ -171,7 +171,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>162</y>
+     <y>138</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -201,8 +201,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>559</x>
-     <y>340</y>
+     <x>670</x>
+     <y>321</y>
      <width>100</width>
      <height>32</height>
     </rect>
@@ -237,21 +237,21 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>149</x>
      <y>8</y>
-     <width>500</width>
+     <width>261</width>
      <height>28</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>420</width>
+     <width>248</width>
      <height>24</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>500</width>
+     <width>620</width>
      <height>30</height>
     </size>
    </property>
@@ -306,7 +306,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>102</y>
+     <y>76</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -327,8 +327,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLabel" name="clientIdLabel">
    <property name="geometry">
     <rect>
-     <x>344</x>
-     <y>102</y>
+     <x>470</x>
+     <y>76</y>
      <width>125</width>
      <height>18</height>
     </rect>
@@ -352,9 +352,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>98</y>
-     <width>160</width>
+     <x>149</x>
+     <y>72</y>
+     <width>261</width>
      <height>28</height>
     </rect>
    </property>
@@ -401,8 +401,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>489</x>
-     <y>98</y>
+     <x>609</x>
+     <y>72</y>
      <width>171</width>
      <height>28</height>
     </rect>
@@ -450,9 +450,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>190</y>
-     <width>511</width>
+     <x>149</x>
+     <y>168</y>
+     <width>631</width>
      <height>28</height>
     </rect>
    </property>
@@ -491,7 +491,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <property name="geometry">
     <rect>
      <x>26</x>
-     <y>132</y>
+     <y>106</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -512,9 +512,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QComboBox" name="macroComboBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>130</y>
-     <width>248</width>
+     <x>148</x>
+     <y>104</y>
+     <width>348</width>
      <height>28</height>
     </rect>
    </property>
@@ -532,7 +532,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <property name="toolTip">
@@ -548,8 +548,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QCheckBox" name="checkBoxMacrosActive">
    <property name="geometry">
     <rect>
-     <x>125</x>
-     <y>132</y>
+     <x>123</x>
+     <y>106</y>
      <width>21</width>
      <height>22</height>
     </rect>
@@ -561,9 +561,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QLineEdit" name="lineEditLogFile">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>160</y>
-     <width>452</width>
+     <x>149</x>
+     <y>136</y>
+     <width>511</width>
      <height>28</height>
     </rect>
    </property>
@@ -592,8 +592,8 @@ remove this filename.</string>
    <property name="geometry">
     <rect>
      <x>31</x>
-     <y>280</y>
-     <width>511</width>
+     <y>261</y>
+     <width>631</width>
      <height>91</height>
     </rect>
    </property>
@@ -612,7 +612,7 @@ author and dates.</string>
    <property name="geometry">
     <rect>
      <x>41</x>
-     <y>260</y>
+     <y>241</y>
      <width>125</width>
      <height>17</height>
     </rect>
@@ -631,7 +631,7 @@ author and dates.</string>
    <property name="geometry">
     <rect>
      <x>167</x>
-     <y>260</y>
+     <y>241</y>
      <width>393</width>
      <height>17</height>
     </rect>
@@ -649,8 +649,8 @@ author and dates.</string>
   <widget class="QLabel" name="labelCharsRemaining">
    <property name="geometry">
     <rect>
-     <x>269</x>
-     <y>380</y>
+     <x>400</x>
+     <y>358</y>
      <width>191</width>
      <height>22</height>
     </rect>
@@ -676,8 +676,8 @@ author and dates.</string>
   <widget class="QLabel" name="labelCharactersRemaining">
    <property name="geometry">
     <rect>
-     <x>479</x>
-     <y>380</y>
+     <x>610</x>
+     <y>358</y>
      <width>71</width>
      <height>22</height>
     </rect>
@@ -695,7 +695,7 @@ author and dates.</string>
     </font>
    </property>
    <property name="text">
-    <string>1024</string>
+    <string>65536</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
@@ -704,8 +704,8 @@ author and dates.</string>
   <widget class="QPushButton" name="pushButtonSaveInfo">
    <property name="geometry">
     <rect>
-     <x>559</x>
-     <y>280</y>
+     <x>670</x>
+     <y>261</y>
      <width>100</width>
      <height>32</height>
     </rect>
@@ -734,8 +734,8 @@ author and dates.</string>
   <widget class="QSpinBox" name="spinBoxTrackNumber">
    <property name="geometry">
     <rect>
-     <x>149</x>
-     <y>380</y>
+     <x>230</x>
+     <y>361</y>
      <width>65</width>
      <height>26</height>
     </rect>
@@ -743,6 +743,7 @@ author and dates.</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
+     <bold>true</bold>
     </font>
    </property>
    <property name="toolTip">
@@ -756,7 +757,7 @@ then the first one is shown.</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>220</y>
+     <y>200</y>
      <width>121</width>
      <height>22</height>
     </rect>
@@ -780,9 +781,9 @@ then the first one is shown.</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>220</y>
-     <width>511</width>
+     <x>149</x>
+     <y>200</y>
+     <width>631</width>
      <height>28</height>
     </rect>
    </property>
@@ -809,7 +810,7 @@ then the first one is shown.</string>
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>194</y>
+     <y>172</y>
      <width>111</width>
      <height>22</height>
     </rect>
@@ -831,8 +832,8 @@ then the first one is shown.</string>
    <property name="geometry">
     <rect>
      <x>29</x>
-     <y>380</y>
-     <width>131</width>
+     <y>364</y>
+     <width>191</width>
      <height>22</height>
     </rect>
    </property>
@@ -843,15 +844,18 @@ then the first one is shown.</string>
     </font>
    </property>
    <property name="text">
-    <string>Pattern  No.</string>
+    <string>Song Info Pattern  No.</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonLogFileClear">
    <property name="geometry">
     <rect>
-     <x>605</x>
-     <y>160</y>
-     <width>56</width>
+     <x>672</x>
+     <y>136</y>
+     <width>108</width>
      <height>28</height>
     </rect>
    </property>
@@ -863,7 +867,7 @@ then the first one is shown.</string>
    </property>
    <property name="maximumSize">
     <size>
-     <width>56</width>
+     <width>108</width>
      <height>16777215</height>
     </size>
    </property>
@@ -885,8 +889,8 @@ way to undo rerouting standard I/O to file.</string>
   <widget class="QPushButton" name="pushButtonMacroSend">
    <property name="geometry">
     <rect>
-     <x>554</x>
-     <y>130</y>
+     <x>671</x>
+     <y>104</y>
      <width>48</width>
      <height>28</height>
     </rect>
@@ -915,8 +919,8 @@ way to undo rerouting standard I/O to file.</string>
   <widget class="QPushButton" name="pushButtonMacroDelete">
    <property name="geometry">
     <rect>
-     <x>605</x>
-     <y>130</y>
+     <x>724</x>
+     <y>104</y>
      <width>56</width>
      <height>28</height>
     </rect>
@@ -933,9 +937,9 @@ way to undo rerouting standard I/O to file.</string>
   <widget class="QComboBox" name="bussComboBox">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>130</y>
-     <width>151</width>
+     <x>500</x>
+     <y>104</y>
+     <width>161</width>
      <height>28</height>
     </rect>
    </property>

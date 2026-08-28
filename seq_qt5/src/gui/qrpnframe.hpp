@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-24
+ * \updates       2026-08-27
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -39,6 +39,7 @@
 
 #include "ctrl/rpn.hpp"                 /* seq66::rpn "macro" class         */
 #include "midi/calculations.hpp"        /* seq66::timeformat enumeration    */
+#include "play/performer.hpp"           /* seq66::performer                 */
 
 /*
  *  Forward declarations for Qt.
@@ -57,7 +58,9 @@ namespace seq66
 class performer;
 class sequence;
 
-class qrpnframe : public QFrame
+class qrpnframe final :
+    public QFrame,
+    protected performer::callbacks
 {
     Q_OBJECT
 
@@ -140,19 +143,31 @@ public:
 
 private:
 
+    virtual bool on_macro_change
+    (
+        const std::string & macroname,
+        performer::macro operation
+    ) override;
+
+private:
+
+    void notify_macro_change (performer::macro code, bool modified = true);
     void select_rpn_control (int rpncontrol);
     void set_rpn_option_checkboxes ();
     void select_rpn_parameter_type (int rpnvalue);
     void set_rpn_parameter_number (bool is_rpn, midishort pv);
     void set_rpn_parameter_value (midishort pv);
     void set_time_stamp (midipulse ts);
-    void populate_macro_combo ();
+    void populate_macro_combo (bool konnect = true);
     void set_macro_name (const QString & name);
     void modify_macro ();
     bool send_rpn_macro ();
     bool insert_rpn_macro ();
     bool send_other_macro ();
     bool insert_other_macro ();
+    void set_plaintext_msg (const std::string & msg);
+    void set_plaintext_msg (const tokenization & tokens);
+    void macro_name_changed ();
 
     void macro_name (const std::string & s)
     {
@@ -201,7 +216,6 @@ private slots:
     void slot_param_number_text_changed ();
     void slot_param_value_text_changed ();
     void slot_show_in_hex ();
-    void slot_macro_name_changed ();        // should make it a non-slot
     void slot_create_macro ();
     void slot_pick_macro (int);
     void slot_macro_text ();

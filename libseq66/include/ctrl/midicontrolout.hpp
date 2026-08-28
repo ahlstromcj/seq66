@@ -439,7 +439,7 @@ public:
 
     bool write_midi_data
     (
-        const midimacro & macro,
+        midimacro & macro,              /* macro file-name might be changed */
         const std::string & fn = ""
     )
     {

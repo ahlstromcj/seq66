@@ -9,16 +9,18 @@ Chris Ahlstrom
 ### Added
 
 -   RPN/NRPN/Macro dialog. This dialog is accessible in the pattern
-    and event editors for sequence macros. Access from Edit / Macros
-    for use with macro and SysEx files.
+    and event editors for macros that will be used in a patter.
+    Access from Edit / Macros for use with 'macro', 'sysex', and
+    other binary files.
     -   Added MPE Configuration Message (no. 6) to the RPN set.
     -   Added a Send (N)RPN button to the RPN dialog.
     -   Added a select output buss combo-box to the dialog.
         The default selection is "Ctrl Out" (MIDI Control Out configured
         buss), but other output ports/devices can be selected.
-    -   Added arbitrary macro editing..
+    -   Added arbitrary macro editing.
     -   Added functions to delete and modify MIDI macros. Used
         in the RPN dialog.
+    -   Added buttons to load and save macros from arbitrary data files.
 -   Pattern editor.
     -   Changed the "Extra" color to "Data Line" and use it
         [instead of fore\_color()] to draw in the data pane.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-13
+ * \updates       2026-08-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -648,19 +648,14 @@ performer::notify_macro_change
     macro operation
 )
 {
-    bool modify_song { operation == performer::macro::inserted };
-    if (modify_song)
+    bool modify_tune { operation == performer::macro::inserted };
+    if (modify_tune)
     {
         modify();
     }
     else
     {
-        bool modify_ctrl
-        {
-            operation == performer::macro::removed ||
-            operation == performer::macro::added ||
-            operation == performer::macro::modified
-        };
+        bool modify_ctrl { operation != performer::macro::sent };
         if (modify_ctrl)
             rc().auto_ctrl_save(true);
     }

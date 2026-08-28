@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-17
+ * \updates       2026-08-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3670,6 +3670,11 @@ qseqeditframe64::change_ppqn (int ppqn)
     return true;
 }
 
+/**
+ *  This menu renews the Tools pop-up menu to refresh the Insert Macro
+ *  sub-menu.
+ */
+
 bool
 qseqeditframe64::on_macro_change
 (
@@ -3680,9 +3685,12 @@ qseqeditframe64::on_macro_change
     bool result { operation != performer::macro::sent };
     if (result)
     {
-        delete m_tools_popup;
-        m_tools_popup = nullptr;
-        popup_tool_menu();
+        if (not_nullptr(m_tools_popup))
+        {
+            delete m_tools_popup;
+            m_tools_popup = nullptr;
+            popup_tool_menu();
+        }
     }
     return result;
 }

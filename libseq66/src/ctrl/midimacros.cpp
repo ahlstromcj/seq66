@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-24
+ * \updates       2026-08-28
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -203,7 +203,13 @@ midimacros::expand ()
             bool ok { ! b.empty() };            /* no longer an error       */
             if (ok)
             {
-                mac.bytes(b);
+                /*
+                 * The bytes are no longer stored in a separate vector,
+                 * but in the midimacro event stack.
+                 *
+                 *      mac.bytes(b);
+                 */
+
                 mac.is_valid(true);
             }
         }
@@ -254,7 +260,11 @@ midimacros::expand_macro (midimacro & m)
 {
     midibytes result;                   /* holds all of the bytes found     */
     midibytes temp;                     /* holds bytes of 1 event if ! N/A  */
-    bool found_events { false };
+    if (m.is_expanded())
+    {
+        return m.bytes();
+    }
+
     for (const auto & token : m.tokens())
     {
         if (token[0] == '$')
@@ -275,7 +285,6 @@ midimacros::expand_macro (midimacro & m)
         }
         else if (token[0] == '|')
         {
-            found_events = true;
             m.push_bytes(temp);
             temp.clear();
         }
@@ -286,9 +295,7 @@ midimacros::expand_macro (midimacro & m)
             temp.push_back(b);
         }
     }
-    if (found_events)
-        m.push_bytes(temp);             /* push the bytes of last event     */
-
+    m.push_bytes(temp);                 /* push the bytes of last event     */
     if (! result.empty())
         m.is_expanded(true);
 
@@ -369,17 +376,17 @@ midimacros::make_defaults ()
         "header = 0xF0 0x00 0x00         # device SysEx header, 0xF0 required",
         "middlec_off = 0x80 0x3C 0x00    # turn off test note",
         "middlec_on = 0x90 0x3C 0x40     # turn on test note",
-        "reset = $header 0x00 $footer    # fill in with device's reset command",
-        "startup = $header 0x00 $footer  # sent at start, if not empty",
-        "shutdown = $header 0x00 $footer # sent at exit, if not empty",
         "pitch = "
             "0xB0 0x65 0 0xB0 0x64 0x0 "
             "0xB0 0x06 0x02 0xB0 0x26 0 "
             "0xB0 0x65 0x7F 0xB0 0x64 0x7F",
+        "reset = $header 0x00 $footer    # fill in with device's reset command",
         "rpnpitch = "
             "0xB0 0x65 0 0xB0 0x64 0x0 "
             "0xB0 0x06 0x0C 0xB0 0x26 0 "
             "0xB0 0x65 0x7F 0xB0 0x64 0x7F",
+        "shutdown = $header 0x00 $footer # sent at exit, if not empty",
+        "startup = $header 0x00 $footer  # sent at start, if not empty",
         ""                                          /* list terminator */
     };
     bool result = count() == 0;
@@ -413,6 +420,8 @@ midimacros::make_defaults ()
  *      -   ".raw". Basically any type of MIDI binary data.
  *          Could be any other file extension the user selects as raw
  *          data.
+ *      -   We check for ".macro" and ".macros" first, and assume
+ *          any other extension is a raw data file.
  *
  *  Macro data items:
  *
@@ -645,28 +654,34 @@ midimacros::read_macro_file (const std::string & fn)
 bool
 midimacros::write_midi_data
 (
-    const midimacro & macro,
+    midimacro & macro,
     const std::string & fn
 )
 {
     bool result { false };
     std::string filename { fn.empty() ? macro.file_name() : fn };
-    std::string ext { file_dot_extension(filename) };   /* keep the '.'     */
-    if (ext == ".macro")
+    if (! filename.empty())
     {
-        result = write_macro_file(macro, fn);
-    }
-    else if (ext == ".macros")
-    {
-        // TODO when we derive the file from configfile
-        result = false;
-    }
-    else                                                /* assume binary    */
-    {
-        std::string fn { macro.file_name() };
-        midibytes byts { macro.bytes() };
-        if (byts.size() > 0 && macro.is_valid())
-            result = write_raw_midi(fn, byts);
+        std::string ext { file_dot_extension(filename) };   /* keep the '.' */
+        if (ext == ".macro")
+        {
+            result = write_macro_file(macro, filename);
+        }
+        else if (ext == ".macros")
+        {
+            // TODO when we derive the file from configfile
+            result = false;
+        }
+        else                                                /* assume raw   */
+        {
+            midibytes byts { macro.bytes() };
+            if (byts.size() > 0 && macro.is_valid())
+            {
+                result = write_raw_midi(filename, byts);
+                if (result)
+                    macro.file_name(filename);
+            }
+        }
     }
     return result;
 }
@@ -712,9 +727,14 @@ midimacros::write_macro_file
             }
             else
             {
-                // DO WE NEED to assemble the existing macro tokens
-                // into lines and push them all to 'lines'.
-                // I think we do.
+                /*
+                 * Assemble the existing macro tokens into lines and push
+                 * them all.
+                 */
+
+                tokenization datalines { macro.bytes_to_lines() };
+                for (const auto & dl : datalines)
+                    lines.push_back(dl);
             }
         }
         lines.push_back("\n");

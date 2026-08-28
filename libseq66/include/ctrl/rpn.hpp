@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-16
+ * \updates       2026-08-26
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -84,7 +84,7 @@ public:
         modulation_depth_range  = 5,    /* manufacturer specific change     */
         mpe_configuration_msg   = 6,    /* MIDI polyphone expression zone   */
         parameter_reset         = 0x7F, /* provides 0x7F to end a change    */
-        nrpn_active             = -1    /* indicates there's no set number  */
+        rpn_not_active          = -1    /* indicates there's no set number  */
     };
 
 public:

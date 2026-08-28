@@ -176,7 +176,9 @@ public:
         added,          /**< The macro was added (see the qrpnframe class). */
         modified,       /**< Duty now for the future!                       */
         inserted,       /**< Events added to a sequence/loop/pattern.       */
-        sent            /**< Might be useful in the future (i.e. now!)      */
+        sent,           /**< Might be useful in the future (i.e. now!)      */
+        loaded,         /**< A macro file (ASCII or binary) was loaded.     */
+        saved           /**< A macro file (ASCII or binary) was loaded.     */
     };
 
     /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-31
- * \updates       2026-08-22
+ * \updates       2026-08-26
  * \license       GNU GPLv2 or above
  *
  *  This class represents all the RPN and NRPN events needed to change
@@ -168,7 +168,7 @@ rpn::create_rpn_events (int channel)
 
     if (ok)
     {
-        int evcount { 0 };
+//      int evcount { 0 };
         midibyte cc { 0xB0 };
         midibyte ch { midibyte(channel) };
         midibytes pnbytes { rpn_number_to_bytes(parameter_number()) };
@@ -180,14 +180,14 @@ rpn::create_rpn_events (int channel)
             evbytes.push_back(0x65);                    /* RPN MSB flag     */
             evbytes.push_back(pnbytes[0]);              /* parameter MSB    */
             result.push_back(evbytes);                  /* push first event */
-            ++evcount;
+//          ++evcount;
 
             evbytes.clear();
             evbytes.push_back(cc);                      /* controller event */
             evbytes.push_back(0x64);                    /* RPN LSB flag     */
             evbytes.push_back(pnbytes[1]);              /* parameter LSB    */
             result.push_back(evbytes);                  /* push next event  */
-            ++evcount;
+//          ++evcount;
             is_valid(true);                             /* a bit tricky     */
             if (append_data())
             {
@@ -197,7 +197,7 @@ rpn::create_rpn_events (int channel)
                 evbytes.push_back(0x06);                /* data slider MSB  */
                 evbytes.push_back(vbytes[0]);           /* value MSB        */
                 result.push_back(evbytes);              /* push next event */
-                ++evcount;
+//              ++evcount;
 
                 if (use_fine_rpn())
                 {
@@ -206,7 +206,7 @@ rpn::create_rpn_events (int channel)
                     evbytes.push_back(0x26);            /* data slider LSB  */
                     evbytes.push_back(vbytes[1]);       /* value LSB        */
                     result.push_back(evbytes);          /* push next event  */
-                    ++evcount;
+//                  ++evcount;
                 }
             }
             if (append_reset())
@@ -214,12 +214,12 @@ rpn::create_rpn_events (int channel)
                 midibytes reset_msb { cc, 0x65, 0x7f }; /* (N)RPN reset MSB */
                 midibytes reset_lsb { cc, 0x64, 0x7f }; /* (N)RPN reset LSB */
                 result.push_back(reset_msb);
-                ++evcount;
+//              ++evcount;
                 result.push_back(reset_lsb);
-                ++evcount;
+//              ++evcount;
             }
         }
-        event_count(evcount);
+//      event_count(evcount);
     }
     return result;
 }
@@ -250,19 +250,24 @@ rpn::create_rpn_macro_string (const std::string & macnam, int channel)
     {
         std::string tokens;
         int listcount { 0 };
-        const char * fmt { "0x%02x" };
+        int counter { 0 };
         result.push_back(macnam);
         for (const auto & evbyts : evlist)
         {
             for (auto b : evbyts)
             {
                 char tmp[8];
-                snprintf(tmp, sizeof tmp, fmt, b);
+                if (counter == 0)
+                    snprintf(tmp, sizeof tmp, "0x%02x", b);
+                else
+                    snprintf(tmp, sizeof tmp, " 0x%02x", b);
+
                 tokens += tmp;
+                ++counter;
             }
             ++listcount;
             if (listcount < sz)
-                tokens += " | ";
+                tokens += " |";
         }
         result.push_back(tokens);
     }

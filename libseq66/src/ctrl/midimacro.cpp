@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-23
+ * \updates       2026-08-28
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -85,14 +85,49 @@ midimacro::midimacro
     m_is_valid = tokenize(values);              /* member function below    */
 }
 
-const midibytes &
+midimacro::midimacro (const tokenization & name_and_tokens) :
+    m_name ("?")
+{
+    bool ok { name_and_tokens.size() == 2 };
+    if (ok)
+    {
+        m_name = name_and_tokens[0];
+        m_is_valid = tokenize(name_and_tokens[1]);
+    }
+}
+
+/**
+ *  Returns either the given event bytes, or all of them.
+ *
+ * \param index
+ *      Provides the index, which is checked, of the array of midibytes
+ *      desired. If the value is the default, -1, then all are collected
+ *      and returned.
+ *
+ * \return
+ *      Returns a copy of the bytes.
+ */
+
+midibytes
 midimacro::bytes (int index) const
 {
-    static midibytes s_dummy { 0 };
-    if (index >= 0 && index < m_event_count)
-        return m_event_bytes[index];
+    if (index == (-1))
+    {
+        midibytes result;
+        for (auto & ev : m_event_bytes)
+        {
+            result.insert(result.end(), ev.begin(), ev.end());
+        }
+        return result;
+    }
     else
-        return s_dummy;
+    {
+        static midibytes s_dummy;
+        if (index >= 0 && index < event_count())
+            return m_event_bytes[index];
+        else
+            return s_dummy;
+    }
 }
 
 /**
@@ -131,15 +166,7 @@ midimacro::tokenize (const std::string & values)
         }
         else
         {
-            m_event_count = 1;
-            if (m_tokens.size() >= 3)
-            {
-                for (const auto & t : m_tokens)
-                {
-                    if (t == "|")
-                        ++m_event_count;        /* no. of "|" sep'd events  */
-                }
-            }
+            // No other code
         }
     }
     return result;

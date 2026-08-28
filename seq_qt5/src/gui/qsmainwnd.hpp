@@ -240,6 +240,13 @@ protected:                              // performer callbacks
         int ppqn, midibpm bp, performer::change ch
     ) override;
     virtual bool on_song_action (bool signal, playlist::action) override;
+#if USE_ON_MACRO_CHANGE
+    virtual bool on_macro_change
+    (
+        const std::string & /* macroname */,
+        performer::macro operation
+    );
+#endif
 
 protected:
 

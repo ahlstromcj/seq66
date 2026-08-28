@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-23
+ * \updates       2026-08-27
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -89,9 +89,9 @@ private:
      *  data comes from a raw file, then this count is 1, and
      *  m_events_bytes[0] contains the full list of midibytes to be
      *  sent via this macro after expanding any macros it includes.
-     */
 
     int m_event_count { 0 };
+     */
 
     /**
      *  Provides the midibytes for each separate event in a multiple-event
@@ -142,6 +142,7 @@ public:
 
     midimacro () = default;
     midimacro (const std::string & name, const std::string & values);
+    midimacro (const tokenization & name_and_tokens);
     midimacro (const midimacro &) = default;
     midimacro & operator = (const midimacro &) = default;
     midimacro (midimacro &&) = default;
@@ -153,6 +154,11 @@ public:
     const std::string & name () const
     {
         return m_name;
+    }
+
+    void name (const std::string & n)
+    {
+        m_name = n;
     }
 
     tokenization & tokens ()
@@ -167,7 +173,7 @@ public:
 
     std::string line () const;
 
-    const midibytes & bytes (int index = 0) const;
+    midibytes bytes (int index = (-1)) const;
 
     bool use_file_storage () const
     {
@@ -187,7 +193,7 @@ public:
 
     int event_count () const
     {
-        return m_event_count;
+        return int(m_event_bytes.size());
     }
 
     bool is_expanded () const
@@ -223,21 +229,7 @@ protected:
         m_use_file_storage = flag;
     }
 
-    /*
-     * Used only in rpn::create_rpn_events() [so far].
-     */
-
-    void event_count (int c)
-    {
-        m_event_count = c;
-    }
-
     bool tokenize (const std::string & values);
-
-    void name (const std::string & n)
-    {
-        m_name = n;
-    }
 
     void bytes (const midibytes & b)
     {
@@ -257,7 +249,6 @@ protected:
     void push_bytes (const midibytes & b)
     {
         m_event_bytes.push_back(b);
-        ++m_event_count;
     }
 
 };          // class midimacro

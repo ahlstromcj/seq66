@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-24
+ * \updates       2026-08-28
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -35,7 +35,6 @@
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/controllers.hpp"         /* seq66::string_to_rpn_number()    */
 #include "play/clockslist.hpp"          /* seq66::clockslist                */
-#include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "util/strfunctions.hpp"        /* seq66::expand_byte_vector()      */
@@ -100,6 +99,24 @@ rpn::info qrpnframe::sm_rpn_test_info
 
 #endif
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+
+static void
+s_show_slot (const std::string & txt)
+{
+    printf("Slot: %s\n", txt.c_str());
+}
+
+#else
+
+static void
+s_show_slot (const std::string & txt)
+{
+    (void) txt;
+}
+
+#endif
+
 /**
  *  Tricky constructor. It uses a dummy sequence, which requires a
  *  few handsprings to get right.
@@ -131,10 +148,11 @@ qrpnframe::qrpnframe
     sequence & s,
     QWidget * parent
 ) :
-    QFrame          (parent),
-    ui              (new Ui::qrpnframe),
-    m_perf          (p),                    /* accessor: perf()             */
-    m_seq           (s),                    /* accessor: track()            */
+    QFrame                  (parent),
+    performer::callbacks    (p),
+    ui                      (new Ui::qrpnframe),
+    m_perf                  (p),            /* accessor: perf()             */
+    m_seq                   (s),            /* accessor: track()            */
     m_midi_timing                           /* used in time calculations    */
     (
         perf().bpm(),
@@ -163,9 +181,82 @@ qrpnframe::qrpnframe
         char tmp[24];
         snprintf(tmp, sizeof tmp, "Pattern #%d", track().seq_number());
         ui->label_pattern_no->setText(tmp);
+        if (! s.modified())
+            ui->label_pattern_modified->hide();
     }
     else
+    {
         ui->label_pattern_no->clear();
+        ui->label_pattern_modified->hide();
+        other_macro_in_force();             // ca 2026-09-28
+    }
+    ui->label_ctrl_modified->hide();
+
+    /*
+     * Create a button group to manage the mutual status of the Select
+     * RPN buttons. We do this first so that, if "Other" is selected at
+     * startup, it won't be changed to "RPN".
+     */
+
+    m_select_value_group = new (std::nothrow) QButtonGroup(this);
+    if (not_nullptr(m_select_value_group))
+    {
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_pitch_range, rpn_select_pitchbend_range
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_chan_fine_tuning, rpn_select_channel_fine_tuning
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_chan_coarse_tuning, rpn_select_channel_coarse_tuning
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_tune_program_change, rpn_select_tuning_program_change
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_tune_bank_select, rpn_select_tuning_bank_select
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_mod_depth_range, rpn_select_modulation_depth_range
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_mpe_config_msg, rpn_select_mpe_configuration_message
+        );
+        m_select_value_group->addButton
+        (
+            ui->radio_rpn_parameter_reset, rpn_select_parameter_reset
+        );
+        if (not_null_sequence())
+            select_rpn_parameter_type(rpn_select_pitchbend_range);
+        else
+            select_rpn_parameter_type(rpn_select_pitchbend_range);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto lambdafunc = [this] (QAbstractButton * abutton)
+        {
+            slot_select_rpn_parameter_type(m_select_value_group->id(abutton));
+        };
+        connect
+        (
+            m_select_value_group,
+            &QButtonGroup::buttonClicked, lambdafunc
+        );
+#else
+        connect
+        (
+            m_select_value_group, SIGNAL(buttonClicked(int)),
+            this, SLOT(slot_select_rpn_parameter_type(int))
+        );
+
+#endif
+    }
 
     /*
      * Create a button group to manage the mutual status of the Select
@@ -302,71 +393,6 @@ qrpnframe::qrpnframe
     );
 
     /*
-     * Create a button group to manage the mutual status of the Select
-     * Control buttons.
-     */
-
-    m_select_value_group = new (std::nothrow) QButtonGroup(this);
-    if (not_nullptr(m_select_value_group))
-    {
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_pitch_range, rpn_select_pitchbend_range
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_chan_fine_tuning, rpn_select_channel_fine_tuning
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_chan_coarse_tuning, rpn_select_channel_coarse_tuning
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_tune_program_change, rpn_select_tuning_program_change
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_tune_bank_select, rpn_select_tuning_bank_select
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_mod_depth_range, rpn_select_modulation_depth_range
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_mpe_config_msg, rpn_select_mpe_configuration_message
-        );
-        m_select_value_group->addButton
-        (
-            ui->radio_rpn_parameter_reset, rpn_select_parameter_reset
-        );
-        if (not_null_sequence())
-            select_rpn_parameter_type(rpn_select_pitchbend_range);
-        else
-            select_rpn_parameter_type(rpn_select_pitchbend_range);
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        auto lambdafunc = [this] (QAbstractButton * abutton)
-        {
-            slot_select_rpn_parameter_type(m_select_value_group->id(abutton));
-        };
-        connect
-        (
-            m_select_value_group,
-            &QButtonGroup::buttonClicked, lambdafunc
-        );
-#else
-        connect
-        (
-            m_select_value_group, SIGNAL(buttonClicked(int)),
-            this, SLOT(slot_select_rpn_parameter_type(int))
-        );
-
-#endif
-    }
-
-    /*
      * A line-editor to allow entering arbitrary bytes in order to
      * send data (ok?) or create a macro.
      */
@@ -468,10 +494,10 @@ qrpnframe::qrpnframe
     connect
     (
         ui->line_edit_rpn_macro_name, SIGNAL(editingFinished()),
-        this, SLOT(slot_macro_name_changed())
+        this, SLOT(macro_name_changed())
     );
 #else
-    populate_macro_combo();
+    populate_macro_combo();             /* populate and connect the slots   */
 #endif
 
     connect
@@ -536,13 +562,16 @@ qrpnframe::~qrpnframe()
 }
 
 /**
- *  Fills the combo-box for macro names. Similar to
- *  qsessionframe::populate_macro_combo(), but it does not add the
- *  bytes to this narrow dropdown.
+ *  Fills the combo-box for macro names. Similar to qsessionframe ::
+ *  populate_macro_combo(), but it does not add the bytes to this narrow
+ *  dropdown.
+ *
+ * \param konnect
+ *      If true (the default), connect the slots.
  */
 
 void
-qrpnframe::populate_macro_combo ()
+qrpnframe::populate_macro_combo (bool konnect)
 {
     tokenization names { perf().macro_names() };
     bool macrosactive { perf().macros_active() };
@@ -596,25 +625,90 @@ qrpnframe::populate_macro_combo ()
             {
                 ui->combo_box_macro_name->setCurrentIndex(firstenabled);
                 set_macro_name(ui->combo_box_macro_name->currentText());
+                if (other_macro_in_force())     /* macro_name() is set      */
+                {
+                    midicontrolout & mco { perf().midi_control_out() };
+                    std::string macnam { macro_name() };
+                    bool found { mco.find_macro(macnam) };
+                    if (found)
+                    {
+                        const midimacro & mac { mco.macro(macnam) };
+                        std::string line { mac.line() };    /* name = data  */
+                        tokenization macpair { tokenize(line, "=") };
+                        other_macro_tokens(macpair);
+                    }
+                }
             }
             else
-            {
                 macro_name().clear();
+
+            if (konnect)
+            {
+                connect
+                (
+                    ui->combo_box_macro_name, SIGNAL(currentIndexChanged(int)),
+                    this, SLOT(slot_pick_macro(int))
+                );
+                connect
+                (
+                    ui->combo_box_macro_name->lineEdit(),
+                    SIGNAL(editingFinished()),
+                    this, SLOT(slot_macro_text())
+                );
+
+#if defined USE_ADDITIONAL_COMBO_SLOTS
+
+                /*
+                 * Test additions, maybe temporary, ca 2026-08-26
+                 */
+
+                connect
+                (
+                    ui->combo_box_macro_name,
+                    SIGNAL(editTextChanged(const QString &)),
+                    this, SLOT(slot_macro_text())
+                );
+                connect
+                (
+                    ui->combo_box_macro_name,
+                    SIGNAL(currentTextChanged(const QString &)),
+                    this, SLOT(slot_macro_text())
+                );
+#endif
             }
-            connect
-            (
-                ui->combo_box_macro_name, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(slot_pick_macro(int))
-            );
-            connect
-            (
-                ui->combo_box_macro_name->lineEdit(),
-                SIGNAL(editingFinished()),
-                this, SLOT(slot_macro_text())
-            );
         }
     }
 }
+
+/**
+ *  Help code to deal with macro actions.
+ */
+
+void
+qrpnframe::notify_macro_change (performer::macro code, bool modified)
+{
+    if (modified)
+    {
+        ui->button_rpn_macro->setEnabled(false);
+        if (code == performer::macro::inserted)
+            ui->label_pattern_modified->show();
+        else
+            ui->label_ctrl_modified->show();
+    }
+    else
+    {
+        ui->button_rpn_macro->setEnabled(true);
+        if (code == performer::macro::inserted)
+            ui->label_pattern_modified->hide();
+        else
+            ui->label_ctrl_modified->hide();
+    }
+    perf().notify_macro_change(macro_name(), code);
+}
+
+/**
+ *  Selects an RPN control button.
+ */
 
 void
 qrpnframe::select_rpn_control (int rpncontrol)
@@ -664,7 +758,8 @@ qrpnframe::select_rpn_control (int rpncontrol)
 void
 qrpnframe::select_rpn_parameter_type (int rpnparamtype)
 {
-    rpn::parameter paramtype { rpn::parameter::nrpn_active };
+    rpn::parameter paramtype { rpn::parameter::rpn_not_active };
+    select_rpn_control(rpn_control_rpn);
     switch (rpnparamtype)
     {
     case rpn_select_pitchbend_range:
@@ -717,10 +812,15 @@ qrpnframe::select_rpn_parameter_type (int rpnparamtype)
     }
     rpn_info().rpn_parameter_type = paramtype;
     rpn_info().rpn_parameter_number = rpn::parameter_to_short(paramtype);
-    if (not_null_sequence())
-        select_rpn_control(rpn_control_rpn);
-    else
-        select_rpn_control(rpn_control_other);
+
+    /*
+     * Nonsense.
+     *
+     *  if (not_null_sequence())
+     *      select_rpn_control(rpn_control_rpn);
+     *  else
+     *      select_rpn_control(rpn_control_other);
+     */
 
     midishort pt { rpn_info().rpn_parameter_number };
     set_rpn_parameter_number(true, pt);
@@ -759,18 +859,21 @@ void
 qrpnframe::slot_select_rpn_control (int r)
 {
     select_rpn_control(r);
+    s_show_slot(__FUNCTION__);
 }
 
 void
 qrpnframe::slot_midi_channel (int c)
 {
     m_rpn_channel = c;
+    s_show_slot(__FUNCTION__);
 }
 
 void
 qrpnframe::slot_midi_buss (int b)
 {
     m_rpn_buss = b == 0 ? null_buss() : b - 1 ;
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -790,6 +893,7 @@ qrpnframe::slot_rpn_append_data (int state)
     bool checked { state == Qt::Checked };
     rpn_info().rpn_append_data = checked;
     set_rpn_option_checkboxes();
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -798,6 +902,7 @@ qrpnframe::slot_rpn_append_reset (int state)
     bool checked { state == Qt::Checked };
     rpn_info().rpn_append_reset = checked;
     set_rpn_option_checkboxes();
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -806,12 +911,14 @@ qrpnframe::slot_rpn_use_fine_rpn (int state)
     bool checked { state == Qt::Checked };
     rpn_info().rpn_use_fine_rpn = checked;
     set_rpn_option_checkboxes();
+    s_show_slot(__FUNCTION__);
 }
 
 void
 qrpnframe::slot_select_rpn_parameter_type (int v)
 {
     select_rpn_parameter_type(v);
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -876,7 +983,9 @@ qrpnframe::slot_macro_other_changed ()
     macpair.push_back(byts);
     other_macro_in_force(true);
     other_macro_tokens(macpair);
+    set_plaintext_msg(macpair);
     ui->button_rpn_macro->setEnabled(true);
+    s_show_slot(__FUNCTION__);
 }
 
 /**
@@ -923,20 +1032,16 @@ qrpnframe::slot_load_file ()
                  * We don't need to save the data, which might be huge,
                  * whether it's a ".syx" file or ".macro" file.
                  *
-                 * We save the file specification.
-                 *
-                 * bool usehex { true };       // later, m_show_in_hex
-                 * std::string s { expand_byte_vector(rawdata, usehex) };
-                 * ui->plain_text_edit_msg->setPlainText(qt(s));
+                 * We save the file specification instead.
                  */
 
-                std::string base    // THIS IS ALREADY SET IN read_midi_data()
+                std::string base    // TODO: ALREADY SET IN read_midi_data()
                 {
                     filename_base(selectedfile, true)           /* nix .ext */
                 };
                 std::string s { "file: " };
                 s += selectedfile;  // DITTO
-                ui->plain_text_edit_msg->setPlainText(qt(s));
+                set_plaintext_msg(s);
                 other_macro_tokens().clear();                   /* be safe  */
                 other_macro_tokens().push_back(base);           /* macnam   */
                 other_macro_tokens().push_back(s);              /* macfile  */
@@ -956,6 +1061,7 @@ qrpnframe::slot_load_file ()
             }
         }
     }
+    s_show_slot(__FUNCTION__);
 }
 
 /**
@@ -986,11 +1092,15 @@ qrpnframe::slot_save_file ()
         midicontrolout & mco { perf().midi_control_out() };
         if (other_macro_in_force())
         {
-            midimacro mac(other_macro_tokens()[0], other_macro_tokens()[1]);
+            midimacro mac(other_macro_tokens());
             std::string macnam { macro_name() };
-            ok = mco.get_midi_data(mac);
+            midibytes byts { mco.expand_midimacro(mac) };
+            ok = byts.size() > 0;
             if (ok)
+            {
+                mac.name(macnam);
                 ok = mco.write_midi_data(mac, selectedfile);
+            }
         }
         else
         {
@@ -1015,17 +1125,19 @@ qrpnframe::slot_save_file ()
 
             /*
              * Usually the macro is already expanded, and this
-             * call has no effect.
+             * call has no effect, unless that macro is not in
+             * the 'ctrl' file.
+             *
+             * (void) mco.expand_macro(macnam);
              */
 
-            (void) mco.expand_macro(macnam);
+            (void) mco.expand_midimacro(r);
             ok = mco.write_midi_data(r, selectedfile);
         }
         if (! ok)
-        {
-            ui->plain_text_edit_msg->setPlainText("Error sending macro");
-        }
+            set_plaintext_msg("Error sending macro");
     }
+    s_show_slot(__FUNCTION__);
 }
 
 /**
@@ -1041,6 +1153,7 @@ qrpnframe::slot_next_time_format ()
     std::string tf { time_format_name(m_time_format) };
     ui->button_bbt->setText(qt(tf));
     set_time_stamp(ts);
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1050,6 +1163,7 @@ qrpnframe::slot_timestamp_text_changed ()
     std::string ts { t.toStdString() };
     midipulse ticks { string_to_pulses(ts, m_midi_timing, m_time_format) };
     rpn_info().rpn_time_stamp = ticks;
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1073,6 +1187,7 @@ qrpnframe::slot_param_number_text_changed ()
     {
         select_rpn_control(rpn_control_nrpn);
     }
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1082,6 +1197,7 @@ qrpnframe::slot_param_value_text_changed ()
     std::string valstring { v.toStdString() };
     midishort value { string_to_rpn_number(valstring) };
     rpn_info().rpn_parameter_value = value;
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1094,6 +1210,7 @@ qrpnframe::slot_show_in_hex ()
     set_rpn_parameter_number(isrpn, pnumber);
     pnumber = rpn_info().rpn_parameter_value;
     set_rpn_parameter_value(pnumber);
+    s_show_slot(__FUNCTION__);
 }
 
 /**
@@ -1101,7 +1218,7 @@ qrpnframe::slot_show_in_hex ()
  */
 
 void
-qrpnframe::slot_macro_name_changed ()
+qrpnframe::macro_name_changed ()
 {
 #if defined USE_LINE_EDIT_RPN_MACRO_NAME
     QString m { ui->line_edit_rpn_macro_name->text() };
@@ -1165,7 +1282,7 @@ qrpnframe::slot_create_macro ()
         std::string values { other_macro_tokens()[1] };
         other_macro_tokens()[0] = macnam;   /* set the name to be sure  */
 
-        midimacro mac(macnam, values);
+        midimacro mac(other_macro_tokens());
         if (found)
         {
             ok = mco.modify_macro(other_macro_tokens());
@@ -1174,12 +1291,11 @@ qrpnframe::slot_create_macro ()
 
             if (ok)
             {
-                ui->plain_text_edit_msg->setPlainText(qt(values));
-                ui->button_rpn_macro->setEnabled(false);
-                perf().notify_macro_change(macnam, performer::macro::modified);
+                set_plaintext_msg(other_macro_tokens());
+                notify_macro_change(performer::macro::modified);
             }
             else
-                ui->plain_text_edit_msg->setPlainText("Error modifying macro");
+                set_plaintext_msg("Error modifying macro");
         }
         else
         {
@@ -1193,17 +1309,11 @@ qrpnframe::slot_create_macro ()
 
             if (ok)
             {
-                ui->plain_text_edit_msg->setPlainText(qt(values));
-                ui->button_rpn_macro->setEnabled(false);
-                perf().notify_macro_change(macnam, performer::macro::added);
+                set_plaintext_msg(values);
+                notify_macro_change(performer::macro::added);
             }
             else
-            {
-                ui->plain_text_edit_msg->setPlainText
-                (
-                    "Error creating macro; duplicate name?"
-                );
-            }
+                set_plaintext_msg("Error creating macro; duplicate name?");
         }
     }
     else
@@ -1226,17 +1336,11 @@ qrpnframe::slot_create_macro ()
 
             if (ok)
             {
-                ui->plain_text_edit_msg->setPlainText(qt(values));
-                ui->button_rpn_macro->setEnabled(false);
-                perf().notify_macro_change(macnam, performer::macro::modified);
+                set_plaintext_msg(name_and_data);
+                notify_macro_change(performer::macro::modified);
             }
             else
-            {
-                ui->plain_text_edit_msg->setPlainText
-                (
-                    "Error modifying RPN macro"
-                );
-            }
+                set_plaintext_msg("Error modifying RPN macro");
         }
         else
         {
@@ -1246,19 +1350,19 @@ qrpnframe::slot_create_macro ()
 
             if (ok)
             {
-                ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-                ui->button_rpn_macro->setEnabled(false);
-                perf().notify_macro_change(macnam, performer::macro::added);
+                set_plaintext_msg(name_and_data);
+                notify_macro_change(performer::macro::added);
             }
             else
             {
-                ui->plain_text_edit_msg->setPlainText
+                set_plaintext_msg
                 (
                     "Error creating RPN macro; duplicate name?"
                 );
             }
         }
     }
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1267,20 +1371,15 @@ qrpnframe::set_macro_name (const QString & name)
     std::string macnam { name.toStdString() };
     ui->line_edit_rpn_macro_name->setText(name);
     macro_name(macnam);
-
-    /*
-     * Rename this function at some point.
-     */
-
-    slot_macro_name_changed();
+    macro_name_changed();
 
     midicontrolout & mco { perf().midi_control_out() };
     bool found { mco.find_macro(macnam) };
     if (found)
     {
         const midimacro & mac { mco.macro(macnam) };
-        std::string line { mac.line() };
-        ui->plain_text_edit_msg->setPlainText(qt(line));
+        std::string line { mac.line() };    /* line() gets name and data    */
+        set_plaintext_msg(line);
     }
 }
 
@@ -1297,6 +1396,7 @@ qrpnframe::slot_pick_macro (int index)
 
     QString name { ui->combo_box_macro_name->currentText() };
     set_macro_name(name);
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1311,6 +1411,7 @@ qrpnframe::slot_macro_text ()
 
     set_macro_name(name);
     ui->button_rpn_macro->setEnabled(true);
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1330,19 +1431,21 @@ qrpnframe::slot_delete_macro ()
         ok = mco.delete_macro(name_and_data[0]);
         if (ok)
             ok = mco.expand_macros();
+
+        if (ok)
+        {
+            notify_macro_change(performer::macro::removed);
+        }
     }
     if (ok)
     {
-        ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-        perf().notify_macro_change(macro_name(), performer::macro::added);
+        set_plaintext_msg(name_and_data);
+        notify_macro_change(performer::macro::added);
     }
     else
-    {
-        ui->plain_text_edit_msg->setPlainText
-        (
-            "Error creating macro; duplicate name?"
-        );
-    }
+        set_plaintext_msg("Error creating macro; duplicate name?");
+
+    s_show_slot(__FUNCTION__);
 }
 
 void
@@ -1365,16 +1468,11 @@ qrpnframe::modify_macro ()
     }
     if (ok)
     {
-        ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-        perf().notify_macro_change(macro_name(), performer::macro::added);
+        set_plaintext_msg(name_and_data);
+        notify_macro_change(performer::macro::added);
     }
     else
-    {
-        ui->plain_text_edit_msg->setPlainText
-        (
-            "Error creating macro; duplicate name?"
-        );
-    }
+        set_plaintext_msg("Error creating macro; duplicate name?");
 }
 
 /**
@@ -1390,6 +1488,7 @@ qrpnframe::slot_send ()
     {
         // todo
     }
+    s_show_slot(__FUNCTION__);
 }
 
 bool
@@ -1419,23 +1518,39 @@ qrpnframe::send_rpn_macro ()
     }
     if (result)
     {
-        ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
+        set_plaintext_msg(name_and_data);
         perf().notify_macro_change(macro_name(), performer::macro::sent);
     }
     else
-    {
-        ui->plain_text_edit_msg->setPlainText("Error sending macro");
-    }
+        set_plaintext_msg("Error sending macro");
+
     return result;
 }
+
+/**
+ *  Compare to the "other" side of slot_save_file().
+ */
 
 bool
 qrpnframe::send_other_macro ()
 {
-    midicontrolout & mco { perf().midi_control_out() };
-    return false;
+    bool result { other_macro_tokens().size() == 2 };
+    if (other_macro_tokens().size() == 2)
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        midimacro mac(other_macro_tokens());
+        std::string macnam { macro_name() };
+        midibytes byts { mco.expand_macro(macnam) };
+        int macbuss { m_rpn_buss };
+        result = byts.size() > 0;
+        if (result)
+        {
+            mac.name(macnam);
+            result = perf().send_macro_bytes(mac, macbuss);
+        }
+    }
+    return result;
 }
-
 
 /**
  *  Compare this function to qseqeditframe64::insert_macro(). But we
@@ -1456,12 +1571,13 @@ qrpnframe::slot_insert ()
     };
     if (ok)
     {
-        // set data string
+        ui->label_pattern_modified->show();
     }
     else
     {
         // set error string
     }
+    s_show_slot(__FUNCTION__);
 }
 
 bool
@@ -1482,42 +1598,26 @@ qrpnframe::insert_rpn_macro ()
 
     if (result)
     {
-        ui->plain_text_edit_msg->setPlainText(qt(name_and_data[1]));
-        perf().notify_macro_change
-        (
-            macro_name(), performer::macro::inserted
-        );
+        set_plaintext_msg(name_and_data);
+        perf().notify_macro_change(macro_name(), performer::macro::inserted);
     }
     else
-    {
-        ui->plain_text_edit_msg->setPlainText("Error inserting macro");
-    }
+        set_plaintext_msg("Error inserting macro");
+
     return result;
 }
 
 bool
 qrpnframe::insert_other_macro ()
 {
-    midimacro mac
-    (
-        other_macro_tokens()[0], other_macro_tokens()[1]
-    );
+    midimacro mac(other_macro_tokens());
     midipulse ts { rpn_info().rpn_time_stamp };
     bool result { track().add_macro(ts, mac) };
     if (result)
-    {
-        perf().notify_macro_change
-        (
-            macro_name(), performer::macro::inserted
-        );
-    }
+        notify_macro_change(performer::macro::inserted);
     else
-    {
-        ui->plain_text_edit_msg->setPlainText
-        (
-            "Error inserting arbitrary  macro"
-        );
-    }
+        set_plaintext_msg("Error inserting arbitrary  macro");
+
     return result;
 }
 
@@ -1525,6 +1625,63 @@ void
 qrpnframe::slot_cancel ()
 {
     close();
+    s_show_slot(__FUNCTION__);
+}
+
+void
+qrpnframe::set_plaintext_msg (const std::string & msg)
+{
+    ui->plain_text_edit_msg->setPlainText(qt(msg));
+}
+
+void
+qrpnframe::set_plaintext_msg (const tokenization & tokens)
+{
+    std::string msg;
+    if (tokens.size() == 2)
+    {
+        msg = tokens[0];
+        msg += " = ";
+        msg += tokens[1];
+    }
+    else
+    {
+        for (const auto & t : tokens)
+            msg += t;
+    }
+    set_plaintext_msg(msg);
+}
+
+/**
+ *  This is a brief list of the performer::macro value:
+ *
+ *      { removed, added, modified, inserted, sent, loaded, saved }
+ *
+ *  The qsessionframe currently implements only the removed and sent
+ *  operations.
+ *
+ *  The performer (via its midicontrolout object) is involved in
+ *  modified, added, removed, sent, inserted,
+ *
+ *  The inserted action involves a particular sequence (pattern).
+ *
+ *  The sent action involves a particular MIDI buss.
+ */
+
+bool
+qrpnframe::on_macro_change
+(
+    const std::string & /* macroname */,
+    performer::macro operation
+)
+{
+    bool result { operation == performer::macro::removed };
+    if (result)
+    {
+        populate_macro_combo(false);        /* don't (re)connect */
+    }
+    s_show_slot(__FUNCTION__);
+    return result;
 }
 
 }               // namespace seq66

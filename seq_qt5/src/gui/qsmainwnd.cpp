@@ -4936,6 +4936,30 @@ qsmainwnd::update_song_action (int playaction)
     }
 }
 
+#if USE_ON_MACRO_CHANGE
+
+/**
+ *  Handles changes to a macro (removed, added, or modified)
+ *  by setting the save-ctrl flag.
+ */
+
+bool
+qsmainwnd::on_macro_change
+(
+    const std::string & /* macroname */,
+    performer::macro operation
+)
+{
+    bool result { operation != performer::macro::sent };
+    if (result)
+    {
+        rc().auto_ctrl_save(true);
+    }
+    return result;
+}
+
+#endif
+
 /**
  *  This is called when focus changes in the main window.
  */

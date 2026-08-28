@@ -1,8 +1,9 @@
 TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-08-22
+2019-04-13 to 2026-08-26
 
     -   BSD. Boot to it and test out the latest meson build.
+    -   Revisit metronome and count-in testin re issue #147.
     -   Restart.
         -   Try to figure out why somethings show up only after
             exiting and running again.
@@ -25,6 +26,15 @@ Chris Ahlstrom
         -   Check with valgrind again.
         -   Add opening the dialog to the right click menu.
         -   Add a button to read a *.SYS (SysEx) file.
+        -   Create Macro does not raise the 'ctrl' save flag.
+        -   Wrap setting up the msg text into a function.
+            Make a string version and a tokenization version.
+        -   With "Other", put the first macro data token in 
+            Other Data.
+        -   If Other Data is changed, enable "Modify Macro".
+            Otherwise, if other edits are changed, ditto.
+        -   How can we select Control and Parameter when changing
+            the macro combo.
     -   Reinvestigate the MIDI macros.
         -   Mark an existing macro as "modified". How?
         -   Add a non-pattern way to get the RPN dialog. Would disable

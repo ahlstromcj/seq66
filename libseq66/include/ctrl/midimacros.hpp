@@ -133,7 +133,7 @@ public:
     );
     bool write_midi_data
     (
-        const midimacro & macro,
+        midimacro & macro,
         const std::string & fn = ""
     );
     bool write_macro_file

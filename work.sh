@@ -8,7 +8,7 @@
 # \library        seq66
 # \author         Chris Ahlstrom
 # \date           2026-04-23
-# \update         2026-07-16
+# \update         2026-08-27
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2026-07-16"
+export SEQ66_SCRIPT_EDIT_DATE="2026-08-27"
 export SEQ66_LIBRARY_API_VERSION="0.99"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.0"
 export SEQ66="seq66"
@@ -154,7 +154,7 @@ get_options () {
 
                   *)
                      CROSS_FILE_BASE="$2"
-                     shift 2
+                     shift 1
                      ;;
                esac
                ;;
@@ -417,8 +417,8 @@ option first).
                      doc/latex/make_pdf.sh.
  --nsis              Use NSIS to make a Windows installer on Linux.
  --clean             Delete all subdirectories and other build products in
-                     the 'build' directory.
-                     do "git checkout doc/seq66-dev-manual.pdf"
+                     the 'build' directory. Also does a git checkout of
+                     doc/seq66-dev-manual.pdf.
  --rebuild           Clean the project and build from scratch.
  --jack-session      Enable the usage of JACK Session, which is deprecated.
  --no-jack           Disable the usage of JACK (in Linux).
