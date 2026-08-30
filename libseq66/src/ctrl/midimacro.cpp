@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-28
+ * \updates       2026-08-30
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -236,7 +236,7 @@ midimacro::bytes_to_lines () const
             line += tmp;
         }
         if (index < (count - 1))
-            line += " | ";
+            line += "| ";
     }
     result.push_back(line);
     return result;

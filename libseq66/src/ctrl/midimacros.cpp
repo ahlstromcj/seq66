@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-28
+ * \updates       2026-08-29
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -236,7 +236,11 @@ midimacros::expand (const std::string & macnam)
     if (cit != m_macros.end())
     {
         midimacro & mac { cit->second };
-        if (! mac.is_expanded())
+        if (mac.is_expanded())
+        {
+            result = true;
+        }
+        else
         {
             midibytes temp { expand_macro(mac) };   /* sets is_expanded()   */
             result = temp.size() > 0;
@@ -264,42 +268,56 @@ midimacros::expand_macro (midimacro & m)
     {
         return m.bytes();
     }
-
-    for (const auto & token : m.tokens())
+    else
     {
-        if (token[0] == '$')
+        bool separator_encountered { false };
+        for (const auto & token : m.tokens())
         {
-            std::string macnam { token.substr(1) };
-            const auto cit { m_macros.find(macnam) };
-            if (cit != m_macros.end())  //  && ! cit->second.is_expanded)
+            if (token[0] == '$')
             {
-                midimacro & variable { cit->second };
-                midibytes xpanded { expand_macro(variable) };
-                result.insert(result.end(), xpanded.begin(), xpanded.end());
+                std::string macnam { token.substr(1) };
+                const auto cit { m_macros.find(macnam) };
+                if (cit != m_macros.end())
+                {
+                    midimacro & variable { cit->second };
+                    midibytes xpanded { expand_macro(variable) };
+                    result.insert(result.end(), xpanded.begin(), xpanded.end());
+                }
+                else
+                {
+                    result.clear();
+                    temp.clear();
+                    break;
+                }
+            }
+            else if (token[0] == '|')
+            {
+                separator_encountered = true;
+                m.push_bytes(temp);     /* push onto events stack/vector    */
+                temp.clear();
             }
             else
             {
-                result.clear();
-                break;
+                midibyte b { string_to_midibyte(token) };
+                result.push_back(b);    /* push onto the midibytes vector   */
+                temp.push_back(b);      /* push onto the interim vector     */
             }
         }
-        else if (token[0] == '|')
+        if (separator_encountered)
         {
-            m.push_bytes(temp);
-            temp.clear();
+            if (temp.size() > 0)
+                m.push_bytes(temp);     /* push the bytes of last event     */
         }
         else
         {
-            midibyte b { string_to_midibyte(token) };
-            result.push_back(b);
-            temp.push_back(b);
+            if (result.size() > 0)
+                m.push_bytes(result);
         }
-    }
-    m.push_bytes(temp);                 /* push the bytes of last event     */
-    if (! result.empty())
-        m.is_expanded(true);
+        if (result.size() > 0)
+            m.is_expanded(true);
 
-    return result;
+        return result;
+    }
 }
 
 midibytes

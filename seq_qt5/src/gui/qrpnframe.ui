@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>811</width>
-    <height>579</height>
+    <width>815</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -134,7 +134,7 @@ Useful?</string>
 as System Exclusive for a MIDI device.</string>
        </property>
        <property name="text">
-        <string>Other (arbitrary data)</string>
+        <string>Other (macros/arbitrary data)</string>
        </property>
       </widget>
      </item>
@@ -680,7 +680,7 @@ the selected bus.</string>
     <number>65536</number>
    </property>
    <property name="placeholderText">
-    <string>(set a macro name and enter its bytes in hex or decimal here)</string>
+    <string>(set/make a macro name and enter its bytes in hex or decimal here)</string>
    </property>
    <property name="clearButtonEnabled">
     <bool>true</bool>
@@ -692,11 +692,12 @@ the selected bus.</string>
      <x>10</x>
      <y>493</y>
      <width>71</width>
-     <height>22</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
-    <string>Info</string>
+    <string>Event
+Info</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
