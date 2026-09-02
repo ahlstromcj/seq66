@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-23
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  */
 
@@ -37,6 +37,19 @@
 
 #include "seq66-config.h"               /* SEQ66_JACK_*, _MIDI_LEARN macros */
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
+
+/**
+ * EXPERIMENTAL.
+ *
+ *  This seems to work reasonably well now.
+ */
+
+#define SEQ66_ALLOW_PORTMAP_CLEAR
+#define SEQ66_ALLOW_PORTMAP_FIX
+
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+#include <vector>                       /* std::vector<>                    */
+#endif
 
 namespace Ui
 {
@@ -51,6 +64,11 @@ namespace seq66
 {
     class performer;
     class qsmainwnd;
+
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+    class qclocklayout;
+    class qinputcheckbox;;
+#endif
 
 /**
  *  Provides a dialog class for Edit / Preferences.
@@ -79,7 +97,7 @@ private:
 
     void midi_through_check ();
     void setup_clock_combo_box (int buses);
-    void refresh_clock_combo_box ();
+    void refresh_clock_combo_box (bool fix = false);
     void setup_input_combo_box (int buses);
     void refresh_input_combo_box ();
     void setup_tab_midi_clock ();
@@ -176,6 +194,9 @@ private slots:
     void slot_jack_midi ();
     void slot_jack_auto_connect ();
     void slot_io_maps ();
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+    void slot_fix_io_maps ();
+#endif
 #if defined SEQ66_ALLOW_PORTMAP_CLEAR
     void slot_remove_io_maps ();
 #endif
@@ -329,6 +350,11 @@ private:
     bool m_is_initialized;
     int m_inbus_count;
     int m_outbus_count;
+
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+    std::vector<qclocklayout *> m_clock_layouts;
+    std::vector<qinputcheckbox *> m_input_checkboxes;
+#endif
 
     /*
      * Backup variables for settings.

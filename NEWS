@@ -1,26 +1,36 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-08-24
+2015-07-10 to 2026-09-02
 
 # Change Log
 
-## [0.99.28] - 2026-08-24
+## [0.99.28] - 2026-09-02
+
+    "Unhappy MACNAM"
 
 ### Added
 
 -   RPN/NRPN/Macro dialog. This dialog is accessible in the pattern
-    and event editors for macros that will be used in a patter.
+    and event editors for macros that will be used in a pattern.
     Access from Edit / Macros for use with 'macro', 'sysex', and
     other binary files.
     -   Added MPE Configuration Message (no. 6) to the RPN set.
     -   Added a Send (N)RPN button to the RPN dialog.
     -   Added a select output buss combo-box to the dialog.
-        The default selection is "Ctrl Out" (MIDI Control Out configured
-        buss), but other output ports/devices can be selected.
+        The default selection is "Ctrl Out" (MIDI Control Out
+        configured buss), but other output ports/devices can be
+        selected.
     -   Added arbitrary macro editing.
     -   Added functions to delete and modify MIDI macros. Used
         in the RPN dialog.
-    -   Added buttons to load and save macros from arbitrary data files.
+    -   Added buttons to load and save macros from arbitrary data
+        files in both text and binary formats..
+-   Edit / Preferences / MIDI Clock and Input.
+    -   Added a "Re-enable" button to re-activate ports that were
+        missing but are now plugged in. A restart is required, but
+        manually editing the 'rc' file is not needed.
+    -   Sleep time added to restart to try to mitigate ports
+        changes not showing up.
 -   Pattern editor.
     -   Changed the "Extra" color to "Data Line" and use it
         [instead of fore\_color()] to draw in the data pane.

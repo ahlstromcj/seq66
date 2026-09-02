@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2022-01-20
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  *  Provides the layout for a single MIDI output buss clocking user-interface
@@ -70,6 +70,9 @@ public:
     {
         // no code needed
     }
+
+    void set_unavailable ();
+    void set_available (bool setclock = false);
 
     QHBoxLayout * layout ()
     {

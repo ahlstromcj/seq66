@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-08-25
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -1478,7 +1478,12 @@ bool
 performer::ui_set_input (bussbyte bus, bool active)
 {
     bussbyte truebus { true_input_bus(bus) };
-    bool result { m_master_bus->set_input(truebus, active) };
+    bool result { is_good_buss(truebus) };
+    if (result)
+    {
+        result = bool(m_master_bus) &&
+            m_master_bus->set_input(truebus, active);
+    };
     if (result)
     {
         inputslist & ipm { input_port_map() };
@@ -1584,7 +1589,12 @@ bool
 performer::ui_set_clock (bussbyte bus, e_clock clocktype)
 {
     bussbyte truebus { true_output_bus(bus) };
-    bool result { m_master_bus->set_clock(truebus, clocktype) };
+    bool result { is_good_buss(truebus) };
+    if (result)
+    {
+        result = bool(m_master_bus) &&
+            m_master_bus->set_clock(truebus, clocktype);
+    }
     if (result)
     {
         clockslist & opm { output_port_map() };
@@ -1812,7 +1822,7 @@ performer::client_id_string () const
         if (m_master_bus)
             result += std::to_string(m_master_bus->client_id());
         else
-            result += "no master bus";
+            result += "null master bus";
     }
     return result;
 }
@@ -4026,7 +4036,8 @@ performer::announce_playscreen ()
             std::placeholders::_1, std::placeholders::_2
         );
         exec_slot_function(sh, false);          /* do not use set-offset    */
-        m_master_bus->flush();
+        if (m_master_bus)
+            m_master_bus->flush();
     }
 }
 
@@ -4409,7 +4420,7 @@ performer::finish ()
 bool
 performer::activate ()
 {
-    bool result = m_master_bus && m_master_bus->activate();
+    bool result = bool(m_master_bus) && m_master_bus->activate();
 
 #if defined SEQ66_JACK_SUPPORT_ACTIVATE_HERE // init_jack_transport() instead
     if (result)
@@ -5089,7 +5100,8 @@ performer::output_func ()
 
         /*
          * We still need to make sure the BPM and PPQN changes are airtight!
-         * Check jack_set_beats_per_minute() and change_ppqn()
+         * Check jack_set_beats_per_minute() and change_ppqn().
+         * Is it possible for m_master_bus to be null here?
          */
 
         double bwdenom = 4.0 / get_beat_width();
@@ -5341,7 +5353,8 @@ performer::input_func ()
 }
 
 /**
- *  A helper function for input_func().
+ *  A helper function for input_func(). Is it possible for m_masterbus
+ *  to be null here?
  */
 
 bool
@@ -6070,7 +6083,8 @@ performer::play (midipulse tick)
                 else
                     append_error_message("play on null sequence");
             }
-            m_master_bus->flush();                      /* flush MIDI buss  */
+            if (m_master_bus)
+                m_master_bus->flush();                  /* flush MIDI buss  */
         }
     }
 }
@@ -6083,7 +6097,8 @@ performer::play_all_sets (midipulse tick)
         set_tick(tick);
         sequence::playback songmode = song_start_mode();
         set_mapper().play_all_sets(tick, songmode, resume_note_ons());
-        m_master_bus->flush();                          /* flush MIDI buss  */
+        if (m_master_bus)
+            m_master_bus->flush();                      /* flush MIDI buss  */
     }
 }
 

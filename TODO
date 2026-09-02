@@ -1,26 +1,26 @@
 TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-08-30
+2019-04-13 to 2026-09-02
 
     -   BSD. Boot to it and test out the latest meson build.
     -   Revisit metronome and count-in testing re issue #147.
-    -   Restart.
-        -   Try to figure out why somethings show up only after
-            exiting and running again.
-        -   Maybe need a way enable all (new) ports without
-            doing a (destructive of configuration) remapping.
+    -   Redo screenshots in the KvGray theme.
+    -   Edit / Preferences / MIDI CLock.
+        -   Test, fix, and document the Re-enable and Clear buttons.
+        -   Wrap the MIDI Input buss list in the same object
+            type as done in the Clock buss list.
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
             Individual selection of notes seems fine.
         -   Horizontal gets better with zoom, vertical gets worse.
     -   Follow up on RPN:
+        -   Verify the proper sorting of (N)RPN messages.
         -   Need to have the save dialog show the types of
             file extensions: .macro(s), .sys, .raw.
         -   program-banks.text (issue #138)
         -   akai-mpk-mini-play.text
         -   RPN.text
         -   24stones.mid and 2stones.mid
-        -   Verify the proper sorting of (N)RPN messages.
         -   Check with valgrind again.
         -   Add opening the dialog to the right click menu.
         -   Add a button to read a *.SYS (SysEx) file.
@@ -30,12 +30,7 @@ Chris Ahlstrom
         -   If Other Data is changed, enable "Modify Macro".
             Otherwise, if other edits are changed, ditto.
     -   Reinvestigate the MIDI macros.
-        -   Mark an existing macro as "modified". How?
-        -   Add a non-pattern way to get the RPN dialog. Would disable
-            Send and Insert buttons. Only macros could be handled.
         -   Copy the Tools menu to the slot menu?
-        -   When non-Other selected, Send shows the currently selected
-            macros data.
     -   The ":" key is available (as well as some other keys). How
         can we use them? Metronome toggle as noted in "Back burner".
     -   Background recording / Metronome.

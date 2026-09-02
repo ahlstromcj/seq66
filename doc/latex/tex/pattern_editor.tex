@@ -831,7 +831,7 @@
    the note position advances.
    To preview notes entered via a MIDI device, click the
    \textbf{MIDI Thru} button to activate so that they will be
-   passed to the sound generator or software synthesizer.
+   passed to a sound generator or software synthesizer.
 
 \subsubsection{Pattern Editor / Piano Roll Items}
 \label{subsubsec:pattern_editor_piano_roll_items}
@@ -2360,7 +2360,17 @@
 
    This dialog provides a way to insert parameter changes much more
    easily than using the event editor.
-   It inserts multiple events at once based on the settings in the dialog.
+   It inserts sequences of RPN or NRPN events
+   based on the settings in the dialog.
+   It can also create arbitrary data items and manage the
+   \textsl{Seq66} MIDI macros.
+
+   \textbf{Note:}
+   This dialog cannot look up MIDNAM data in order to populate the
+   parameter names for NRPN.
+   It does not handle the sequence of events needed to select a
+   patch bank and a patch in that bank.
+   
 
 \begin{figure}[H]
    \centering 
@@ -2379,8 +2389,8 @@
          One can also choose to enter a \textbf{Data} event alone, but
          there is not much reason to do that (yet).
          The \textbf{Data button increment/decrment} buttons
-         are not yet implement.
-         The \textbf{Other (arbitrary data)} allows typing or
+         are not yet implemented.
+         The \textbf{Other (macros/arbitrary data)} allows typing or
          pasting events into the \textbf{Other's Data} field.
       \item \textbf{Select RPN}.
          On the other side, this group selects a specific RPN from
@@ -2388,7 +2398,7 @@
       \item \textbf{Channel}.
          Provides the channel (1 to 16) to be applied to the RPN/NRPN
          controller events.
-      \item \textbf{Buss}.
+      \item \textbf{Bus}.
          Normally, the configured MIDI Control Out port is used for
          sending events. This dropdown allows the selection of another
          destination MIDI device.
@@ -2419,13 +2429,15 @@
          cannot be edited.
          If NRPN is selected, then the number of the desired
          parameter can be typed here.
-         Note that parameter numbers are limit to 14-bits (0 to 16383).
+         Note that parameter numbers are limited to 14-bits (0 to 16383).
+         Unfortunately, at this time the user must know the NPRN parameter
+         number.
       \item \textbf{Select macro}.
          Entering a short name into this editable combo-box enables the
          \textbf{Create Macro} button, or, if the macro exists,
          the \textbf{Modify Macro} button.
-      \item \textbf{RPN/NRPN parameter value}.
-         Type the desired parameter value here.
+      \item \textbf{RPN/NRPN value}.
+         Type the desired value of the current parameter here.
          It can be a single number (e.g. 1583 or 0x0600)
          or two numbers separated by a decimal point.
          An example is "12.50".
@@ -2439,10 +2451,12 @@
          to the list of macros in the 'ctrl' configuration file,
          or modifies an existing macro.
          That file is marked to be saved at exit.
-      \item \textbf{Insert (N)RPN}.
-         Clicking this button adds the RPN/NRPN or "other" events to the pattern
-         at the timestamp shown in the timestamp text box.
-      \item \textbf{Send (N)RPN}.
+      \item \textbf{Insert Events}.
+         Clicking this button adds the RPN/NRPN or "other" events to the
+         pattern at the timestamp shown in the timestamp text box.
+         This button is enabled only when the RPN/NRPN dialog is
+         brought up via the pattern or event editor.
+      \item \textbf{Send Events}.
          Clicking this button sends the RPN/NRPN or "other" events to the
          MIDI Control Out (display) buss or the selected alternate buss.
       \item \textbf{Close}.
@@ -2453,13 +2467,22 @@
          format. To create more than one event, separate the events
          with a pipe ("|"). Spaces \textsl{must} separate each token,
          including the pipe.
-      \item \textbf{Info}.
+      \item \textbf{Event Info}.
          This text-box shows the generated data, always in hexadecimal.
          We might fix that later.
          If an error occurs, a message is shown in this box.
+      \item \textbf{Load}.
+         This button opens a file dialog with filters for
+         \texttt{*.macro} (textual macro file), \texttt{*.syx}
+         (SysEx data file), and the usual "All Files" filter.
+         Anything not a \texttt{*.macro} file consider a raw,
+         binary file.
+      \item \textbf{Save}.
+         This button allows to save the data in text format or in
+         a binary format.
    \end{itemize}
 
-   There is a lot more that could be done with this macro editor.
+   There is a lot more that could be added to this macro editor.
    One thing is adding other controllers that have "coarse" and "fine"
    values, such as the controller and program events needed to
    select a patch bank and a particular patch.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-08-21
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -129,6 +129,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
     m_is_initialized        (false),
     m_inbus_count           (0),
     m_outbus_count          (0),
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+    m_clock_layouts         (),
+    m_input_checkboxes      (),
+#endif
     m_backup_rc             (),
     m_backup_usr            (),
     m_reload_needed         (false)
@@ -150,6 +154,24 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent) :
 
     ui->pushButtonReload->setEnabled(false);
     ui->pushButtonReload->hide();
+
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+
+    /*
+     *  TRIAL CODE
+     *
+     *  Try to fix (reload) the I/O port lists.
+     */
+
+    connect
+    (
+        ui->pushButtonFixMap, SIGNAL(clicked()),
+        this, SLOT(slot_fix_io_maps())
+    );
+
+#else
+        ui->pushButtonFixMap->hide();
+#endif
 
     /*
      * OK/Cancel Buttons
@@ -225,7 +247,7 @@ qseditoptions::setup_clock_combo_box (int buses)
         bool good = perf().ui_get_clock(bussbyte(b), ec, busname);
         if (good)
         {
-            bool active = port_active(ec);
+            bool active { ! port_unavailable(ec) };
             out->addItem(qt(busname));
             enable_combobox_item(out, b, active);
         }
@@ -246,7 +268,7 @@ qseditoptions::setup_clock_combo_box (int buses)
 }
 
 void
-qseditoptions::refresh_clock_combo_box ()
+qseditoptions::refresh_clock_combo_box (bool fix)
 {
     QComboBox * out = ui->comboBoxMidiOutBuss;
     bool active = perf().midi_control_out().configure_enabled();
@@ -258,7 +280,7 @@ qseditoptions::refresh_clock_combo_box ()
         bool good = perf().ui_get_clock(bussbyte(b), ec, busname);
         if (good)
         {
-            bool active = port_active(ec);
+            bool active { fix || ! port_unavailable(ec) };
             enable_combobox_item(out, b, active);
         }
     }
@@ -365,10 +387,13 @@ qseditoptions::setup_tab_midi_clock ()
         {
             qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
             vboxclocks->addLayout(tempqc->layout());
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+            m_clock_layouts.push_back(tempqc);
+#endif
         }
 
         /*
-         * Output MIDI control buss combo-box population.
+         * Output MIDI Control buss combo-box population.
          */
 
         setup_clock_combo_box(buses);
@@ -509,6 +534,9 @@ qseditoptions::setup_tab_midi_input ()
         {
             qinputcheckbox * tempqi = new qinputcheckbox(this, perf(), bus);
             vboxinputs->addWidget(tempqi->input_checkbox());
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+            m_input_checkboxes.push_back(tempqi);
+#endif
         }
 
         /*
@@ -2709,15 +2737,36 @@ qseditoptions::slot_io_maps ()
         bool active = perf().port_maps_active();
         ui->ioPortsMappedCheck->setChecked(active);
         rc().portmaps_active(active);
-        modify_rc();
     }
     else
     {
         ui->ioPortsMappedCheck->setChecked(false);
         rc().portmaps_active(false);
-        modify_rc();
     }
+    modify_rc();
 }
+
+#if defined SEQ66_ALLOW_PORTMAP_FIX
+
+void
+qseditoptions::slot_fix_io_maps ()
+{
+    /*
+     * refresh_clock_combo_box(true);
+     */
+
+    for (auto qcptr : m_clock_layouts)
+    {
+        qcptr->set_available(true);
+    }
+    for (auto qiptr : m_input_checkboxes)
+    {
+        qiptr->set_available(true);
+    }
+    modify_rc();
+}
+
+#endif
 
 #if defined SEQ66_ALLOW_PORTMAP_CLEAR
 

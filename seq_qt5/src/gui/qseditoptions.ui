@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>772</width>
-    <height>692</height>
+    <width>786</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="font">
@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -333,7 +333,7 @@
         </font>
        </property>
        <property name="text">
-        <string>MIDI Clock</string>
+        <string>MIDI OUT/Clock</string>
        </property>
       </widget>
       <widget class="QWidget" name="horizontalLayoutWidget_2">
@@ -341,7 +341,7 @@
         <rect>
          <x>28</x>
          <y>370</y>
-         <width>573</width>
+         <width>631</width>
          <height>45</height>
         </rect>
        </property>
@@ -392,8 +392,8 @@
         <rect>
          <x>30</x>
          <y>300</y>
-         <width>569</width>
-         <height>70</height>
+         <width>631</width>
+         <height>72</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_7">
@@ -436,7 +436,30 @@
           </item>
          </layout>
         </item>
-        <item row="0" column="2" colspan="2">
+        <item row="1" column="4">
+         <widget class="QPushButton" name="pushButtonRemoveMap">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Clear</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditBussOverride">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" colspan="3">
          <widget class="QCheckBox" name="ioPortsMappedCheck">
           <property name="enabled">
            <bool>true</bool>
@@ -451,12 +474,12 @@
            <string>If checked, the output port map was active.</string>
           </property>
           <property name="text">
-           <string>MIDI I/O Port Maps</string>
+           <string>Use MIDI I/O Port Maps</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_20">
+         <widget class="QLabel" name="labelBussOverride">
           <property name="font">
            <font>
             <pointsize>11</pointsize>
@@ -468,43 +491,41 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditBussOverride">
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pushButtonStoreMap">
+          <property name="minimumSize">
+           <size>
+            <width>80</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Saves maps of I/O port numbers and names to the 'rc' file.
+Each port number can be found by name-lookup.
+
+WARNING: Devices not present at this time are DROPPED
+from the maps.</string>
+          </property>
+          <property name="text">
+           <string>Recreate!</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButtonFixMap">
           <property name="minimumSize">
            <size>
             <width>0</width>
             <height>28</height>
            </size>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pushButtonStoreMap">
-          <property name="minimumSize">
-           <size>
-            <width>80</width>
-            <height>32</height>
-           </size>
-          </property>
           <property name="toolTip">
-           <string>Saves maps of I/O port numbers and names to the 'rc' file.
-Each port number can be found by name-lookup.</string>
+           <string>If missing devices have been plugged back in,
+then click this button to re-enable them.
+This action will update the ports/maps at exit.</string>
           </property>
           <property name="text">
-           <string>Recreate</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QPushButton" name="pushButtonRemoveMap">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>32</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Clear</string>
+           <string>Re-enable</string>
           </property>
          </widget>
         </item>
@@ -515,7 +536,7 @@ Each port number can be found by name-lookup.</string>
         <rect>
          <x>10</x>
          <y>290</y>
-         <width>601</width>
+         <width>661</width>
          <height>131</height>
         </rect>
        </property>
@@ -528,7 +549,7 @@ Each port number can be found by name-lookup.</string>
         <rect>
          <x>10</x>
          <y>496</y>
-         <width>601</width>
+         <width>661</width>
          <height>51</height>
         </rect>
        </property>
@@ -859,8 +880,8 @@ channel.</string>
         <rect>
          <x>10</x>
          <y>230</y>
-         <width>621</width>
-         <height>291</height>
+         <width>591</width>
+         <height>301</height>
         </rect>
        </property>
        <property name="font">
@@ -1189,7 +1210,7 @@ button in the piano rolls.</string>
            </property>
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
              <italic>false</italic>
              <bold>false</bold>
             </font>
@@ -1209,7 +1230,7 @@ button in the piano rolls.</string>
            </property>
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
              <italic>true</italic>
              <bold>false</bold>
             </font>
@@ -1236,7 +1257,7 @@ button in the piano rolls.</string>
          <widget class="QCheckBox" name="checkBoxProgressBoxShown">
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1313,7 +1334,7 @@ Range: 4 to 8. Default: 4.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1365,7 +1386,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1387,7 +1408,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1530,7 +1551,7 @@ Range: 0.5 to 1.0. Default: 0.8.</string>
          <widget class="QSpinBox" name="spinKeyHeight">
           <property name="minimumSize">
            <size>
-            <width>65</width>
+            <width>68</width>
             <height>28</height>
            </size>
           </property>
@@ -1576,7 +1597,7 @@ zoom vertically.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1602,7 +1623,7 @@ zoom vertically.</string>
          <widget class="QLabel" name="labelUiScaling">
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1688,7 +1709,7 @@ Range: 0.5 to 3.0</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>520</y>
+         <y>530</y>
          <width>551</width>
          <height>22</height>
         </rect>
@@ -1709,7 +1730,7 @@ Range: 0.5 to 3.0</string>
         <rect>
          <x>10</x>
          <y>0</y>
-         <width>621</width>
+         <width>591</width>
          <height>221</height>
         </rect>
        </property>
@@ -1737,7 +1758,7 @@ Range: 0.5 to 3.0</string>
          <x>10</x>
          <y>10</y>
          <width>611</width>
-         <height>241</height>
+         <height>271</height>
         </rect>
        </property>
        <property name="title">
@@ -1787,7 +1808,7 @@ Range: 0.5 to 3.0</string>
           <x>360</x>
           <y>29</y>
           <width>241</width>
-          <height>212</height>
+          <height>237</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_5" columnstretch="7,8">
@@ -2112,9 +2133,9 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>259</y>
+         <y>290</y>
          <width>349</width>
-         <height>151</height>
+         <height>131</height>
         </rect>
        </property>
        <property name="title">
@@ -2168,7 +2189,7 @@ setting of Start mode)</string>
        <property name="geometry">
         <rect>
          <x>31</x>
-         <y>300</y>
+         <y>330</y>
          <width>141</width>
          <height>64</height>
         </rect>
@@ -2219,9 +2240,9 @@ in the Song Editor.</string>
        <property name="geometry">
         <rect>
          <x>370</x>
-         <y>260</y>
+         <y>290</y>
          <width>251</width>
-         <height>151</height>
+         <height>131</height>
         </rect>
        </property>
        <property name="title">
@@ -2233,7 +2254,7 @@ in the Song Editor.</string>
           <x>20</x>
           <y>10</y>
           <width>211</width>
-          <height>101</height>
+          <height>108</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -2405,7 +2426,7 @@ an event in the new pattern.</string>
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>220</y>
+         <y>230</y>
          <width>701</width>
          <height>132</height>
         </rect>
@@ -2506,7 +2527,7 @@ an event in the new pattern.</string>
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>360</y>
+         <y>370</y>
          <width>701</width>
          <height>121</height>
         </rect>
@@ -2880,7 +2901,7 @@ recording.</string>
          <x>222</x>
          <y>20</y>
          <width>325</width>
-         <height>227</height>
+         <height>251</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -3101,7 +3122,7 @@ the beat width.</string>
          <x>10</x>
          <y>10</y>
          <width>581</width>
-         <height>251</height>
+         <height>271</height>
         </rect>
        </property>
        <property name="title">
@@ -3112,7 +3133,7 @@ the beat width.</string>
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>264</y>
+         <y>290</y>
          <width>581</width>
          <height>141</height>
         </rect>
@@ -3131,7 +3152,7 @@ the beat width.</string>
          <rect>
           <x>14</x>
           <y>32</y>
-          <width>552</width>
+          <width>558</width>
           <height>98</height>
          </rect>
         </property>
@@ -3387,7 +3408,7 @@ notes as they come in.</string>
          <x>24</x>
          <y>10</y>
          <width>217</width>
-         <height>441</height>
+         <height>401</height>
         </rect>
        </property>
        <property name="font">
@@ -3899,8 +3920,8 @@ even if Seq66 is run by it.</string>
       <widget class="QGroupBox" name="groupBoxSaveAtExit">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>210</y>
+         <x>10</x>
+         <y>220</y>
          <width>673</width>
          <height>231</height>
         </rect>
@@ -4707,7 +4728,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>450</y>
+         <y>456</y>
          <width>101</width>
          <height>22</height>
         </rect>
@@ -4723,7 +4744,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>485</y>
+         <y>491</y>
          <width>101</width>
          <height>22</height>
         </rect>
@@ -4739,7 +4760,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>456</y>
+         <y>462</y>
          <width>491</width>
          <height>28</height>
         </rect>
@@ -4755,7 +4776,7 @@ PATH.
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>486</y>
+         <y>492</y>
          <width>491</width>
          <height>28</height>
         </rect>
@@ -4771,7 +4792,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>639</x>
-         <y>459</y>
+         <y>465</y>
          <width>28</width>
          <height>24</height>
         </rect>
@@ -4787,7 +4808,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>639</x>
-         <y>490</y>
+         <y>496</y>
          <width>28</width>
          <height>24</height>
         </rect>

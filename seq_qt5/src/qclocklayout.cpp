@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2026-08-05
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -40,7 +40,25 @@
 namespace seq66
 {
 
+/**
+ *  Keeps the name length manageable.
+ */
+
 static const size_t c_max_name_length = 48;    /* 40, 32 */
+
+/**
+ *  Getting weird button ID numbers, so we force them here.
+ *  They match the e_clock enum class.
+ */
+
+enum clock_setting_t
+{
+    clock_setting_unavailable,   // == (-2),
+    clock_setting_disabled,      // == (-1),
+    clock_setting_none,          // == 0,
+    clock_setting_pos,           // == 1,
+    clock_setting_mod            // == 2
+};
 
 /**
  *  Creates a single line in the MIDI Clocks "Clock" group-box.  We will use
@@ -50,11 +68,13 @@ static const size_t c_max_name_length = 48;    /* 40, 32 */
  *      -#  Get the label for the port and set it.
  *      -#  Add the tooltips for the clock radio-buttons.
  *      -#  Add the clock radio-buttons to m_horizlayout_clocklive.
- *        -#    Connect to the radio-button slots:
- *            -    clock_callback_disable().
- *            -    clock_callback_off().
- *            -    clock_callback_on().
- *            -    clock_callback_mod().
+ *      -#  Connect to the radio-button slots. These are implemented by
+ *          clock_callback_clicked (int id):
+ *            -    clock_callback_unavailable(): -2
+ *            -    clock_callback_disable(): -1
+ *            -    clock_callback_off(): 0
+ *            -    clock_callback_on(): 1
+ *            -    clock_callback_mod(): 2
  */
 
 qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
@@ -70,10 +90,6 @@ qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
 {
     setup_ui();                         /* defined below, not in .h/.hpp    */
 
-    /*
-     * Obsolete in Qt 6:
-     */
-
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 
     auto lambdafunc = [this] (QAbstractButton * abutton)
@@ -83,6 +99,10 @@ qclocklayout::qclocklayout (QWidget * parent, performer & p, int bus) :
     connect(m_rbutton_group, &QButtonGroup::buttonClicked, lambdafunc);
 
 #else
+
+    /*
+     * Obsolete in Qt 6:
+     */
 
     connect
     (
@@ -141,11 +161,20 @@ qclocklayout::setup_ui ()
         m_rbutton_group = new QButtonGroup(this);
         m_rbutton_group->addButton
         (
-            m_rbutton_portdisabled, int(e_clock::disabled)
+            m_rbutton_portdisabled, clock_setting_disabled
         );
-        m_rbutton_group->addButton(m_rbutton_clockoff, int(e_clock::none));
-        m_rbutton_group->addButton(m_rbutton_clockonpos, int(e_clock::pos));
-        m_rbutton_group->addButton(m_rbutton_clockonmod, int(e_clock::mod));
+        m_rbutton_group->addButton
+        (
+            m_rbutton_clockoff, clock_setting_none
+        );
+        m_rbutton_group->addButton
+        (
+            m_rbutton_clockonpos, clock_setting_pos
+        );
+        m_rbutton_group->addButton
+        (
+            m_rbutton_clockonmod, clock_setting_mod
+        );
         m_horizlayout_clockline->addWidget(m_label_outputbusname);
         m_horizlayout_clockline->addItem(m_spacer_clock);
         m_horizlayout_clockline->addWidget(m_rbutton_portdisabled);
@@ -159,13 +188,7 @@ qclocklayout::setup_ui ()
         );
         if (unavailable)
         {
-            m_label_outputbusname->setEnabled(false);
-            m_rbutton_portdisabled->setChecked(true);
-            m_rbutton_portdisabled->setEnabled(false);
-            m_rbutton_clockoff->setChecked(false);
-            m_rbutton_clockoff->setEnabled(false);
-            m_rbutton_clockonpos->setEnabled(false);
-            m_rbutton_clockonmod->setEnabled(false);
+            set_unavailable();
 
             /*
              * Overridden by the Clock tab's tooltip.
@@ -179,20 +202,12 @@ qclocklayout::setup_ui ()
             {
             case e_clock::unavailable:
 
-                m_label_outputbusname->setEnabled(false);
-                m_rbutton_portdisabled->setChecked(true);
-                m_rbutton_portdisabled->setEnabled(false);
-                m_rbutton_clockonpos->setEnabled(false);
-                m_rbutton_clockonmod->setEnabled(false);
+                set_unavailable();
                 break;
 
             case e_clock::disabled:
 
-                m_label_outputbusname->setEnabled(true);
-                m_rbutton_portdisabled->setChecked(true);
-                m_rbutton_portdisabled->setEnabled(true);
-                m_rbutton_clockonpos->setEnabled(true);
-                m_rbutton_clockonmod->setEnabled(true);
+                set_available();
                 break;
 
             case e_clock::none:
@@ -230,17 +245,15 @@ qclocklayout::setup_ui ()
  *      values explicitly, via addButton(ptrbutton, int(e_clock::disabled)).
  *      For some reason, probably because -1 is a special flag for this
  *      callback, -1 [e_clock::disabled] gets converted to -2.  So we have to
- *      adjust.
+ *      adjust. In fact, we need to ensure all integers are >= 0. See
+ *      enum clock_setting_t at the top of this module.
  */
 
 void
 qclocklayout::clock_callback_clicked (int id)
 {
-    if (id == (-2))
-        id = (-1);                              /* e_clock::disabled        */
-
-    e_clock clocking = int_to_clock(id);        /* static_cast<e_clock>(id) */
-    bool enable = port_active(clocking);        /* e_clock::disabled        */
+    e_clock clocking { int_to_clock(id + 2) };  /* static_cast<e_clock>(id) */
+    bool enable { clocking != e_clock::unavailable };
     perf().ui_set_clock(bus(), clocking);
     m_label_outputbusname->setEnabled(enable);
     m_rbutton_portdisabled->setEnabled(enable);
@@ -248,6 +261,41 @@ qclocklayout::clock_callback_clicked (int id)
     m_rbutton_clockonpos->setEnabled(enable);
     m_rbutton_clockonmod->setEnabled(enable);
     parent_widget()->enable_bus_item(bus(), enable);    /* tell the parent  */
+}
+
+/**
+ *  Sets the status display for an unavailable port.
+ */
+
+void
+qclocklayout::set_unavailable ()
+{
+    m_label_outputbusname->setEnabled(false);
+    m_rbutton_portdisabled->setChecked(true);
+    m_rbutton_portdisabled->setEnabled(false);
+    m_rbutton_clockoff->setChecked(false);
+    m_rbutton_clockoff->setEnabled(false);
+    m_rbutton_clockonpos->setEnabled(false);
+    m_rbutton_clockonmod->setEnabled(false);
+}
+
+/**
+ *  Sets the status display for an available port. Used in the context
+ *  of Seq66 not being able to recognize that a device is now available.
+ *  Using this function avoids the need to edit the 'rc' file manually.
+ */
+
+void
+qclocklayout::set_available (bool setclock)
+{
+    m_label_outputbusname->setEnabled(true);
+    m_rbutton_portdisabled->setEnabled(true);
+    m_rbutton_clockoff->setChecked(true);
+    m_rbutton_clockoff->setEnabled(true);
+    m_rbutton_clockonpos->setEnabled(true);
+    m_rbutton_clockonmod->setEnabled(true);
+    if (setclock)
+        perf().ui_set_clock(bus(), e_clock::none);
 }
 
 }           // namespace seq66

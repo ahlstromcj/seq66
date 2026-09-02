@@ -105,7 +105,8 @@
       \item \textbf{Clock Start Modulo}
       \item \textbf{Buss Override}
       \item \textbf{MIDI I/O Maps}
-      \item \textbf{Create (maps)}
+      \item \textbf{Rereate! (maps)}
+      \item \textbf{Re-enable (maps)}
       \item \textbf{Clear (maps)}
       \item \textbf{MIDI Control Out Bus}
       \item \textbf{Meta Events}
@@ -253,7 +254,7 @@
    checkbox.
 %  If changed, the \textbf{Restart Seq66!} button is enabled.
 
-   \itempar{Create (maps)}{midi i/o!port mapping}
+   \itempar{Recreate! (maps)}{midi i/o!port mapping}
    \index{port mapping}
    \index{port!mapping}
    Pressing this button saves the current set of MIDI I/O ports to sections in
@@ -263,6 +264,14 @@
    \textsl{Seq66}, rearrange the clock and input maps in the
    'rc' file with a text editor, back up this file in a safe place,
    and restart \textsl{Seq66}.
+
+   \itempar{Re-enable! (maps)}{midi i/o!re-enable mapping}
+   \index{port re-enable mapping}
+   \index{port!re-enable mapping}
+   This button assumes that the user knows that formerly missing
+   devices have been plugged back in, so they need to be
+   re-enables. After restarting, the changes in the clock and input maps
+   are saved in the 'rc' file.
 
    \itempar{Clear (maps)}{midi i/o!remove mapping}
    \index{remove mapping}

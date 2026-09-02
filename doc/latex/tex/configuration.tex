@@ -964,6 +964,7 @@
    Again, see the 'rc' file itself for more information.
 
    \index{linux!system MIDI Thru}
+   \index{linux!ALSA MIDI Thru}
    \index{MIDI Thru}
    One minor issue with the system MIDI Thru port is that, if it and another
    input port (e.g. VMPK) are both enabled, then each note emitted by VMPK is
@@ -2453,6 +2454,8 @@
 
    There are still some wrinkles to work out with this, such as ignoring snap
    values in order to get an exact recording of the triggers.
+   One work around is to use a very small snap; the smallest currently
+   available is 1/32.
 
 \paragraph{Automation / Solo}
 \label{paragraph:configuration_midi_ctrl_solo}
@@ -2828,6 +2831,27 @@
    The first three are useful in other macros, while "startup" and
    "shutdown", if defined with actual data, are sent at the launch
    and shutdown, respectively, of \textsl{Seq66}.
+
+   For macros with a large amount of data, another format is
+   supported.
+   This example shows SysEx data contained in a binary file.
+
+   \begin{verbatim}
+      [macro-control-out]
+      mt32sysex = ~/.config/seq66/mt32sysex.syx
+   \end{verbatim}
+
+   \textsl{Seq66} supports a provisional format for a
+   \texttt{*.macro} file:
+
+   \begin{verbatim}
+      Seq66 macro: rpnpitch
+      0xB0 0x65 0 | 0xB0 0x64 0x0 | 0xB0 0x06 0x0C | 0xB0 0x26 0 |
+      0xB0 0x65 0x7F | 0xB0 0x64 0x7F
+   \end{verbatim}
+
+   In the future, we might provide a \texttt{*.macros} file that
+   defines macros in the \textsl{Seq66} "INI" format.
 
    Features to note:
 

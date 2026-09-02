@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2026-04-15
+ * \updates       2026-08-31
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -67,7 +67,7 @@
  *  seems sometimes new port settings do not work.
  */
 
-static const int sc_sleep_time_ms = 250;
+static const int sc_sleep_time_ms { 750 };  /* 250 ms   */
 
 /**
  *  The standard C/C++ entry point to this application.  The first thing is to
@@ -108,16 +108,14 @@ main (int argc, char * argv [])
     if (apppath.empty())
         apppath = argv[0];
 
-#if 0
     /*
      *  Use the new font-fix.qss to fix the font size.
+     *
+     *  app.setStyleSheet
+     *  (
+     *      "QMenu { font-size : 10pt; } QMenu::item { font-size: 10pt; }"
+     *  );
      */
-
-    app.setStyleSheet
-    (
-        "QMenu { font-size : 10pt; } QMenu::item { font-size: 10pt; }"
-    );
-#endif
 
     seq66::smanager::app_info(apppath);     /* instead of set_app_path()    */
 
@@ -140,7 +138,7 @@ main (int argc, char * argv [])
 
     Q_FOREACH(QString a, app.arguments())
     {
-        const static QString s_locale_arg = "--locale:";
+        const static QString s_locale_arg { "--locale:" };
         if (a.startsWith(s_locale_arg))
         {
            QLocale::setDefault(QLocale(a.mid(sizeof(s_locale_arg) - 1)));
@@ -164,16 +162,15 @@ main (int argc, char * argv [])
          app.installTranslator(&app_translator);
 #endif
 
-    int exit_status = EXIT_SUCCESS;                 /* versus EXIT_FAILURE  */
+    int exit_status { EXIT_SUCCESS };               /* versus EXIT_FAILURE  */
     for (;;)
     {
         seq66::qt5nsmanager sm(app);
-        seq66::millisleep(sc_sleep_time_ms);        /* TRIAL CODE 2025-06-11 */
-        bool result = sm.create(argc, argv);
+        bool result { sm.create(argc, argv) };
         if (result)
         {
             std::string msg;
-            bool result = sm.run();
+            bool result { sm.run() };
             exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
             (void) sm.close_session(msg, result);
             if (! result)
@@ -186,7 +183,6 @@ main (int argc, char * argv [])
             }
             if (seq66::session_restart())
             {
-                seq66::millisleep(sc_sleep_time_ms);
                 seq66::session_message("Reloading Seq66 session");
                 seq66::signal_end_restart();
             }
@@ -198,6 +194,7 @@ main (int argc, char * argv [])
             exit_status = EXIT_FAILURE;             /* --help or error      */
             break;
         }
+        seq66::millisleep(sc_sleep_time_ms);
     }
     return exit_status;
 }
@@ -207,4 +204,3 @@ main (int argc, char * argv [])
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

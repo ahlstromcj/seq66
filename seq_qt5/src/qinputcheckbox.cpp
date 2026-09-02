@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2026-05-02
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  *  This class is used in the qseditoptions settings-dialog class.
@@ -106,8 +106,8 @@ qinputcheckbox::setup_ui ()
 }
 
 /**
- *  Sets the clocking value based on in incoming parameter.  We have to use
- *  this particular slot in order to handle all of the radio-buttons.
+ *  Sets the inputing value based on in incoming parameter. We have to use
+ *  this particular slot in order to handle all of the check-boxes.
  *  Note that there is no explicit and separate "disabled" state for input
  *  like there is for clocks.
  *
@@ -123,6 +123,24 @@ qinputcheckbox::input_callback_clicked (int state)
     parent_widget()->enable_bus_item(bus(), true);      /* tell the parent  */
 }
 
+/**
+ *  Sets the status display for an available port. Used in the context
+ *  of Seq66 not being able to recognize that a device is now available.
+ *  Using this function avoids the need to edit the 'rc' file manually.
+ */
+
+void
+qinputcheckbox::set_available (bool setinput)
+{
+    m_chkbox_inputactive->setEnabled(true);
+    m_chkbox_inputactive->setToolTip("");
+    if (setinput)
+    {
+        perf().ui_set_input(bus(), true);
+        parent_widget()->enable_bus_item(bus(), true);  /* tell the parent  */
+    }
+}
+
 }           // namespace seq66
 
 /*
@@ -130,4 +148,3 @@ qinputcheckbox::input_callback_clicked (int state)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

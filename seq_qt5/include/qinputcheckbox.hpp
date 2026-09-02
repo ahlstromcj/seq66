@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2022-01-20
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -63,6 +63,8 @@ public:
     {
         return m_chkbox_inputactive;
     }
+
+    void set_available (bool setinput = false);
 
 private:
 
