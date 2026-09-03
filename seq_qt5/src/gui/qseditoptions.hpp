@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-02
+ * \updates       2026-09-03
  * \license       GNU GPLv2 or above
  */
 
@@ -39,13 +39,17 @@
 #include "cfg/settings.hpp"             /* seq66::combolist class, helpers  */
 
 /**
- * EXPERIMENTAL.
- *
- *  This seems to work reasonably well now.
+ *  The port-map "fix" (re-enabling) seems to work reasonably well now.
  */
 
-#define SEQ66_ALLOW_PORTMAP_CLEAR
 #define SEQ66_ALLOW_PORTMAP_FIX
+
+/**
+ *  The clear feature removes the map sections from the 'rc', but
+ *  they come back. So now we just set maps-active to off.
+ */
+
+#undef SEQ66_ALLOW_PORTMAP_CLEAR
 
 #if defined SEQ66_ALLOW_PORTMAP_FIX
 #include <vector>                       /* std::vector<>                    */

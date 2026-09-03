@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-08-21
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -243,7 +243,18 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
 std::string
 qt_icon_theme ()
 {
-    QString qs = QIcon::themeName();
+    QString qs { QIcon::themeName() };
+    return qs.toStdString();
+}
+
+/**
+ *  Gets the applications style, i.e. theme.
+ */
+
+std::string
+qt_style_theme (const QApplication & qapp)
+{
+    QString qs { qapp.style()->objectName() };
     return qs.toStdString();
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-07-24
+ * \updates       2026-09-03
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/qseq66/qseq66.rc </code> configuration file is fairly
@@ -408,6 +408,12 @@ rcfile::parse ()
         }
         infoprintf("%d midi-input-map entries added", count);
     }
+    else
+    {
+        inputslist & inputref = input_port_map();
+        inputref.active(false);
+        status_message("No input port map");
+    }
 
     /*
      * One thing about MIDI clock values.  If a device (e.g. Korg nanoKEY2)
@@ -483,8 +489,11 @@ rcfile::parse ()
         infoprintf("%d midi-clock-map entries added", count);
     }
     else
-        portmaps_present = false;       /* both sections must be present    */
-
+    {
+        clockslist & clocsref = output_port_map();
+        clocsref.active(false);
+        status_message("No output port map");
+    }
     rc().portmaps_present(portmaps_present);
     rc().portmaps_active(inportmap_active && outportmap_active);
 
@@ -1425,4 +1434,3 @@ copy_configuration
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

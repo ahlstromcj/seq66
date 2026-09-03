@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-09-02
+2015-07-10 to 2026-09-03
 
 # Change Log
 
-## [0.99.28] - 2026-09-02
+## [0.99.28] - 2026-09-03
 
     "Unhappy MACNAM"
 
@@ -54,6 +54,8 @@ Chris Ahlstrom
         to the file-extension for lookup.
     -   Added show\_filespec\_select\_dialog() to return the
         full file-specification of the selected file.
+    -   Many tiny improvements to various parts of the
+        user-interface.
 
 ### Changed
 

@@ -50,7 +50,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -292,7 +292,7 @@
         </font>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Shape::NoFrame</enum>
+        <enum>QFrame::Shape::Box</enum>
        </property>
        <property name="lineWidth">
         <number>2</number>
@@ -311,8 +311,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>701</width>
-          <height>241</height>
+          <width>691</width>
+          <height>231</height>
          </rect>
         </property>
        </widget>
@@ -471,7 +471,7 @@
            </font>
           </property>
           <property name="toolTip">
-           <string>If checked, the output port map was active.</string>
+           <string>If checked, the input/output port map is active.</string>
           </property>
           <property name="text">
            <string>Use MIDI I/O Port Maps</string>
@@ -773,7 +773,7 @@ channel.</string>
         </font>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Shape::NoFrame</enum>
+        <enum>QFrame::Shape::Box</enum>
        </property>
        <property name="lineWidth">
         <number>2</number>
@@ -792,8 +792,8 @@ channel.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>691</width>
-          <height>251</height>
+          <width>681</width>
+          <height>241</height>
          </rect>
         </property>
        </widget>

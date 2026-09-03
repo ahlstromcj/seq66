@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-08-19
+ * \updates       2026-09-02
  * \license       GNU GPLv2 or above
  *
  * Note:
@@ -54,6 +54,7 @@
  */
 
 #include <QAction>
+#include <QApplication>
 #include <QComboBox>
 #include <QColor>
 #include <QErrorMessage>
@@ -131,6 +132,7 @@ extern std::string qt_set_color
 );
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
 extern std::string qt_icon_theme ();
+extern std::string qt_style_theme (const QApplication & qapp);
 extern bool qt_prompt_ok
 (
     const std::string & text,

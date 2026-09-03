@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2026-08-01
+% \update      2026-09-03
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -39,6 +39,8 @@
          been moved to a separate file for flexibility.
       \item \textbf{'drums' File}.  This file supports remapping percussion
          notes from older drum machines to General MIDI.
+      \item \textbf{'notemap' File}.  This file is just a 'drums' file
+         that is used to remap notes.
       \item \textbf{'playlist' File}. This new file specifies a file that
          contains one or more playlists and MIDI controls for them.
       \item \textbf{'palette' File}. This new file allows replacing the default
@@ -59,17 +61,25 @@
       /home/user/.config/seq66/qseq66.ctrl
       /home/user/.config/seq66/qseq66.mutes
       /home/user/.config/seq66/qseq66.drums
+      /home/user/.config/seq66/qseq66.notemap [perhaps]
       /home/user/.config/seq66/qseq66.playlist
       /home/user/.config/seq66/qseq66.palette
+      /home/user/.config/seq66/qseq66.qss
    \end{verbatim}
 
-   The palette file is not automatically generated.  It can be saved from the
-   \textbf{Edit / Preferences / Display} tab.
-   There are also samples installed in the \texttt{data/samples}
-   directory.
+   The 'palette' file is not automatically generated.
+   It can be saved from the
+   \textbf{Edit / Preferences / Display} tab or be copied from the installed
+   \texttt{data} directories.
+
    The style-sheet file can be specified in the 'rc' file's
    \texttt{[style-sheet-file]} section.
-   There are also some 'keymap' files.  They are not yet used, but may become a
+
+   Note that a \textsl{Seq66} install includes a number of paired 'qss'
+   and 'palette' file.
+
+   There are also some 'keymap' files.
+   They are not yet used, but may become a
    feature of \textsl{Seq66} in the future.
    For \textsl{Microsoft Windows}, the default base name of the files is
    \texttt{qpseq66}, and the default configuration directory is

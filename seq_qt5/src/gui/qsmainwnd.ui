@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
-    <height>628</height>
+    <width>912</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -887,7 +887,7 @@ the current set.</string>
          </font>
         </property>
         <property name="text">
-         <string>0: Group #1</string>
+         <string>N: Group #n</string>
         </property>
         <property name="readOnly">
          <bool>true</bool>
@@ -1780,7 +1780,7 @@ beats/minute.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>910</width>
+     <width>912</width>
      <height>28</height>
     </rect>
    </property>
@@ -1798,7 +1798,7 @@ beats/minute.</string>
     <widget class="QMenu" name="menuExport">
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>10</pointsize>
        <bold>false</bold>
        <stylestrategy>PreferDefault</stylestrategy>
       </font>
@@ -1814,7 +1814,7 @@ beats/minute.</string>
     <widget class="QMenu" name="menuImport">
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>10</pointsize>
        <bold>false</bold>
        <stylestrategy>PreferDefault</stylestrategy>
       </font>
