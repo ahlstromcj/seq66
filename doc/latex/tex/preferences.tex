@@ -366,7 +366,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_input_tab-2.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_input_tab-2.png}
    \caption{MIDI Input Tab}
    \label{fig:midi_input_tab}
 \end{figure}
@@ -445,7 +445,6 @@
    See \sectionref{sec:recording}, which describes recording in more detail.
 
    \itempar{Use virtual (manual) I/O ports}{ports!virtual}
-   \textbf{Use virtual (manual) I/O ports}
    Virtual ports are called "manual ports" because the connections
    generally need to be made manually.
    This option
@@ -458,14 +457,13 @@
    is necessary for this option to take effect.
 
    \itempar{Auto-Enable virtual ports}{ports!virtual auto-enable}
-   \textbf{Auto-enable virtual I/O ports}
    If set, the ports are all automatically enabled upon a restart.
    The following figure shows that a large number of virtual ports can be
    defined, and a vertical scroll-bar appears.
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.95]{main-menu/edit/preferences/midi_input_tab-virtual.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_input_tab-virtual.png}
    \caption{MIDI Virtual Inputs}
    \label{fig:midi_input_tab_virtual}
 \end{figure}
@@ -502,9 +500,6 @@
    For more information on keystrokes, see
    \sectionref{subsec:kbd_mouse_keyboard_control}.
 
-   One useful enhancement, though "costly", would be support of MIDI Learn.
-   Currently the only "learnable" items are the mute groups.
-
 \subsection{Edit / Preferences / Mouse (removed)}
 \label{subsection:edit_preferences_mouse}
 
@@ -524,7 +519,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_display_tab.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_display_tab.png}
    \caption{Display Options}
    \label{fig:midi_display_tab}
 \end{figure}
@@ -584,7 +579,7 @@
    In the \textbf{UI Boolean Options} section are some more options
    from the 'usr' file:
 
-   \begin{itemize}
+   \begin{enumber}
       \item Verbose console output. (Read only).
       \item Load most-recent file (startup).
       \item Show full path of recent files.
@@ -601,7 +596,9 @@
       \item Elliptical progress box.
       \item Follow progress by default.
       \item \textsl{Reserved}. (For future expansion).
-   \end{itemize}
+   \end{enumber}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Verbose Console Output}{verbose}
    This boolean makes more output appear if \textsl{Seq66} is run from a
@@ -716,7 +713,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_jack_tab.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_jack_tab.png}
    \caption{Edit / Preferences / JACK}
    \label{fig:midi_jack_tab}
 \end{figure}
@@ -843,7 +840,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_play_options_tab.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_play_options_tab.png}
    \caption{Play Options}
    \label{fig:midi_play_options_tab}
 \end{figure}
@@ -947,7 +944,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_metro_options_tab.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_metro_options_tab.png}
    \caption{Metronome Options}
    \label{fig:midi_metro_options_tab}
 \end{figure}
@@ -956,13 +953,13 @@
 
    The metronome feature is enabled in the main live grid via a metronome
    button.
-   The metronome is a standard \textsl{Seq66} pattern that is used
+   The metronome is a standard \textsl{Seq66} pattern used
    for playback of the metronome, but it is never seen
    nor directly edited by the user.
    It is not saved with a song, so changing the metronome does not modify the
    song.
-   The settings shown above are saved to a "metronome" section in the 'rc'
-   file.
+   The settings shown above are saved to a
+   \texttt{[metronome]} section in the 'rc' file.
    The metronome is a pattern that first plays a main note once, and then
    plays "sub" notes for the rest of the measure.
    Here are the settings:
@@ -1071,10 +1068,12 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_pattern_tab.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_pattern_tab.png}
    \caption{Pattern Options}
    \label{fig:midi_pattern_options_tab}
 \end{figure}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Pattern}{edit!pattern}
    \textbf{Pattern}
@@ -1203,7 +1202,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{main-menu/edit/preferences/midi_session_tab.png}
+   \includegraphics[scale=0.65]{main-menu/edit/preferences/midi_session_tab.png}
    \caption{Session Options}
    \label{fig:midi_session_options_tab}
 \end{figure}

@@ -1,18 +1,21 @@
 TO DO for Seq66 0.99.28
 Chris Ahlstrom
-2019-04-13 to 2026-09-03
+2019-04-13 to 2026-09-05
 
     -   BSD. Boot to it and test out the latest meson build.
     -   Revisit metronome and count-in testing re issue #147.
     -   Redo screenshots in the KvGray theme.
-    -   Edit / Preferences / MIDI CLock.
-        -   Test, fix, and document the Re-enable and Clear buttons.
-            Clear works until restart!?
+    -   Edit / Preferences / MIDI Clock.
+        -   Test, fix, and document the Re-enable button.
+        -   Consider a dialog to set up port-mapping.
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
             Individual selection of notes seems fine.
         -   Horizontal gets better with zoom, vertical gets worse.
         -   Some text in slots get partly cut.
+        -   In the right-click menu for a slot, the Input bus
+            ALSA Announce should be disabled.
+        -   Solo works, but unsoloing does not.
     -   Follow up on RPN:
         -   Verify the proper sorting of (N)RPN messages.
         -   Need to have the save dialog show the types of

@@ -2154,7 +2154,7 @@ qseditoptions::setup_tab_session ()
     /*
      * There's no real way to change the 'rc' from the UI and have it
      * stick. It can be specified by the --config option only.
-     * We could eventually support an environment variablie like
+     * We could eventually support an environment variable like
      * SEQ66_RC_FILE.
      */
 

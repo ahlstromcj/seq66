@@ -1,4 +1,4 @@
-# README for Seq66 0.99.28 2026-08-11
+# README for Seq66 0.99.28 2026-09-04
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -10,9 +10,9 @@ now it provides a form of MIDI Learn and "scratchpad recording".
 It does not support audio samples, just MIDI.
 
 __Seq66__ Seq24/Kepler34 on steroids with modern C++ and new features.
-Linux and Windows users can build this application from source code.
-See the extensive INSTALL files. Includes a comprehensive PDF
-user-manual. As of this release, employs the __Meson__ build system.
+Linux and Windows users can build this application from source code,
+using the __Meson__ build system. See the extensive INSTALL files. Includes a
+comprehensive PDF user-manual.
 
 *The current development-in-progress branch is now "Meson". Seq66 now
 builds using Meson, and supports Qt6. Bootstrap and build now done via
@@ -89,6 +89,7 @@ in force. Otherwise Seq66 uses the current Qt theme.
     *   Highly configurable MIDI-based metronome.
     *   Management of scales, keys, and chords.
     *   Improved non-U.S. keyboard support.
+    *   Displays the text in karaoke MIDI files.
     *   Many demonstration and test MIDI files.
 
 ##  Internal

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2026-06-22
+% \update      2026-09-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -52,7 +52,7 @@
 
 \begin{document}
 
-\title{Seq66 User Manual v. 0.99.26}
+\title{Seq66 User Manual v. 0.99.28}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
@@ -118,10 +118,11 @@
    It supports the \textsl{Non/New Session Manager},
    has a metronome function,
    multiple input port recording,
+   MIDI Learn, macro editing, karaoke MIDI files,
    a modifiable color and brush palette,
    and Qt style-sheets.
-   Be prepared to note some significant differences
-   between \textsl{Seq66} and our first reboot, \textsl{Sequencer64}.
+   Be prepared to note some significant advances
+   in  \textsl{Seq66} from our first reboot, \textsl{Sequencer64}.
    The basics are similar, though.
 
    \textsl{Seq66} is not a synthesizer.
@@ -141,7 +142,7 @@
    things learned in responding to user reports;  to use
    the new code as an opportunity to add new functionality such as
    \textsl{Non Session Manager} support; to tighten the
-   code by using newer features of \textsl{C++17} and later;
+   code by using newer features of \textsl{C++17};
    and to make the innumerable minor improvements that come to
    attention with time and testing.
 
@@ -229,11 +230,13 @@
    There are a number of ways of building Seq66.
 
    \begin{itemize}
-      \item \textbf{Autotools Build and Install}.
-         Configure, make, and install.
-         Works with \textsl{Linux} and \textsl{FreeBSD}.
-      \item \textbf{Bootstrap Install}.
-         Generate autotools files and build settings.
+      \item \textbf{Meson Build and Install}.
+         Meson loads any subproject, builds the code, and can install
+         it and generate this PDF manual.
+         Works with \textsl{Linux}, \textsl{Windows}, and \textsl{FreeBSD}.
+      \item \textbf{./work.sh}.
+         This script provides a lot of canned options to use
+         meson to build multiple versions (Clang, debug, etc.)
       \item \textbf{OpenSUSE and Fedora}.
          Specifics for those Linux distros.
       \item \textbf{Qmake-based Install}.

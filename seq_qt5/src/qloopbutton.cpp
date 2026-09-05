@@ -83,7 +83,7 @@ static const int s_alpha_popup      {  32 };
  */
 
 static const int s_fontsize_main    {  8 };
-static const int s_fontsize_large   { 10 }; /* for usr:progress-bar-thick   */
+static const int s_fontsize_large   {  9 }; /* for usr:progress-bar-thick   */
 static const int s_fontsize_record  {  8 };
 static const int s_radius_record    {  8 };
 static const int s_radius_thru      {  4 };
@@ -121,16 +121,16 @@ qloopbutton::textbox::set
  *  Progress-box values.
  */
 
-bool qloopbutton::sm_draw_progress_box = true;
-double qloopbutton::sm_progress_w_fraction = 0.80;      /* 0.0, 0.50 - 0.80 */
-double qloopbutton::sm_progress_h_fraction = 0.25;      /* 0.0, 0.10 - 0.40 */
-const int qloopbutton::scm_progress_event_margin = 3;   /* better viewing   */
-const int qloopbutton::sm_vert_draw_text_threshold = 40;
-const int qloopbutton::sm_vert_compressed_threshold = 45;
-const int qloopbutton::sm_horiz_compressed_threshold = 45;
-const int qloopbutton::sm_base_height = 12;             /* rough font hght  */
-const float qloopbutton::sm_left_width_factor = 0.70;
-const float qloopbutton::sm_right_width_factor = 0.50;
+bool qloopbutton::sm_draw_progress_box { true };
+double qloopbutton::sm_progress_w_fraction { 0.80 };    /* 0.0, 0.50 - 0.80 */
+double qloopbutton::sm_progress_h_fraction { 0.25 };    /* 0.0, 0.10 - 0.40 */
+const int qloopbutton::scm_progress_event_margin { 3 }; /* better viewing   */
+const int qloopbutton::sm_vert_draw_text_threshold { 40 };
+const int qloopbutton::sm_vert_compressed_threshold { 45 };
+const int qloopbutton::sm_horiz_compressed_threshold { 45 };
+const int qloopbutton::sm_base_height { 12 };           /* rough font hght  */
+const float qloopbutton::sm_left_width_factor { 0.70 };
+const float qloopbutton::sm_right_width_factor { 0.50 };
 
 qloopbutton::progbox::progbox () :
     m_x         (0),
@@ -292,13 +292,13 @@ qloopbutton::initialize_text ()
 
         int dx = usr().scale_size(4);
         int dy = usr().scale_size_y(2);
-        int lw = int(sm_left_width_factor * w);
-        int rw = int(sm_right_width_factor * w);
+        int lw = int(sm_left_width_factor * w) + 4;
+        int rw = int(sm_right_width_factor * w) - 4;
         int lx = dx;
         int ty = dy + 2;
-        int bh = usr().scale_size_y(sm_base_height);
+        int bh = usr().scale_size_y(sm_base_height) + 4;
         int rx = int(0.50 * w) + lx - dx - 1;
-        int by = int(0.85 * h) + dy - 4;                    /* 3 */
+        int by = int(0.85 * h) + dy - 6;                    /* 4, 3 */
         int basefontsize = usr().progress_bar_thick() ?
             s_fontsize_large : s_fontsize_main ;
 
@@ -335,7 +335,6 @@ qloopbutton::initialize_text ()
         int rflags = Qt::AlignRight | Qt::AlignVCenter;
         std::string lengthstr = std::to_string(loop()->get_measures());
         std::string chanstr = loop()->channel_string();
-        std::string lowerleft, hotkey;
         char tmp[32];
         if (horiz_compressed())
         {
@@ -357,8 +356,14 @@ qloopbutton::initialize_text ()
                 sn, bus, chanstr.c_str(), bpb, bw
             );
         }
-        lowerleft = std::string(tmp);
-        hotkey = "[" + m_hotkey + "]";
+        std::string lowerleft = std::string(tmp);
+
+        /*
+         * the denominator of the time signature gets clipped,
+         * so let's adjust.
+         */
+
+        std::string hotkey = "[" + m_hotkey + "]";
         if (loop()->modified())
             lengthstr += "*";
         else if (loop()->loop_count_max() > 0)

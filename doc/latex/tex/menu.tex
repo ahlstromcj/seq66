@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-08-12
+% \update      2026-09-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -205,7 +205,7 @@
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-save-as.png}
-   \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-save-as.png}
+   \includegraphics[scale=0.65]{main-menu/file/menu-file-save-as.png}
    \caption{File / Save As}
    \label{fig:menu_file_save_as}
 \end{figure}
@@ -244,7 +244,9 @@
    are now read as events, and are saved back when the file is saved.
    They cannot be edited in \textsl{Seq66}, but they are not lost.
    (Channel and port meta events are
-   considered \textsl{obsolete} in the MIDI standard.)
+   considered \textsl{obsolete} in the MIDI standard.
+   \textsl{Seq66} uses SeqSpecs to encode these two values.
+   See \sectionref{subsec:midi_format_meta_format}.)
    Various meta text events, such as \textbf{Lyric},
    can be edited and saved.
 
@@ -253,16 +255,16 @@
 
    This command is useful to grab an existing project configuration
    (i.e. the set of \texttt{qseq66.*} files) and copy it
-   to the current "home" configuration directory.
+   to the current "\$home" configuration directory.
    This command is most useful in importing a project into a new
    NSM session.
-   Previously, the "home" project would be imported automatically
+   Previously, the "\$home" project would be imported automatically
    into a new NSM session, but this was deemed confusing by some users, and
    properly so!
 
    This command brings up a file dialog box. Navigate to the desired
    source directory and then select the desired 'rc' file.
-   Any configuration files in the current "home" directory are removed
+   Any configuration files in the current "\$home" directory are removed
    and replaced with all files and subdirectories from the selected
    directory.
    If NSM is not running, \textsl{Seq66} restarts and loads the
@@ -304,7 +306,7 @@
 \label{subsubsec:menu_file_export_project}
 
    This menu entry lets the user select a destination directory.
-   Then the project files from the current "home" directory are copied
+   Then the project files from the current "\$home" directory are copied
    to that destination directory. Useful for backup or for making
    an experimental configuration official.
    See \sectionref{subsubsec:midi_export_configuration_export}.
@@ -485,22 +487,44 @@
    The \textbf{Learn Manager} comes up with this item selected.
    At this point, the control event for the first loop,
    loop 0, is ready to be recorded.
-   The user should then serially click all the desired loop event until
+   The user should then serially click all the desired loop events 
+   in the MIDI controller until
    up to 32 loop events are recorded.
 
    \itempar{Learn / Mute Groups}{edit!learn mute groups}
    The \textbf{Learn Manager} comes up with this item selected.
    It works like the loop learning noted above, but maps the buttons
    for the mute-group settings in a serial fashion.
+   The user should serially click all the desired mute-group selection
+   events in the MIDI controller until
+   up to 32 mute-group selection events are recorded.
 
-   \itempar{Learn / Loops}{edit!learn loops}
+   \itempar{Learn / Automation}{edit!learn loops}
    The \textbf{Learn Manager} comes up with this item selected.
+   The user has to click the desired action, and then
+   click the desired button on the MIDI controller.
+
+   \itempar{Learn / Mute ("L")}{edit!learn mutes}
+   This item is the same as "L" button; it stores the current configuration
+   of armed patterns.
+   See \sectionref{subsubsec:introduction_mute_group_learn_button}.
 
 \subsection{Menu / Help}
 \label{subsec:menu_help}
 
+   \begin{enumber}
+      \item \textbf{About...}
+      \item \textbf{Build Info...}
+      \item \textbf{Song Summary File...}
+      \item \textbf{App Keys...}
+      \item \textbf{MIDI Learn...}
+      \item \textbf{Tutorial...}
+      \item \textbf{User Manual...}
+      \item \textbf{View Log...}
+   \end{enumber}
+
    The usual \textbf{Help} dialog is provided.
-   As of version 0.98.8, it has been beefed up with a way to access a
+   It has been beefed up with a way to access a
    tutorial and the user manual.
 
    These new help items are a work in progress, so please apprise
@@ -548,7 +572,7 @@
    This file can be helpful for trouble-shooting or solving puzzling effects in
    the tune.
 
-\subsubsection{Menu / Help / App Keys}
+\subsubsection{Menu / Help / App Keys...}
 \label{subsubsec:menu_help_app_keys}
 
    \index{Help!app keys}
@@ -559,7 +583,7 @@
    keystrokes can be quickly viewed. Note that the descriptions come from small
    HTML files that are part of the installation.
 
-\subsubsection{Menu / Help / MIDI Learn}
+\subsubsection{Menu / Help / MIDI Learn...}
 \label{subsubsec:menu_help_midi_learn}
 
    \index{Help!MIDI Learn}
@@ -568,7 +592,7 @@
    It's just enough to jog one's memory after reading
    \sectionref{sec:midi_import_export}.
 
-\subsubsection{Menu / Help / Tutorial}
+\subsubsection{Menu / Help / Tutorial...}
 \label{subsubsec:menu_help_tutorial}
 
    \index{Help!tutorial}
@@ -612,7 +636,7 @@
    \textbf{Edit / Preferences / Session}; see
    \sectionref{subsection:edit_preferences_session}.
 
-\subsubsection{Menu / Help / User Manual}
+\subsubsection{Menu / Help / User Manual...}
 \label{subsubsec:menu_help_user_manual}
 
    \index{Help!user manual}
@@ -629,6 +653,15 @@
    \begin{verbatim}
       $ xdg-open https://ahlstromcj.github.io/docs/seq66/seq66-user-manual.pdf
    \end{verbatim}
+
+\subsubsection{Menu / Help / View Log...}
+\label{subsubsec:menu_help_view_log}
+
+   \index{Help!view log}
+
+   If a log file is in play (as is the default, which can be changed
+   in the main window's \textbf{Session} tab), then its contents can
+   be viewed in a new window.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-09-03
+2015-07-10 to 2026-09-05
 
 # Change Log
 
-## [0.99.28] - 2026-09-03
+## [0.99.28] - 2026-09-05
 
     "Unhappy MACNAM"
 
@@ -37,6 +37,7 @@ Chris Ahlstrom
     -   Changed the drawings of beat lines from the "Extra" color
         to the "Beat" color.
     -   Some user palettes might need to be adjusted.
+    -   Fixed the text drawing in a pattern slot.
 -   Pattern slot.
     -   Added a Thru toggle to the right-click slot menu.
     -   Added a yellow Thru indicator, too.

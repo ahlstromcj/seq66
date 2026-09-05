@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-07-20
+% \update      2026-09-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -79,16 +79,14 @@
    32 loops are supported by \textsl{Seq66}.
 
    \index{screen-set}
-   This group of 32 loops is called a "screen-set".
-   One can switch between sets by using these keys to move down and up:
    \index{keys![}
    \index{keys!screenset down}
    \index{keys!]}
    \index{keys!screenset up}
-
-   \begin{verbatim}
-      [ and ]
-   \end{verbatim}
+   This group of 32 loops is called a "screen-set".
+   One can switch between sets by using the square-bracket
+   keys to move down and up: "]" to move up by one set, and
+   "[" to move down by one set.
 
    One can also use 
    the spin-widget labeled \textbf{Set}, or
@@ -353,12 +351,12 @@
    \label{fig:patterns_panel_popup_edit_menu}
 \end{figure}
 
-   \itempar{Pattern in window}{pattern!edit in window}
+   \itempar{Edit / Pattern in window}{pattern!edit in window}
    Selecting this item brings up the pattern in an external pattern editor that
    has a few additional controls over the \textbf{Edit} tab (where space is
    more constrained).
 
-   \itempar{Pattern in tab}{pattern!edit in tab}
+   \itempar{Edit / Pattern in tab}{pattern!edit in tab}
    Selecting this item activates the \textbf{Edit} tab and fills it with data
    from the selected pattern.
    Note that this editor is slightly simpler than the external pattern editor
@@ -381,7 +379,7 @@
    a pattern shortcut key (hot-key), to bring up a new sequence or edit an
    existing one in a \textbf{Pattern Editor} .
 
-   \itempar{Events in tab}{pattern!events in tab}
+   \itempar{Edit / Events in tab}{pattern!events in tab}
    Edits an existing loop or pattern, but using a detailed \textbf{Event Editor}
    tab that shows events as text and numbers, and allows editing them as text
    and numbers.
@@ -424,7 +422,10 @@
    \label{fig:patterns_panel_popup_track_menu}
 \end{figure}
 
-   \itempar{Flatten triggers}{pattern!flatten}
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Track / Flatten triggers}{pattern!flatten}
+   This item is shown only if the pattern has song triggers.
    This item "flattens" a sequence that has triggers.
    This means that the triggers are used to create the events without
    the triggers, so that the track can be used in MIDI sequencers that
@@ -436,7 +437,7 @@
    This operation is similar to the effect of the \textbf{Export Song}
    function, but for one track.
 
-   \itempar{Export}{pattern!export pattern}
+   \itempar{Track / Export}{pattern!export pattern}
    This operation takes the current track, in whatever form it is (SMF 0, 1,
    and with or without triggers), and writes it to a new
    MIDI file in pattern zero (MIDI track 1).
@@ -444,7 +445,7 @@
    (In future release, perhaps a destination track number will be
    specifiable....)
 
-   \itempar{Copy}{pattern!copy}
+   \itempar{Track / Copy}{pattern!copy}
    Copies the pattern underneath the mouse cursor.
    The pattern can then be pasted elsewhere in the Patterns panel.
    One can also drag-and-drop a pattern into another cell (there is no outline
@@ -454,22 +455,22 @@
    Note that there is no \texttt{Ctrl-C} key for this operation in the
    live (main) window.
 
-   \itempar{Cut}{pattern!cut}
+   \itempar{Track / Cut}{pattern!cut}
    Cuts the pattern while copying it for later pasting.
    There is no \texttt{Ctrl-X} key for this operation.
 
-   \itempar{Delete}{pattern!delete}
+   \itempar{Track / Delete}{pattern!delete}
    Deletes the pattern.
    There is no "undo" for this operation.
 
-   \itempar{Clear events}{pattern!clear}
+   \itempar{Track / Clear events}{pattern!clear}
    This selection leaves the pattern and its specifications in place,
    but removes all events from the pattern.
 
    The following two menu items are only available if a pattern
    has previously been copied or cut
 
-   \itempar{Paste}{pattern!paste}
+   \itempar{Track / Paste}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
    This option is shown only when
    \textsl{right-clicking} over an empty pattern.
@@ -480,12 +481,14 @@
    \textbf{File / New} or \textbf{File / Open},
    to copy it to another file.
 
-   \itempar{Merge}{pattern!merge}
+   \itempar{Track / Merge}{pattern!merge}
    Like \textbf{Paste to pattern}, it pastes a
    patten that was cut or copied into the pattern slot where the mouse was
    \textsl{right-clicked}.  However, the original notes remain.  Thus, the merge
    option provides a way to build up a pattern by copying other patterns.
    This action work on an empty slot or an existing pattern.
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Output Bus}{pattern!buss}
    This item allows one to select the output buss for a pattern without having
@@ -503,7 +506,7 @@
    \textsl{optional} input buss setting for each pattern.
    This setting is not available in the pattern editor due to lack
    of room, so this popup menu is the only way to get to this option.
-   And it is available only if the
+   It is available only if the
    \textbf{Edit / Preferences / MIDI Input / Record into patterns by
    bus} option is set.
 
@@ -548,18 +551,17 @@
    \end{itemize}
 
    If an input buss has been specified, then the measures length at the
-   top right changes to show the form "bus:measures".
+   top right changes to show the form "bus:measures". Also shown
+   is the asterisk denoting a pattern change.
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=1.00]{main-window/slot-with-input-buss.png}
+   \includegraphics[scale=0.85]{main-window/slot-with-input-buss.png}
    \caption{Input Bus Notation}
    \label{fig:slot_input_bus_notation}
 \end{figure}
 
-   In this figure, the string is "3:1".
-
-   One final note... the input buss setting overrides the record-by-channel
+   Note: the input buss setting overrides the record-by-channel
    setting.
 
 \paragraph{Pattern Labels}
@@ -593,9 +595,11 @@
          then an \textbf{plus sign} is shown.
          Remember that a pattern loop-count of 0 means the pattern can repeat
          "forever".
+         Lastly, if the is a number followed by a colon, this is
+         in input buss number.
       \item \textbf{Notes or Fingerprint}. Center progress box.
          \index{pattern!contents}
-         The contents of the pattern, in the central box,
+         The contents of the pattern, in the central box (or ellipse),
          provide a distinguishable representation of the notes or events in the
          pattern.
          The notes are shown in the center, inside a "progress box" that
@@ -604,7 +608,7 @@
          faster drawing.
          Tempo events are indicated by a small circle.
          \index{empty pattern}
-         An pattern with no playable events will not needlessly scroll
+         A pattern with no playable events will not needlessly scroll
          during playback.
          However, if a pattern has even a single event (say, a program change),
          it will scroll.
@@ -669,6 +673,12 @@
    If the \texttt{Shift} key is held during a
    \textsl{left-click} on a pattern,
    the corresponding set's \textbf{Live} frame is brought up.
+
+   \index{pattern!ctrl left click}
+   If the \texttt{Ctrl} key is held during a
+   \textsl{left-click} on a pattern,
+   a new pattern is created; a prompt comes up if the slot
+   is already occupied.
 
 \subsubsection{Basic Pattern Control}
 \label{subsubsec:patterns_basic_pattern_control}
@@ -959,11 +969,11 @@
    \index{keys!decrement set}
    \index{keys!screenset down}
    \textbf{Screenset Increment and Decrement}.
-   The \texttt{[} and
    \index{keys!]}
    \index{keys!increment set}
    \index{keys!screenset up}
-   \texttt{]} keys on the keyboard decrement or increment the set number.
+   The "[" key and "]" (square brackets) keys
+   on the keyboard decrement or increment the set number.
 
    \index{keys!alt}
    \index{keys!snapshot}
@@ -1050,7 +1060,7 @@
    \textsl{Left-click-hold-drag} on a pattern, drags it to a different
    pattern on the grid.
    The box disappears while dragged, and reappears in the new location when
-   dropped.  However, a pattern \textsl{cannot} be dragged if its
+   dropped.  A pattern \textsl{can} be dragged even if its
    \textbf{Pattern Editor} window is open.
 
    \index{pattern!right click}
@@ -1071,7 +1081,8 @@
    \index{pattern!ctrl-left-click}
    \index{ctrl-left-click new pattern}
    \textsl{Ctrl-left-click} on a pattern will create a new pattern, just like
-   double-click will (if enabled).
+   double-click (if enabled) will.
+   If the slot already has a pattern, a prompt will appear.
 
    \index{solo!true}
    \index{pattern!alt-left-click}
@@ -1097,8 +1108,7 @@
 
    \index{metronome}
    Also shown in the figure is a \textbf{Metronome} button.
-   This is a feature new with \textsl{Seq66} version 0.99.0,
-   and still has a few minor issues to work out, but it works.
+   This feature still has a few minor issues to work out, but it works.
    The metronome has a number of configurable items.
    See \sectionref{subsubsec:configuration_rc_metronome}.
 
@@ -1109,11 +1119,11 @@
    It is always available, stored as a hidden automatically-generated
    pattern.
 
-\paragraph{Background Recording}
+\paragraph{Background/Scratchpad Recording}
 \label{paragraph:patterns_background_recording}
 
    \index{background recording}
-   \index{scratch recording}
+   \index{scratchpad recording}
    \index{recording!background}
    \index{recording!scratch}
    Also shown in the figure is a \textbf{Scratchpad Recording} button.
@@ -1261,7 +1271,7 @@
                Thus, one can easily re-do a one-shot recording.
             \item The (note) events just recorded are \textsl{no longer
             erased}. Instead, one can use the slot popup menu entry
-            \textbf{Clear events}.
+            \textbf{Track / Clear events}.
             This seems safer, if slightly clumsy.
          \end{itemize}
    \end{itemize}

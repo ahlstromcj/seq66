@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2026-04-15
+% \update      2026-09-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -29,7 +29,7 @@
 
    The \textsl{Seq66} main window (i.e. the "Live Grid") appears
    as shown above, though the look can be tailored, as noted below.
-   This figure shows the "elliptical progress box" optional features.
+   This figure shows the "elliptical progress box" optional feature.
    This figure has many differences from the \textsl{Seq24} main window,
    but the functionality is similar.
    \textsl{Seq66} allows resizing, and can
@@ -73,7 +73,7 @@
 \subsubsection{Tabs / Live}
 \label{subsubsec:introduction_main_tabs_live}
 
-   The \textbf{Live} tab is foremost in the application.
+   The \textbf{Live} tab is foremost in \textsl{Seq66}.
    It provides a grid of \textsl{patterns}
    (also called \textsl{slots}, \textsl{loops}, \textsl{tracks}, or
    \textsl{sequences}) that display recorded MIDI data, status information, and
@@ -296,7 +296,7 @@
    The value 32 is included anyway, but, if selected, the
    displays of notes and grids are incorrect.
    We don't intend to fix this.
-   960 PPQN at 120 BPM is about 2 time more accurate in timing
+   960 PPQN at 120 BPM is about 2 times more accurate in timing
    than a MIDI port can handle, so the higher values are there
    "for fun".
 
@@ -368,8 +368,8 @@
    This push-button shows the current time during playback. 
    It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds),
    which can be switched by clicking this button.
-   \textsl{The \textbf{BBT/HMS} button that was
-   at the bottom of the window has been removed.}
+   (\textsl{The \textbf{BBT/HMS} button that was
+   at the bottom of the window has been removed.})
 
 \subsubsection{Beat Indicator}
 \label{subsubsec:introduction_beat_indicator}
@@ -620,6 +620,9 @@
          Incoming events that have a channel nybble are routed to that
          pattern.
          However, there must already be a pattern in that slot.
+         \textbf{Edit / Preferences / MIDI Input / Record into patterns by
+         channel}
+         must be enabled.
          See \sectionref{subsection:edit_preferences_midi_input}.
       \item \textbf{Green}.
          This color indicates the record-by-buss recording mode,
@@ -633,6 +636,7 @@
          menu, but only if
          \textbf{Edit / Preferences / MIDI Input / Record into patterns by bus}
          is enabled.
+         It overrides the "Record into patterns by channel".
          See \sectionref{subsection:edit_preferences_midi_input}.
    \end{itemize}
 

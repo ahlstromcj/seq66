@@ -52,10 +52,12 @@
       C:/Users/your\_user\_name/AppData/Local/seq66      (Windows)
    \end{verbatim}
 
-   Note: we will refer to this directory as the "home" directory
+   Note: we will refer to this directory as the "\$home" directory
    for \textsl{Seq66}.
    Thus, a log file, for example, might be referred to by
    \texttt{\$home/qseq66.log}.
+   Note that the use of a log file can be disabled.
+
 
    If a session manager (e.g. \textsl{NSM})
    is used, the configuration directory is determined by
@@ -105,7 +107,7 @@
    along with other directories such as "samples", "win", "wrk", etc.:
 
    \begin{verbatim}
-      /usr/share/seq66-0.99/                             (Linux)
+      /usr/local/share/seq66-0.99/                       (Linux)
       C:/Program Files/Seq66/data/                       (Windows)
    \end{verbatim}
 
@@ -144,12 +146,16 @@
    If port-mapping is enabled (the default, and recommended), then
    one can go to
    \textbf{Edit / Preferences / MIDI Clock} and
-   click the \textbf{Make Maps} button.
+   click the \textbf{Recreate} button.
    This action stores (again) the current set of MIDI devices.
+   Or, if some devices were missing (and thus flagged as unavailable
+   in the 'rc' file), and are now availabled, click the
+   \textbf{Re-enable} button.
    Restart \textsl{Seq66} and the new set of devices should appear.
    Sometimes one must completely exit and the start \textsl{Seq66}.
    If devices have been added or removed (disabled), the user
    might need to edit the port maps directly in the 'rc' file.
+   (We need a dialog, at some point, to make this easier.)
 
    \textsl{Seq66} will also detect, at startup, if there are unavailable
    ports or if there are now more real MIDI ports than mapped ports.
@@ -175,7 +181,8 @@
    output port numbers that don't exist on the current system, a prompt
    will appear with option to remap-and-restart \textsl{Seq66}.
    Sometimes the best thing to do is change the
-   port numbers to the numbers of existing ports, and then save the MIDI file.
+   port numbers in the MIDI file to the numbers of existing ports,
+   and then save the MIDI file.
    One way to do this is to use the "buss-override" feature
    (see \sectionref{subsubsec:introduction_sets_buss_override}),
    which affects all patterns shown on the Live grid.

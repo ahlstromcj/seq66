@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
-    <height>706</height>
+    <width>790</width>
+    <height>710</height>
    </rect>
   </property>
   <property name="font">
@@ -311,8 +311,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>691</width>
-          <height>231</height>
+          <width>701</width>
+          <height>241</height>
          </rect>
         </property>
        </widget>
@@ -581,7 +581,7 @@ This action will update the ports/maps at exit.</string>
          <x>10</x>
          <y>380</y>
          <width>611</width>
-         <height>171</height>
+         <height>181</height>
         </rect>
        </property>
        <property name="font">
@@ -792,8 +792,8 @@ channel.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>681</width>
-          <height>241</height>
+          <width>691</width>
+          <height>251</height>
          </rect>
         </property>
        </widget>
@@ -1208,6 +1208,18 @@ button in the piano rolls.</string>
            <property name="enabled">
             <bool>true</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>10</pointsize>
@@ -1227,6 +1239,18 @@ button in the piano rolls.</string>
           <widget class="QCheckBox" name="checkBox_2">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
            </property>
            <property name="font">
             <font>
@@ -1282,7 +1306,7 @@ button in the piano rolls.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1314,7 +1338,7 @@ Range: 0.5 to 3.0</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1365,7 +1389,7 @@ Range: 4 to 8. Default: 4.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1436,7 +1460,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1461,7 +1485,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1493,7 +1517,7 @@ Range: 4 to 12. Default: 8.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1524,7 +1548,7 @@ Range: 4 to 12. Default: 8.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1563,7 +1587,7 @@ Range: 0.5 to 1.0. Default: 0.8.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1651,7 +1675,7 @@ zoom vertically.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <bold>false</bold>
            </font>
           </property>

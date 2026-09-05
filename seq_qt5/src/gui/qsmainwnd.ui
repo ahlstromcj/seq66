@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>912</width>
-    <height>630</height>
+    <width>916</width>
+    <height>634</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1780,7 +1780,7 @@ beats/minute.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>912</width>
+     <width>916</width>
      <height>28</height>
     </rect>
    </property>
@@ -2087,7 +2087,7 @@ and messages.</string>
   </action>
   <action name="actionSongEditor">
    <property name="text">
-    <string>&amp;Song Editor</string>
+    <string>&amp;Song Editor...</string>
    </property>
    <property name="toolTip">
     <string>Brings up the Song Editor in an external window.</string>
@@ -2230,7 +2230,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionImportMIDIIntoSession">
    <property name="text">
-    <string>&amp;MIDI into Session</string>
+    <string>&amp;MIDI into Session...</string>
    </property>
    <property name="font">
     <font/>
@@ -2238,7 +2238,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionTutorial">
    <property name="text">
-    <string>&amp;Tutorial</string>
+    <string>&amp;Tutorial...</string>
    </property>
    <property name="font">
     <font/>
@@ -2246,7 +2246,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionUserManual">
    <property name="text">
-    <string>&amp;User Manual</string>
+    <string>&amp;User Manual...</string>
    </property>
    <property name="font">
     <font/>
@@ -2262,7 +2262,7 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionLogView">
    <property name="text">
-    <string>&amp;View Log</string>
+    <string>&amp;View Log...</string>
    </property>
    <property name="font">
     <font/>
@@ -2299,12 +2299,12 @@ in the same directory as the original, with the extension
   </action>
   <action name="actionMute_Learn">
    <property name="text">
-    <string>Mute Learn</string>
+    <string>Mute Learn (&quot;L&quot;)</string>
    </property>
   </action>
   <action name="actionMIDILearn">
    <property name="text">
-    <string>MIDI &amp;Learn</string>
+    <string>MIDI &amp;Learn...</string>
    </property>
   </action>
   <action name="actionMacros">

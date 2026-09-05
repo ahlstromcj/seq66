@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-08-17
+% \update      2026-09-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -30,13 +30,17 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=1.00]{pattern-editor/pattern-edit-window.png}
+%  \includegraphics[scale=1.00]{pattern-editor/pattern-edit-window.png}
+   \includegraphics[scale=0.75]{pattern-editor/pattern-edit-window-2.png}
    \caption{External Pattern Editor Window}
    \label{fig:pattern_editor_window}
 \end{figure}
 
-   That figure does not show recent new features; they are shown
-   in the figure below:
+   Recall that the grey dappled bars show the notes of the selected scale
+   (the scale here does not reflect the scale used by the tune).
+   The cyan dappled bars show the background pattern; here it is the
+   rhythm cords.
+   This figure shows recent new features, discussed later:
 
    \begin{itemize}
       \item For selected events, the orange data line is topped with a
@@ -44,6 +48,9 @@
          data (e.g. velocity) being shown.
       \item Notes are, by default, shown with a gradient
          pattern for a textured appearance.
+      \item The thin tooltip button above the pointing finger
+         causes hovering over a note to show its number, time range,
+         and velocity.
       \item New buttons at the right (including a button reserved for
          the future) to tweak some aspects of the pattern editor
          panels.
@@ -60,7 +67,7 @@
 \end{figure}
   
    The \textbf{Pattern Editor} is complex, and we will discuss the external
-   window only since its features are a superset of the \textbf{Edit} tab.
+   window only since its features are a superset of the \textbf{Editor} tab.
    For exposition, we break the window into the following sections:
 
    \begin{enumber}
@@ -79,18 +86,18 @@
    Before we describe this window, there are some things to recognize.
    First, if the pattern is empty when play is started, the progress bar will
    still move, so that the user can play a MIDI instrument and record new notes.
-   Second, to add a note with the mouse the following options turn on painting
-   note:
+   Second, to add a note with the mouse the following options each turn on
+   note painting:
 
    \begin{itemize}
-      \item One must press \textsl{and hold} the \textsl{right}
+      \item Press \textsl{and hold} the \textsl{right}
          mouse button (the pointer changes to a pointing finger),
-         press the left mouse button.
+         press the left mouse button while drawing.
       \item Click in the pattern editor, press the
          \index{keys!i}
          \index{keys!p}
          \texttt{p} key to select the "pencil" or "paint" mode,
-         or
+         or the 
          \texttt{i} key to select "insert" mode (a la vi),
       \item Click on the "pointing finger" button.
       \item 
@@ -105,7 +112,7 @@
    \index{keys!x}
    \index{keys!Esc}
    press or release the right mouse button, press
-   \texttt{x} to "eXit" or "eXscape" from paint mode,
+   \texttt{x} to "eXit" from paint mode,
    or click the "pointing finger" button again.
    \texttt{Esc} also exits paint mode if the pattern is not playing.
 
@@ -439,11 +446,14 @@
          low-frequency oscillator.
          See \sectionref{subsec:pattern_editor_bottom}.
       \item \textbf{RPN/NRPN}.
-         This entry allows for the creation of a complete RPN or NRPN
-         series of parameter change events, from the start to the data
+         This entry bring up a dialog to set up the creation of a complete RPN
+         or NRPN series of parameter change events, from the start to the data
          to the ending "reset" event.
          The events can be inserted into the pattern or
          be used to create a macro in the 'ctrl' file.
+         The events can be saved to a file in text or binary formats.
+         Pre-existing files (e.g. SysEx data) can be loaded.
+         Arbitrary strings of MIDI bytes can also be created.
          See \sectionref{subsec:pattern_editor_rpn_nrpn_dialog}.
       \item \textbf{Pattern fix}.
          Allows for fixing up a new pattern
@@ -641,8 +651,17 @@
    When the piano roll has focus and \texttt{Ctrl-K} is pressed,
    all of the notes in the pattern are analyzed to try to determine
    the both the key and the scale of the existing notes.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=1.00]{pattern-editor/estimated-scales.png}
+   \caption{Estimating Scale(s) by Ctrl-K}
+   \label{fig:pattern_editor_estimated_scales}
+\end{figure}
+
    The method is not sophisticated... the notes are counted and are matched
-   against all of the keys (C to B) and scales supported by \textsl{Seq66}.
+   against all of the keys (C to B) and only the
+   scales supported by \textsl{Seq66}.
    The combinations with the highest number of notes are then shown in a
    message box.
    This simple analysis depends on having at least 8 notes in the pattern, and
@@ -652,7 +671,7 @@
    Don't expect miracles from this feature.
    A more sophisticated analysis, the
    \textsl{Krumhansl-Schmuckler} key-finding
-   algorithm, could be used, but it is a bit too complex
+   algorithm \cite{krumhansl}, could be used, but it is a bit too complex
    for our needs, which are basic.
 
 \subsubsection{Pattern Editor / Second Row / Background Sequence}
@@ -737,7 +756,7 @@
    \label{fig:pattern_editor_seqtime_cursor_composite}
 \end{figure}
 
-   The steps shown are
+   The steps shown in the figure are:
 
    \begin{enumber}
       \item The mouse cursor is in the piano roll, and has the normal
@@ -807,7 +826,7 @@
    \textsl{only} in the piano roll.
 
    \index{keys!arrows}
-   \textsl{If no notes are selected}, the arrow keys will move the piano row
+   \textsl{If no notes are selected}, the arrow keys will move the piano roll
    up, down, left, and right in small steps.
    Otherwise, the selected notes are moved
    up, down, left, and right.
@@ -1079,7 +1098,10 @@
                the note using a keystroke.
          \end{itemize}
       \item \index{pattern editor!deselect notes} \index{selection!deselect}
-         \textbf{Deselect Notes}
+         \textbf{Deselect Notes}.
+         To deselect all notes, click in an empty part of the piano roll.
+         Or click on an unselected note (which becomes
+         the only one selected).
    \end{itemize}
 
    \index{note!selection box}
@@ -1439,6 +1461,7 @@
    \figureref{fig:pattern_editor_window_additions}).
 
    \begin{enumber}
+      \item \textbf{Show Pattern-Fix Dialog}
       \item \textbf{Toggle Scale/Chord Display}
       \item \textbf{Toggle Scale/Chord Note Filtering}
       \item \textbf{Toggle Hex Number Display}
@@ -1446,8 +1469,14 @@
       \item \textbf{Reserved for Expansion}
    \end{enumber}
 
+\subsubsection{Pattern Editor / Right Buttons / Show Pattern-Fix Dialog}
+\label{subsubsec:pattern_editor_right_buttons_show_pattern_fix}
+
+   This button brings up the pattern-fix dialog.
+   See \sectionref{subsubsection:patterns_fix_length_change}.
+
 \subsubsection{Pattern Editor / Right Buttons / Toggle Scale/Chord Display}
-\label{subsubsec:pattern_editor_left_buttons_scale_chord_display}
+\label{subsubsec:pattern_editor_right_buttons_scale_chord_display}
 
    A new feature of \textsl{Seq66} is the ability to show the note bars
    that \textsl{are not} in the selected chord.
@@ -1460,7 +1489,7 @@
    chord.
 
 \subsubsection{Pattern Editor / Right Buttons / Toggle Scale/Chord Note Filtering}
-\label{subsubsec:pattern_editor_left_buttons_scale_chord_filtering}
+\label{subsubsec:pattern_editor_right_buttons_scale_chord_filtering}
 
    When this button is active (checked) and a scale has been selected,
    all notes painted into the piano roll are restricted to notes
@@ -2366,11 +2395,12 @@
    \textsl{Seq66} MIDI macros.
 
    \textbf{Note:}
-   This dialog cannot look up MIDNAM data in order to populate the
-   parameter names for NRPN.
+
+   This dialog cannot, at this time, look up MIDNAM data in order to populate
+   the parameter names for NRPN.
    It does not handle the sequence of events needed to select a
    patch bank and a patch in that bank.
-   
+   The event editor can be used to (tediously) create these events.
 
 \begin{figure}[H]
    \centering 
@@ -2459,8 +2489,6 @@
       \item \textbf{Send Events}.
          Clicking this button sends the RPN/NRPN or "other" events to the
          MIDI Control Out (display) buss or the selected alternate buss.
-      \item \textbf{Close}.
-         All this button does is close the dialog.
       \item \textbf{Other's Data}.
          When \textbf{Other} is selected, this text editor field is enabled.
          One can type in the data bytes in either hexadecimal or decimal
@@ -2480,6 +2508,8 @@
       \item \textbf{Save}.
          This button allows to save the data in text format or in
          a binary format.
+      \item \textbf{Close}.
+         All this button does is close the dialog.
    \end{itemize}
 
    There is a lot more that could be added to this macro editor.
@@ -2489,6 +2519,7 @@
    However, to be really useful, we would need incorporate the
    reading of MIDINAM files.
    This is something we are only thinking about at present.
+   See \url{https://github.com/ahlstromcj/midiname}.
 
 \subsection{Pattern Editor / Common Actions}
 \label{subsec:pattern_editor_common}
