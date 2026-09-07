@@ -1,6 +1,7 @@
 TO DO for Seq66 0.99.28
+j
 Chris Ahlstrom
-2019-04-13 to 2026-09-05
+2019-04-13 to 2026-09-06
 
     -   BSD. Boot to it and test out the latest meson build.
     -   Revisit metronome and count-in testing re issue #147.
@@ -16,6 +17,10 @@ Chris Ahlstrom
         -   In the right-click menu for a slot, the Input bus
             ALSA Announce should be disabled.
         -   Solo works, but unsoloing does not.
+    -   MIDI Learn.
+        -   Disable MIDI Through Clock. It comes back after restart.
+        -   nanoKEY2 and MPK Inputs come up disabled after a restart.
+            And they are *grayed out*.
     -   Follow up on RPN:
         -   Verify the proper sorting of (N)RPN messages.
         -   Need to have the save dialog show the types of

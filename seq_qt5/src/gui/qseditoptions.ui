@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>790</width>
-    <height>710</height>
+    <width>792</width>
+    <height>588</height>
    </rect>
   </property>
   <property name="font">
@@ -40,6 +40,12 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>560</height>
+      </size>
+     </property>
      <property name="font">
       <font>
        <pointsize>10</pointsize>
@@ -50,7 +56,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -3817,7 +3823,7 @@ with jitter application.</string>
          <x>8</x>
          <y>8</y>
          <width>301</width>
-         <height>131</height>
+         <height>121</height>
         </rect>
        </property>
        <property name="font">
@@ -3829,45 +3835,6 @@ with jitter application.</string>
        <property name="title">
         <string/>
        </property>
-       <widget class="QRadioButton" name="radio_session_none">
-        <property name="geometry">
-         <rect>
-          <x>12</x>
-          <y>32</y>
-          <width>285</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>None. Normal Se&amp;q66 operation.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_session_nsm">
-        <property name="geometry">
-         <rect>
-          <x>12</x>
-          <y>64</y>
-          <width>285</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>NSM. NSM debug mode.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_session_jack">
-        <property name="geometry">
-         <rect>
-          <x>12</x>
-          <y>96</y>
-          <width>285</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>JACK. JACK session management.</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="label_10">
         <property name="geometry">
          <rect>
@@ -3886,6 +3853,39 @@ with jitter application.</string>
         <property name="text">
          <string>Session</string>
         </property>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>12</x>
+          <y>32</y>
+          <width>227</width>
+          <height>74</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QRadioButton" name="radio_session_none">
+           <property name="text">
+            <string>None. Normal Se&amp;q66 operation.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_session_nsm">
+           <property name="text">
+            <string>NSM. NSM debug mode.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_session_jack">
+           <property name="text">
+            <string>JACK. JACK session management.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QLabel" name="label_session">
@@ -3916,7 +3916,7 @@ even if Seq66 is run by it.</string>
        <property name="geometry">
         <rect>
          <x>16</x>
-         <y>152</y>
+         <y>148</y>
          <width>149</width>
          <height>17</height>
         </rect>
@@ -3935,7 +3935,7 @@ even if Seq66 is run by it.</string>
        <property name="geometry">
         <rect>
          <x>44</x>
-         <y>176</y>
+         <y>170</y>
          <width>233</width>
          <height>25</height>
         </rect>
@@ -3944,8 +3944,8 @@ even if Seq66 is run by it.</string>
       <widget class="QGroupBox" name="groupBoxSaveAtExit">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>220</y>
+         <x>9</x>
+         <y>203</y>
          <width>673</width>
          <height>231</height>
         </rect>
@@ -4752,7 +4752,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>456</y>
+         <y>440</y>
          <width>101</width>
          <height>22</height>
         </rect>
@@ -4768,7 +4768,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>491</y>
+         <y>475</y>
          <width>101</width>
          <height>22</height>
         </rect>
@@ -4784,7 +4784,7 @@ path added to this name is stripped.</string>
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>462</y>
+         <y>446</y>
          <width>491</width>
          <height>28</height>
         </rect>
@@ -4800,7 +4800,7 @@ PATH.
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>492</y>
+         <y>476</y>
          <width>491</width>
          <height>28</height>
         </rect>
@@ -4816,7 +4816,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>639</x>
-         <y>465</y>
+         <y>449</y>
          <width>28</width>
          <height>24</height>
         </rect>
@@ -4832,7 +4832,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>639</x>
-         <y>496</y>
+         <y>480</y>
          <width>28</width>
          <height>24</height>
         </rect>
@@ -4848,7 +4848,7 @@ or /usr/bin/zathura.
        <property name="geometry">
         <rect>
          <x>8</x>
-         <y>139</y>
+         <y>130</y>
          <width>301</width>
          <height>71</height>
         </rect>

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2026-09-02
+ * \updates       2026-09-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -283,6 +283,10 @@ qclocklayout::set_unavailable ()
  *  Sets the status display for an available port. Used in the context
  *  of Seq66 not being able to recognize that a device is now available.
  *  Using this function avoids the need to edit the 'rc' file manually.
+ *
+ * \param setclock
+ *      If true, check the "Off" button, otherwise check the "Disabled"
+ *      button. The default is false.
  */
 
 void
@@ -290,12 +294,21 @@ qclocklayout::set_available (bool setclock)
 {
     m_label_outputbusname->setEnabled(true);
     m_rbutton_portdisabled->setEnabled(true);
-    m_rbutton_clockoff->setChecked(true);
     m_rbutton_clockoff->setEnabled(true);
     m_rbutton_clockonpos->setEnabled(true);
     m_rbutton_clockonmod->setEnabled(true);
     if (setclock)
+    {
+        m_rbutton_portdisabled->setChecked(false);
+        m_rbutton_clockoff->setChecked(true);
         perf().ui_set_clock(bus(), e_clock::none);
+    }
+    else
+    {
+        m_rbutton_clockoff->setChecked(false);
+        m_rbutton_portdisabled->setChecked(true);
+        perf().ui_set_clock(bus(), e_clock::disabled);
+    }
 }
 
 }           // namespace seq66

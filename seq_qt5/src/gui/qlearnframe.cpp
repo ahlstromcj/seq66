@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-08-05
+ * \updates       2026-09-06
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to initiate the MIDI learning of some
@@ -267,7 +267,7 @@ qlearnframe::on_automation_change (automation::slot s)
     {
         std::string eventname
         {
-            "Automation " + automation::slot_to_string(s)
+            "Auto " + automation::slot_to_string(s)
         };
         ui->current_logged_control_line_edit->setText(qt(eventname));
         refresh();
@@ -371,7 +371,7 @@ qlearnframe::slot_poll_update ()
     else if (midi_learn().is_automation())
     {
         ui->current_logged_control_label->setText("Next Control");
-        eventname = "Automation " + automation::slot_to_string(last);
+        eventname = "Auto " + automation::slot_to_string(last);
         midi_learn().automation_slot(last);
     }
     if (eventname.empty())

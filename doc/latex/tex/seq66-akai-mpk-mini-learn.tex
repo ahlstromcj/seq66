@@ -1,0 +1,252 @@
+%-------------------------------------------------------------------------------
+% akai-mpk-mini-play-learn
+%-------------------------------------------------------------------------------
+%
+% \file        akai-mpk-mini-play-learn.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2026-09-06
+% \update      2026-09-07
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     This document provides LaTeX documentation for Seq66.
+%
+%-------------------------------------------------------------------------------
+
+\documentclass[
+ 11pt,
+ twoside,
+ a4paper,
+ final                                 % versus draft
+]{article}
+
+\input{tex/docs-structure}             % specifies document structure and layout
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyheadoffset{0.005\textwidth}
+\lhead{Seq66 MIDI Learn with the Akai MPK Mini Play}
+\chead{}
+\rhead{User Manual}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\setlength{\headheight}{14.0pt}
+\makeindex
+
+\begin{document}
+
+\title{Seq66 v. 0.99.28 MIDI Learn with the Akai MPK Mini Play}
+\author{Chris Ahlstrom \\
+   (\texttt{ahlstromcj@gmail.com})}
+\date{\today}
+\maketitle
+
+\clearpage                             % moves Contents to next page
+\tableofcontents
+\listoffigures                         % print the list of figures
+\listoftables                          % print the list of tables
+\parindent 0pt
+\parskip 9pt
+\rhead{\rightmark}         % shows section number and section name
+
+\section{Introduction}
+\label{sec:introduction}
+
+   This document is a tutorial about using the
+   MIDI Learn feature of \textsl{Seq66}.
+   It supplements the "MIDI Learn" section of the user manual
+   with a real case.
+
+   The following projects support \textsl{Seq66} and its documentation (see
+   the \textbf{Help} menu):
+
+   \begin{itemize}
+      \item \url{https://github.com/ahlstromcj/seq66.git}
+      \item \url{https://ahlstromcj.github.io/}
+      \item \url{https://ahlstromcj/github.io/docs/seq66/akai-mpk-mini-play-learn.pdf}
+   \end{itemize}
+
+\subsection{Background}
+\label{subsec:background}
+
+   The Akai MPK Mini Play Mk3 is an interesting device.
+   It has a full-fledged MIDI engine, but uses an ARM processor
+   that constrains what can be done with it.
+   The following article explains how it works.
+
+   \url{http://sandsoftwaresound.net/akai-mpk-mini-play-midi-implementation/}
+
+   When attached via USB, channel 10 is used for percussion, all other
+   channels respond to notes, but all program change events are
+   redirection to channel 1.
+   For \textsl{Seq66} and MIDI, what matters is that the MIDI
+   controller portion of the emits events only on channels 1 and 10.
+   Also, the ARM mini-controller filters out all SysEx other than
+   its own.
+
+\subsection{Setup}
+\label{subsec:setup}
+
+   Plug in the MPK Mini.
+   Run \textsl{Seq66} and verify that it is active
+   in the 
+   \textbf{Edit / Preferences / MIDI Clock} and
+   \textbf{MIDI Input} tabs and the
+   The setup involves the following steps:
+
+   \begin{enumber}
+      \item Create a 'ctrl' file.
+      \item Specify it and activate it in the 'rc' file.
+      \item Set the MPK Mini as an input controller.
+   \end{enumber}
+
+\subsubsection{Setup / 'ctrl' File}
+\label{subsubsec:setup_ctrl_file}
+
+   Copy the \texttt{data/linux/qseq66.ctrl} to a file named after
+   the device, such as \texttt{akai-mpk-mini-play.ctrl}. Copy this file
+   to "\$home", which is usually \texttt{~/.config/seq66}.
+
+   Read up on the \textsl{'ctrl' File} section of the user manual
+   to get familiar with the control sections of this file.
+   The sections relevant to MIDI Learn are
+
+   \begin{verbatim}
+      [comments]
+      [loop-control]
+      [mute-group-control]
+      [automation-control]
+   \end{verbatim}
+
+   Only the comments section needs editing (for an explanation of
+   the intended usage of the file).
+   The rest are covered by the
+   \textbf{Edit / Preferences / Session} tab and the
+   \textbf{Learn} dialog, though the 'ctrl' can still be edited,
+   if desired.
+
+   At this point, the 'ctrl' file is in place, but not yet ready.
+
+\subsubsection{Setup / 'rc' File}
+\label{subsubsec:setup_rc_file}
+
+   In the \textbf{Edit / Preferences / Session} tab, set up
+   the new 'ctrl' file as shown here.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{midi-learning/preferences-session-select-ctrl-file.png}
+   \caption*{Set New 'ctrl' File}
+\end{figure}
+
+   Note that it is marked as active and to be saved.
+   Exit \textsl{Seq66}.
+   In the 'rc' file \texttt{~/.config/seq66/qseq66.rc}, one should see
+   the following items (adapted to one's personal setup):
+
+\begin{verbatim}
+      [comments]
+      Add your comment block here
+
+      [midi-control-file]
+      active = true
+      name = "akai-mpk-mini-play.ctrl"
+\end{verbatim}
+
+   Now restart \textsl{Seq66}.
+   The changes made in the next section will now be able to be written
+   to the 'ctrl' file.
+
+\subsubsection{Setup / I/O Ports}
+\label{subsubsec:setup_io_ports}
+
+   Refer to the following figures.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{midi-learning/midi-clock-select-mpk.png}
+   \caption*{Set MPK Mini Output Status}
+\end{figure}
+
+   Some ports might be disabled, even though present, because they
+   were missing. If it is known they are plugged in click, click
+   the \textbf{Re-enable} button. This also enables the input port
+   entries in the \textbf{MIDI Input} tab.
+   Set the MPK Mini controller as desired (usually Disabled or Off).
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{midi-learning/midi-input-select-mpk.png}
+   \caption*{Set MPK Mini Input Status}
+\end{figure}
+
+   Make sure the MPK Mini is enabled. Do not set \textbf{MIDI Ctrl In}
+   at this time. Restart \textsl{Seq66} and verify
+   that the MIDI clock and input tabs show the correct settings.
+
+   In the 'rc' file \texttt{~/.config/seq66/qseq66.rc}, one should see
+   the following items (adapted to one's personal setup):
+
+\begin{verbatim}
+      [midi-input]
+       . . .
+       6  1   "[6] 48:0 MPK mini Play mk3 MIDI 1"
+
+      [midi-input-map]
+       1      # map is active
+       . . .
+       6  1   "MPK mini Play mk3 MIDI 1"
+
+      [midi-clock]
+       . . .
+       5  0   "[5] 48:0 MPK mini Play mk3 MIDI 1"
+
+      [midi-clock-map]
+       1      # map is active
+       5  0   "MPK mini Play mk3 MIDI 1"
+\end{verbatim}
+
+   If not, this is an issue and should be reported.
+   In the meantime, one can try to edit the 'rc' file.
+
+\subsubsection{Setup / I/O and Automation Control}
+\label{subsubsec:setup_io_and_automation_control}
+
+   Once all the ports are configured, one can then select
+   the MPK Mini as the control/automation buss.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{midi-learning/midi-input-automation-mpk.png}
+   \caption*{Set MPK Mini Input as the MIDI Controller}
+\end{figure}
+
+   In the 'ctrl' file \texttt{~/.config/seq66/akai-mpk-mini-play.ctrl},
+   one should see the following items (adapted to one's personal setup):
+
+\begin{verbatim}
+      [midi-control-settings]
+      control-buss = "MPK mini Play mk3 MIDI 1"
+      midi-enabled = true
+
+      [midi-control-out-settings]
+      output-buss = "MPK mini Play mk3 MIDI 1"
+      midi-enabled = false
+\end{verbatim}
+
+\subsection{MIDI Learning}
+\label{subsec:midi_learning}
+
+TODO
+
+\printindex
+
+\end{document}
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

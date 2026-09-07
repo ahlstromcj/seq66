@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2026-08-13
+% \update      2026-09-05
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -226,7 +226,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    does not support \textsl{JACK Session}.
    Try it with \textsl{Yoshimi}, which does support it.
 
-\subsection{Seq66 Session Management / NSM}
+\subsection{Session Management / NSM}
 \label{subsec:sessions_nsm}
 
    \index{sessions!nsm}
@@ -365,7 +365,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    This import used to be automatic, but is too surprising to an unsuspecting
    user.
 
-\subsubsection{Seq66 Session Management / NSM / Run in NSM}
+\subsubsection{Session Management / NSM / Run in NSM}
 \label{subsec:sessions_nsm_first_run_in_nsm}
 
    Note: When \textsl{Seq66} is run in \textsl{NSM} for the first time,
@@ -533,6 +533,90 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    and "seq66.nXYZT" (for example) when under session management.  This makes
    it possible to run multiple instances of \textsl{Seq66}.
 
+\subsubsection{Session Management / NSM / File Menu}
+\label{subsubsec:sessions_file_menu}
+
+   The author of \textsl{NSM} has provided documentation for session-management
+   which provides very strict instructions on how an application must behave
+   under session management.  \textsl{Seq66} tries very hard to stick to these
+   instructions.  One major adjustment an application must make is to adhere to
+   the "File menu" guidelines.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus-2.png}
+   \caption*{File Menu Under NSM, Composite View}
+\end{figure}
+
+   Not (yet) shown in the figure are the \textbf{Project Configuration}
+   options for import and export.
+   (See \sectionref{subsec:menu_file}.)
+
+   This has been changed; the \textbf{Quit} menu entry becomes
+   \textbf{Hide}, as per the NSM protocol.
+   Also have fixed a bug that disables
+   the load-most-recent option under NSM.
+   We will update the figure above eventually.
+   The following items describe the menu entries.
+
+   \begin{itemize}
+      \item \textbf{New MIDI File}.
+         This function prompts for the name of a
+         new MIDI file and clears the current MIDI file.  The file-name must not
+         include a full-path to the file.  The path is hardwired by the
+         session.  A relative path can be included.  This name is needed
+         because there is no "Save As" option when running in an \textsl{NSM}
+         session.
+      \item \textbf{Import / Project Configuration...}
+         Imports a whole project configuration into the current NSM session.
+         This functionality used to be automatic (importing the "home"
+         configuration), but it is better left to the user to do.
+         \index{restart!automatic}
+         However, the restart of \textsl{Seq66} after this operation is
+         automatic.  Be careful!
+      \item \textbf{Import / MIDI to Current Set...}
+         This action works the same as in normal mode.
+         This item allows the user to grab a MIDI file from anywhere and import
+         it into the current set.
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
+      \item \textbf{Import / Playlist...}
+         This action works the same as in normal mode.
+         The destination is the NSM session directory.
+         \index{restart!automatic}
+         Once the playlist is imported,
+         \textsl{Seq66} is automatically \textsl{\textbf{restarted}}
+         in order to load the playlist.
+         Be careful!
+      \item \textbf{Import / Import into Session...}
+         Prompts the user for a MIDI file to
+         be imported (copied) into the current session.  The path to the file
+         is then adjusted to use the \textsl{NSM} \texttt{midi} subdirectory.
+      \item \textbf{Export / Song...}
+         Allows exporting the current song as a stock MIDI file, using the
+         performance information (triggers) to write the MIDI data as it would
+         be played in "song" mode.
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
+      \item \textbf{Export / MIDI Only...}
+         Allows exporting the current song as a stock MIDI file.
+         The "proprietary" SeqSpec data is \textsl{not} written.
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
+      \item \textbf{Export / SMF 0...}
+         This action works the same as in normal mode.
+         It converts the destination file to SMF 0 format.
+      \item \textbf{Hide}.
+         This menu item replaces the \textbf{Quit} item.
+         It hides the main window and tells NSM about it.
+   \end{itemize}
+
+   At some point we would like to present a small tutorial showing a session
+   under \textsl{JACK}.
+   Also note that NSM can invoke or kill applications via
+   \textsl{signals}, as explained in 
+   \sectionref{subsec:sessions_signals}.
+
 \subsubsection{Session Management / NSM / Run with Remote NSM}
 \label{subsec:sessions_nsm_before_using_nsm}
 
@@ -577,6 +661,44 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    and the
    \textsl{New/Non Session Manager} \cite{nsm}
    with the JACK project's \texttt{nsm-legacy-gui}.
+
+\subsubsection{Session Management / NSM / Debugging}
+\label{subsubsec:sessions_debugging}
+
+   This section is oriented towards advanced users who found a problem running
+   \textsl{Seq66} and want to track it down themselves.  The issue is that we
+   need to start the application under the debugger, or start it under NSM and
+   somehow attach to \textsl{Seq66} before it starts running.  Another issue is
+   that we have found that, at least on the same host, an NSM session
+   \textsl{must} be open before \textsl{Seq66} can attach to it, even if the
+   correct \texttt{NSM\_URL} is provided.
+   So we have to open a session, get the proper URL, configure it in the 'usr'
+   file, and then start \textsl{Seq66} under the debugger.
+   Here are the steps:
+
+   \begin{enumerate}
+      \item Start \textsl{non-session-manager} from a command-line console.
+         Write down the URL that it advertises.
+      \item Prepare a session for the executable as per earlier instructions.
+         Once \texttt{qseq66} starts, immediately exit it, and leave the session
+         open.
+      \item Open the proper 'usr' file (usually \texttt{qseq66.usr}) in a 
+         text editor.  Set variable "session = nsm", and set the variable "url"
+         to the value that was advertised.
+      \item Now start \texttt{qseq66} in a debugger.
+      \item Set a breakpoint in \texttt{clinsmanager::detect\_session()}.
+   \end{enumerate}
+   
+   Now you can step through and see where NSM and Seq66 are getting mixed up.
+   Also check the session directory afterward to make the configuration
+   (and any MIDI files) are in good shape.
+
+\subsection{Session Management / LASH}
+\label{subsec:sessions_lash}
+
+   \index{sessions!lash}
+   LASH support has been removed.  Use the \textsl{NSM} session manager or
+   the \textsl{JACK} session manager.
 
 \subsection{Session Management / Sessions Tab}
 \label{subsec:sessions_tab}
@@ -752,129 +874,7 @@ qseq66 --jack --jack-slave --jack-session-uuid 84670 --home ${SESSION_DIR}
    The (N)RPN dialog includes an initial user-interface to make
    macro creation, editing, and deletion more foolproof.
 
-\subsubsection{Seq66 Session Management / NSM / File Menu}
-\label{subsubsec:sessions_file_menu}
-
-   The author of \textsl{NSM} has provided documentation for session-management
-   which provides very strict instructions on how an application must behave
-   under session management.  \textsl{Seq66} tries very hard to stick to these
-   instructions.  One major adjustment an application must make is to adhere to
-   the "File menu" guidelines.
-
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.65]{tabs/session/nsm-qseq66-menus-2.png}
-   \caption*{File Menu Under NSM, Composite View}
-\end{figure}
-
-   Not (yet) shown in the figure are the \textbf{Project Configuration}
-   options for import and export.
-   (See \sectionref{subsec:menu_file}.)
-
-   This has been changed; the \textbf{Quit} menu entry becomes
-   \textbf{Hide}, as per the NSM protocol.
-   Also have fixed a bug that disables
-   the load-most-recent option under NSM.
-   We will update the figure above eventually.
-   The following items describe the menu entries.
-
-   \begin{itemize}
-      \item \textbf{New MIDI File}.
-         This function prompts for the name of a
-         new MIDI file and clears the current MIDI file.  The file-name must not
-         include a full-path to the file.  The path is hardwired by the
-         session.  A relative path can be included.  This name is needed
-         because there is no "Save As" option when running in an \textsl{NSM}
-         session.
-      \item \textbf{Import / Project Configuration...}
-         Imports a whole project configuration into the current NSM session.
-         This functionality used to be automatic (importing the "home"
-         configuration), but it is better left to the user to do.
-         \index{restart!automatic}
-         However, the restart of \textsl{Seq66} after this operation is
-         automatic.  Be careful!
-      \item \textbf{Import / MIDI to Current Set...}
-         This action works the same as in normal mode.
-         This item allows the user to grab a MIDI file from anywhere and import
-         it into the current set.
-         The default directory that comes up in the
-         prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Import / Playlist...}
-         This action works the same as in normal mode.
-         The destination is the NSM session directory.
-         \index{restart!automatic}
-         Once the playlist is imported,
-         \textsl{Seq66} is automatically \textsl{\textbf{restarted}}
-         in order to load the playlist.
-         Be careful!
-      \item \textbf{Import / Import into Session...}
-         Prompts the user for a MIDI file to
-         be imported (copied) into the current session.  The path to the file
-         is then adjusted to use the \textsl{NSM} \texttt{midi} subdirectory.
-      \item \textbf{Export / Song...}
-         Allows exporting the current song as a stock MIDI file, using the
-         performance information (triggers) to write the MIDI data as it would
-         be played in "song" mode.
-         The default directory that comes up in the
-         prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Export / MIDI Only...}
-         Allows exporting the current song as a stock MIDI file.
-         The "proprietary" SeqSpec data is \textsl{not} written.
-         The default directory that comes up in the
-         prompt is the "last-used directory" from the session 'rc' file.
-      \item \textbf{Export / SMF 0...}
-         This action works the same as in normal mode.
-         It converts the destination file to SMF 0 format.
-      \item \textbf{Hide}.
-         This menu item replaces the \textbf{Quit} item.
-         It hides the main window and tells NSM about it.
-   \end{itemize}
-
-   At some point we would like to present a small tutorial showing a session
-   under \textsl{JACK}.
-   Also note that NSM can invoke or kill applications via
-   \textsl{signals}, as explained in 
-   \sectionref{subsec:sessions_signals}.
-
-\subsubsection{Seq66 Session Management / NSM / Debugging}
-\label{subsubsec:sessions_debugging}
-
-   This section is oriented towards advanced users who found a problem running
-   \textsl{Seq66} and want to track it down themselves.  The issue is that we
-   need to start the application under the debugger, or start it under NSM and
-   somehow attach to \textsl{Seq66} before it starts running.  Another issue is
-   that we have found that, at least on the same host, an NSM session
-   \textsl{must} be open before \textsl{Seq66} can attach to it, even if the
-   correct \texttt{NSM\_URL} is provided.
-   So we have to open a session, get the proper URL, configure it in the 'usr'
-   file, and then start \textsl{Seq66} under the debugger.
-   Here are the steps:
-
-   \begin{enumerate}
-      \item Start \textsl{non-session-manager} from a command-line console.
-         Write down the URL that it advertises.
-      \item Prepare a session for the executable as per earlier instructions.
-         Once \texttt{qseq66} starts, immediately exit it, and leave the session
-         open.
-      \item Open the proper 'usr' file (usually \texttt{qseq66.usr}) in a 
-         text editor.  Set variable "session = nsm", and set the variable "url"
-         to the value that was advertised.
-      \item Now start \texttt{qseq66} in a debugger.
-      \item Set a breakpoint in \texttt{clinsmanager::detect\_session()}.
-   \end{enumerate}
-   
-   Now you can step through and see where NSM and Seq66 are getting mixed up.
-   Also check the session directory afterward to make the configuration
-   (and any MIDI files) are in good shape.
-
-\subsection{Seq66 Session Management / LASH}
-\label{subsec:sessions_lash}
-
-   \index{sessions!lash}
-   LASH support has been removed.  Use the \textsl{NSM Session Manager} or
-   the \textsl{JACK Session Manager}.
-
-\subsection{Seq66 Session Management / sessions.rc}
+\subsection{Session Management / sessions.rc}
 \label{subsec:sessions_sessions_rc}
 
    \texttt{Seq66} also supports a more simplistic type of "session",

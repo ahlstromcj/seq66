@@ -8,7 +8,7 @@
 # \library    	seq66
 # \author     	Chris Ahlstrom
 # \date       	2026-05-05
-# \update     	2026-05-05
+# \update     	2026-09-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -33,6 +33,7 @@ LATEXDIR="$BUILDDIR/latex"
 PDFDIR="seq66/build/latex"
 DOCDIR="../../data/share/doc"
 PDFBASENAME="seq66-user-manual"
+PDFLEARNNAME="seq66-akai-mpk-mini-learn"
 export openout_any="a"
 
 if test "$1" = "--help" ; then
@@ -46,7 +47,7 @@ Usage: ./make_pdf.sh
    $LATEXDIR.  The work.sh --clean command removes everything in
    $BUILDDIR.
 
-Version: 2026-05-05
+Version: 2026-09-07
 
 E_O_F
 
@@ -64,6 +65,11 @@ else
       latexmk --aux-directory=$LATEXDIR --output-directory=$LATEXDIR -g --silent \
          --pdf tex/$PDFBASENAME > $BUILDDIR/latex-warnings.log
 
+      if test $? = 0 ; then
+         latexmk --aux-directory=$LATEXDIR --output-directory=$LATEXDIR -g \
+            --silent --pdf tex/$PDFLEARNNAME >> $BUILDDIR/latex-warnings.log
+      fi
+
 #     if test $? = 0 ; then
 #        echo "Reducing margins"
 #        sed -e 's/letterpaper,/letterpaper,margin=2cm,/' \
@@ -71,10 +77,10 @@ else
 #     fi
 
       if test $? = 0 ; then
-         echo "The PDF is in $PDFBASENAME.pdf, copied to the doc directory."
+         echo "The PDFs are in $PDFBASENAME.pdf, copied to the doc directory."
          cp $LATEXDIR/*.pdf $DOCDIR
       else
-         echo "PDF build failed, read $PDFDIR/$PDFBASENAME.log"
+         echo "PDF builds failed, read $PDFDIR/$PDFBASENAME.log"
       fi
    fi
 

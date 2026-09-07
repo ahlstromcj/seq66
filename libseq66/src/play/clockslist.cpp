@@ -103,7 +103,7 @@ clockslist::add
         }
         ioitem.io_name = portname;
         ioitem.io_alias = alias;
-        ioitem.io_client_number = ioitem.io_port_number = pstatus;
+        ioitem.io_client_number = ioitem.io_port_number = pstatus;  // ??????
         result = portslist::add(buss, ioitem, nickname);
     }
     return result;
