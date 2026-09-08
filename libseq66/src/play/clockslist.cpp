@@ -184,6 +184,13 @@ clockslist::set (bussbyte b, e_clock clocktype)
         bool active = port_active(clocktype);       /* e_clock::disabled    */
         it->second.io_enabled = active;
         it->second.out_clock = clocktype;
+
+        /**
+         * Needed?
+         *
+         * if (active)
+         *     it->second.io_available = true;
+         */
     }
     return result;
 }

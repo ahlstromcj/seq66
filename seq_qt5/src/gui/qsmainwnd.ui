@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>916</width>
-    <height>634</height>
+    <width>918</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1780,7 +1780,7 @@ beats/minute.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>916</width>
+     <width>918</width>
      <height>28</height>
     </rect>
    </property>
@@ -1843,13 +1843,21 @@ beats/minute.</string>
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <widget class="QMenu" name="menuMIDI_Learn">
+     <property name="title">
+      <string>MIDI &amp;Learn</string>
+     </property>
+     <addaction name="action_Tutorial"/>
+     <addaction name="action_Cheat_sheet"/>
+     <addaction name="action_Quick_Reference"/>
+    </widget>
     <addaction name="actionAbout"/>
     <addaction name="actionBuildInfo"/>
     <addaction name="actionSongSummary"/>
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionAppInfo"/>
-    <addaction name="actionMIDILearn"/>
+    <addaction name="menuMIDI_Learn"/>
     <addaction name="actionTutorial"/>
     <addaction name="actionUserManual"/>
     <addaction name="separator"/>
@@ -2292,7 +2300,7 @@ in the same directory as the original, with the extension
     <font/>
    </property>
   </action>
-  <action name="actionMute_Learn">
+  <action name="actionLearnMute">
    <property name="text">
     <string>Mute (&quot;L&quot;)</string>
    </property>
@@ -2302,14 +2310,24 @@ in the same directory as the original, with the extension
     <string>Mute Learn (&quot;L&quot;)</string>
    </property>
   </action>
-  <action name="actionMIDILearn">
-   <property name="text">
-    <string>MIDI &amp;Learn...</string>
-   </property>
-  </action>
   <action name="actionMacros">
    <property name="text">
     <string>M&amp;acros...</string>
+   </property>
+  </action>
+  <action name="action_Tutorial">
+   <property name="text">
+    <string>&amp;Tutorial</string>
+   </property>
+  </action>
+  <action name="action_Cheat_sheet">
+   <property name="text">
+    <string>&amp;Cheat-sheet</string>
+   </property>
+  </action>
+  <action name="action_Quick_Reference">
+   <property name="text">
+    <string>&amp;Quick Reference</string>
    </property>
   </action>
  </widget>

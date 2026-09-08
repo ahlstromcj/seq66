@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2026-06-14
+ * \updates       2026-09-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -1731,7 +1731,7 @@ default_color_check (const std::string & value)
     return
     (
         value == "normal" || value == "default" ||
-        value == "?" || value.empty()
+        is_missing_string(value)                        /* "?" || empty()   */
     );
 }
 

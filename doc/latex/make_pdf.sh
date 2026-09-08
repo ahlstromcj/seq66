@@ -77,7 +77,7 @@ else
 #     fi
 
       if test $? = 0 ; then
-         echo "The PDFs are in $PDFBASENAME.pdf, copied to the doc directory."
+         echo "The PDFs are copied to the data/share/doc directory."
          cp $LATEXDIR/*.pdf $DOCDIR
       else
          echo "PDF builds failed, read $PDFDIR/$PDFBASENAME.log"

@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-09-05
+2015-07-10 to 2026-09-08
 
 # Change Log
 
-## [0.99.28] - 2026-09-05
+## [0.99.28] - 2026-09-08
 
     "Unhappy MACNAM"
 
@@ -47,6 +47,11 @@ Chris Ahlstrom
     -   Added a select output buss combo-box to the dialog.
         The default selection is "Ctrl Out" (MIDI Control Out);
         other output ports/devices can be selected.
+-   MIDI Learn.
+    -   A new tutorial (PDF) is provided for step-by-step learning
+        of the Akai MPK Mini Play drum pads.
+    -   The Save operation was erratic, and now works without
+        exiting Seq66.
 -   Performer.
     -   The send\_macro\_bytes() function can direct the bytes of
         a multi-event macro to a selected buss.

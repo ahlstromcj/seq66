@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>792</width>
-    <height>588</height>
+    <width>796</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="font">
@@ -69,9 +69,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>422</y>
+         <y>400</y>
          <width>601</width>
-         <height>71</height>
+         <height>61</height>
         </rect>
        </property>
        <property name="font">
@@ -90,7 +90,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>10</y>
+          <y>3</y>
           <width>141</width>
           <height>17</height>
          </rect>
@@ -109,7 +109,7 @@
         <property name="geometry">
          <rect>
           <x>11</x>
-          <y>30</y>
+          <y>20</y>
           <width>571</width>
           <height>31</height>
          </rect>
@@ -148,13 +148,13 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>28</height>
+             <height>24</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>140</width>
-             <height>16777215</height>
+             <height>24</height>
             </size>
            </property>
            <property name="toolTip">
@@ -202,60 +202,19 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>28</height>
+             <height>24</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>64</width>
-             <height>16777215</height>
+             <height>24</height>
             </size>
            </property>
           </widget>
          </item>
         </layout>
        </widget>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>520</y>
-         <width>181</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Client Name:ID/UUID</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="lineEditClientId">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>220</x>
-         <y>510</y>
-         <width>185</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Holds the MIDI client ID, as applicable.</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>0</string>
-       </property>
       </widget>
       <widget class="QLabel" name="portsClocksLabel">
        <property name="geometry">
@@ -345,10 +304,10 @@
       <widget class="QWidget" name="horizontalLayoutWidget_2">
        <property name="geometry">
         <rect>
-         <x>28</x>
-         <y>370</y>
+         <x>30</x>
+         <y>362</y>
          <width>631</width>
-         <height>45</height>
+         <height>31</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="hLayoutMidiOutBuss" stretch="1,8,10">
@@ -399,7 +358,7 @@
          <x>30</x>
          <y>300</y>
          <width>631</width>
-         <height>72</height>
+         <height>61</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_7">
@@ -426,7 +385,13 @@
             <property name="minimumSize">
              <size>
               <width>82</width>
-              <height>28</height>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>24</height>
              </size>
             </property>
             <property name="minimum">
@@ -447,7 +412,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>28</height>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>24</height>
            </size>
           </property>
           <property name="text">
@@ -460,7 +431,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>28</height>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>24</height>
            </size>
           </property>
          </widget>
@@ -502,7 +479,13 @@
           <property name="minimumSize">
            <size>
             <width>80</width>
-            <height>28</height>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>24</height>
            </size>
           </property>
           <property name="toolTip">
@@ -522,7 +505,13 @@ from the maps.</string>
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>28</height>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>24</height>
            </size>
           </property>
           <property name="toolTip">
@@ -542,8 +531,8 @@ This action will update the ports/maps at exit.</string>
         <rect>
          <x>10</x>
          <y>290</y>
-         <width>661</width>
-         <height>131</height>
+         <width>671</width>
+         <height>111</height>
         </rect>
        </property>
        <property name="title">
@@ -554,20 +543,71 @@ This action will update the ports/maps at exit.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>496</y>
-         <width>661</width>
-         <height>51</height>
+         <y>452</y>
+         <width>671</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="title">
         <string/>
        </property>
+       <widget class="QLineEdit" name="lineEditClientId">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>10</y>
+          <width>185</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Holds the MIDI client ID, as applicable.</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>0</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>10</y>
+          <width>181</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Client Name:ID/UUID</string>
+        </property>
+       </widget>
       </widget>
       <zorder>groupBoxMetaEvents</zorder>
       <zorder>groupBox_2</zorder>
       <zorder>groupBox_10</zorder>
-      <zorder>label</zorder>
-      <zorder>lineEditClientId</zorder>
       <zorder>portsClocksLabel</zorder>
       <zorder>clocksScrollArea</zorder>
       <zorder>label_2</zorder>
@@ -585,9 +625,9 @@ This action will update the ports/maps at exit.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>380</y>
+         <y>340</y>
          <width>611</width>
-         <height>181</height>
+         <height>161</height>
         </rect>
        </property>
        <property name="font">
@@ -628,9 +668,9 @@ This action will update the ports/maps at exit.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>38</y>
+          <y>27</y>
           <width>571</width>
-          <height>126</height>
+          <height>121</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
@@ -810,7 +850,7 @@ channel.</string>
          <x>32</x>
          <y>300</y>
          <width>585</width>
-         <height>49</height>
+         <height>31</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,8,10">
@@ -845,7 +885,13 @@ channel.</string>
           <property name="minimumSize">
            <size>
             <width>180</width>
-            <height>0</height>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>24</height>
            </size>
           </property>
           <property name="sizeAdjustPolicy">
@@ -861,7 +907,7 @@ channel.</string>
          <x>10</x>
          <y>290</y>
          <width>611</width>
-         <height>81</height>
+         <height>51</height>
         </rect>
        </property>
        <property name="title">
@@ -887,7 +933,7 @@ channel.</string>
          <x>10</x>
          <y>230</y>
          <width>591</width>
-         <height>301</height>
+         <height>271</height>
         </rect>
        </property>
        <property name="font">
@@ -908,7 +954,7 @@ channel.</string>
           <x>8</x>
           <y>4</y>
           <width>570</width>
-          <height>281</height>
+          <height>251</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
@@ -1788,7 +1834,7 @@ Range: 0.5 to 3.0</string>
          <x>10</x>
          <y>10</y>
          <width>611</width>
-         <height>271</height>
+         <height>221</height>
         </rect>
        </property>
        <property name="title">
@@ -1838,7 +1884,7 @@ Range: 0.5 to 3.0</string>
           <x>360</x>
           <y>29</y>
           <width>241</width>
-          <height>237</height>
+          <height>181</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_5" columnstretch="7,8">
@@ -1862,6 +1908,18 @@ Range: 0.5 to 3.0</string>
           <widget class="QLineEdit" name="lineEditFrameRate">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
            </property>
            <property name="font">
             <font>
@@ -1895,6 +1953,18 @@ Range: 0.5 to 3.0</string>
           <widget class="QLineEdit" name="lineEditPeriod">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
            </property>
            <property name="font">
             <font>
@@ -1931,6 +2001,18 @@ JACK process callbacks.</string>
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -1966,6 +2048,18 @@ callbacks.</string>
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -1999,6 +2093,18 @@ beat, normally PPQN/10.</string>
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -2031,6 +2137,18 @@ beat, normally PPQN/10.</string>
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>24</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -2045,7 +2163,7 @@ beat, normally PPQN/10.</string>
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>200</y>
+          <y>170</y>
           <width>151</width>
           <height>32</height>
          </rect>
@@ -2071,7 +2189,7 @@ beat, normally PPQN/10.</string>
          <x>30</x>
          <y>40</y>
          <width>339</width>
-         <height>166</height>
+         <height>131</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="vertLayoutJackTransportMidi">
@@ -2163,9 +2281,9 @@ connects to the MIDI I/O ports it finds.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>290</y>
+         <y>240</y>
          <width>349</width>
-         <height>131</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="title">
@@ -2197,7 +2315,7 @@ connects to the MIDI I/O ports it finds.</string>
         <property name="geometry">
          <rect>
           <x>168</x>
-          <y>54</y>
+          <y>40</y>
           <width>173</width>
           <height>49</height>
          </rect>
@@ -2219,9 +2337,9 @@ setting of Start mode)</string>
        <property name="geometry">
         <rect>
          <x>31</x>
-         <y>330</y>
+         <y>280</y>
          <width>141</width>
-         <height>64</height>
+         <height>51</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="radio_group_layout">
@@ -2270,9 +2388,9 @@ in the Song Editor.</string>
        <property name="geometry">
         <rect>
          <x>370</x>
-         <y>290</y>
+         <y>240</y>
          <width>251</width>
-         <height>131</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="title">
@@ -2284,7 +2402,7 @@ in the Song Editor.</string>
           <x>20</x>
           <y>10</y>
           <width>211</width>
-          <height>108</height>
+          <height>91</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -2352,7 +2470,7 @@ in the Song Editor.</string>
          <x>9</x>
          <y>0</y>
          <width>701</width>
-         <height>161</height>
+         <height>151</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -2373,10 +2491,10 @@ in the Song Editor.</string>
        <widget class="QWidget" name="flagsLayoutWidget">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>19</x>
           <y>32</y>
           <width>441</width>
-          <height>124</height>
+          <height>101</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -2456,9 +2574,9 @@ an event in the new pattern.</string>
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>230</y>
+         <y>220</y>
          <width>701</width>
-         <height>132</height>
+         <height>151</height>
         </rect>
        </property>
        <property name="minimumSize">
@@ -2476,88 +2594,76 @@ an event in the new pattern.</string>
        <property name="title">
         <string>Sets Mode</string>
        </property>
-       <widget class="QRadioButton" name="radio_setsmode_normal">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>24</x>
-          <y>24</y>
-          <width>500</width>
-          <height>23</height>
+          <x>20</x>
+          <y>30</y>
+          <width>465</width>
+          <height>101</height>
          </rect>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Normal. Only the active set (&quot;play-screen&quot;) can be armed.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_setsmode_autoarm">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>48</y>
-          <width>500</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Auto-Arm. When moving to the ne&amp;xt set, it automatically arms.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_setsmode_additive">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>72</y>
-          <width>500</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Additive. As each sets is activated, the others keep playing.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_setsmode_allsets">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>96</y>
-          <width>500</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>All Sets.  All sets can play at the same time.</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <widget class="QRadioButton" name="radio_setsmode_normal">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Normal. Only the active set (&quot;play-screen&quot;) can be armed.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_setsmode_autoarm">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Auto-Arm. When moving to the ne&amp;xt set, it automatically arms.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_setsmode_additive">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Additive. As each sets is activated, the others keep playing.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_setsmode_allsets">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>All Sets.  All sets can play at the same time.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QGroupBox" name="group_startmode">
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>370</y>
+         <y>380</y>
          <width>701</width>
          <height>121</height>
         </rect>
@@ -2583,69 +2689,63 @@ an event in the new pattern.</string>
        <property name="title">
         <string>Song Start Mode</string>
        </property>
-       <widget class="QRadioButton" name="radio_startmode_live">
+       <widget class="QWidget" name="">
         <property name="geometry">
          <rect>
-          <x>24</x>
-          <y>24</y>
-          <width>500</width>
-          <height>23</height>
+          <x>20</x>
+          <y>30</y>
+          <width>408</width>
+          <height>71</height>
          </rect>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Li&amp;ve. Musician controls arming/muting.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_startmode_song">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>48</y>
-          <width>500</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Song. Song-editor layout controls arming/muting.</string>
-        </property>
-       </widget>
-       <widget class="QRadioButton" name="radio_startmode_auto">
-        <property name="geometry">
-         <rect>
-          <x>24</x>
-          <y>72</y>
-          <width>500</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Auto. Song mode is used if a song-editor layout exists.</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_10">
+         <item>
+          <widget class="QRadioButton" name="radio_startmode_live">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Li&amp;ve. Musician controls arming/muting.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_startmode_song">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Song. Song-editor layout controls arming/muting.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radio_startmode_auto">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Auto. Song mode is used if a song-editor layout exists.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QLabel" name="label_ppqn">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>185</y>
+         <y>177</y>
          <width>61</width>
          <height>21</height>
         </rect>
@@ -2679,7 +2779,7 @@ an event in the new pattern.</string>
        <property name="geometry">
         <rect>
          <x>220</x>
-         <y>190</y>
+         <y>180</y>
          <width>460</width>
          <height>18</height>
         </rect>
@@ -2710,7 +2810,7 @@ an event in the new pattern.</string>
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>185</y>
+         <y>176</y>
          <width>100</width>
          <height>26</height>
         </rect>
@@ -2745,7 +2845,7 @@ Saved in the 'usr' file when Seq66 exits.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>170</y>
+         <y>160</y>
          <width>701</width>
          <height>51</height>
         </rect>
@@ -3854,7 +3954,7 @@ with jitter application.</string>
          <string>Session</string>
         </property>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>12</x>
@@ -3916,7 +4016,7 @@ even if Seq66 is run by it.</string>
        <property name="geometry">
         <rect>
          <x>16</x>
-         <y>148</y>
+         <y>141</y>
          <width>149</width>
          <height>17</height>
         </rect>
@@ -3934,8 +4034,8 @@ even if Seq66 is run by it.</string>
       <widget class="QLineEdit" name="lineEditNsmUrl">
        <property name="geometry">
         <rect>
-         <x>44</x>
-         <y>170</y>
+         <x>32</x>
+         <y>167</y>
          <width>233</width>
          <height>25</height>
         </rect>

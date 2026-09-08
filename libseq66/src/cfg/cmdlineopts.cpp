@@ -545,14 +545,6 @@ cmdlineopts::help_check (int argc, char * argv [])
                 arg == "-#"
                 ;
         }
-#if 0
-        if
-        (
-            (arg == "-h") || (arg == "--help") ||
-            (arg == "-V") || (arg == "--version") ||
-            (arg == "-#")
-        )
-#endif
         if (result)
             break;
     }

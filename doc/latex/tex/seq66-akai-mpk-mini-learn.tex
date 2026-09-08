@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2026-09-06
-% \update      2026-09-07
+% \update      2026-09-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -28,9 +28,9 @@
 \fancyhead{}
 \fancyfoot{}
 \fancyheadoffset{0.005\textwidth}
-\lhead{Seq66 MIDI Learn with the Akai MPK Mini Play}
+\lhead{Seq66 MIDI Learn / Akai MPK Mini Play}
 \chead{}
-\rhead{User Manual}
+\rhead{Tutorial}
 \lfoot{}
 \cfoot{\thepage}
 \rfoot{}
@@ -39,16 +39,22 @@
 
 \begin{document}
 
-\title{Seq66 v. 0.99.28 MIDI Learn with the Akai MPK Mini Play}
+\title{Seq66 v. 0.99.27+ \\ MIDI Learn with the Akai MPK Mini Play}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
 \maketitle
 
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.50]{midi-learning/akai-mpk-mini-play.png}
+   \caption*{Akai MPK Mini Play}
+\end{figure}
+
 \clearpage                             % moves Contents to next page
 \tableofcontents
 \listoffigures                         % print the list of figures
-\listoftables                          % print the list of tables
+% \listoftables                        % print the list of tables
 \parindent 0pt
 \parskip 9pt
 \rhead{\rightmark}         % shows section number and section name
@@ -59,7 +65,8 @@
    This document is a tutorial about using the
    MIDI Learn feature of \textsl{Seq66}.
    It supplements the "MIDI Learn" section of the user manual
-   with a real case.
+   with a real use-case.
+   We recommend reading through that manual section first.
 
    The following projects support \textsl{Seq66} and its documentation (see
    the \textbf{Help} menu):
@@ -82,15 +89,28 @@
 
    When attached via USB, channel 10 is used for percussion, all other
    channels respond to notes, but all program change events are
-   redirection to channel 1.
+   redirection to channel 1 (which drives one nuts until one learns
+   about it).
+
+   This tutorial describes using the 16 pads (8 "A" pads and 8 "B" pads)
+   to mute/unmute \textsl{Seq66} pattern slots.
+   It assumes that drum set 001 "Std. Set" is selected, to make sure
+   the pads always emit the same set of events.
+   (We will look into the possibility of creating a macro to select
+   that drumset.)
+
    For \textsl{Seq66} and MIDI, what matters is that the MIDI
-   controller portion of the emits events only on channels 1 and 10.
+   controller portion of the MPK Mini emits events only on channels 1 and 10.
    Also, the ARM mini-controller filters out all SysEx other than
    its own.
+
+   This tutorial assumes that Linux ALSA, JACK, and Windows MIDI
+   have been set up properly for use with \textsl{Seq66}.
 
 \subsection{Setup}
 \label{subsec:setup}
 
+   Stop \textsl{Seq66}.
    Plug in the MPK Mini.
    Run \textsl{Seq66} and verify that it is active
    in the 
@@ -109,7 +129,7 @@
 
    Copy the \texttt{data/linux/qseq66.ctrl} to a file named after
    the device, such as \texttt{akai-mpk-mini-play.ctrl}. Copy this file
-   to "\$home", which is usually \texttt{~/.config/seq66}.
+   to "\$home", which is usually \texttt{\textasciitilde/.config/seq66}.
 
    Read up on the \textsl{'ctrl' File} section of the user manual
    to get familiar with the control sections of this file.
@@ -122,14 +142,15 @@
       [automation-control]
    \end{verbatim}
 
-   Only the comments section needs editing (for an explanation of
+   Only the comments section needs manual editing (for an explanation of
    the intended usage of the file).
    The rest are covered by the
    \textbf{Edit / Preferences / Session} tab and the
-   \textbf{Learn} dialog, though the 'ctrl' can still be edited,
-   if desired.
+   \textbf{Learn} dialog, though the 'ctrl' can still be
+   manually edited, if desired.
 
    At this point, the 'ctrl' file is in place, but not yet ready.
+   It needs to be specified in the 'rc' file.
 
 \subsubsection{Setup / 'rc' File}
 \label{subsubsec:setup_rc_file}
@@ -140,18 +161,17 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{midi-learning/preferences-session-select-ctrl-file.png}
-   \caption*{Set New 'ctrl' File}
+   \caption{Set New 'ctrl' File}
+   \label{fig:preferences_session_select_ctrl_file}
 \end{figure}
 
    Note that it is marked as active and to be saved.
    Exit \textsl{Seq66}.
-   In the 'rc' file \texttt{~/.config/seq66/qseq66.rc}, one should see
-   the following items (adapted to one's personal setup):
+
+   In the 'rc' file \texttt{\textasciitilde/.config/seq66/qseq66.rc},
+   one should see the following items (adapted to one's personal setup):
 
 \begin{verbatim}
-      [comments]
-      Add your comment block here
-
       [midi-control-file]
       active = true
       name = "akai-mpk-mini-play.ctrl"
@@ -169,26 +189,29 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{midi-learning/midi-clock-select-mpk.png}
-   \caption*{Set MPK Mini Output Status}
+   \caption{Set MPK Mini Output Status}
+   \label{fig:midi_clock_select_mpk}
 \end{figure}
 
    Some ports might be disabled, even though present, because they
    were missing. If it is known they are plugged in click, click
    the \textbf{Re-enable} button. This also enables the input port
    entries in the \textbf{MIDI Input} tab.
-   Set the MPK Mini controller as desired (usually Disabled or Off).
+   Set the MPK Mini controller as desired (usually "Off").
 
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{midi-learning/midi-input-select-mpk.png}
-   \caption*{Set MPK Mini Input Status}
+   \caption{Set MPK Mini Input Status}
+   \label{fig:midi_input_select_mpk}
 \end{figure}
 
    Make sure the MPK Mini is enabled. Do not set \textbf{MIDI Ctrl In}
    at this time. Restart \textsl{Seq66} and verify
    that the MIDI clock and input tabs show the correct settings.
 
-   In the 'rc' file \texttt{~/.config/seq66/qseq66.rc}, one should see
+   In the 'rc' file \texttt{\textasciitilde/.config/seq66/qseq66.rc},
+   one should see
    the following items (adapted to one's personal setup):
 
 \begin{verbatim}
@@ -222,10 +245,12 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{midi-learning/midi-input-automation-mpk.png}
-   \caption*{Set MPK Mini Input as the MIDI Controller}
+   \caption{Set MPK Mini Input as the MIDI Controller}
+   \label{fig:midi_input_automation_mpk}
 \end{figure}
 
-   In the 'ctrl' file \texttt{~/.config/seq66/akai-mpk-mini-play.ctrl},
+   In the 'ctrl' file
+   \texttt{\textasciitilde/.config/seq66/akai-mpk-mini-play.ctrl},
    one should see the following items (adapted to one's personal setup):
 
 \begin{verbatim}
@@ -234,16 +259,64 @@
       midi-enabled = true
 
       [midi-control-out-settings]
-      output-buss = "MPK mini Play mk3 MIDI 1"
+      output-buss = "Midi Through Port-0"
       midi-enabled = false
 \end{verbatim}
 
 \subsection{MIDI Learning}
 \label{subsec:midi_learning}
 
-TODO
+   Now we are ready to make the percussion pads control 16 pattern slots.
+   Start \textsl{Seq66} and then select \textbf{Learn / Loops} from
+   the main menu.
+   The learn manager that comes up should look blank, like the following.
+   If not, the wrong 'ctrl' file has been configured in the 'rc' file.
+   Try again with \sectionref{subsubsec:setup_rc_file}.
 
-\printindex
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{midi-learning/blank-learn-manager.png}
+   \caption{Blank/Initial Learn Manager}
+   \label{fig:blank_learn_manager}
+\end{figure}
+
+   Without doing anything else, go to the Mini Play and
+   strike each pad in group "A" once, in order.
+   Then select group "B" and 
+   strike each pad again, in order.
+
+   After these actions, the \textbf{Loop} count should be 16, and the 
+   \textbf{Save} button should be enabled.
+   Click it.
+   This saves the file specified for 'ctrl' in
+   \textbf{Edit / Preferences / Session} \textsl{immediately}.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{midi-learning/learn-manager-post.png}
+   \caption{Learn Manager After Save}
+   \label{fig:learn_manager_post}
+\end{figure}
+
+   One can look at the \texttt{akai-mpk-mini-play.ctrl} file
+   and verify in the \texttt{[loop-control]} section that the
+   first 16 lines in the "toggle" section show active events
+   such as:
+
+   \begin{verbatim}
+       0 "1"  [ 0 0x99  40   0 127 ] [ 0 0x00   0   0   0 ] ...
+       1 "q"  [ 0 0x99  41   0 127 ] [ 0 0x00   0   0   0 ] ...
+       2 "a"  [ 0 0x99  42   0 127 ] [ 0 0x00   0   0   0 ] ...
+       . . .
+   \end{verbatim}
+
+   where the first number is the slot number,
+   the character in quotes is the hot-key, and the first set of
+   numbers are the "inverse" flag, 0x99 is a note-on for channel
+   10, next is the note value, and 0 and 127 is the acceptable
+   range of note velocities.
+
+% \printindex
 
 \end{document}
 

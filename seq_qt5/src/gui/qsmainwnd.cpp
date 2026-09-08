@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-08-05
+ * \updates       2026-09-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -555,11 +555,29 @@ qsmainwnd::qsmainwnd
     );
 
 #if SEQ66_MIDI_LEARN_SUPPORT
+#if defined USE_OLD_LAYOUT
     connect
     (
         ui->actionMIDILearn, SIGNAL(triggered(bool)),
         this, SLOT(slot_midi_learn_help())
     );
+#else
+    connect
+    (
+        ui->action_Quick_Reference, SIGNAL(triggered(bool)),
+        this, SLOT(slot_midi_learn_help())
+    );
+    connect
+    (
+        ui->action_Tutorial, SIGNAL(triggered(bool)),
+        this, SLOT(slot_midi_learn_tutorial())
+    );
+    connect
+    (
+        ui->action_Cheat_sheet, SIGNAL(triggered(bool)),
+        this, SLOT(slot_midi_learn_cheat_sheet())
+    );
+#endif
 #else
     ui->actionMIDILearn->setVisible(false);
 #endif
@@ -1692,6 +1710,23 @@ qsmainwnd::slot_midi_learn_help ()
     }
 #endif
 }
+
+void
+qsmainwnd::slot_midi_learn_tutorial ()
+{
+#if SEQ66_MIDI_LEARN_SUPPORT
+    (void) open_midi_learn_tutorial();
+#endif
+}
+
+void
+qsmainwnd::slot_midi_learn_cheat_sheet ()
+{
+#if SEQ66_MIDI_LEARN_SUPPORT
+    (void) open_midi_learn_cheat_sheet();
+#endif
+}
+
 
 /**
  *  For NSM usage, this function replaces the "Open" operation.  It will

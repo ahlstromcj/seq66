@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2025-08-18
+ * \updates       2026-09-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -169,6 +169,8 @@ inputslist::set (bussbyte bus, bool inputing)
     {
         it->second.io_enabled = inputing;
         it->second.out_clock = e_clock::none;
+        if (inputing)
+            it->second.io_available = true;
     }
     return result;
 }

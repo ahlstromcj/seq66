@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2025-07-17
+ * \updates       2026-09-08
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -141,6 +141,8 @@ extern const tokenization & rec_style_items ();
 extern void set_configuration_defaults ();
 extern bool ppqn_in_range (int ppqn);
 extern bool open_user_manual ();
+extern bool open_midi_learn_tutorial ();
+extern bool open_midi_learn_cheat_sheet ();
 extern bool open_tutorial ();
 extern const tokenization & doc_folder_list ();
 extern const tokenization & tutorial_folder_list ();

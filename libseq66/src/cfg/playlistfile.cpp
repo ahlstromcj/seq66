@@ -592,11 +592,11 @@ open_playlist
     bool show_on_stdout
 )
 {
-    bool result = ! is_missing_string(source);  /* empty, "", or "?"        */
+    bool result = ! is_missing_string(source);      /* empty, "", or "?"    */
     if (result)
     {
         playlistfile plf(source, pl, rc(), show_on_stdout);
-        result = plf.open(true);            /* parse and file verify    */
+        result = plf.open(true);                    /* parse & file verify  */
         if (result)
         {
             // Anything worth doing?

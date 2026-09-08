@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-08
- * \updates       2026-09-06
+ * \updates       2026-09-08
  * \license       GNU GPLv2 or above
  *
  *  This dialog provides a way to initiate the MIDI learning of some
@@ -238,9 +238,11 @@ qlearnframe::qlearnframe
 
     /**
      * Could set it to "last index"
+     *
+     * midi_learn().clear_current_index();
      */
 
-    midi_learn().clear_current_index();
+    midi_learn().initialize_current_index();
 
     /*
      * Check for a pending automation-control every

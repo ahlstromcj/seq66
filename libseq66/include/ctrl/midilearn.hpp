@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-06-09
- * \updates       2026-07-04
+ * \updates       2026-09-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -282,10 +282,15 @@ public:
 
     bool active_counts () const
     {
-        return  m_current_controls.active_counts
+        return m_current_controls.active_counts
         (
             m_loops_ctrl_count, m_mutes_ctrl_count, m_automation_ctrl_count
         );
+    }
+
+    const midicontrolin & current_controls () const
+    {
+        return m_current_controls;
     }
 
     bool active_counts

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2026-07-15
+ * \updates       2026-09-08
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -501,6 +501,62 @@ open_user_manual ()
         std::string docpath = find_file
         (
             doc_folder_list(), "seq66-user-manual.pdf"
+        );
+        result = ! docpath.empty();
+        if (result)
+            result = open_pdf(docpath);
+        else if (! netdocs_done)
+            result = open_url(s_url);
+    }
+    return result;
+}
+
+bool
+open_midi_learn_tutorial ()
+{
+    static const std::string s_url =
+        "https://ahlstromcj.github.io/docs/seq66/seq66-akai-mpk-mini-learn.pdf";
+
+    bool result = false;
+    bool netdocs_done = false;
+    if (s_netdocs_first)
+    {
+        result = open_url(s_url);
+        netdocs_done = true;
+    }
+    if (! result)
+    {
+        std::string docpath = find_file
+        (
+            doc_folder_list(), "seq66-akai-mpk-mini-learn.pdf"
+        );
+        result = ! docpath.empty();
+        if (result)
+            result = open_pdf(docpath);
+        else if (! netdocs_done)
+            result = open_url(s_url);
+    }
+    return result;
+}
+
+bool
+open_midi_learn_cheat_sheet ()
+{
+    static const std::string s_url =
+        "https://ahlstromcj.github.io/docs/seq66/midi-learn-cheat-sheet.pdf";
+
+    bool result = false;
+    bool netdocs_done = false;
+    if (s_netdocs_first)
+    {
+        result = open_url(s_url);
+        netdocs_done = true;
+    }
+    if (! result)
+    {
+        std::string docpath = find_file
+        (
+            doc_folder_list(), "midi-learn-cheat-sheet.pdf"
         );
         result = ! docpath.empty();
         if (result)

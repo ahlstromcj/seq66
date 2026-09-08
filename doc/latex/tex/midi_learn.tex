@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2026-06-22
-% \update      2026-09-07
+% \update      2026-09-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -34,8 +34,13 @@
    be learned, and what kind of action is to be added via
    the learning process.
    The process is described in detail later.
-   A specific example is provided in a tutorial:
-   \texttt{seq66-akai-mpk-mini-learn.pdf}.
+   A simple and specific step-by-step example is provided in a tutorial, and
+   a cheat-sheet showing the learnable user-interface elements:
+
+   \begin{verbatim}
+      share/doc/seq66-akai-mpk-mini-learn.pdf
+      share/doc/midi-learn-cheat-sheet.pdf
+   \end{verbatim}
 
    There are some limitations and quirks in the learn features:
 
@@ -94,7 +99,8 @@
    category Loops/Mutes/Automation and Toggle/On/Off.
 
    The Learn Manager dialog can be brought to the
-   screen via the \textbf{Learn} menu (see\sectionref{subsec:menu_learn}.)
+   screen via the \textbf{Learn} menu
+   (see \sectionref{subsec:menu_learn}.)
 
 \begin{figure}[H]
    \centering 
@@ -178,32 +184,33 @@
    the allowable values of, for example, note velocity.
    In most cases, we want the largest range, 0-127.
 
-   \itempar{Learn Save}{learn!save}
+   \itempar{Learn / Save}{learn!save}
    When clicked, this copies the currently-entered events into
    the application's main control-in container, and also
    replaces the original container to support a possible
    reset operation.
-   In addition, the 'ctrl' file is marked for saving at exit.
+   In addition, the 'ctrl' file saved immediately.
+   Examine it to make sure it looks correct.
 
-   \itempar{Learn Reset}{learn!Reset}
+   \itempar{Learn / Reset}{learn!Reset}
    When clicked, this copies the original or last-saved events into
    the current container, overwriting any changes.
 
-   \itempar{Learn Clear All}{learn!clear all}
+   \itempar{Learn / Clear All}{learn!clear all}
    When clicked, all events are cleared from the current container.
    This includes the loop, mute-group, and automation events.
 
-   \itempar{Learn Clear}{learn!clear selected}
+   \itempar{Learn / Clear <selected>}{learn!clear selected}
    When clicked, all events in the selected category
    (Loop, Mute Groups, or Automation) \textsl{only}
    are cleared from the current container.
    The text of the button indicates what will be cleared.
 
-   \itempar{Learn OK}{learn!OK}
+   \itempar{Learn / OK}{learn!OK}
    When clicked, acts like the \textbf{Save} button, then closes
    the Learn Manager.
 
-   \itempar{Learn Cancel}{learn!cancel}
+   \itempar{Learn / Cancel}{learn!cancel}
    When clicked, simply closes the Learn Manager, with no changes
    since the last save.
 
@@ -238,7 +245,7 @@
          Beware!
       \item Verify that the \textbf{Next Control} box shows "Loop 0".
       \item Leave the \textbf{Action} set to \textsl{Toggle},
-         the \textbf{Inverse} unchecked, \textbf{d1min} set to 0,
+         Leave the \textbf{Inverse} unchecked, \textbf{d1min} set to 0,
          and \textbf{d1max} set to 127.
          This ensures good recording and acceptance of all note velocities,
          for example.
@@ -251,7 +258,9 @@
       \item If some mistakes were made, the only recourse is to
          click the \textbf{Reset} button and start over.
       \item Click the \textbf{Save} button.
-         This copies the current events to the main control-in set.
+         This copies the current events to the main control-in set
+         and saves the MIDI control file specified in
+         \textbf{Edit / Preferences / Session}.
    \end{enumber}
 
 \subsection{Learn / Mute Groups}
@@ -289,7 +298,6 @@
       \item If some mistakes were made, the only recourse is to
          click the \textbf{Reset} button and start over.
       \item Click the \textbf{Save} button.
-         This copies the current events to the main control-in set.
    \end{enumber}
 
 \subsection{Learn / Automation}
@@ -313,8 +321,13 @@
       \item Verify that the \textbf{Next Control} box shows
          "Automation" followed by the (internal)
          name of the desired control.
-      \item Leave the \textbf{Action} set to \textsl{Toggle},
-         the \textbf{Inverse} unchecked, \textbf{d1min} set to 0,
+      \item One can leave the \textbf{Action} set to
+         \textsl{Toggle},
+         \textsl{On},
+         \textsl{Off}, or
+         \textsl{Hold}, as desired. "Toggle" is the most common
+         implementation in \textsl{Seq66}.
+         Leave \textbf{Inverse} unchecked, \textbf{d1min} set to 0,
          and \textbf{d1max} set to 127.
          This ensures good recording and acceptance of all note velocities,
          for example.

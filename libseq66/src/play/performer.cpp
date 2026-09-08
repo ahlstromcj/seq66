@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-09-02
+ * \updates       2026-09-07
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -245,6 +245,7 @@
 #include <sstream>                      /* std::ostringstream               */
 
 #include "seq66-config.h"               /* SEQ66_JACK_**** macros           */
+#include "cfg/midicontrolfile.hpp"      /* seq66::write_midi_control_file() */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile              */
@@ -3767,7 +3768,15 @@ performer::save_midi_learn (const midicontrolin & mci)
     if (result)
     {
         midi_control_in() = mci;
-        rc().auto_ctrl_save(result);
+        rc().midi_control_in() = m_midi_control_in;
+
+        /*
+         * rc().auto_ctrl_save(result);
+         */
+
+        std::string mcfname { rc().midi_control_filespec() };
+        session_message("Save", "Controls");
+        result = write_midi_control_file(mcfname, rc());
     }
     else
         warn_message("MIDI Learn container empty, not saved");
