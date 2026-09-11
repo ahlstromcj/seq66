@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-08-25
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1172,6 +1172,9 @@ qseqeditframe64::~qseqeditframe64 ()
     if (not_nullptr(m_timer))
         m_timer->stop();
 
+    if (not_nullptr(m_rpn_wnd))
+        delete m_rpn_wnd;
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -1429,8 +1432,10 @@ qseqeditframe64::closeEvent (QCloseEvent * event)
         m_timer->stop();
 
     if (not_nullptr(m_rpn_wnd))
+    {
         delete m_rpn_wnd;
-
+        m_rpn_wnd = nullptr;
+    }
     remove_lfo_frame();
     remove_patternfix_frame();
     event->accept();

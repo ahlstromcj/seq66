@@ -1,6 +1,6 @@
 Notes on RPN
 Chris Ahlstrom
-2025-01-13 to 2026-08-11
+2025-01-13 to 2026-09-09
 
 https://www.recordingblogs.com/wiki/midi-registered-parameter-number-rpn
 
@@ -311,5 +311,35 @@ For Seq66, what are the options we could code to send the following?
         immediately? Or at playback?
 
 Also see contrib/notes/program-banks.text.
+
+=================================================
+
+Sorting:
+
+    The event::get_rank() function is used in sorting events.
+    This can mess up this order:
+
+        0xB0 0x65 0     RPN coarse, pitch-range
+        0xB0 0x64 0x0   RPN fine, pitch-range
+        0xB0 0x06 0x0C  Pitch-range coarse (semitones)
+        0xB0 0x26 0     Pitch-range fine (cent)
+        0xB0 0x65 0x7F  RPN coarse, end-of-setting
+        0xB0 0x64 0x7F  RPN fine, end-of-setting
+
+    To keep these multi-event sequences intact, the time of insert is
+    incremented by one tick before inserting the next event.
+
+=================================================
+
+Bank Select:
+
+    Selecting a patch-bank and one of the patches in that bank
+    on advanced synthesizers requires using these events:
+
+    Control Change 0, value 0. The MSB of the bank to be selected.
+    Control Change 32, value 0. The LSB of the bank to be selected.
+    Program Change, value 0 (or whatever from 0 to 127).
+
+    https://yamahasynth.com/learn/2010s/bank-select-and-program-change-event/
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

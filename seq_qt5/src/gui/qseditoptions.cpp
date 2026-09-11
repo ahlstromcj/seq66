@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-02
+ * \updates       2026-09-09
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -2759,9 +2759,19 @@ qseditoptions::slot_fix_io_maps ()
     {
         qcptr->set_available(true);
     }
+
+    int count { 0 };
     for (auto qiptr : m_input_checkboxes)
     {
-        qiptr->set_available(true);
+        if (count == 0 && rc().with_alsa_midi())
+        {
+            ++count;
+        }
+        else
+        {
+            ++count;
+            qiptr->set_available(true);
+        }
     }
     modify_rc();
 }

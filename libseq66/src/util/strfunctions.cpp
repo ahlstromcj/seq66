@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-08-19
+ * \updates       2026-09-10
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1802,6 +1802,21 @@ hanging_word_wrap
     return result;
 }
 
+/**
+ *  Converts a tokenization to a (probably long) string.
+ */
+
+std::string
+tokenization_to_string (const tokenization & tokens)
+{
+    std::string result;
+    for (auto & t : tokens)
+    {
+        result += t;
+    }
+    return result;
+}
+
 }           // namespace seq66
 
 /*
@@ -1809,4 +1824,3 @@ hanging_word_wrap
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

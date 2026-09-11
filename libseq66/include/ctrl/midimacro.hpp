@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-27
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -89,8 +89,9 @@ private:
      *  data comes from a raw file, then this count is 1, and
      *  m_events_bytes[0] contains the full list of midibytes to be
      *  sent via this macro after expanding any macros it includes.
-
-    int m_event_count { 0 };
+     *  Now calculated as needed.
+     *
+     *      int m_event_count { 0 };
      */
 
     /**
@@ -151,6 +152,8 @@ public:
 
     static const std::string & file_marker ();
 
+    tokenization bytes_to_lines () const;
+
     const std::string & name () const
     {
         return m_name;
@@ -196,6 +199,8 @@ public:
         return int(m_event_bytes.size());
     }
 
+    int byte_count () const;
+
     bool is_expanded () const
     {
         return m_is_expanded;
@@ -207,8 +212,6 @@ public:
     }
 
 protected:
-
-    tokenization bytes_to_lines () const;
 
     void is_expanded (bool flag)
     {

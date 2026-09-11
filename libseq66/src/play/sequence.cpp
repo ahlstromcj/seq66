@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-08-15
+ * \updates       2026-09-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4712,7 +4712,7 @@ sequence::add_event
 
 /**
  *  The following two functions are meant only for the "Insert macro at L"
- *  functionality.
+ *  functionality (in the qrpnframe).
  *
  *  The add_event() version adds a single event. The add_macro() checks
  *  for multiple events in one macro...
@@ -4736,6 +4736,34 @@ sequence::add_macro (midipulse tick, const midimacro & macro)
             const midibytes & dbytes = macro.bytes(i);
             result = add_event(tick, dbytes);
             if (! result)
+                break;
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function is similar to the functions above, but it is meant to use for
+ *  multi-event MIDI macros that should not be sorted, such as multi-event NPRN
+ *  and RPN variable settings.
+ *
+ *  To get the sorting of these events to work, each event is set to one tick
+ *  later than the previous one, to guarantee the sort order.
+ */
+
+bool
+sequence::add_sequenced_macro (midipulse tick, const midimacro & macro)
+{
+    bool result = macro.is_valid();
+    if (result)
+    {
+        for (int i = 0; i < macro.event_count(); ++i)
+        {
+            const midibytes & dbytes = macro.bytes(i);
+            result = add_event(tick, dbytes);
+            if (result)
+                ++tick;
+            else
                 break;
         }
     }

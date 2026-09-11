@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-08-13
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -149,6 +149,12 @@ protected:
      * virtual bool on_group_learn (bool state) override;
      * virtual bool on_set_change (screenset::number setno) override;
      */
+
+    virtual bool on_macro_change
+    (
+        const std::string & macroname,
+        performer::macro operation
+    ) override;
 
 private:
 

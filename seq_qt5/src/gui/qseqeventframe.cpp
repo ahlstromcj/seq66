@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-08-13
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -408,7 +408,7 @@ qseqeventframe::qseqeventframe
      * Load the data.
      */
 
-    initialize_table();
+    (void) initialize_table();
     track().set_dirty_mp();
     set_dirty(false);
     cb_perf().enregister(this);
@@ -789,7 +789,7 @@ qseqeventframe::slot_hex_data_state (int state)
     bool is_true = state != Qt::Unchecked;
     m_show_data_as_hex = is_true;
     m_eventslots->hexadecimal(is_true);
-    initialize_table();
+    (void) initialize_table();
 }
 
 /**
@@ -908,9 +908,29 @@ qseqeventframe::on_sequence_change
         {
             bool recreate = ctype == performer::change::yes;
             if (recreate)
-                initialize_table();
+                result = initialize_table();
         }
     }
+    return result;
+}
+
+bool
+qseqeventframe::on_macro_change
+(
+    const std::string & /* macroname */,
+    performer::macro operation
+)
+{
+    bool result { operation == performer::macro::inserted };
+    if (result)
+    {
+        result = m_eventslots->reload_events();
+        if (result)
+            result = initialize_table();
+    }
+    if (result)
+        ui->button_save->setEnabled(true);
+
     return result;
 }
 
@@ -1690,7 +1710,7 @@ qseqeventframe::slot_modify ()
         set_seq_lengths(get_lengths());
         set_event_line(row0, ts, name, busno, chan, d0, d1, ltstr);
         if (reload)
-            initialize_table();             /* this is very stilted, Milton */
+            (void) initialize_table();      /* this is very stilted, Milton */
 
         set_dirty(reload);
     }
@@ -1753,7 +1773,7 @@ qseqeventframe::slot_clear ()
     {
         bool hasevents = ! m_eventslots->empty();
         m_eventslots->clear();
-        initialize_table();
+        (void) initialize_table();
         if (hasevents)
             set_dirty();
     }
@@ -1889,7 +1909,7 @@ qseqeventframe::slot_next_time_format ()
     const editable_event & ev { m_eventslots->current_event() };
     tf = ev.format_timestamp();
     ui->entry_ev_timestamp->setText(qt(tf));
-    initialize_table();
+    (void) initialize_table();
 }
 
 /**

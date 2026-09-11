@@ -24,12 +24,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-08-30
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
  *  It is easier than trying to add them in the event editor.
- *
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
@@ -188,7 +187,7 @@ qrpnframe::qrpnframe
     {
         ui->label_pattern_no->clear();
         ui->label_pattern_modified->hide();
-        other_macro_in_force();             // ca 2026-09-28
+        other_macro_in_force();
     }
     ui->label_ctrl_modified->hide();
 
@@ -411,7 +410,7 @@ qrpnframe::qrpnframe
      */
 
     ui->button_load_file->setEnabled(! not_null_sequence());
-    ui->button_save_file->setEnabled(true);
+    set_action_buttons(false);
     connect
     (
         ui->button_load_file, SIGNAL(clicked(bool)),
@@ -494,10 +493,11 @@ qrpnframe::qrpnframe
     connect
     (
         ui->line_edit_rpn_macro_name, SIGNAL(editingFinished()),
-        this, SLOT(macro_name_changed())    /* not a slot anymore */
+        this, SLOT(macro_name_changed())        /* not a slot anymore       */
     );
 #else
-    populate_macro_combo();             /* populate and connect the slots   */
+    ui->line_edit_rpn_macro_name->hide();
+    populate_macro_combo();                     /* populate & connect slots */
 #endif
 
     connect
@@ -510,16 +510,14 @@ qrpnframe::qrpnframe
         ui->button_rpn_delete, SIGNAL(clicked(bool)),
         this, SLOT(slot_delete_macro())
     );
-    ui->button_rpn_macro->setEnabled(false);
-    ui->button_rpn_delete->setEnabled(false);
+//  ui->button_rpn_macro->setEnabled(false);
+//  ui->button_rpn_delete->setEnabled(false);
 
     /*
-     * Hide the "Reserved" buttons.
-     *
-     *  ui->button_reserved_1->hide() now used to send (N)RPN
-     *  ui->button_reserved_2->hide() now used to delete a macro.
+     * Send (N)RPN/macro button.
      */
 
+//  ui->button_rpn_send->setEnabled(false);
     connect
     (
         ui->button_rpn_send, SIGNAL(clicked(bool)),
@@ -527,9 +525,10 @@ qrpnframe::qrpnframe
     );
 
     /*
-     * Insert (N)RPN button.
+     * Insert (N)RPN/macro button.
      */
 
+//  ui->button_rpn_insert->setEnabled(false);
     if (not_null_sequence())
     {
         connect
@@ -538,8 +537,8 @@ qrpnframe::qrpnframe
             this, SLOT(slot_insert())
         );
     }
-    else
-        ui->button_rpn_insert->setEnabled(false);
+//  else
+//      ui->button_rpn_insert->setEnabled(false);
 
     /*
      * Cancel button
@@ -559,6 +558,25 @@ qrpnframe::qrpnframe
 qrpnframe::~qrpnframe()
 {
     delete ui;
+}
+
+/**
+ *  Enables or disables the button according to the parameter.
+ *
+ * \param enable
+ *      Specifies the enable-statuses of the items that can do
+ *      something with the event parameters.
+ */
+
+void
+qrpnframe::set_action_buttons (bool enable)
+{
+//  ui->button_load_file->setEnabled(enable);
+    ui->button_rpn_delete->setEnabled(enable);
+    ui->button_rpn_insert->setEnabled(enable);
+    ui->button_rpn_macro->setEnabled(enable);
+    ui->button_rpn_send->setEnabled(enable);
+    ui->button_save_file->setEnabled(enable);
 }
 
 /**
@@ -590,6 +608,11 @@ qrpnframe::populate_macro_combo (bool konnect)
         int counter { 0 };
         int firstenabled { -1 };
         ui->combo_box_macro_name->clear();
+#if defined USE_NONE_MACRO_NAME
+        ui->combo_box_macro_name->insertItem(counter, "None");
+        enable_combobox_item(ui->combo_box_macro_name, counter, true);
+        ++counter;
+#endif
         for (const auto & name : names)
         {
             if (name.empty())
@@ -598,6 +621,7 @@ qrpnframe::populate_macro_combo (bool konnect)
             }
             else
             {
+
                 const midibytes & mbytes
                 {
                     perf().macro_bytes(name)        /* bytes not used here */
@@ -636,12 +660,22 @@ qrpnframe::populate_macro_combo (bool konnect)
                         std::string line { mac.line() };    /* name = data  */
                         tokenization macpair { tokenize(line, "=") };
                         other_macro_tokens(macpair);
+
+                        int sz { mac.byte_count() };
+                        std::string bcs { std::to_string(sz) };
+                        ui->line_edit_byte_count->setText(qt(bcs));
                     }
                 }
             }
             else
+            {
+#if defined USE_NONE_MACRO_NAME
+                ui->combo_box_macro_name->setCurrentIndex(0);
+                macro_name("None");
+#else
                 macro_name().clear();
-
+#endif
+            }
             if (konnect)
             {
                 connect
@@ -762,7 +796,7 @@ qrpnframe::select_rpn_control (int rpncontrol)
     if (! macnam.empty())
         set_macro_name(qt(macnam));
 
-    set_plaintext_msg("clear");
+    set_plaintext_msg("");
     ui->line_edit_other->clear();
 }
 
@@ -864,6 +898,8 @@ qrpnframe::set_rpn_parameter_value (midishort pv)
         pvtext = tmp;
     }
     ui->line_edit_rpn_param_value->setText(qt(pvtext));
+    ui->button_rpn_insert->setEnabled(true);
+    ui->button_rpn_send->setEnabled(true);
 }
 
 void
@@ -986,6 +1022,9 @@ qrpnframe::slot_macro_other_changed ()
 #else
     QString m { ui->combo_box_macro_name->currentText() };
 #endif
+
+printf("slot_macro_other_changed()\n");
+
     QString b { ui->line_edit_other->text() };
     std::string macnam { m.toStdString() };     /* current macro name!  */
     std::string byts { b.toStdString() };
@@ -1052,7 +1091,7 @@ qrpnframe::slot_load_file ()
                 };
                 std::string s { "file: " };
                 s += selectedfile;  // DITTO
-                set_plaintext_msg(s);
+                set_file_name(s);   //set_plaintext_msg(s);
                 other_macro_tokens().clear();                   /* be safe  */
                 other_macro_tokens().push_back(base);           /* macnam   */
                 other_macro_tokens().push_back(s);              /* macfile  */
@@ -1065,10 +1104,24 @@ qrpnframe::slot_load_file ()
                  * in saving the data.
                  */
 
-                // THIS CLEARS the MACRO and is not needed
-                // select_rpn_control(rpn_control_other);
-
                 macro_filename(s);
+
+                /*
+                 * Load up the "other" line-edit to assure the user.
+                 * These function calls are a bit wasteful.
+                 * Add a midimacro::macdata.bytes_to_string()?
+                 */
+
+                tokenization lines { macdata.bytes_to_lines() };
+                std::string longlines { tokenization_to_string(lines) };
+
+                /*
+                 * ui->line_edit_other->setText(qt(longlines));
+                 */
+
+                std::string bcs { std::to_string(macdata.byte_count()) };
+                ui->line_edit_byte_count->setText(qt(bcs));
+                set_plaintext_msg(longlines);
             }
         }
     }
@@ -1106,7 +1159,10 @@ qrpnframe::slot_save_file ()
             midimacro mac(other_macro_tokens());
             std::string macnam { macro_name() };
             midibytes byts { mco.expand_midimacro(mac) };
-            ok = byts.size() > 0;
+            int sz { int(byts.size()) };
+            std::string bcs { std::to_string(sz) };
+            ui->line_edit_byte_count->setText(qt(bcs));
+            ok = sz > 0;
             if (ok)
             {
                 mac.name(macnam);
@@ -1225,6 +1281,7 @@ qrpnframe::slot_param_value_text_changed ()
     if (ok)
         set_plaintext_msg(name_and_data);
 
+    set_action_buttons(true);
     s_show_slot(__FUNCTION__);
 }
 
@@ -1258,7 +1315,7 @@ qrpnframe::macro_name_changed ()
     if (isempty)
     {
         ui->button_rpn_macro->setText("Create Macro");
-        ui->button_rpn_delete->setEnabled(false);
+//      ui->button_rpn_delete->setEnabled(false);
         ui->button_rpn_macro->setEnabled(false);
         ui->line_edit_other->clear();
         ui->line_edit_other->setEnabled(false);
@@ -1319,6 +1376,8 @@ qrpnframe::slot_create_macro ()
 
             if (ok)
             {
+                std::string bcs { std::to_string(mac.byte_count()) };
+                ui->line_edit_byte_count->setText(qt(bcs));
                 set_plaintext_msg(other_macro_tokens());
                 notify_macro_change(performer::macro::modified);
             }
@@ -1337,6 +1396,8 @@ qrpnframe::slot_create_macro ()
 
             if (ok)
             {
+                std::string bcs { std::to_string(mac.byte_count()) };
+                ui->line_edit_byte_count->setText(qt(bcs));
                 set_plaintext_msg(values);
                 notify_macro_change(performer::macro::added);
             }
@@ -1397,7 +1458,9 @@ void
 qrpnframe::set_macro_name (const QString & name)
 {
     std::string macnam { name.toStdString() };
+#if defined USE_LINE_EDIT_RPN_MACRO_NAME
     ui->line_edit_rpn_macro_name->setText(name);
+#endif
     macro_name(macnam);
 
     /*
@@ -1414,6 +1477,8 @@ qrpnframe::set_macro_name (const QString & name)
     {
         const midimacro & mac { mco.macro(macnam) };
         std::string line { mac.line() };    /* line() gets name and data    */
+        std::string bcs { std::to_string(mac.byte_count()) };
+        ui->line_edit_byte_count->setText(qt(bcs));
         set_plaintext_msg(line);
         if (other_macro_in_force())         /* macro_name() is set          */
         {
@@ -1587,7 +1652,10 @@ qrpnframe::send_other_macro ()
 
         midibytes byts { mco.expand_midimacro(mac) };
         int macbuss { m_rpn_buss };
-        result = byts.size() > 0;
+        int sz { int(byts.size()) };
+        std::string bcs { std::to_string(sz) };
+        ui->line_edit_byte_count->setText(qt(bcs));
+        result = sz > 0;
         if (result)
         {
             mac.name(macnam);
@@ -1639,7 +1707,7 @@ qrpnframe::insert_rpn_macro ()
     };
     result = name_and_data.size() == 2;
     if (result)
-       result = track().add_macro(tick, r);
+       result = track().add_sequenced_macro(tick, r);
 
     if (result)
     {
@@ -1657,7 +1725,7 @@ qrpnframe::insert_other_macro ()
 {
     midimacro mac(other_macro_tokens());
     midipulse ts { rpn_info().rpn_time_stamp };
-    bool result { track().add_macro(ts, mac) };
+    bool result { track().add_macro(ts, mac) }; /* add_sequenced_macro() ?  */
     if (result)
         notify_macro_change(performer::macro::inserted);
     else
@@ -1676,8 +1744,8 @@ qrpnframe::slot_cancel ()
 void
 qrpnframe::set_plaintext_msg (const std::string & msg)
 {
-    if (msg == "clear")
-        ui->plain_text_edit_msg->clear();           // setPlainText(qt(msg));
+    if (msg == "")
+        ui->plain_text_edit_msg->clear();
     else
         ui->plain_text_edit_msg->setPlainText(qt(msg));
 }
@@ -1698,6 +1766,15 @@ qrpnframe::set_plaintext_msg (const tokenization & tokens)
             msg += t;
     }
     set_plaintext_msg(msg);
+}
+
+void
+qrpnframe::set_file_name (const std::string & fname)
+{
+    if (fname == "")
+        ui->line_edit_file_name->clear();
+    else
+        ui->line_edit_file_name->setText(qt(fname));
 }
 
 /**

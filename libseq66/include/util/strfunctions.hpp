@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-08-18
+ * \updates       2026-09-10
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -236,6 +236,7 @@ extern std::string hanging_word_wrap
     size_t leftmargin   = 28,
     size_t rightmargin  = 80
 );
+extern std::string tokenization_to_string (const tokenization & tokens);
 
 /**
  *  This function comes, slightly modified to avoid throwing an exception,

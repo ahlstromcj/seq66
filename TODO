@@ -1,29 +1,22 @@
 TO DO for Seq66 0.99.28
-j
-Chris Ahlstrom
-2019-04-13 to 2026-09-08
 
-    -   BSD. Boot to it and test out the latest meson build.
+Chris Ahlstrom
+2019-04-13 to 2026-09-11
+
     -   Revisit metronome and count-in testing re issue #147.
-    -   Redo screenshots in the KvGray theme.
     -   Edit / Preferences / MIDI Clock.
-        -   Test, fix, and document the Re-enable button.
-        -   Consider a dialog to set up port-mapping.
+        -   On Arch, Clock to VMPK keeps getting disabled.
+            With or without port-mapping. Works on Debian.
+            Works okay if starting with no config files.
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
             Individual selection of notes seems fine.
         -   Horizontal gets better with zoom, vertical gets worse.
-        -   Some text in slots get partly cut.
-        -   In the right-click menu for a slot, the Input bus
-            ALSA Announce should be disabled.
         -   Solo works, but unsoloing does not.
     -   MIDI Learn.
-        -   nanoKEY2 and MPK Inputs come up disabled after a restart.
-            And they are *grayed out*.
         -   In Automation, is starting over really the only
             option to make corrections?
     -   Follow up on RPN:
-        -   Verify the proper sorting of (N)RPN messages.
         -   Need to have the save dialog show the types of
             file extensions: .macro(s), .sys, .raw.
         -   program-banks.text (issue #138)
@@ -31,15 +24,18 @@ Chris Ahlstrom
         -   RPN.text
         -   24stones.mid and 2stones.mid
         -   Check with valgrind again.
-        -   Add opening the dialog to the right click menu.
-        -   Add a button to read a *.SYS (SysEx) file.
-        -   Create Macro does not raise the 'ctrl' save flag.
+        -   Add opening the dialog to the right click menu?
+        -   Added a button to read a *.SYS (SysEx) file, but need to
+            show the data in text format in the "Other's Data"
+            box.
         -   With "Other", put the first macro data token in 
             Other Data.
+        -   Create Macro does not raise the 'ctrl' save flag.
+        -   Save not enabled when the data changes.
         -   If Other Data is changed, enable "Modify Macro".
             Otherwise, if other edits are changed, ditto.
-    -   Reinvestigate the MIDI macros.
-        -   Copy the Tools menu to the slot menu?
+        -   Only enable "Delete Macro" if a macro is selected
+            in "Other" mode.
     -   The ":" key is available (as well as some other keys). How
         can we use them? Metronome toggle as noted in "Back burner".
     -   Background recording / Metronome.
@@ -47,6 +43,7 @@ Chris Ahlstrom
     -   Copy paste:
         -   Can paste a long selection into a short pattern.
             Either warn about it or change the length.
+    -   BSD. Boot to it and test out the latest meson build.
     -   qmake.
         -   Check for Clang and add -W-no-c++26-extensions.
         -   For GNU add -W-no-sfinae-incomplete.
@@ -55,6 +52,8 @@ Chris Ahlstrom
 
 Back burner:
 
+    -   Edit / Preferences / MIDI Clock.
+        -   Consider a dialog to set up port-mapping.
     -   MIDI Learn.
         -   Add a slot::metronome toggle? Only one slot left!
         -   Do not fill in an automation name when loop/mutes

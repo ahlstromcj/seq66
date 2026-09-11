@@ -38,6 +38,8 @@ Chris Ahlstrom
         to the "Beat" color.
     -   Some user palettes might need to be adjusted.
     -   Fixed the text drawing in a pattern slot.
+    -   With ALSA and record-by-bus enabled, the Announce input buss
+        right-click menu entry is disabled.
 -   Pattern slot.
     -   Added a Thru toggle to the right-click slot menu.
     -   Added a yellow Thru indicator, too.

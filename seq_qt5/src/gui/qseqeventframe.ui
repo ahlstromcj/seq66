@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>434</height>
+    <height>436</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -981,13 +981,13 @@ the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
      <widget class="QLineEdit" name="entry_ev_data_0">
       <property name="minimumSize">
        <size>
-        <width>40</width>
+        <width>48</width>
         <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>40</width>
+        <width>48</width>
         <height>24</height>
        </size>
       </property>
@@ -1030,13 +1030,13 @@ the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
      <widget class="QLineEdit" name="entry_ev_data_1">
       <property name="minimumSize">
        <size>
-        <width>40</width>
+        <width>48</width>
         <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>40</width>
+        <width>48</width>
         <height>24</height>
        </size>
       </property>

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-07-11
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -311,6 +311,11 @@ private:
         return m_seq;
     }
 
+    bool hexadecimal () const
+    {
+        return m_show_data_as_hex;
+    }
+
     void hexadecimal (bool flag)
     {
         m_show_data_as_hex = flag;
@@ -335,6 +340,12 @@ private:
         m_time_format = flag ? timeformat::ticks : timeformat::bbt ;
     }
 
+    bool reload_events ()
+    {
+        clear();
+        return load_events();
+    }
+
     bool load_events ();
     bool load_table ();
     midibyte string_to_channel (const std::string & channel);
@@ -347,12 +358,7 @@ private:
     );
     void set_table_event (editable_event & ev, int row);
     std::string data_string (midibyte d);
-    std::string event_to_string
-    (
-        const editable_event & ev,
-        int index,
-        bool usehex = false
-    ) const;
+    std::string event_to_string (const editable_event & ev, int index) const;
     bool insert_event (editable_event ev);
     bool insert_event
     (

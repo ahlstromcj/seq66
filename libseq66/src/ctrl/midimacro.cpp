@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-30
+ * \updates       2026-09-11
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -131,6 +131,25 @@ midimacro::bytes (int index) const
 }
 
 /**
+ *  Counts the bytes in all events.
+ */
+
+int
+midimacro::byte_count () const
+{
+    int result { 0 };
+    for (auto & ev : m_event_bytes)
+    {
+        for (auto b : ev)
+        {
+            (void) b;
+            ++result;
+        }
+    }
+    return result;
+}
+
+/**
  *  This function accepts a string of byte values ("0xF0 0xAB ...")
  *  and creates a tokenization (vector of strings) from them, and
  *  stores it in m_tokens.
@@ -227,8 +246,8 @@ midimacro::bytes_to_lines () const
             if (charcount > limit)
             {
                 charcount = 0;
-                result.push_back(line);
-                result.push_back("\n");
+                line += "\n";
+                result.push_back(line);     /* result.push_back("\n"); */
                 line.clear();
             }
             snprintf(tmp, sizeof tmp, "0x%02x ", b);

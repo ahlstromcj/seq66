@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-07-12
+ * \updates       2026-09-09
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -157,6 +157,9 @@ qseventslots::load_table ()
  *  note?
  *
  *      "Link-time L> <L  Rank\n"
+ *
+ * \return
+ *      Returns a string describing all the events.
  */
 
 std::string
@@ -368,11 +371,24 @@ qseventslots::time_string (midipulse lt)
     return result;
 }
 
+/**
+ *  Converts an event to a string.
+ *
+ * \param ev
+ *      The event to convert.
+ *
+ * \param index
+ *      The event number, basically.
+ *
+ * \return
+ *      Returns the string.
+ */
+
 std::string
 qseventslots::event_to_string
 (
     const editable_event & ev,
-    int index, bool usehex
+    int index
 ) const
 {
     char line[132];
@@ -394,7 +410,7 @@ qseventslots::event_to_string
         std::string data_1;
         std::string linktime;
         std::string lenstring = "--";
-        const char * fmt = usehex ? "0x%02x" : "%5d";
+        const char * fmt = hexadecimal() ? "0x%02x" : "%5d";
         char tmp[32];
         midibyte d0, d1;
         midibyte rawstatus = ev.get_status();

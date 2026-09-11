@@ -2321,6 +2321,9 @@ qslivegrid::popup_menu ()
                             [this, bus] { set_midi_in_bus(bus); }
                         );
                         menuinbuss->addAction(a);
+                        if (bus == 0 && (rc().with_alsa_midi()))
+                            active = false;
+
                         if (! active)
                             a->setEnabled(false);
                     }

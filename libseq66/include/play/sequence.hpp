@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2026-07-24
+ * \updates       2026-09-09
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1805,6 +1805,7 @@ public:
     );
     bool add_event (midipulse tick, const midibytes & dbytes);
     bool add_macro (midipulse tick, const midimacro & macro);
+    bool add_sequenced_macro (midipulse tick, const midimacro & macro);
     bool append_event (const event & er);
     void sort_events ();
     event find_event (const event & e, bool nextmatch = false);

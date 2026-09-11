@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-09-05
+% \update      2026-09-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -446,7 +446,7 @@
          low-frequency oscillator.
          See \sectionref{subsec:pattern_editor_bottom}.
       \item \textbf{RPN/NRPN}.
-         This entry bring up a dialog to set up the creation of a complete RPN
+         This entry brings up a dialog to set up the creation of a complete RPN
          or NRPN series of parameter change events, from the start to the data
          to the ending "reset" event.
          The events can be inserted into the pattern or
@@ -2404,7 +2404,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.50]{pattern-editor/rpnframe.png}
+   \includegraphics[scale=0.75]{pattern-editor/rpnframe.png}
    \caption{RPN/NRPN Dialog}
    \label{fig:pattern_editor_rpn_nrpn_dialog}
 \end{figure}
@@ -2481,14 +2481,25 @@
          to the list of macros in the 'ctrl' configuration file,
          or modifies an existing macro.
          That file is marked to be saved at exit.
+      \item \textbf{Delete Macro}.
+         Deletes the currently selected macro from the active 'ctrl'
+         file.
       \item \textbf{Insert Events}.
          Clicking this button adds the RPN/NRPN or "other" events to the
          pattern at the timestamp shown in the timestamp text box.
          This button is enabled only when the RPN/NRPN dialog is
          brought up via the pattern or event editor.
+         Now, the sorting of MIDI events that \textsl{Seq66} does is
+         a problem for an ordered sequence of events such as RPN and NRPN.
+         To keep these multi-event sequences intact, the time
+         of insert is incremented by one tick before inserting
+         the next event.
       \item \textbf{Send Events}.
          Clicking this button sends the RPN/NRPN or "other" events to the
          MIDI Control Out (display) buss or the selected alternate buss.
+      \item \textbf{Source}.
+         When a file is loaded, or when the selected macro refers to
+         data in a file, the full file-specification is displayed here.
       \item \textbf{Other's Data}.
          When \textbf{Other} is selected, this text editor field is enabled.
          One can type in the data bytes in either hexadecimal or decimal
@@ -2499,6 +2510,9 @@
          This text-box shows the generated data, always in hexadecimal.
          We might fix that later.
          If an error occurs, a message is shown in this box.
+      \item \textbf{Bytes}.
+         This box shows the number of total bytes in the event(s).
+         Useful for indicating a long message.
       \item \textbf{Load}.
          This button opens a file dialog with filters for
          \texttt{*.macro} (textual macro file), \texttt{*.syx}
