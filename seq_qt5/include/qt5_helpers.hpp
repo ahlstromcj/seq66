@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-09-02
+ * \updates       2026-09-13
  * \license       GNU GPLv2 or above
  *
  * Note:
@@ -171,6 +171,7 @@ extern int qt_mouse_y (QMouseEvent * ev);
 #endif
 
 extern void qt_set_layout_visibility (QLayoutItem * item, bool visible);
+extern void qt_set_layout_enable (QLayout * layout, bool enable);
 extern QTimer * qt_timer
 (
     QObject * self,

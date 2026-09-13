@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-09-11
+% \update      2026-09-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2425,6 +2425,8 @@
       \item \textbf{Select RPN}.
          On the other side, this group selects a specific RPN from
          the small set provided by the MIDI specification.
+         These buttons are disabled if \textbf{Other} is
+         selected.
       \item \textbf{Channel}.
          Provides the channel (1 to 16) to be applied to the RPN/NRPN
          controller events.
@@ -2436,12 +2438,18 @@
          If checked (recommended) then, after the RPN/NPRN event
          bytes are created, the bytes need to set the parameter
          are appended.
+         This buttons are disabled if \textbf{Other} is
+         selected.
       \item \textbf{Append RPN reset}.
          If checked (recommended) then, add the RPN parameter reset
          event at the end.
+         This buttons are disabled if \textbf{Other} is
+         selected.
       \item \textbf{Use "fine" events}.
          If checked, also insert the "fine" version of the selected controller.
          The "fine" controllers are supported by General MIDI version 2.
+         This buttons are disabled if \textbf{Other} is
+         selected.
       \item \textbf{macro name}.
          Simply shows the selected/edited macro name. Not editable.
       \item \textbf{Timestamp (BBT)}.

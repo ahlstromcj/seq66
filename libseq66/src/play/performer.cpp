@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-09-07
+ * \updates       2026-09-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -7438,6 +7438,7 @@ performer::send_macro_bytes
             /*
              * This works for 3-byte MIDI messages, such as an RPN
              * controller event. Compare to midicontrolout::send_macro().
+             * It now treats longer messages as well.
              * Get the true bus if port-mapped.
              */
 
@@ -7446,8 +7447,21 @@ performer::send_macro_bytes
             for (int i = 0; i < macro.event_count(); ++i)
             {
                 const midibytes & dbytes { macro.bytes(i) };
-                event ev(ts, dbytes[0], dbytes[1], dbytes[2]);
-                m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                if (dbytes.size() == 2)
+                {
+                    event ev(ts, dbytes[0], dbytes[1]);
+                    m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                }
+                else if (dbytes.size() == 3)
+                {
+                    event ev(ts, dbytes[0], dbytes[1], dbytes[2]);
+                    m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                }
+                else if (dbytes.size() > 3)
+                {
+                    event ev(ts, dbytes);
+                    m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                }
             }
         }
     }

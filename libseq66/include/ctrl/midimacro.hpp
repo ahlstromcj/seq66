@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-09-11
+ * \updates       2026-09-12
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -55,7 +55,24 @@ class midimacro
 
 public:
 
+    /**
+     *  Provides a vector of vectors, each vector representing a MIDI
+     *  event.
+     */
+
     using events = std::vector<midibytes>;
+
+    /**
+     * Indicates the type of file used to hold MIDI data.
+     */
+
+    enum class filetype
+    {
+        none,                           /* not associated with any file     */
+        ascii,                          /* a simple format (*.macro)        */
+        macros,                         /* a future format (*.macros)       */
+        raw                             /* binary data (any other extension */
+    };
 
 private:
 
@@ -120,9 +137,11 @@ private:
      *  against this value. It's about 2 * 72.
      *
      *  But even small data can use a file, if the user wants it.
+     *
+     *      bool m_use_file_storage { false };
      */
 
-    bool m_use_file_storage { false };
+    filetype m_file_type { filetype::none };
 
     /**
      *  Active file specification. Saved for the "Save" function.
@@ -180,7 +199,7 @@ public:
 
     bool use_file_storage () const
     {
-        return m_use_file_storage;
+        return m_file_type != filetype::none;
     }
 
     const std::string & file_name () const
@@ -188,11 +207,7 @@ public:
         return m_file_name;
     }
 
-    void file_name (const std::string & s)
-    {
-        m_file_name = s;
-        use_file_storage(! s.empty());
-    }
+    void file_name (const std::string & s);
 
     int event_count () const
     {
@@ -227,9 +242,9 @@ protected:
         m_is_valid = flag;
     }
 
-    void use_file_storage (bool flag)
+    void file_type (filetype ft)
     {
-        m_use_file_storage = flag;
+        m_file_type = ft;
     }
 
     bool tokenize (const std::string & values);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-11
+ * \updates       2026-09-13
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -510,14 +510,11 @@ qrpnframe::qrpnframe
         ui->button_rpn_delete, SIGNAL(clicked(bool)),
         this, SLOT(slot_delete_macro())
     );
-//  ui->button_rpn_macro->setEnabled(false);
-//  ui->button_rpn_delete->setEnabled(false);
 
     /*
      * Send (N)RPN/macro button.
      */
 
-//  ui->button_rpn_send->setEnabled(false);
     connect
     (
         ui->button_rpn_send, SIGNAL(clicked(bool)),
@@ -528,7 +525,6 @@ qrpnframe::qrpnframe
      * Insert (N)RPN/macro button.
      */
 
-//  ui->button_rpn_insert->setEnabled(false);
     if (not_null_sequence())
     {
         connect
@@ -537,8 +533,6 @@ qrpnframe::qrpnframe
             this, SLOT(slot_insert())
         );
     }
-//  else
-//      ui->button_rpn_insert->setEnabled(false);
 
     /*
      * Cancel button
@@ -571,7 +565,10 @@ qrpnframe::~qrpnframe()
 void
 qrpnframe::set_action_buttons (bool enable)
 {
-//  ui->button_load_file->setEnabled(enable);
+    /*
+     * ui->button_load_file->setEnabled(enable);
+     */
+
     ui->button_rpn_delete->setEnabled(enable);
     ui->button_rpn_insert->setEnabled(enable);
     ui->button_rpn_macro->setEnabled(enable);
@@ -798,6 +795,16 @@ qrpnframe::select_rpn_control (int rpncontrol)
 
     set_plaintext_msg("");
     ui->line_edit_other->clear();
+    enable_rpn_buttons(! use_other);
+}
+
+void
+qrpnframe::enable_rpn_buttons (bool enable)
+{
+    ui->check_box_rpn_append_data->setEnabled(enable);
+    ui->check_box_rpn_append_reset->setEnabled(enable);
+    ui->check_box_rpn_use_fine->setEnabled(enable);
+    qt_set_layout_enable(ui->verticalLayoutSelectRPN, enable);
 }
 
 void
@@ -1121,6 +1128,9 @@ qrpnframe::slot_load_file ()
 
                 std::string bcs { std::to_string(macdata.byte_count()) };
                 ui->line_edit_byte_count->setText(qt(bcs));
+                ui->button_rpn_insert->setEnabled(true);
+                ui->button_rpn_send->setEnabled(true);
+                ui->button_save_file->setEnabled(true);
                 set_plaintext_msg(longlines);
             }
         }
@@ -1588,12 +1598,56 @@ qrpnframe::modify_macro ()
 void
 qrpnframe::slot_send ()
 {
-    bool ok { other_macro_in_force() ? send_other_macro() : send_rpn_macro() };
+    bool ok { false };
+    bool other { other_macro_in_force() };
+    if (other)
+    {
+        if (macro_filename().empty())
+            ok = send_other_macro();
+        else
+            ok = send_file_macro();
+    }
+    else
+        ok = send_rpn_macro();
+
     if (ok)
     {
-        // todo
+        // TODO ?
     }
     s_show_slot(__FUNCTION__);
+}
+
+bool
+qrpnframe::send_file_macro ()
+{
+    bool result { other_macro_tokens().size() == 2 };
+    if (result)
+    {
+        int macbuss { m_rpn_buss };
+        midicontrolout & mco { perf().midi_control_out() };
+        midimacro mac(other_macro_tokens());
+        if (mac.use_file_storage())
+        {
+            result = mco.get_midi_data(mac, mac.file_name());
+            if (result)
+            {
+               result = perf().send_macro_bytes(mac, macbuss);
+                if (result)
+                {
+                    perf().notify_macro_change
+                    (
+                        macro_name(), performer::macro::sent
+                    );
+                }
+            }
+        }
+        else
+            result = false;
+    }
+    if (! result)
+        set_plaintext_msg("Error sending file macro");
+
+    return result;
 }
 
 bool
@@ -1627,7 +1681,7 @@ qrpnframe::send_rpn_macro ()
         perf().notify_macro_change(macro_name(), performer::macro::sent);
     }
     else
-        set_plaintext_msg("Error sending macro");
+        set_plaintext_msg("Error sending RPN macro");
 
     return result;
 }
@@ -1640,11 +1694,12 @@ bool
 qrpnframe::send_other_macro ()
 {
     bool result { other_macro_tokens().size() == 2 };
-    if (other_macro_tokens().size() == 2)
+    if (result)
     {
         midicontrolout & mco { perf().midi_control_out() };
         midimacro mac(other_macro_tokens());
         std::string macnam { macro_name() };
+        mac.name(macnam);                   // redundant?
 
         /*
          * midibytes byts { mco.expand_macro(macnam) };
@@ -1658,7 +1713,6 @@ qrpnframe::send_other_macro ()
         result = sz > 0;
         if (result)
         {
-            mac.name(macnam);
             result = perf().send_macro_bytes(mac, macbuss);
         }
     }
@@ -1677,11 +1731,22 @@ qrpnframe::send_other_macro ()
 void
 qrpnframe::slot_insert ()
 {
-    bool ok
+    bool ok { false };
+    bool other { other_macro_in_force() };
+    if (other)
     {
-        other_macro_in_force() ?
-            insert_other_macro() : insert_rpn_macro()
-    };
+        if (macro_filename().empty())
+        {
+            ok = insert_other_macro();
+        }
+        else
+        {
+            ok = insert_file_macro();
+        }
+    }
+    else
+        ok = insert_rpn_macro();
+
     if (ok)
     {
         ui->label_pattern_modified->show();
@@ -1723,14 +1788,34 @@ qrpnframe::insert_rpn_macro ()
 bool
 qrpnframe::insert_other_macro ()
 {
-    midimacro mac(other_macro_tokens());
-    midipulse ts { rpn_info().rpn_time_stamp };
-    bool result { track().add_macro(ts, mac) }; /* add_sequenced_macro() ?  */
+    bool result { other_macro_tokens().size() == 2 };
     if (result)
-        notify_macro_change(performer::macro::inserted);
-    else
-        set_plaintext_msg("Error inserting arbitrary  macro");
+    {
+        midimacro mac(other_macro_tokens());
+        midipulse ts { rpn_info().rpn_time_stamp };
+        bool result { track().add_macro(ts, mac) };
+        if (result)
+            notify_macro_change(performer::macro::inserted);
+        else
+            set_plaintext_msg("Error inserting other  macro");
+    }
+    return result;
+}
 
+bool
+qrpnframe::insert_file_macro ()
+{
+    bool result { other_macro_tokens().size() == 2 };
+    if (result)
+    {
+        midimacro mac(other_macro_tokens());
+        midipulse ts { rpn_info().rpn_time_stamp };
+        bool result { track().add_macro(ts, mac) };
+        if (result)
+            notify_macro_change(performer::macro::inserted);
+        else
+            set_plaintext_msg("Error inserting file  macro");
+    }
     return result;
 }
 

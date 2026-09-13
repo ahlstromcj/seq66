@@ -10,12 +10,12 @@
     <x>0</x>
     <y>0</y>
     <width>823</width>
-    <height>531</height>
+    <height>551</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <italic>true</italic>
+    <italic>false</italic>
    </font>
   </property>
   <property name="windowTitle">
@@ -24,14 +24,15 @@
   <widget class="QGroupBox" name="group_box_rpn">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>10</x>
      <y>40</y>
-     <width>241</width>
-     <height>201</height>
+     <width>251</width>
+     <height>211</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <italic>false</italic>
      <bold>true</bold>
     </font>
    </property>
@@ -43,15 +44,16 @@
      <rect>
       <x>10</x>
       <y>30</y>
-      <width>221</width>
-      <height>161</height>
+      <width>231</width>
+      <height>171</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayoutSelectControl">
      <item>
       <widget class="QRadioButton" name="radio_button_rpn">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -68,6 +70,7 @@ events.</string>
       <widget class="QRadioButton" name="radio_button_nrpn">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -104,6 +107,7 @@ Useful?</string>
        </property>
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -119,6 +123,7 @@ Useful?</string>
        </property>
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -131,6 +136,7 @@ Useful?</string>
       <widget class="QRadioButton" name="radio_button_other">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -139,7 +145,7 @@ Useful?</string>
 as System Exclusive for a MIDI device.</string>
        </property>
        <property name="text">
-        <string>Other (macros/arbitrary data)</string>
+        <string>Other (macros/ data)</string>
        </property>
       </widget>
      </item>
@@ -152,11 +158,12 @@ as System Exclusive for a MIDI device.</string>
      <x>518</x>
      <y>40</y>
      <width>261</width>
-     <height>251</height>
+     <height>261</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <italic>false</italic>
      <bold>true</bold>
     </font>
    </property>
@@ -169,14 +176,15 @@ as System Exclusive for a MIDI device.</string>
       <x>10</x>
       <y>30</y>
       <width>248</width>
-      <height>211</height>
+      <height>221</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="verticalLayoutSelectRPN">
      <item>
       <widget class="QRadioButton" name="radio_rpn_pitch_range">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -189,6 +197,7 @@ as System Exclusive for a MIDI device.</string>
       <widget class="QRadioButton" name="radio_rpn_chan_fine_tuning">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -201,6 +210,7 @@ as System Exclusive for a MIDI device.</string>
       <widget class="QRadioButton" name="radio_rpn_chan_coarse_tuning">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -213,6 +223,7 @@ as System Exclusive for a MIDI device.</string>
       <widget class="QRadioButton" name="radio_rpn_tune_program_change">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -225,6 +236,7 @@ as System Exclusive for a MIDI device.</string>
       <widget class="QRadioButton" name="radio_rpn_tune_bank_select">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -237,6 +249,7 @@ as System Exclusive for a MIDI device.</string>
       <widget class="QRadioButton" name="radio_rpn_mod_depth_range">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -249,6 +262,7 @@ as System Exclusive for a MIDI device.</string>
       <widget class="QRadioButton" name="radio_rpn_mpe_config_msg">
        <property name="font">
         <font>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -272,11 +286,53 @@ as System Exclusive for a MIDI device.</string>
      </item>
     </layout>
    </widget>
+   <widget class="QLineEdit" name="line_edit_rpn_macro_name">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>0</y>
+      <width>128</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>128</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <italic>true</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>The name of the macro to add
+to the 'ctrl' file.</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="maxLength">
+     <number>64</number>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
+    </property>
+    <property name="placeholderText">
+     <string>(name of macro)</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QComboBox" name="combo_box_channel">
    <property name="geometry">
     <rect>
-     <x>264</x>
+     <x>268</x>
      <y>65</y>
      <width>61</width>
      <height>30</height>
@@ -299,6 +355,7 @@ channel is specified.</string>
    </property>
    <property name="font">
     <font>
+     <italic>false</italic>
      <bold>true</bold>
     </font>
    </property>
@@ -320,6 +377,7 @@ channel is specified.</string>
      <widget class="QLabel" name="label_5">
       <property name="font">
        <font>
+        <italic>false</italic>
         <bold>true</bold>
        </font>
       </property>
@@ -374,8 +432,8 @@ channel is specified.</string>
   <widget class="QLabel" name="label_explanation">
    <property name="geometry">
     <rect>
-     <x>264</x>
-     <y>177</y>
+     <x>290</x>
+     <y>200</y>
      <width>231</width>
      <height>51</height>
     </rect>
@@ -396,7 +454,7 @@ by default. RPN reset is added by default
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>260</y>
+     <y>275</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -413,7 +471,7 @@ and ticks.</string>
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>252</y>
+     <y>270</y>
      <width>341</width>
      <height>121</height>
     </rect>
@@ -485,7 +543,7 @@ to specify a pitch change of 12 semitones and
      <x>274</x>
      <y>100</y>
      <width>231</width>
-     <height>74</height>
+     <height>95</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -526,7 +584,7 @@ as well as the &quot;coarse&quot; version.</string>
    <property name="geometry">
     <rect>
      <x>439</x>
-     <y>260</y>
+     <y>276</y>
      <width>60</width>
      <height>30</height>
     </rect>
@@ -549,6 +607,7 @@ as well as the &quot;coarse&quot; version.</string>
    </property>
    <property name="font">
     <font>
+     <italic>false</italic>
      <bold>true</bold>
     </font>
    </property>
@@ -576,7 +635,7 @@ port can be used.</string>
    <property name="geometry">
     <rect>
      <x>371</x>
-     <y>290</y>
+     <y>310</y>
      <width>411</width>
      <height>81</height>
     </rect>
@@ -669,7 +728,7 @@ the selected bus.</string>
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>412</y>
+     <y>431</y>
      <width>611</width>
      <height>28</height>
     </rect>
@@ -706,7 +765,7 @@ the selected bus.</string>
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>448</y>
+     <y>467</y>
      <width>71</width>
      <height>51</height>
     </rect>
@@ -723,7 +782,7 @@ Info</string>
    <property name="geometry">
     <rect>
      <x>18</x>
-     <y>403</y>
+     <y>422</y>
      <width>71</width>
      <height>41</height>
     </rect>
@@ -743,7 +802,7 @@ Data  </string>
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>450</y>
+     <y>469</y>
      <width>601</width>
      <height>61</height>
     </rect>
@@ -783,7 +842,7 @@ generated data line.</string>
    <property name="geometry">
     <rect>
      <x>720</x>
-     <y>380</y>
+     <y>396</y>
      <width>61</width>
      <height>28</height>
     </rect>
@@ -806,7 +865,7 @@ containing MIDI SysEx data.</string>
    <property name="geometry">
     <rect>
      <x>720</x>
-     <y>413</y>
+     <y>432</y>
      <width>61</width>
      <height>28</height>
     </rect>
@@ -824,52 +883,11 @@ containing MIDI SysEx data.</string>
     <string>Save</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="line_edit_rpn_macro_name">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>372</x>
-     <y>230</y>
-     <width>128</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>128</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>8</pointsize>
-     <italic>true</italic>
-    </font>
-   </property>
-   <property name="toolTip">
-    <string>The name of the macro to add
-to the 'ctrl' file.</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="maxLength">
-    <number>64</number>
-   </property>
-   <property name="frame">
-    <bool>true</bool>
-   </property>
-   <property name="placeholderText">
-    <string>(name of macro)</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_file_name">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>380</y>
+     <y>396</y>
      <width>81</width>
      <height>20</height>
     </rect>
@@ -885,7 +903,7 @@ to the 'ctrl' file.</string>
    <property name="geometry">
     <rect>
      <x>101</x>
-     <y>380</y>
+     <y>396</y>
      <width>611</width>
      <height>28</height>
     </rect>
@@ -907,7 +925,7 @@ to the 'ctrl' file.</string>
    <property name="geometry">
     <rect>
      <x>715</x>
-     <y>480</y>
+     <y>499</y>
      <width>71</width>
      <height>26</height>
     </rect>
@@ -931,7 +949,7 @@ to the 'ctrl' file.</string>
    <property name="geometry">
     <rect>
      <x>719</x>
-     <y>460</y>
+     <y>479</y>
      <width>58</width>
      <height>18</height>
     </rect>

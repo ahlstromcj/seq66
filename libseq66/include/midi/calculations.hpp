@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-07-30
+ * \updates       2026-09-13
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -330,6 +330,12 @@ extern bool split_14_bits
 );
 extern midibpm note_value_to_tempo (midibyte note);
 extern midilong extract_varinum (const midibytes & data, int & index);
+extern midilong extract_varinum
+(
+    const midibyte * data,
+    int count,
+    int & index
+);
 extern midipulse rescale_tick (midipulse tick, int newppqn, int oldppqn);
 
 /**

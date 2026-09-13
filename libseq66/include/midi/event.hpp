@@ -866,7 +866,7 @@ public:
     bool set_midi_event
     (
         midipulse timestamp,
-        const midibyte * buffer,
+        const midibyte * byts,
         int count = 0
     );
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-09-11
+ * \updates       2026-09-12
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacro is of the following format:
@@ -48,21 +48,11 @@
 #include <cstring>                      /* std::strlen()                    */
 
 #include "ctrl/midimacro.hpp"           /* seq66::midimacro class           */
+#include "util/filefunctions.hpp"       /* seq66::tokenize()                */
 #include "util/strfunctions.hpp"        /* seq66::tokenize()                */
 
 namespace seq66
 {
-
-/**
- *  Used to note that data must be read from a file.
- */
-
-const std::string &
-midimacro::file_marker ()
-{
-    static const std::string s_file_marker { "file:" };
-    return s_file_marker;
-}
 
 /**
  *  Note that some defaults are defined "in-class".
@@ -180,8 +170,7 @@ midimacro::tokenize (const std::string & values)
     {
         if (m_tokens[0] == file_marker())
         {
-            use_file_storage(true);
-            file_name(m_tokens[1]);
+            file_name(m_tokens[1]);             /* use_file_storage(true)   */
         }
         else
         {
@@ -259,6 +248,37 @@ midimacro::bytes_to_lines () const
     }
     result.push_back(line);
     return result;
+}
+
+/**
+ *  Used to note that data must be read from a file.
+ */
+
+const std::string &
+midimacro::file_marker ()
+{
+    static const std::string s_file_marker { "file:" };
+    return s_file_marker;
+}
+
+void
+midimacro::file_name (const std::string & s)
+{
+    m_file_name = s;
+    if (s.empty())
+    {
+        m_file_type = filetype::none;
+    }
+    else
+    {
+        std::string ext { file_dot_extension(s) };
+        if (ext == ".macro")
+            m_file_type = filetype::ascii;
+        else if (ext == ".macros")
+            m_file_type = filetype::macros;
+        else
+            m_file_type = filetype::raw;
+    }
 }
 
 }           // namespace seq66

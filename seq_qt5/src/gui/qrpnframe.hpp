@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-10
+ * \updates       2026-09-12
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -152,6 +152,7 @@ private:
 private:
 
     void notify_macro_change (performer::macro code, bool modified = true);
+    void enable_rpn_buttons (bool enable);
     void select_rpn_control (int rpncontrol);
     void set_rpn_option_checkboxes ();
     void select_rpn_parameter_type (int rpnvalue);
@@ -165,6 +166,8 @@ private:
     bool insert_rpn_macro ();
     bool send_other_macro ();
     bool insert_other_macro ();
+    bool send_file_macro ();
+    bool insert_file_macro ();
     void set_plaintext_msg (const std::string & msg);
     void set_plaintext_msg (const tokenization & tokens);
     void set_file_name (const std::string & fname);

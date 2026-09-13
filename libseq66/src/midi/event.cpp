@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-08-20
+ * \updates       2026-09-13
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -202,7 +202,7 @@ event::event (midipulse tstamp, midibyte metatype, const midibytes & data) :
  *  in the data.
  */
 
-event::event (midipulse tstamp, const midibytes & data) :
+event::event (midipulse tstamp, const midibytes & byts) :
     m_input_buss    (null_buss()),
     m_timestamp     (tstamp),
     m_status        (EVENT_MIDI_SYSEX),
@@ -215,8 +215,27 @@ event::event (midipulse tstamp, const midibytes & data) :
     m_marked        (false),
     m_painted       (false)
 {
-    if (event::is_sysex_msg(data[0]))
-        (void) append_sysex(data);
+    if (byts.size() > 0)
+    {
+        int count { int(byts.size()) };
+        if (count <= 3)
+            (void) set_midi_event(tstamp, byts.data());
+        else
+            (void) set_midi_event(tstamp, byts.data(), count);
+
+#if defined USE_THIS_CODE
+        if (event::is_sysex_msg(byts[0]))
+        {
+            m_status = EVENT_MIDI_SYSEX;
+            (void) append_sysex(byts);
+        }
+        else if (event::is_meta_msg(byts[0]))
+        {
+            m_status = EVENT_MIDI_META;
+            (void) append_sysex(byts); // TODO: set m_channel to correct value
+        }
+#endif
+    }
 }
 
 /**
@@ -800,7 +819,7 @@ event::set_note_off (int note, midibyte channel)
  * \param timestamp
  *      The desired or actual time-stamp for the event.
  *
- * \param buffer
+ * \param byts
  *      Provides a pointer to the data buffer. This can also be a pointer
  *      to the data obtained via std::vector::data(). We use a pointer
  *      because PortMidi is C code, not C++ code.
@@ -821,11 +840,11 @@ bool
 event::set_midi_event
 (
     midipulse tstamp,
-    const midibyte * buffer,
+    const midibyte * byts,
     int count
 )
 {
-    midibyte eventstatus = buffer[0];
+    midibyte eventstatus = byts[0];
     bool result = eventstatus < EVENT_MIDI_SYSEX;           /* < 0xf0       */
     set_timestamp(tstamp);                  /* set_sysex_size(count) wrong  */
     if (result)
@@ -842,7 +861,7 @@ event::set_midi_event
         if (count == 3)
         {
             set_status_keep_channel(eventstatus);
-            set_data(buffer[1], buffer[2]);
+            set_data(byts[1], byts[2]);
             if (is_note_off_recorded())
             {
                 midibyte channel = mask_channel(eventstatus);
@@ -853,7 +872,7 @@ event::set_midi_event
         else if (count == 2)
         {
             set_status_keep_channel(eventstatus);
-            set_data(buffer[1]);
+            set_data(byts[1]);
         }
         else if (count == 1)
         {
@@ -863,19 +882,35 @@ event::set_midi_event
     }
     else
     {
+        if (event::is_sysex_msg(byts[0]))
+        {
+            (void) append_sysex(byts, count);
+        }
+        else if (event::is_meta_msg(byts[0]))
+        {
+            (void) append_sysex(byts, count); // TODO: set m_channel value
+        }
+
         result = true;
         reset_sysex();                      /* set up for sysex if needed   */
+        set_status(eventstatus);
         switch (eventstatus)
         {
         case EVENT_MIDI_SYSEX:
 
-            result = append_sysex(buffer, count);
+            result = append_sysex(byts, count);
             if (! result)
                 errprint("append_sysex() failed");
             break;
 
         case EVENT_MIDI_META:               /* 0xFF: done in create_event() */
-
+            {
+                midibyte metatype { byts[1] };
+                int index { 2 };
+                midilong len { extract_varinum(byts, count, index) };
+                set_meta_status(metatype);
+                (void) set_sysex(byts + index, len);
+            }
             break;
 
         /*
@@ -896,17 +931,17 @@ event::set_midi_event
 
         case EVENT_MIDI_QUARTER_FRAME:      /* 0xF1u:  1 data byte          */
 
-            result = append_sysex_byte(buffer[1]);
+            result = append_sysex_byte(byts[1]);
             break;
 
         case EVENT_MIDI_SONG_POS:           /* 0xF2u:  2 data bytes         */
 
-            result = append_sysex(&buffer[1], 2);
+            result = append_sysex(&byts[1], 2);
             break;
 
         case EVENT_MIDI_SONG_SELECT:        /* 0xF3u:  1 data byte, unused  */
 
-            result = append_sysex_byte(buffer[1]);
+            result = append_sysex_byte(byts[1]);
             break;
 
         case EVENT_MIDI_SYSEX_END:          /* 0xF7u: SysEx End or Continue */
@@ -916,7 +951,6 @@ event::set_midi_event
 
         default:
 
-            set_status(eventstatus);
             clear_data();
             break;
         }

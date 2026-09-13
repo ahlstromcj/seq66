@@ -1,7 +1,7 @@
 TO DO for Seq66 0.99.28
 
 Chris Ahlstrom
-2019-04-13 to 2026-09-11
+2019-04-13 to 2026-09-13
 
     -   Revisit metronome and count-in testing re issue #147.
     -   Edit / Preferences / MIDI Clock.
@@ -25,17 +25,13 @@ Chris Ahlstrom
         -   24stones.mid and 2stones.mid
         -   Check with valgrind again.
         -   Add opening the dialog to the right click menu?
-        -   Added a button to read a *.SYS (SysEx) file, but need to
-            show the data in text format in the "Other's Data"
-            box.
-        -   With "Other", put the first macro data token in 
-            Other Data.
         -   Create Macro does not raise the 'ctrl' save flag.
         -   Save not enabled when the data changes.
-        -   If Other Data is changed, enable "Modify Macro".
-            Otherwise, if other edits are changed, ditto.
-        -   Only enable "Delete Macro" if a macro is selected
-            in "Other" mode.
+    -   SysEx.
+        -   ALSA api_play() restricted to 12 bytes. How to send
+            a long message?
+        -   If the first byte is not 0xf0, no data will be
+            set in the event.
     -   The ":" key is available (as well as some other keys). How
         can we use them? Metronome toggle as noted in "Back burner".
     -   Background recording / Metronome.

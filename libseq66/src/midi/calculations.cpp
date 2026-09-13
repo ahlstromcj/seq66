@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-07-30
+ * \updates       2026-09-13
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1652,6 +1652,30 @@ extract_varinum (const midibytes & data, int & index)
     midilong result = 0;
     midibyte c = 0;
     for ( ; index < int(data.size()); ++index)
+    {
+        c = data[index];
+        if ((c & 0x80) != 0x00)                     /* bit 7 is set         */
+        {
+            result <<= 7;                           /* shift result 7 bits  */
+            result += c & 0x7F;                     /* add bits 0-6         */
+        }
+        else
+        {
+            ++index;
+            break;
+        }
+    }
+    result <<= 7;                                   /* bit was clear       */
+    result += c & 0x7F;
+    return result;
+}
+
+midilong
+extract_varinum (const midibyte * data, int count, int & index)
+{
+    midilong result = 0;
+    midibyte c = 0;
+    for ( ; index < count; ++index)
     {
         c = data[index];
         if ((c & 0x80) != 0x00)                     /* bit 7 is set         */

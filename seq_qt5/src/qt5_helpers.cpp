@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2026-09-02
+ * \updates       2026-09-13
  * \license       GNU GPLv2 or above
  *
  *  The items provided externally are:
@@ -312,15 +312,35 @@ qt_mouse_y (QMouseEvent * ev)
 void
 qt_set_layout_visibility (QLayoutItem * item, bool visible)
 {
-    QWidget * widget = item->widget();
+    QWidget * widget { item->widget() };
     if (not_nullptr(widget))
         return widget->setVisible(visible);
 
-    QLayout * layout = item->layout();
+    QLayout * layout { item->layout() };
     if (not_nullptr(layout))
     {
         for (int i = 0; i < layout->count(); ++i)
             qt_set_layout_visibility(layout->itemAt(i), visible);
+    }
+}
+
+/**
+ *  Disables the children of the layout. Disabling the layout itself
+ *  collapses all the children to one line.
+ */
+
+void
+qt_set_layout_enable (QLayout * layout, bool enable)
+{
+    for (int i = 0; i < layout->count(); ++i)
+    {
+        QLayoutItem * item { layout->itemAt(i) };
+        if (not_nullptr(item))
+        {
+            QWidget * widget { item->widget() };
+            if (not_nullptr(widget))
+                widget->setEnabled(enable);
+        }
     }
 }
 

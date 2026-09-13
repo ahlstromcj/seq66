@@ -2228,11 +2228,8 @@ file_extension (const std::string & path)
     std::string result;
     auto ppos = path.find_last_of(".");
     if (ppos != std::string::npos)
-    {
-//      auto len = path.length() - 2;
-//      result = path.substr(ppos + 1, len);
         result = path.substr(ppos + 1);
-    }
+
     return result;
 }
 
