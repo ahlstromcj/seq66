@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-13
+ * \updates       2026-09-14
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -1342,6 +1342,7 @@ qrpnframe::macro_name_changed ()
         if (found)
         {
             ui->button_rpn_delete->setEnabled(true);
+            ui->button_rpn_send->setEnabled(true);
             ui->button_rpn_macro->setText("Modify Macro");
         }
         else

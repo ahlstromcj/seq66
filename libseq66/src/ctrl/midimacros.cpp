@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-08-29
+ * \updates       2026-09-14
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -390,21 +390,23 @@ midimacros::make_defaults ()
 {
     static const std::string s_defaults [] =
     {
+        "custom = 0xF0 0x7D 0x00 0x00 0x00 0x00 0xF7",
         "footer = 0xF7                   # End-of-SysEx byte",
-        "header = 0xF0 0x00 0x00         # device SysEx header, 0xF0 required",
-        "middlec_off = 0x80 0x3C 0x00    # turn off test note",
-        "middlec_on = 0x90 0x3C 0x40     # turn on test note",
+        "header = 0xF0                   # device SysEx header, 0xF0 required",
+        "middle-c-off = 0x80 0x3C 0x00   # turn off test note",
+        "middle-c-on = 0x90 0x3C 0x40    # turn on test note",
+        "ping = 0xF0 0x7E 0x7F 0x06 0x01 0xF7       # request Identity Reply",
         "pitch = "
             "0xB0 0x65 0 0xB0 0x64 0x0 "
             "0xB0 0x06 0x02 0xB0 0x26 0 "
             "0xB0 0x65 0x7F 0xB0 0x64 0x7F",
-        "reset = $header 0x00 $footer    # fill in with device's reset command",
+        "reset = 0xF0 0x7E 0x7F 0x09 0x01 0xF7      # GM1 audio reset"
         "rpnpitch = "
             "0xB0 0x65 0 0xB0 0x64 0x0 "
             "0xB0 0x06 0x0C 0xB0 0x26 0 "
             "0xB0 0x65 0x7F 0xB0 0x64 0x7F",
-        "shutdown = $header 0x00 $footer # sent at exit, if not empty",
-        "startup = $header 0x00 $footer  # sent at start, if not empty",
+        "shutdown =                      # sent at exit, if not empty",
+        "startup =                       # sent at start, if not empty",
         ""                                          /* list terminator */
     };
     bool result = count() == 0;

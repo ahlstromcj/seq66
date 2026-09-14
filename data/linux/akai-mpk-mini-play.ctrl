@@ -1,6 +1,6 @@
 # Seq66 0.99.3 MIDI control configuration file
 #
-# /home/user/.config/seq66/qseq66.ctrl
+# /home/user/.config/seq66/akai-mpk-mini-play.ctrl
 # Written 2023-03-18 10:11:39
 #
 # Sets up MIDI I/O control. The format is like the 'rc' file. To use it, set it
@@ -17,7 +17,12 @@ version = 6
 
 [comments]
 
-Add your comment block here
+This file is similar to qseq66-lp-mini.ctrl, but is meant only
+to set up the drum pads as control values to mute/unmute pattern
+slots.
+  
+See doc/seq66-akai-mpk-mini-learn.pdf for information related to
+this 'ctrl' file.
 
 [midi-control-settings]
 
@@ -32,8 +37,8 @@ Add your comment block here
 # 'azerty'. AZERTY turns off auto-shift for group-learn.
 
 drop-empty-controls = false
-control-buss = 0xff
-midi-enabled = false
+control-buss = "MPK mini Play mk3 MIDI 1"
+midi-enabled = true
 button-offset = 0
 button-rows = 4
 button-columns = 8
@@ -236,7 +241,7 @@ keyboard-layout = qwerty
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 0xff
+output-buss = "Midi Through Port-0"
 midi-enabled = false
 button-offset = 0
 button-rows = 4
@@ -387,8 +392,8 @@ button-columns = 8
 # event, separate each with a '|' (pipe) character.
 
 custom = 0xF0 0x7D 0x00 0x00 0x00 0x00 0xF7
-footer = 0xF7
-header = 0xF0
+footer = 0xF7 # End-of-SysEx byte
+header = 0xF0 0x00 0x00 # device SysEx header, 0xF0 required
 middle-c-off = 0x80 0x3C 0x00
 middle-c-on = 0x90 0x3C 0x40
 ping = 0xF0 0x7E 0x7F 0x06 0x01 0xF7
@@ -400,6 +405,6 @@ rpn-pitch = 0xB0 0x65 0 | 0xB0 0x64 0x0 | 0xB0 0x06 0x0C | 0xB0 0x26 0 | 0xB0 0x
 shutdown = 
 startup = 
 
-# End of /home/user/.config/seq66/qseq66.ctrl
+# End of /home/user/.config/seq66/akai-mpk-mini-play.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

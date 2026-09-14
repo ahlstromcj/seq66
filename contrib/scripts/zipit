@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# This script zips up the changed files for safety's sake and quick
+# transfer of incomplete changes with involving GitHub..
+
+ZIPNAME="seq66-meson.zip"
+CURRENTDATE=$(date +%Y-%m-%d)
+BRANCH=`git symbolic-ref -q HEAD 2> /dev/null`
+ZIPTAG=""
+if [ $? == 0 ] ; then
+   ISGITBRANCH="yes"
+   GITBRANCH=${BRANCH##*/}
+else
+   ISGITBRANCH="no"
+   GITBRANCH=""
+fi
+
+if [ "$1" != "" ] ; then
+    ZIPTAG="-$1"
+fi
+
+if [ "$ISGITBRANCH" == "yes" ] ; then
+    ZIPNAME="seq66-$GITBRANCH-$CURRENTDATE$ZIPTAG.zip"
+else
+    ZIPNAME="seq66-safety-$CURRENTDATE$ZIPTAG.zip"
+fi
+  
+if [ "$ISGITBRANCH" == "yes" ] ; then
+    echo "Zip file: $ZIPNAME git dn"
+    zip -u $ZIPNAME $(git dn)
+else
+    echo "NOT READY"
+fi

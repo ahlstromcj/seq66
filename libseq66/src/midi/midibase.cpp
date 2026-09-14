@@ -448,7 +448,11 @@ void
 midibase::play (const event * e24, midibyte channel)
 {
     automutex locker(m_mutex);
-    api_play(e24, channel);
+    bool issysex { e24->is_sysex() };
+    if (issysex)
+        api_sysex(e24);
+    else
+        api_play(e24, channel);
 }
 
 /**

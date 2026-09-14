@@ -1,0 +1,17 @@
+Seq66 macro: ping
+
+# The Identity Request packet is the de facto "ping" command in the MIDI
+# protocol. If a device receives this packet and supports the MIDI spec, it is
+# required to reply with an Identity Reply packet containing its manufacturer
+# ID, family, and model version.  Hex Stream: F0 7E 7F 06 01 F7
+#
+# F0 — Start of SysEx (SOX)
+# 7E — Universal Non-Real-Time ID (universal utility packet, not vendor-locked)
+# 7F — Device ID / Broadcast (targets all connected devices or is a wildcard)
+# 06 — Sub-ID 1 (General Information Category)
+# 01 — Sub-ID 2 (Identity Request Function Code)
+# F7 — End of SysEx (EOX)#
+
+0xF0 0x7E 0x7F 0x06 0x01 0xF7
+
+# vim: sw=4 ts=4 wm=4 et ft=dosini

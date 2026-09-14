@@ -604,7 +604,29 @@ static const int c_sysex_chunk      =   256;
 
 /**
  *  Takes a native SYSEX event, encodes it to an ALSA event, and then
- *  puts it in the queue.
+ *  puts it in the queue. The process:
+ *
+ *      -   clear(). Initialize the event structure to zero.
+ *      -   set_priority().
+ *      -   set_subs().
+ *      -   set_source(). Set source and destination addresses.
+ *      -   set_direct(). Mark the event for direct dispatch (or queue
+ *          it if using a tempo queue).
+ *      -   set_sysex(). Set the SysEx data using the helper macro from
+ *          alsa/seqmid.h.
+ *      -   event_output_direct() or event_output(). Send the event through
+ *          the sequencer.
+ *      -   api_flush(). Flush the output buffer to send immediately.
+ *
+ *  Note: Replaced by a vector of midibytes:
+ *
+ *      midibyte * data = e24->get_sysex();
+ *
+ *  This tack relies on the standard property of std::vector, where all n
+ *  elements of the vector are guaranteed to be stored contiguously (in
+ *  order to be accessible via random-access iterators).
+ *
+ *  We send the sysex data in chunks, with a sleep, for slower devices.
  *
  * \param e24
  *      The event to be handled.
@@ -619,26 +641,24 @@ midi_alsa::api_sysex (const event * e24)
     snd_seq_ev_set_subs(&ev);
     snd_seq_ev_set_direct(&ev);                         /* it's immediate   */
     snd_seq_ev_set_source(&ev, m_local_addr_port);      /* set source       */
+    snd_seq_ev_set_dest(&ev, m_dest_addr_client, m_dest_addr_port);
 
     /*
-     *  Replaced by a vector of midibytes:
-     *
-     *      midibyte * data = e24->get_sysex();
-     *
-     *  This tack relies on the standard property of std::vector, where all n
-     *  elements of the vector are guaranteed to be stored contiguously (in
-     *  order to be accessible via random-access iterators).
-     *
-     *  We send the sysex data in chunks, with a sleep, for slower devices.
+     *  See "Note" above.
      */
 
-    event::sysex & data = const_cast<event::sysex &>(e24->get_sysex());
-    int data_size = e24->sysex_size();
+    event::sysex & data { const_cast<event::sysex &>(e24->get_sysex()) };
+    int data_size { e24->sysex_size() };
     if (data_size < c_sysex_chunk)
     {
         snd_seq_ev_set_sysex(&ev, data_size, &data[0]);
 
-        int rc = snd_seq_event_output_direct(m_seq, &ev);
+        int rc { snd_seq_event_output_direct(m_seq, &ev) };
+
+        /*
+         * From AI: int rc { snd_seq_event_output(m_seq, &ev) };
+         */
+
         if (rc >= 0)
         {
             api_flush();
@@ -652,13 +672,11 @@ midi_alsa::api_sysex (const event * e24)
     {
         for (int offset = 0; offset < data_size; offset += c_sysex_chunk)
         {
-            int data_left = data_size - offset;
-            snd_seq_ev_set_sysex
-            (
-                &ev, min(data_left, c_sysex_chunk), &data[offset]
-            );
+            int data_left { data_size - offset };
+            int chunksize { int(min(data_left, c_sysex_chunk)) };
+            snd_seq_ev_set_sysex(&ev, chunksize, &data[offset]);
 
-            int rc = snd_seq_event_output_direct(m_seq, &ev);
+            int rc { snd_seq_event_output_direct(m_seq, &ev) };
             if (rc >= 0)
             {
                 usleep(c_sysex_sleep_us);
