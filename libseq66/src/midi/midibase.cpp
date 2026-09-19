@@ -252,7 +252,8 @@ midibase::set_name
             snprintf
             (
                 name, sizeof name, "[%d] %d:%d %s:%s",
-                bus_index(), bus_id(), port_id(),
+//              bus_index(), bus_id(), port_id(),   ca 2026-09-17
+                client_id(), bus_id(), port_id(),
                 appname.c_str(), portname.c_str()
             );
             bus_name(appname);
@@ -451,7 +452,7 @@ midibase::play (const event * e24, midibyte channel)
     bool issysex { e24->is_sysex() };
     if (issysex)
         api_sysex(e24);
-    else
+    else if (! e24->is_meta())
         api_play(e24, channel);
 }
 

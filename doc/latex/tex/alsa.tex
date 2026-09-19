@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-06-16
-% \update      2025-07-27
+% \update      2026-09-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -102,8 +102,7 @@
 
    Edit the following file (create it if necessary)
    to add a line to change the number
-   of Thru ports.  We use the '\#' prompt to indicate root access or usage of
-   \texttt{sudo}.
+   of Thru ports.
    Save it.
    No need to reboot, this is \textsl{Linux}.
    Just remove and reinsert the module with the
@@ -115,6 +114,9 @@
       # rmmod snd_seq_dummy
       # modprobe snd_seq_dummy
    \end{verbatim}
+
+   \textbf{Note}: We use the '\#' prompt to indicate root access or
+   usage of \texttt{sudo}.
 
    Then listing the ports will show:
 
@@ -151,22 +153,93 @@
    live-coding environments (Sonic-Pi, Supercollider, Pure Data), or
    visualization software.
 
-   To use ALSA's virtual MIDI the
-   \texttt{snd-card-virmidi} module must be present. 
+   One instance of \textsl{Seq66} can communicate
+   another instance.
+   See \sectionref{paragraph:alsa_testing_midi_clock_receive};
+
+\label{paragraph:alsa_testing_midi_clock_receive}
+
+\subsubsection{ALSA / Virtual MIDI Devices / snd\_virmidi}
+\label{subsubsec:alsa_virtual_midi_devices_snd_virmidi}
+
+   The \texttt{snd\_virmidi} ("virmidi" for short)
+   Linux kernel module creates ALSA fully functional
+   "hardware" virtual ports that can be used
+   to route MIDI messages between software clients.
+
+   \textbf{Note}: To use Seq66's virtual/manual MIDI ports, the "virmidi"
+   modules need not be present. 
 
    \begin{verbatim}
-   # Configure support for OSS /dev/sequencer and /dev/music (/dev/sequencer2)
-   # (Takashi Iwai: unnecessary to alias beyond the first card, i.e., card 0)
-   alias sound-service-0-1 snd-seq-oss
-   alias sound-service-0-8 snd-seq-oss
-   # Configure card 1 (second card) as a virtual MIDI card
-   sound-slot-1 snd-card-1
-   alias snd-card-1 snd-virmidi
+      $ lsmod | grep virmidi
    \end{verbatim}
 
+   Both \texttt{snd\_virmidi} and \texttt{snd\_seq\_virmidi}
+   should be present.
+   If not, then they must be added.
+   Load the modules temporarily using
+
+   \begin{verbatim}
+      # modprobe snd-virmidi                 (defaults to 4 "devices")
+      # modprobe snd-virmidi midi_devs=1     (one "device")
+   \end{verbatim}
+
+   Run the second command so only one virtual port is made.
+   Run \texttt{lsmod} as above to verify the "virmidi" modules.
+   If present run these commands for more verification:
+
+   \begin{verbatim}
+      $ cat /proc/asound/cards
+       0 [PCH     ]: HDA-Intel - HDA Intel PCH
+                     HDA Intel PCH at 0xa1228000 irq 141
+       1 [VirMIDI ]: VirMIDI - VirMIDI
+                     Virtual MIDI Card 1
+   \end{verbatim}
+
+   And:
+
+   \begin{verbatim}
+      $ aconnect -i    ---or---     aconnect -o
+      client 44: 'Virtual Raw MIDI 7-0' [type=kernel,card=7]
+          0 'VirMIDI 7-0     '
+   \end{verbatim}
+
+   One will see something like the above, as well as other ALSA
+   clients.
+
+   Load the module permanently at boot by adding
+   \texttt{snd\_virmidi} to:
+   \texttt{/etc/modules-load.d/modules.conf}
+   or by copying \texttt{contrib/scripts/virmidi.conf}
+   to 
+   \texttt{/etc/modules-load.d}.
+
+%  Set a fixed card index by creating a file in
+%  /etc/modprobe.d/snd-virmidi.conf with 
+%  options snd-virmidi index=1
+%
+%  \begin{verbatim}
+%     # Configure support for OSS /dev/sequencer and /dev/music (/dev/sequencer2)
+%     # (Takashi Iwai: unnecessary to alias beyond the first card, i.e., card 0)
+%
+%     alias sound-service-0-1 snd-seq-oss
+%     alias sound-service-0-8 snd-seq-oss
+%
+%     # Configure card 1 (second card) as a virtual MIDI card
+%
+%     sound-slot-1 snd-card-1
+%     alias snd-card-1 snd-virmidi
+%  \end{verbatim}
+
    A small, but useful application to connect ALSA ports
-   is \texttt{aconnectgui}.
+   is \texttt{aconnectgui}. The command-line version is
+   \texttt{aconnect}.
    Also see the article about ALSA and JACK MIDI \cite{midilinux}.
+
+   At present, we have no use-case to describe
+   for these virtual ports.
+   One use is for connecting more than one port to another port
+   using \texttt{aconnect}.
 
 \subsection{ALSA / Trouble-Shooting}
 \label{subsec:alsa_testing}
@@ -233,7 +306,6 @@
    First, run one of the following commands:
 
    \begin{verbatim}
-      $ seq24 -m
       $ qseq66 --alsa --manual --verbose
    \end{verbatim}
 
@@ -244,15 +316,15 @@
    with the following options:
 
    \begin{verbatim}
-      $ qseq66 --alsa --auto-ports --verbose --client-name seq66debug
+      $ qseq66 --alsa --manual --verbose --client-name seq66debug
    \end{verbatim}
 
-   This sets up to auto-connect ALSA MIDI ports.  In
+   In
    \textbf{Edit / Preferences / MIDI Input}, check-mark the first
-   "seq24" port.  There should be no need to restart.
-   Then start playback in \textsl{Seq24}.
-   \textsl{Seq66} should display a rapid stream of MIDI Clock messages.
-   If not, check the setup and, if correct, report a bug!
+   "seq66" port.  There should be no need to restart.
+%  Then start playback in \textsl{Seq24}.
+%  \textsl{Seq66} should display a rapid stream of MIDI Clock messages.
+%  If not, check the setup and, if correct, report a bug!
 
 \paragraph{VMPK Issues}
 \label{paragraph:alsa_testing_vmpk_issues}

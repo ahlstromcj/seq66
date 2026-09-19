@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-09
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -571,6 +571,12 @@ qseditoptions::setup_tab_midi_input ()
     (
         ui->checkBoxRecordByChannel, SIGNAL(clicked(bool)),
         this, SLOT(slot_record_by_channel())
+    );
+
+    connect
+    (
+        ui->checkBoxRecordSysEx, SIGNAL(clicked(bool)),
+        this, SLOT(slot_record_sysex())
     );
 
     bool isvirtualports = rc().manual_ports();
@@ -3176,6 +3182,9 @@ qseditoptions::sync_rc ()
         ui->checkBoxRecordByChannel->setChecked(false);
     else
         ui->checkBoxRecordByChannel->setChecked(rc().record_by_channel());
+
+    bool recsysex { rc().record_sysex() };
+    ui->checkBoxRecordSysEx->setChecked(rc().record_sysex());
 }
 
 void
@@ -4749,6 +4758,15 @@ qseditoptions::slot_record_by_channel ()
     if (on)
         ui->checkBoxRecordByBuss->setChecked(false);
 
+    modify_rc();
+}
+
+void
+qseditoptions::slot_record_sysex ()
+{
+    bool on = ui->checkBoxRecordSysEx->isChecked();
+    rc().record_sysex(on);
+    perf().record_sysex(on);
     modify_rc();
 }
 

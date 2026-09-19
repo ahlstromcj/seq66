@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2026-07-13
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -908,6 +908,11 @@ public:
         return m_thread_priority;
     }
 
+    bool record_sysex () const
+    {
+        return m_pass_sysex;
+    }
+
     bool pass_sysex () const
     {
         return m_pass_sysex;
@@ -1519,6 +1524,11 @@ public:
             p = c_thread_priority;
 
         m_thread_priority = p;
+    }
+
+    void record_sysex (bool flag)
+    {
+        m_pass_sysex = flag;
     }
 
     void pass_sysex (bool flag)

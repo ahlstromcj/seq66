@@ -82,7 +82,7 @@ rcsettings::rcsettings () :
     m_show_midi                 (false),
     m_priority                  (false),
     m_thread_priority           (0),        /* c_thread_priority            */
-    m_pass_sysex                (false),
+    m_pass_sysex                (false),    /* a.k.a. record sysex          */
     m_with_jack_transport       (false),
     m_with_jack_master          (false),
     m_with_jack_master_cond     (false),
@@ -202,7 +202,7 @@ rcsettings::set_defaults ()
     m_show_midi                 = false;
     m_priority                  = false;
     m_thread_priority           = 0;        /* c_thread_priority            */
-    m_pass_sysex                = false;
+    m_pass_sysex                = false;    /* a.k.a. record sysex          */
     m_with_jack_transport       = false;
     m_with_jack_master          = false;
     m_with_jack_master_cond     = false;

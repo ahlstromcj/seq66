@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-09-12
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -365,6 +365,7 @@ performer::performer (int ppq, int rows, int columns) :
     m_master_bus            (),                 /* this is a shared pointer */
     m_record_by_buss        (false),
     m_record_by_channel     (false),
+    m_record_sysex          (rc().record_sysex()),
     m_buss_patterns         (),
     m_one_measure           (0),
     m_fast_ticks            (0),
@@ -5393,6 +5394,11 @@ performer::poll_cycle ()
                 if (! is_pattern_playing())         /* ! is_running()       */
                     inner_start();                  /* start_playing()      */
 #endif
+                bool ok
+                {
+                    ev.below_sysex() ||                     /* below 0xF0   */
+                    (ev.is_sysex() && record_sysex())
+                };
                 if (ev.below_sysex())                       /* below 0xF0   */
                 {
                     if (m_master_bus->is_dumping_input())
@@ -5476,9 +5482,9 @@ performer::poll_cycle ()
                     if (is_jack_master() || ! is_jack_running())
                         (void) set_beats_per_minute(ev.tempo());
                 }
-                else if (ev.is_sysex())
+                else if (ev.is_sysex())             /* can be handled above */
                 {
-                    midi_sysex(ev);
+                    midi_sysex(ev);                 /* currently just shown */
                 }
 #if defined USE_ACTIVE_SENSE_AND_RESET
                 else if (ev.is_sense_reset())
@@ -5709,12 +5715,12 @@ performer::midi_sysex (const event & ev)
     if (rc().show_midi())
         ev.print();
 
-    /*
-     *  if (rc().pass_sysex())
-     *  {
-     *      m_master_bus->sysex(&ev);
-     *  }
-     */
+#if 0
+    if (rc().pass_sysex())
+    {
+        m_master_bus->handle_sysex(&ev);
+    }
+#endif
 }
 
 /**

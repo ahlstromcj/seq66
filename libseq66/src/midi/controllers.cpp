@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2026-08-11
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -194,6 +194,22 @@ s_controller_names [c_midibyte_data_max]
     { 126, "Mono On"                              },
     { 127, "Poly On"                              }     // 0x7F
 };
+
+/*
+ *  Handles these numbers in /usr/include/alsa/asoundef.h:
+ *
+ *      MIDI_CTL_MSB_BANK to MIDI_CTL_MONO2
+ *
+ * \param index
+ *      The controller number.
+ *
+ * \param usehex
+ *      If true (the default is false), the index is converted to
+ *      hexadecimal.
+ *
+ * \return
+ *      Returns the controller number and name in one string.
+ */
 
 std::string
 controller_name (int index, bool usehex)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-09-03
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/qseq66/qseq66.rc </code> configuration file is fairly
@@ -520,14 +520,21 @@ rcfile::parse ()
     rc_ref().set_clock_mod(ticks);
 
     /*
-     * Note that record-by-buss supercedes record-by-channel. They cannot both
-     * be true.
+     * Note that record-by-buss supercedes record-by-channel. They cannot
+     * both be true.
      */
 
-    bool recordby = get_boolean(file, tag, "record-by-buss");
-    rc_ref().record_by_buss(recordby);
-    recordby = get_boolean(file, tag, "record-by-channel");
-    rc_ref().record_by_channel(recordby);
+    bool recordbybus = get_boolean(file, tag, "record-by-buss");
+    rc_ref().record_by_buss(recordbybus);
+
+    bool recordbych = get_boolean(file, tag, "record-by-channel");
+    if (recordbybus)
+        recordbych = false;
+
+    rc_ref().record_by_channel(recordbych);
+
+    bool recordsyx = get_boolean(file, tag, "record-sysex");
+    rc_ref().record_sysex(recordsyx);
 
     tag = "[midi-file-tweaks]";
     pfname = get_variable(file, tag, "running-status-action");
@@ -1067,8 +1074,8 @@ rcfile::write ()
     }
 
     /*
-     * MIDI clock modulo value, and filter by channel, new option as of
-     * 2016-08-20.
+     * MIDI clock modulo value, filter by bus or channel, and record SysEx
+     * events.
      */
 
     file << "\n"
@@ -1076,12 +1083,12 @@ rcfile::write ()
 "# the bus is set to MIDI Clock Mod setting. 'record-by-buss' routes MIDI\n"
 "# events to the first pattern set to that input buss. 'record-by-channel',\n"
 "# if the buss is not set, routes events to patterns with an output channel\n"
-"# matching the MIDI event channel. Option adopted from the Seq32 project.\n"
+"# matching the MIDI event channel. 'record-sysex' allows SysEx recording.\n"
+"# Option adopted from the Seq32 project.\n"
 "\n[midi-clock-mod-ticks]\n\n"
        ;
 
     /*
-     * ca 2026-05-16
      * Changed midibus to midibase because of an incomplete type
      * in the Windows Meson build.
      */
@@ -1089,6 +1096,7 @@ rcfile::write ()
     write_integer(file, "ticks", midibase::get_clock_mod());
     write_boolean(file, "record-by-buss", rc_ref().record_by_buss());
     write_boolean(file, "record-by-channel", rc_ref().record_by_channel());
+    write_boolean(file, "record-sysex", rc_ref().record_sysex());
 
     /*
      * Running-status action

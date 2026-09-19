@@ -151,7 +151,7 @@ namespace seq66
  *  client IDs from the sequencer handle, and they range from 128 to 191.
  *
  * \param parentbus
- *      Provides much of the infor about this ALSA buss.
+ *      Provides much of the info about this ALSA buss.
  *
  * \param masterinfo
  *      Provides the information about the desired port, and more.
@@ -513,18 +513,12 @@ midi_alsa::api_connect ()
 }
 
 /**
- *  Defines the size of the MIDI event buffer, which should be large enough to
+ *  Defines the size of the MIDI event buffer; should be large enough to
  *  accomodate the largest MIDI message to be encoded.  A local define for
- *  visibility.  Also provided, but not yet used, is a size for SysEx events,
- *  which we don't handle, but want to note here.  Inspired by Qtractor code.
- *  Also in Qtractor, the same snd_midi_event_t object is used over and over,
- *  rather than being recreated/destroyed for every event-play by
- *  snd_midi_event_new() and snd_midi_event_free().
- *
- * Unused:
- *
- *      static const size_t s_sysex_size_max = 512; // Hydrogen uses 32
- *      w/input
+ *  visibility.  Inspired by Qtractor code.  Also in Qtractor, the same
+ *  snd_midi_event_t object is used over and over, rather than being
+ *  recreated/destroyed for every event-play by snd_midi_event_new() and
+ *  snd_midi_event_free().
  */
 
 static const size_t s_event_size_max =  12;
@@ -940,4 +934,3 @@ midi_out_alsa::midi_out_alsa (midibus & parentbus, midi_info & masterinfo) :
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

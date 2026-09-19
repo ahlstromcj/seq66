@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-09-13
+ * \updates       2026-09-15
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -882,15 +882,6 @@ event::set_midi_event
     }
     else
     {
-        if (event::is_sysex_msg(byts[0]))
-        {
-            (void) append_sysex(byts, count);
-        }
-        else if (event::is_meta_msg(byts[0]))
-        {
-            (void) append_sysex(byts, count); // TODO: set m_channel value
-        }
-
         result = true;
         reset_sysex();                      /* set up for sysex if needed   */
         set_status(eventstatus);

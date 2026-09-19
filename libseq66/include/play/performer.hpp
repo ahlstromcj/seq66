@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2026-08-12
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  *
  *  The main player!  Coordinates sets, patterns, mutes, playlists, you name
@@ -916,6 +916,16 @@ private:                            /* key, midi, and op container section  */
      */
 
     bool m_record_by_channel;
+
+    /**
+     *  EXPERIMENTAL.
+     *
+     *  If set, then SysEx messages are routed to the main recording
+     *  sequence. Record-by-buss is not yet supported, and record-by-channel
+     *  cannot apply.
+     */
+
+    bool m_record_sysex;
 
     /**
      *  Provides a mapping of input busses to patterns. Treated like an array
@@ -1893,6 +1903,16 @@ public:
     bool record_by_buss () const
     {
         return m_record_by_buss;
+    }
+
+    void record_sysex (bool flag)
+    {
+        m_record_sysex = flag;
+    }
+
+    bool record_sysex () const
+    {
+        return m_record_sysex;
     }
 
     bool sequence_inbus_setup (bool changed = false);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-03
+ * \updates       2026-09-17
  * \license       GNU GPLv2 or above
  */
 
@@ -297,6 +297,7 @@ private slots:
     void slot_buss_override ();
     void slot_record_by_buss ();
     void slot_record_by_channel ();
+    void slot_record_sysex ();
     void slot_virtual_ports ();
     void slot_enable_virtual_ports ();
     void slot_virtual_out_count ();
