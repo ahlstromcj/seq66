@@ -1,0 +1,69 @@
+System Exclusive Implementation Notes
+Chris Ahlstrom
+2026-09-20 to 2026-09-20
+
+This document describes some features of ALSA System Exclusive and
+hardware implementations. For SysEx format, see contrib/notes/sysex.text.
+
+1. The RawMidi API.
+
+When using snd_rawmidi_write(), you pass a continuous pointer to your SysEx
+stream. You do not need to slice it yourself, but you must account for the ring
+buffer allocation in the Linux kernel.
+
+Limitation: By default, the ALSA rawmidi output ring buffer is small (often 4
+KB). An attempt of a single write that exceeds this buffer, or writing quickly
+without giving the hardware time to drain it, the write will either block
+(blocking mode) or truncate/silently drop data (non-blocking mode).
+
+Solution: Use snd_rawmidi_params_set_buffer_size() to expand the kernel
+internal ring buffer size to safely accommodate your largest message (e.g., 64
+KB or larger) before you begin transmitting data.
+
+2. The Sequencer API.
+
+If using the high-level ALSA Sequencer (snd_seq_*), SysEx messages are
+scheduled using pointer-based cell containers via snd_seq_ev_set_sysex().
+
+Limitation: Large sequencer events can silently fail or get dropped if they
+exceed the size of the client output pool memory allocation.
+
+Solution: Instead of manual chunking, resize the sequencer pool dynamically
+using snd_seq_set_client_pool_output(). The output pool size should be larger
+than the planned SysEx payload size.
+
+3. USB
+
+The maximum packet size for a USB MIDI endpoint depends on the USB speed of the
+device:
+
+    -   64 bytes for Full-Speed (USB 1.1/2.0) endpoints.
+    -   Up to 512 bytes for High-Speed endpoints.
+
+USB MIDI Packet and Endpoint Limits.
+
+    Full-Speed (FS - 12 Mbps):
+
+    The maximum bulk or interrupt endpoint packet size is 64 bytes. USB MIDI
+    1.0 standard implementations typically operate at Full-Speed, where each
+    USB packet consists of 4-byte MIDI event blocks.
+
+    High-Speed (HS - 480 Mbps):
+
+    High-speed bulk endpoints allow a maximum packet size of 512 bytes, which
+    is often utilized in modern USB MIDI and class-compliant multi-channel
+    setups to handle larger data payloads more efficiently.
+
+Practical Considerations.
+
+    MIDI Event Packets: Standard USB MIDI 1.0 event packets are structured in
+    4-byte chunks (code index byte plus three bytes of MIDI data).
+
+    SysEx Transfers: For large System Exclusive (SysEx) messages, data is
+    broken down into smaller chunks fitting the endpoint size. Operating
+    systems or software libraries (such as CoreMIDI on macOS or specific audio
+    drivers) sometimes encounter buffer or packet limitations (e.g., handling
+    256-byte or 64-byte chunks) depending on how the driver handles message
+    splitting.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

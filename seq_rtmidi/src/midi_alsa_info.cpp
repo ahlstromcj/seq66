@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2026-07-29
+ * \updates       2026-09-21
  * \license       See above.
  *
  *  API information found at:
@@ -78,6 +78,8 @@
 #include "cfg/settings.hpp"             /* seq66::rc() configuration object */
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
+#include "midi/event.hpp"               /* seq66::event and other tokens    */
+#include "midi/sysex.hpp"               /* manifest constants, future work  */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
@@ -784,52 +786,34 @@ midi_alsa_info::api_get_midi_event (event * inev)
         {
             // no input in non-blocking mode
 
-            warnprint("input EAGAIN status");           /* ca 2025-05-20    */
+            infoprint("no more events");
         }
         else if (remcount == -ENOSPC)
         {
             errprint("input FIFO overrun");             /* see VMPK note    */
         }
         else
-            errprint("snd_seq_event_input() failure");
+            errprint("event input fail");
 
         return false;
     }
-    if (! rc().manual_ports())
+    if (rc().manual_ports())
     {
+        if (ev->type == SND_SEQ_EVENT_SYSEX)
+        {
+            sysex = true;
+            (void) show_event(ev, "SysEx");
+        }
+        else if (ev->type == SND_SEQ_EVENT_CLIENT_START)
+        {
+            result = show_event(ev, "Client start");
+        }
+    }
+    else
+    {
+
         switch (ev->type)
         {
-#if defined WE_SHOULD_HANDLE_THESE
-
-        /*
-         * gmidimonitor handles a large number of controllers.
-         */
-
-        case SND_SEQ_EVENT_NOTE:
-        case SND_SEQ_EVENT_NOTEON:
-        case SND_SEQ_EVENT_NOTEOFF:
-        case SND_SEQ_EVENT_KEYPRESS:
-        case SND_SEQ_EVENT_PGMCHANGE:
-        case SND_SEQ_EVENT_PITCHBEND:
-
-            break;
-
-        case SND_SEQ_EVENT_CONTROLLER:
-
-            /*
-             *  Handles these numbers in /usr/include/alsa/asoundef.h:
-             *
-             *      MIDI_CTL_MSB_BANK to MIDI_CTL_MONO2
-             */
-
-            #include "midi/controllers.hpp"
-
-            int ctrlindex { int(event_ptr->data.control.param) };
-            std::string ccname { controller_name(ctrlindex) };
-            result = show_event(ev, CSTR(ccname);
-            break;
-#endif
-
         case SND_SEQ_EVENT_SYSTEM:
 
             result = show_event(ev, "System event");
@@ -924,9 +908,9 @@ midi_alsa_info::api_get_midi_event (event * inev)
     if (result)
         return false;
 
-    midibyte buffer[0x1000];                    /* 4096 buffer for data     */
+    midibyte midbuf[0x1000];                    /* 4096 buffer for data     */
     snd_midi_event_t * midi_ev { nullptr };     /* make ALSA MIDI parser    */
-    int rc { snd_midi_event_new(sizeof buffer, &midi_ev) };
+    int rc { snd_midi_event_new(sizeof midbuf, &midi_ev) };
     if (rc < 0 || is_nullptr(midi_ev))
     {
         errprint("snd_midi_event_new() failed");
@@ -940,10 +924,10 @@ midi_alsa_info::api_get_midi_event (event * inev)
      *  is said to block!
      */
 
-    long bytes { snd_midi_event_decode(midi_ev, buffer, sizeof buffer, ev) };
-    if (bytes > 0)
+    long byts { snd_midi_event_decode(midi_ev, midbuf, sizeof midbuf, ev) };
+    if (byts > 0)
     {
-        result = inev->set_midi_event(ev->time.tick, buffer, bytes);
+        result = inev->set_midi_event(ev->time.tick, midbuf, byts);
         if (result)
         {
             bussbyte b = input_ports().get_port_index
@@ -962,47 +946,45 @@ midi_alsa_info::api_get_midi_event (event * inev)
 
             /*
              * The actual data payload length is given by ev.data.ext.len,
-             * and the data pointer is in ev.data.ext.ptr.
+             * and the data pointer is in ev.data.ext.ptr. The call to
+             * inev->set_midi_event() loads up the byte buffer. If
+             * larger than 256, we need to fall back to using the
+             * internal ALSA buffer pointer and lengt().
              */
 
             if (sysex)
             {
 #if defined SEQ66_PLATFORM_DEBUG
                 int len { int(ev->data.ext.len) };
-                printf("sysex length %d\n", len);
+                printf("sysex length %d\r", len);
+                if (len <  sysex_chunk())                       /* 256  */
+                    sysex = false;
+                else
+                    inev->reset_sysex();
 #endif
             }
 
             while (sysex)           /* sysex might be more than one message */
             {
+                midibyte * syxbuf { (midibyte *)(ev->data.ext.ptr) };
+                int syxlen { int(ev->data.ext.len) };
+                sysex = inev->append_sysex(syxbuf, syxlen);
+
                 int remcount = snd_seq_event_input(m_alsa_seq, &ev);
-                if (remcount == (-EAGAIN))
+                if (remcount == -EAGAIN)
                 {
-                    return false;   /* non-blocking mode, no more events    */
+                    info_message("no more events");
+                    break;
                 }
                 else if (remcount == -ENOSPC)
                 {
-                    return false;   /* input FIFO overrun, cleared          */
-                }
-                else
-                {
-                    long bytes = snd_midi_event_decode
-                    (
-                        midi_ev, buffer, sizeof buffer, ev
-                    );
-                    if (bytes > 0)
-                    {
-                        sysex = inev->append_sysex(buffer, bytes);
-                        if (remcount == 0)
-                            sysex = false;
-                    }
-                    else
-                        sysex = false;
+                    error_message("input FIFO overrun");
+                    result = false; /* input FIFO overrun, cleared          */
+                    break;
                 }
             }
         }
-        snd_midi_event_free(midi_ev);
-        return true;
+        result = true;
     }
     else
     {
@@ -1010,29 +992,32 @@ midi_alsa_info::api_get_midi_event (event * inev)
          * This happens even at startup, before anything is really happening.
          */
 
-        snd_midi_event_free(midi_ev);
-        if (bytes < 0)
+        if (byts < 0)
         {
-            if (bytes == -EINVAL)
+            if (byts == -EINVAL)
             {
                 errprint("Invalid seq event");
             }
-            else if (bytes == -ENOENT)
+            else if (byts == -ENOENT)
             {
                 errprint("Not a MIDI message");
             }
-            else if (bytes == -ENOMEM)
+            else if (byts == -ENOMEM)
             {
                 errprint("MIDI message too big");
             }
+            result = false;
         }
-
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-        errprintf("snd_midi_event_decode() returned %ld", bytes);
+        errprintf("snd_midi_event_decode() returned %ld", byts);
 #endif
-
-        return false;
     }
+
+    /*
+     * Deprecated, no longer needed: snd_midi_event_free(midi_ev);
+     */
+
+    return result;
 }
 
 }           // namespace seq66

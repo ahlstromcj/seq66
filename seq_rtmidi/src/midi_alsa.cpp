@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2025-08-10
+ * \updates       2025-09-21
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -111,6 +111,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/event.hpp"               /* seq66::event (MIDI event)        */
+#include "midi/sysex.hpp"               /* manifest constants, future work  */
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_alsa.hpp"                /* seq66::midi_alsa for ALSA        */
 #include "midi_info.hpp"                /* seq66::midi_info                 */
@@ -547,15 +548,15 @@ midi_alsa::api_play (const event * e24, midibyte channel)
     if (parent_bus().port_enabled())
     {
         snd_midi_event_t * midi_ev;                         /* MIDI parser  */
-        int rc = snd_midi_event_new(s_event_size_max, &midi_ev);
+        int rc { snd_midi_event_new(s_event_size_max, &midi_ev) };
         if (rc == 0)
         {
             snd_seq_event_t ev;                             /* event memory */
-            midibyte buffer[4];                             /* temp data    */
-            buffer[0] = e24->get_status(channel);           /* status+chan  */
-            e24->get_data(buffer[1], buffer[2]);            /* set the data */
+            midibyte mbuf[4];                               /* temp data    */
+            mbuf[0] = e24->get_status(channel);             /* status+chan  */
+            e24->get_data(mbuf[1], mbuf[2]);                /* set the data */
             snd_seq_ev_clear(&ev);                          /* clear event  */
-            snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* 3 raw bytes  */
+            snd_midi_event_encode(midi_ev, mbuf, 3, &ev);   /* 3 raw bytes  */
             snd_midi_event_free(midi_ev);                   /* free parser  */
             snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source   */
             snd_seq_ev_set_subs(&ev);                       /* subscriber   */
@@ -587,14 +588,6 @@ min (long a, long b)
 {
     return (a < b) ? a : b ;
 }
-
-/**
- *  Defines the value used for sleeping, in microseconds.  Defined locally
- *  simply for visibility.  Why 80000?
- */
-
-static const int c_sysex_sleep_us   = 80000;
-static const int c_sysex_chunk      =   256;
 
 /**
  *  Takes a native SYSEX event, encodes it to an ALSA event, and then
@@ -632,27 +625,27 @@ midi_alsa::api_sysex (const event * e24)
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);                              /* clear event      */
     snd_seq_ev_set_priority(&ev, 1);
-    snd_seq_ev_set_subs(&ev);
+    snd_seq_ev_set_subs(&ev);                           /* all subscribers  */
     snd_seq_ev_set_direct(&ev);                         /* it's immediate   */
     snd_seq_ev_set_source(&ev, m_local_addr_port);      /* set source       */
-    snd_seq_ev_set_dest(&ev, m_dest_addr_client, m_dest_addr_port);
 
     /*
-     *  See "Note" above.
+     *  Oops: snd_seq_ev_set_dest(&ev, m_dest_addr_client, m_dest_addr_port);
+     *
+     *  Also see "Note" above; event::sysex == midibytes.
      */
 
     event::sysex & data { const_cast<event::sysex &>(e24->get_sysex()) };
     int data_size { e24->sysex_size() };
-    if (data_size < c_sysex_chunk)
+    if (data_size < sysex_chunk())
     {
         snd_seq_ev_set_sysex(&ev, data_size, &data[0]);
 
-        int rc { snd_seq_event_output_direct(m_seq, &ev) };
-
         /*
-         * From AI: int rc { snd_seq_event_output(m_seq, &ev) };
+         * Pump it into the queue.
          */
 
+        int rc { snd_seq_event_output_direct(m_seq, &ev) };
         if (rc >= 0)
         {
             api_flush();
@@ -664,21 +657,25 @@ midi_alsa::api_sysex (const event * e24)
     }
     else
     {
-        for (int offset = 0; offset < data_size; offset += c_sysex_chunk)
+        for (int offset = 0; offset < data_size; offset += sysex_chunk())
         {
             int data_left { data_size - offset };
-            int chunksize { int(min(data_left, c_sysex_chunk)) };
+            int chunksize { int(min(data_left, sysex_chunk())) };
             snd_seq_ev_set_sysex(&ev, chunksize, &data[offset]);
+
+            /*
+             * Pump it into the queue.
+             */
 
             int rc { snd_seq_event_output_direct(m_seq, &ev) };
             if (rc >= 0)
             {
-                usleep(c_sysex_sleep_us);
+                usleep(sysex_sleep_us());
                 api_flush();
             }
             else
             {
-                errprint("Sending SysEx failed");
+                errprint("Sending SysEx chunk failed");
             }
         }
     }

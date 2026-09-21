@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2026-04-23
- * \updates       2026-07-02
+ * \updates       2026-09-20
  * \license       GNU GPL v2 or above
  *
  *  This file is used mainly for system files and specific build options.  The
@@ -155,7 +155,7 @@
 #define SEQ66_JACK_SUPPORT              @jack_support@
 #define SEQ66_JACK_TRANSPORT            @jack_transport@
 #else
-#define SEQ66_JACK_GET_VERSION_STRING   "none"
+#define SEQ66_JACK_GET_VERSION_STRING   0   /* not "none"   */
 #define SEQ66_JACK_METADATA             0
 #define SEQ66_JACK_PORT_RENAME          0
 #define SEQ66_JACK_SESSION              0

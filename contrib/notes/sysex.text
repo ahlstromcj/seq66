@@ -1,6 +1,10 @@
-Deeper Dive into System Exclusive Message
+Deeper Dive into System Exclusive Messages
 Chris Ahlstrom
-2026-09-13 to 2026-09-13
+2026-09-13 to 2026-09-20
+
+This document describes the format of System Exclusive messages.
+For implementation considerations, see
+contrib/notes/sysex-implementation-notes.text.
 
 -   System Exclusive Message
 

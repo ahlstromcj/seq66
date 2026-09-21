@@ -5394,12 +5394,13 @@ performer::poll_cycle ()
                 if (! is_pattern_playing())         /* ! is_running()       */
                     inner_start();                  /* start_playing()      */
 #endif
-                bool ok
+                bool issyx { ev.is_sysex() };
+                bool canhandle
                 {
                     ev.below_sysex() ||                     /* below 0xF0   */
-                    (ev.is_sysex() && record_sysex())
+                    issyx && record_sysex()
                 };
-                if (ev.below_sysex())                       /* below 0xF0   */
+                if (canhandle)
                 {
                     if (m_master_bus->is_dumping_input())
                     {
@@ -5482,7 +5483,7 @@ performer::poll_cycle ()
                     if (is_jack_master() || ! is_jack_running())
                         (void) set_beats_per_minute(ev.tempo());
                 }
-                else if (ev.is_sysex())             /* can be handled above */
+                else if (issyx)                     /* can be handled above */
                 {
                     midi_sysex(ev);                 /* currently just shown */
                 }

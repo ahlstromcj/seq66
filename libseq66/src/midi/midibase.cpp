@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2026-07-22
+ * \updates       2026-09-19
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -252,8 +252,7 @@ midibase::set_name
             snprintf
             (
                 name, sizeof name, "[%d] %d:%d %s:%s",
-//              bus_index(), bus_id(), port_id(),   ca 2026-09-17
-                client_id(), bus_id(), port_id(),
+                bus_index(), bus_id(), port_id(),   /* bus ID == client ID  */
                 appname.c_str(), portname.c_str()
             );
             bus_name(appname);

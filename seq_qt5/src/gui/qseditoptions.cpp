@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-17
+ * \updates       2026-09-21
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -3184,7 +3184,7 @@ qseditoptions::sync_rc ()
         ui->checkBoxRecordByChannel->setChecked(rc().record_by_channel());
 
     bool recsysex { rc().record_sysex() };
-    ui->checkBoxRecordSysEx->setChecked(rc().record_sysex());
+    ui->checkBoxRecordSysEx->setChecked(recsysex);
 }
 
 void
