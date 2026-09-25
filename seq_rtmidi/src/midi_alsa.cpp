@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2025-09-21
+ * \updates       2025-09-25
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -556,12 +556,27 @@ midi_alsa::api_play (const event * e24, midibyte channel)
             mbuf[0] = e24->get_status(channel);             /* status+chan  */
             e24->get_data(mbuf[1], mbuf[2]);                /* set the data */
             snd_seq_ev_clear(&ev);                          /* clear event  */
-            snd_midi_event_encode(midi_ev, mbuf, 3, &ev);   /* 3 raw bytes  */
-            snd_midi_event_free(midi_ev);                   /* free parser  */
-            snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source   */
-            snd_seq_ev_set_subs(&ev);                       /* subscriber   */
-            snd_seq_ev_set_direct(&ev);                     /* immediate    */
-            snd_seq_event_output(m_seq, &ev);               /* pump to que  */
+
+            long count
+            {
+                snd_midi_event_encode                       /* 3 raw bytes  */
+                (
+                    midi_ev, mbuf, 3, &ev
+                )
+            };
+            rc = int(count);
+            if (rc > 0)
+            {
+                snd_midi_event_free(midi_ev);               /* free parser  */
+                snd_seq_ev_set_source(&ev, m_local_addr_port);  /* source   */
+                snd_seq_ev_set_subs(&ev);                   /* subscriber   */
+                snd_seq_ev_set_direct(&ev);                 /* immediate    */
+                rc = snd_seq_event_output(m_seq, &ev);      /* pump to que  */
+            }
+            if (rc < 0)
+            {
+                errprint("ALSA api_play() fail");
+            }
         }
         else
         {
@@ -615,6 +630,16 @@ min (long a, long b)
  *
  *  We send the sysex data in chunks, with a sleep, for slower devices.
  *
+ *  To send large SysEx payloads, one must increase the client pool size
+ *  before writing the event. To increase the output pool dynamically,
+ *  call all snd_seq_set_client_pool_output(handle, size) immediately
+ *  after opening your ALSA sequencer handle to expand the byte capacity.
+ *
+ *  If the SysEx is massive (many kilobytes), use multi-packet chunking.
+ *  Split the payload into independent chunks (each bracketed by 0xF0 and
+ *  0xF7) and use multiple snd_seq_ev_set_sysex() calls spaced apart by
+ *  small delays to avoid overflowing the receiving buffer.
+ *
  * \param e24
  *      The event to be handled.
  */
@@ -652,7 +677,20 @@ midi_alsa::api_sysex (const event * e24)
         }
         else
         {
-            errprint("Sending complete SysEx failed");
+            if (rc == -EINVAL)
+            {
+                errprint("Invalid seq event");
+            }
+            else if (rc == -ENOENT)
+            {
+                errprint("Not a MIDI message");
+            }
+            else if (rc == -ENOMEM)
+            {
+                errprint("MIDI message too big");
+            }
+            else
+                errprint("Sending event failed");
         }
     }
     else
@@ -675,7 +713,20 @@ midi_alsa::api_sysex (const event * e24)
             }
             else
             {
-                errprint("Sending SysEx chunk failed");
+                if (rc == -EINVAL)
+                {
+                    errprint("Invalid seq event");
+                }
+                else if (rc == -ENOENT)
+                {
+                    errprint("Not a MIDI message");
+                }
+                else if (rc == -ENOMEM)
+                {
+                    errprint("MIDI message too big");
+                }
+                else
+                    errprint("Sending SysEx chunk failed");
             }
         }
     }

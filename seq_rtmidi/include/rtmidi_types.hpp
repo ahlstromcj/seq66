@@ -370,6 +370,8 @@ public:
  *  The rtmidi_in_data structure is used to pass private class data to the
  *  MIDI input handling function or thread.  Used to be nested in the
  *  rtmidi_in class.
+ *
+ *  Currently used only for JACK, even though it is part of midi_api.
  */
 
 class rtmidi_in_data

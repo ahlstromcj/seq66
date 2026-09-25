@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-09-11
+ * \updates       2026-09-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2815,7 +2815,7 @@ qseqeditframe64::popup_tool_menu ()
         bool macrosactive = ! names.empty();
         if (macrosactive)
         {
-            menumacros = new_qmenu("&Insert macro...", m_tools_popup);
+            menumacros = new_qmenu("&Insert macro", m_tools_popup);
             if (not_nullptr(menumacros))
             {
                 for (const auto & name : names)
@@ -2842,7 +2842,7 @@ qseqeditframe64::popup_tool_menu ()
                 macrosactive = false;
         }
 
-        QMenu * menuselect = new_qmenu("&Select notes...", m_tools_popup);
+        QMenu * menuselect = new_qmenu("&Select notes", m_tools_popup);
         QMenu * menutiming = new_qmenu
         (
             "Note &timing/velocity...", m_tools_popup

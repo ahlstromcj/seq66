@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2026-09-21
+ * \updates       2026-09-24
  * \license       See above.
  *
  *  API information found at:
@@ -707,7 +707,14 @@ midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
             tmp, sizeof tmp, "[%s event[%d] = 0x%x: client %d port %d]",
             tag, b, unsigned(ev->type), c, p
         );
-        info_message(tmp);
+
+        /*
+         * We want to use non-buffered I/O.
+         *
+         *      info_message(tmp);
+         */
+
+        fprintf(stderr, "[%s] %s\n", seq_client_name().c_str(), tmp);
     }
     return true;
 }
@@ -784,9 +791,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
     {
         if (remcount == -EAGAIN)
         {
-            // no input in non-blocking mode
-
-            infoprint("no more events");
+            infoprint("no more events");    /* no input in non-block mode   */
         }
         else if (remcount == -ENOSPC)
         {
@@ -795,7 +800,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
         else
             errprint("event input fail");
 
-        return false;
+        return result;
     }
     if (rc().manual_ports())
     {
@@ -806,22 +811,21 @@ midi_alsa_info::api_get_midi_event (event * inev)
         }
         else if (ev->type == SND_SEQ_EVENT_CLIENT_START)
         {
-            result = show_event(ev, "Client start");
+            (void) show_event(ev, "Client start");
         }
     }
     else
     {
-
         switch (ev->type)
         {
         case SND_SEQ_EVENT_SYSTEM:
 
-            result = show_event(ev, "System event");
+            (void) show_event(ev, "System event");
             break;
 
         case SND_SEQ_EVENT_RESULT:
 
-            result = show_event(ev, "Result event");
+            (void) show_event(ev, "Result event");
             break;
 
         case SND_SEQ_EVENT_CLIENT_START:
@@ -937,12 +941,11 @@ midi_alsa_info::api_get_midi_event (event * inev)
 
             /*
              * bool sysex = inev->is_sysex();
+             *
+             * Also done in busarray::get_midi_event():
              */
 
             inev->set_input_bus(b);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf("[seq66] input event on ALSA bus %d\n", int(b));
-#endif
 
             /*
              * The actual data payload length is given by ev.data.ext.len,
@@ -952,23 +955,24 @@ midi_alsa_info::api_get_midi_event (event * inev)
              * internal ALSA buffer pointer and lengt().
              */
 
+            int base { 0 };
             if (sysex)
             {
+                int len = int(ev->data.ext.len);
 #if defined SEQ66_PLATFORM_DEBUG
-                int len { int(ev->data.ext.len) };
                 printf("sysex length %d\r", len);
-                if (len <  sysex_chunk())                       /* 256  */
+#endif
+                if (len < sysex_chunk())                        /* 256  */
                     sysex = false;
                 else
                     inev->reset_sysex();
-#endif
             }
-
             while (sysex)           /* sysex might be more than one message */
             {
                 midibyte * syxbuf { (midibyte *)(ev->data.ext.ptr) };
                 int syxlen { int(ev->data.ext.len) };
-                sysex = inev->append_sysex(syxbuf, syxlen);
+                sysex = inev->append_sysex(syxbuf + base, syxlen);
+                base += syxlen;
 
                 int remcount = snd_seq_event_input(m_alsa_seq, &ev);
                 if (remcount == -EAGAIN)
@@ -1008,15 +1012,14 @@ midi_alsa_info::api_get_midi_event (event * inev)
             }
             result = false;
         }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        errprintf("snd_midi_event_decode() returned %ld", byts);
-#endif
     }
 
     /*
      * Deprecated, no longer needed: snd_midi_event_free(midi_ev);
+     * You sure about that?
      */
 
+    snd_midi_event_free(midi_ev);
     return result;
 }
 

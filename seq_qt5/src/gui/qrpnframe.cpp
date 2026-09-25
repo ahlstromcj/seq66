@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-14
+ * \updates       2026-09-24
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -41,7 +41,7 @@
 #include "qt5_helpers.hpp"              /* seq66::qt()                      */
 #include "ui_qrpnframe.h"
 
-namespace
+namespace   // anonymous
 {
     seq66::sequence s_dummy_pattern;
 }
@@ -187,7 +187,7 @@ qrpnframe::qrpnframe
     {
         ui->label_pattern_no->clear();
         ui->label_pattern_modified->hide();
-        other_macro_in_force();
+        other_macro_in_force(true);             // ca 2026-09-23
     }
     ui->label_ctrl_modified->hide();
 
@@ -343,6 +343,7 @@ qrpnframe::qrpnframe
     const clockslist & opm = output_port_map();
     mastermidibus * mmb = perf().master_bus();
     ui->combo_box_buss->addItem("Ctrl Out");    /* the default */
+
     if (not_nullptr(mmb))
     {
         int buses = opm.active() ? opm.count() : mmb->get_num_out_buses() ;
@@ -356,6 +357,37 @@ qrpnframe::qrpnframe
                 if (port_unusable(ec))
                     enable_combobox_item(ui->combo_box_buss, b + 1, false);
             }
+        }
+
+        /*
+         * If midi-control-out is disabled, disable item 0 and select the
+         * first active buss item.
+         */
+
+        midicontrolout & mco { perf().midi_control_out() };
+        bool noctrl { ! mco.is_enabled() };
+        if (noctrl)
+        {
+            enable_combobox_item(ui->combo_box_buss, 0, false);
+            for (int b = 0; b < buses; ++b)
+            {
+                e_clock ec;
+                std::string busname;
+                if (perf().ui_get_clock(bussbyte(b), ec, busname))
+                {
+                    if (port_active(ec))
+                    {
+                        ui->combo_box_buss->setCurrentIndex(b + 1);
+                        m_rpn_buss = b;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            ui->combo_box_buss->setCurrentIndex(0);
+            m_rpn_buss = null_buss();
         }
 
         /*
@@ -395,7 +427,7 @@ qrpnframe::qrpnframe
      * A line-editor to allow entering arbitrary bytes in order to
      * send data (ok?) or create a macro.
      */
-
+    ui->line_edit_other->clear();
     connect
     (
         ui->line_edit_other, SIGNAL(editingFinished()),
@@ -410,7 +442,6 @@ qrpnframe::qrpnframe
      */
 
     ui->button_load_file->setEnabled(! not_null_sequence());
-    set_action_buttons(false);
     connect
     (
         ui->button_load_file, SIGNAL(clicked(bool)),
@@ -428,7 +459,10 @@ qrpnframe::qrpnframe
      */
 
     if (not_null_sequence())
+    {
         set_time_stamp(track().get_tick());
+        ui->line_edit_byte_count->setText("0");
+    }
     else
         set_time_stamp(0);
 
@@ -554,6 +588,8 @@ qrpnframe::~qrpnframe()
     delete ui;
 }
 
+#if 0
+
 /**
  *  Enables or disables the button according to the parameter.
  *
@@ -565,15 +601,121 @@ qrpnframe::~qrpnframe()
 void
 qrpnframe::set_action_buttons (bool enable)
 {
-    /*
-     * ui->button_load_file->setEnabled(enable);
-     */
+    if (enable)
+    {
+        ui->button_load_file->setEnabled(true);
+        ui->button_rpn_delete->setEnabled(true);
+        ui->button_rpn_insert->setEnabled(true);
+        ui->button_rpn_macro->setEnabled(true);
+        ui->button_rpn_send->setEnabled(true);
+        ui->button_save_file->setEnabled(true);
+    }
+    else
+    {
+        /*
+         * ui->button_load_file->setEnabled(false);
+         * ui->button_save_file->setEnabled(false);
+         */
 
-    ui->button_rpn_delete->setEnabled(enable);
-    ui->button_rpn_insert->setEnabled(enable);
-    ui->button_rpn_macro->setEnabled(enable);
-    ui->button_rpn_send->setEnabled(enable);
-    ui->button_save_file->setEnabled(enable);
+        ui->button_rpn_delete->setEnabled(false);
+        ui->button_rpn_insert->setEnabled(false);
+        ui->button_rpn_macro->setEnabled(false);
+        ui->button_rpn_send->setEnabled(false);
+    }
+}
+
+#endif
+
+/**
+ *  Truth table for certain GUI elements.
+ *
+ *  VALUE  | OTHER
+ *  EDITED | MACROS || Delete | Create | Insert | Send | Load | Save | Bytes
+ *  -------|------------------|--------|--------|------|------|------|------
+ *  false  | false  ||   F    |   F    |   F    |  F   |   F  |  F   |  0
+ *  false  | true   ||   T    |   T    |   F    |  T   |   T  |  T   | xxxx
+ *  true   | false  ||   F    |   T    |   T    |  T   |   F  |  T   | xxxx
+ *  true   | true   ||  Err   |  Err   |  Err   | Err  |  Err | Err  |  Err
+ */
+
+void
+qrpnframe::set_rpn_guis (bool value_edited, bool other)
+{
+    if (value_edited && other)
+    {
+        return;
+    }
+    else
+    {
+        /*
+         * Defaults represent ! value_edited && ! other
+         */
+
+        bool del { false };
+        bool cre { false };
+        bool ins { false };
+        bool snd { false };
+        bool load { false };
+        bool save { false };
+        std::string txt { "0" };
+        if (other && ! value_edited)
+        {
+            del = cre = snd = load = save = true;   /* save needs an edit */
+        }
+        else if (value_edited && ! other)
+        {
+            cre = ins = snd = save = true;
+        }
+        if (other != value_edited)
+            update_byte_count();
+        else
+            ui->line_edit_byte_count->setText(qt(txt)); /* "Bytes"          */
+
+        ui->button_rpn_delete->setEnabled(del);     /* "Delete Macro"       */
+        ui->button_rpn_macro->setEnabled(cre);      /* "Create/Modify Mac"  */
+        ui->button_rpn_insert->setEnabled(ins);     /* "Insert Events"      */
+        ui->button_rpn_send->setEnabled(snd);       /* "Send Events"        */
+        ui->button_load_file->setEnabled(load);     /* "Load"               */
+        ui->button_save_file->setEnabled(save);     /* "Save"               */
+    }
+}
+
+void
+qrpnframe::update_byte_count ()
+{
+    if (other_macro_in_force())     /* macro_name() is set      */
+    {
+        midicontrolout & mco { perf().midi_control_out() };
+        std::string macnam { macro_name() };
+        bool found { mco.find_macro(macnam) };
+        if (found)
+        {
+            const midimacro & mac { mco.macro(macnam) };
+            std::string line { mac.line() };    /* name = data  */
+            tokenization macpair { tokenize(line, "=") };
+            other_macro_tokens(macpair);
+
+            int sz { mac.byte_count() };
+            std::string bcs { std::to_string(sz) };
+            ui->line_edit_byte_count->setText(qt(bcs));
+        }
+    }
+    else
+    {
+        rpn r(rpn_info());
+        std::string macnam { macro_name() };
+        int macchannel { m_rpn_channel };
+        tokenization name_and_data
+        {
+            r.create_rpn_macro_string(macnam, macchannel)
+        };
+        bool ok { name_and_data.size() == 2 };
+        if (ok)
+        {
+            std::string bcs { std::to_string(r.byte_count()) };
+            ui->line_edit_byte_count->setText(qt(bcs));
+        }
+    }
 }
 
 /**
@@ -785,6 +927,7 @@ qrpnframe::select_rpn_control (int rpncontrol)
         ui->radio_button_other->setChecked(true);
         ui->line_edit_other->setEnabled(true);
         ui->button_load_file->setEnabled(true);
+        ui->line_edit_rpn_param_value->clear();
         use_other = true;
         break;
     }
@@ -795,7 +938,9 @@ qrpnframe::select_rpn_control (int rpncontrol)
 
     set_plaintext_msg("");
     ui->line_edit_other->clear();
+    ui->line_edit_byte_count->setText("0");
     enable_rpn_buttons(! use_other);
+    set_rpn_guis(false, use_other);
 }
 
 void
@@ -1067,7 +1212,7 @@ qrpnframe::slot_load_file ()
 {
     if (other_macro_in_force())             /* "Other" radio button checked */
     {
-        static const std::string s_filter   /* this may be excessive :-)    */
+        std::string s_filter   /* this may be excessive :-)    */
         {
             "Sysex file (*.syx *.sysex)"
             ";;Raw file (*.raw)"
@@ -1146,7 +1291,13 @@ qrpnframe::slot_load_file ()
 void
 qrpnframe::slot_save_file ()
 {
+    std::string s_filter   /* this may be excessive :-)    */
+    {
+        "Sysex file (*.syx)"
+        ";;Macro file (*.macro)"
+    };
     std::string selectedfile { macro_filename() };
+    bool useconfigdir { selectedfile.empty() };
     bool ok
     {
         show_file_dialog
@@ -1156,8 +1307,8 @@ qrpnframe::slot_save_file ()
             "Save current (N)RPN/Macro data",
             "",                                 /* filter list              */
             true,                               /* we are saving a file     */
-            false,                              /* normal file, not config  */
-            "",                                 /* no default extension     */
+            useconfigdir,                       /* normal file, not config  */
+            s_filter,                           /* no default extension     */
             true                                /* prompt for overwrite     */
         )
     };
@@ -1272,27 +1423,50 @@ qrpnframe::slot_param_value_text_changed ()
 {
     QString v { ui->line_edit_rpn_param_value->text() };
     std::string valstring { v.toStdString() };
-    midishort value { string_to_rpn_number(valstring) };
-    rpn_info().rpn_parameter_value = value;
-
-    /*
-     * Immediately display the data bytes that would be used.
-     */
-
-    bool ok { false };
-    rpn r(rpn_info());
-    std::string macnam { macro_name() };
-    int macchannel { m_rpn_channel };
-    tokenization name_and_data
+    if (valstring.empty())
     {
-        r.create_rpn_macro_string(macnam, macchannel)
-    };
-    ok = name_and_data.size() == 2;
-    if (ok)
-        set_plaintext_msg(name_and_data);
+        if (other_macro_in_force())
+            set_rpn_guis(false, true);
+        else
+            set_rpn_guis(false, false);
+    }
+    else
+    {
+        if (other_macro_in_force())
+        {
+            // don't change anything
+        }
+        else
+        {
+            midishort value { string_to_rpn_number(valstring) };
+            rpn_info().rpn_parameter_value = value;
 
-    set_action_buttons(true);
-    s_show_slot(__FUNCTION__);
+            /*
+             * Immediately display the data bytes that would be used.
+             */
+
+
+            bool ok { false };
+            rpn r(rpn_info());
+            std::string macnam { macro_name() };
+            int macchannel { m_rpn_channel };
+            tokenization name_and_data
+            {
+                r.create_rpn_macro_string(macnam, macchannel)
+            };
+            ok = name_and_data.size() == 2;
+            if (ok)
+            {
+                std::string bcs { std::to_string(r.byte_count()) };
+                ui->line_edit_byte_count->setText(qt(bcs));
+                set_plaintext_msg(name_and_data);
+                set_rpn_guis(true, false);
+            }
+            else
+                set_rpn_guis(false, false);
+        }
+        s_show_slot(__FUNCTION__);
+    }
 }
 
 void
@@ -1325,7 +1499,6 @@ qrpnframe::macro_name_changed ()
     if (isempty)
     {
         ui->button_rpn_macro->setText("Create Macro");
-//      ui->button_rpn_delete->setEnabled(false);
         ui->button_rpn_macro->setEnabled(false);
         ui->line_edit_other->clear();
         ui->line_edit_other->setEnabled(false);

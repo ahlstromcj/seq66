@@ -1,17 +1,13 @@
 TO DO for Seq66 0.99.28
 
 Chris Ahlstrom
-2019-04-13 to 2026-09-18
+2019-04-13 to 2026-09-23
 
     -   Revisit metronome and count-in testing re issue #147.
     -   Edit / Preferences / MIDI Clock.
         -   On Arch, Clock to VMPK keeps getting disabled.
             With or without port-mapping. Works on Debian.
             Works okay if starting with no config files.
-        -   The first virtual output port is "0:0 seq:midi out 0"
-            (disabled) and the rest are "130:n seq66:midi out n".
-        -   The first virtual input port is "130:n seq66:midi in 0"
-            and the rest are "n:n seq66:midi in n" (disabled)
     -   Pattern editor.
         -   The selection box is a off horizontally and vertically.
             Individual selection of notes seems fine.

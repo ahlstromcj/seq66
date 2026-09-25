@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2026-09-17
+ * \updates       2026-09-25
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Seq64 version of this module, perform.
@@ -5398,7 +5398,7 @@ performer::poll_cycle ()
                 bool canhandle
                 {
                     ev.below_sysex() ||                     /* below 0xF0   */
-                    issyx && record_sysex()
+                    (issyx && record_sysex())
                 };
                 if (canhandle)
                 {
@@ -7450,25 +7450,32 @@ performer::send_macro_bytes
              */
 
             bussbyte truebus { true_output_bus(b) };
-            const midipulse ts { 0 };       /* timestamp does not matter    */
+            midipulse ts { 0 };         /* timestamp does not quite matter  */
             for (int i = 0; i < macro.event_count(); ++i)
             {
                 const midibytes & dbytes { macro.bytes(i) };
                 if (dbytes.size() == 2)
                 {
                     event ev(ts, dbytes[0], dbytes[1]);
-                    m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                    m_master_bus->play(truebus, &ev, ev.channel());
                 }
                 else if (dbytes.size() == 3)
                 {
                     event ev(ts, dbytes[0], dbytes[1], dbytes[2]);
-                    m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                    m_master_bus->play(truebus, &ev, ev.channel());
                 }
                 else if (dbytes.size() > 3)
                 {
+                    /*
+                     * SysEx detected in midibase::play().
+                     */
+
                     event ev(ts, dbytes);
-                    m_master_bus->play_and_flush(truebus, &ev, ev.channel());
+                    m_master_bus->play(truebus, &ev, ev.channel());
                 }
+                m_master_bus->flush();
+                ++ts;                   /* try to preserve event order      */
+                (void) microsleep(10);  /* this seems to help               */
             }
         }
     }

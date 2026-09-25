@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-09-20
- * \updates       2026-09-21
+ * \updates       2026-09-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -48,7 +48,7 @@ namespace seq66
 
 #if SEQ66_HAVE_ALSA
 
-const int c_alsa_sysex_sleep_us   { 40000 };            /* 20 to 50 ms: 40  */
+const int c_alsa_sysex_sleep_us   { 20000 };            /* 20 to 50 ms      */
 const int c_alsa_sysex_chunk      {   256 };
 
 inline int

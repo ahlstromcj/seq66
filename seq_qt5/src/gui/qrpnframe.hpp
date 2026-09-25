@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-12
+ * \updates       2026-09-23
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to more easily add NRPN and RPN controller events.
@@ -171,7 +171,11 @@ private:
     void set_plaintext_msg (const std::string & msg);
     void set_plaintext_msg (const tokenization & tokens);
     void set_file_name (const std::string & fname);
+#if 0
     void set_action_buttons (bool enable);
+#endif
+    void set_rpn_guis (bool value_edited, bool other);
+    void update_byte_count ();
     void macro_name_changed ();
 
     void macro_name (const std::string & s)

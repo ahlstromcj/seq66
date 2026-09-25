@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with refactoring by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2025-08-29
+ * \updates       2025-09-24
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -547,7 +547,7 @@ midicontrolout::send_macro (const midibytes & byts, bool flush)
 {
     bool result = is_enabled() && not_nullptr(m_master_bus);
     if (result)
-        result = m_macro_events.active() && ! byts.empty();
+        result = macros_active() && ! byts.empty();
 
     if (result)
     {
