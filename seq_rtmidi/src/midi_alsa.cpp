@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2025-09-25
+ * \updates       2025-09-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -115,6 +115,7 @@
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_alsa.hpp"                /* seq66::midi_alsa for ALSA        */
 #include "midi_info.hpp"                /* seq66::midi_info                 */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 
 namespace seq66
 {
@@ -649,10 +650,10 @@ midi_alsa::api_sysex (const event * e24)
 {
     snd_seq_event_t ev;
     snd_seq_ev_clear(&ev);                              /* clear event      */
-    snd_seq_ev_set_priority(&ev, 1);
+    snd_seq_ev_set_source(&ev, m_local_addr_port);      /* set source       */
     snd_seq_ev_set_subs(&ev);                           /* all subscribers  */
     snd_seq_ev_set_direct(&ev);                         /* it's immediate   */
-    snd_seq_ev_set_source(&ev, m_local_addr_port);      /* set source       */
+    snd_seq_ev_set_priority(&ev, 1);
 
     /*
      *  Oops: snd_seq_ev_set_dest(&ev, m_dest_addr_client, m_dest_addr_port);
@@ -662,9 +663,11 @@ midi_alsa::api_sysex (const event * e24)
 
     event::sysex & data { const_cast<event::sysex &>(e24->get_sysex()) };
     int data_size { e24->sysex_size() };
-    if (data_size < sysex_chunk())
+    for (int offset = 0; offset < data_size; offset += sysex_chunk())
     {
-        snd_seq_ev_set_sysex(&ev, data_size, &data[0]);
+        int data_left { data_size - offset };
+        int chunksize { int(min(data_left, sysex_chunk())) };
+        snd_seq_ev_set_sysex(&ev, chunksize, &data[offset]);
 
         /*
          * Pump it into the queue.
@@ -673,60 +676,37 @@ midi_alsa::api_sysex (const event * e24)
         int rc { snd_seq_event_output_direct(m_seq, &ev) };
         if (rc >= 0)
         {
-            api_flush();
+            api_flush();                                /* should we flush? */
+            microsleep(sysex_sleep_us());               /* see sysex.hpp    */
         }
         else
         {
             if (rc == -EINVAL)
             {
                 errprint("Invalid seq event");
+                break;
             }
             else if (rc == -ENOENT)
             {
                 errprint("Not a MIDI message");
+                break;
             }
             else if (rc == -ENOMEM)
             {
                 errprint("MIDI message too big");
+                break;
             }
-            else
-                errprint("Sending event failed");
-        }
-    }
-    else
-    {
-        for (int offset = 0; offset < data_size; offset += sysex_chunk())
-        {
-            int data_left { data_size - offset };
-            int chunksize { int(min(data_left, sysex_chunk())) };
-            snd_seq_ev_set_sysex(&ev, chunksize, &data[offset]);
-
-            /*
-             * Pump it into the queue.
-             */
-
-            int rc { snd_seq_event_output_direct(m_seq, &ev) };
-            if (rc >= 0)
+            else if (rc == -EAGAIN)
             {
-                usleep(sysex_sleep_us());
-                api_flush();
+                errprint("MIDI try-again status");
+                microsleep(sysex_sleep_us());           /* see sysex.hpp    */
+                continue;
             }
             else
             {
-                if (rc == -EINVAL)
-                {
-                    errprint("Invalid seq event");
-                }
-                else if (rc == -ENOENT)
-                {
-                    errprint("Not a MIDI message");
-                }
-                else if (rc == -ENOMEM)
-                {
-                    errprint("MIDI message too big");
-                }
-                else
-                    errprint("Sending SysEx chunk failed");
+                std::string rcvalue { std::to_string(rc) };
+                error_message("Sending SysEx chunk failed", rcvalue);
+                break;
             }
         }
     }

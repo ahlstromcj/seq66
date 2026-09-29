@@ -1849,24 +1849,6 @@ qseqeventframe::slot_dump ()
 }
 
 /**
- *  Cancels the edits and closes the dialog box.  In order for removing the
- *  current-highlighting in the mainwd or perfedit windows, some of the work
- *  of slot_close() needs to be done here as well.
- *
- *  Not used.
- */
-
-#if 0
-
-void
-qseqeventframe::slot_cancel ()
-{
-    set_selection_multi(false);
-}
-
-#endif
-
-/**
  *  Adds one measure to the length. We also need to prohibit entering
  *  events past the measure-count of the pattern.
  */

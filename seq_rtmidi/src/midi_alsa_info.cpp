@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2026-09-24
+ * \updates       2026-09-29
  * \license       See above.
  *
  *  API information found at:
@@ -686,6 +686,87 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
     get_poll_descriptors();
 }
 
+bool
+midi_alsa_info::handle_seq_event (snd_seq_event_t * ev)
+{
+    bool result { false };
+    switch (ev->type)
+    {
+    case SND_SEQ_EVENT_SYSTEM:
+
+        (void) show_event(ev, "System event");
+        break;
+
+    case SND_SEQ_EVENT_RESULT:
+
+        (void) show_event(ev, "Result event");
+        break;
+
+    case SND_SEQ_EVENT_CLIENT_START:
+
+        result = show_event(ev, "Client start");
+        break;
+
+    case SND_SEQ_EVENT_CLIENT_EXIT:
+
+        result = show_event(ev, "Client exit");
+        break;
+
+    case SND_SEQ_EVENT_CLIENT_CHANGE:
+
+        result = show_event(ev, "Client change");
+        break;
+
+    case SND_SEQ_EVENT_PORT_START:
+    {
+        /*
+         * Figure out how to best do this.  It has way too many parameters
+         * now, and is currently meant to be called from mastermidibus.
+         * See mastermidibase::port_start().
+         *
+         * port_start(masterbus, ev->data.addr.client, ev->data.addr.port);
+         * api_port_start (mastermidibus & masterbus, int bus, int port)
+         */
+
+        result = show_event(ev, "Port start");
+        break;
+    }
+    case SND_SEQ_EVENT_PORT_EXIT:
+    {
+        /*
+         * The port_exit() function is defined in mastermidibase and in
+         * businfo.  They seem to cover this functionality.
+         *
+         * port_exit(masterbus, ev->data.addr.client, ev->data.addr.port);
+         */
+
+        result = show_event(ev, "Port exit");
+        break;
+    }
+    case SND_SEQ_EVENT_PORT_CHANGE:
+    {
+        result = show_event(ev, "Port change");
+        break;
+    }
+    case SND_SEQ_EVENT_PORT_SUBSCRIBED:
+
+        result = show_event(ev, "Port subscribed");
+        break;
+
+    case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
+
+        result = show_event(ev, "Port unsubscribed");
+        break;
+
+    default:
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        (void) show_event(ev, "Port other");
+#endif
+        break;
+    }
+    return result;
+}
+
 /**
  *  For debugging, we may expose the following static function for use for
  *  normal (and usually copious) incoming MIDI events.  For less common
@@ -696,26 +777,24 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
 bool
 midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
 {
-    if (rc().investigate())
-    {
-        int c = int(ev->source.client);
-        int p = int(ev->source.port);
-        int b = int(input_ports().get_port_index(c, p));
-        char tmp[80];
-        snprintf
-        (
-            tmp, sizeof tmp, "[%s event[%d] = 0x%x: client %d port %d]",
-            tag, b, unsigned(ev->type), c, p
-        );
+    int c = int(ev->source.client);
+    int p = int(ev->source.port);
+    int b = int(input_ports().get_port_index(c, p));
+    char tmp[80];
+    snprintf
+    (
+        tmp, sizeof tmp, "[%s event [bus %d] = 0x%x: client %d port %d]",
+        tag, b, unsigned(ev->type), c, p
+    );
 
-        /*
-         * We want to use non-buffered I/O.
-         *
-         *      info_message(tmp);
-         */
+    /*
+     * We want to use non-buffered I/O.
+     *
+     *      info_message(tmp);
+     *      fprintf(stderr, "[%s] %s\n", seq_client_name().c_str(), tmp);
+     */
 
-        fprintf(stderr, "[%s] %s\n", seq_client_name().c_str(), tmp);
-    }
+    warn_message(tmp);
     return true;
 }
 
@@ -796,6 +875,11 @@ midi_alsa_info::api_get_midi_event (event * inev)
         else if (remcount == -ENOSPC)
         {
             errprint("input FIFO overrun");             /* see VMPK note    */
+            (void) snd_seq_drop_input(m_alsa_seq);
+
+            /*
+             * (void) snd_seq_drop_input_buffer(m_alsa_seq);
+             */
         }
         else
             errprint("event input fail");
@@ -804,99 +888,19 @@ midi_alsa_info::api_get_midi_event (event * inev)
     }
     if (rc().manual_ports())
     {
-        if (ev->type == SND_SEQ_EVENT_SYSEX)
-        {
-            sysex = true;
-            (void) show_event(ev, "SysEx");
-        }
-        else if (ev->type == SND_SEQ_EVENT_CLIENT_START)
-        {
+        if (ev->type == SND_SEQ_EVENT_CLIENT_START)
             (void) show_event(ev, "Client start");
-        }
+    }
+    if (ev->type == SND_SEQ_EVENT_SYSEX)
+    {
+        sysex = true;
+
+        /*
+         * TMI: (void) show_event(ev, "SysEx");
+         */
     }
     else
-    {
-        switch (ev->type)
-        {
-        case SND_SEQ_EVENT_SYSTEM:
-
-            (void) show_event(ev, "System event");
-            break;
-
-        case SND_SEQ_EVENT_RESULT:
-
-            (void) show_event(ev, "Result event");
-            break;
-
-        case SND_SEQ_EVENT_CLIENT_START:
-
-            result = show_event(ev, "Client start");
-            break;
-
-        case SND_SEQ_EVENT_CLIENT_EXIT:
-
-            result = show_event(ev, "Client exit");
-            break;
-
-        case SND_SEQ_EVENT_CLIENT_CHANGE:
-
-            result = show_event(ev, "Client change");
-            break;
-
-        case SND_SEQ_EVENT_PORT_START:
-        {
-            /*
-             * Figure out how to best do this.  It has way too many parameters
-             * now, and is currently meant to be called from mastermidibus.
-             * See mastermidibase::port_start().
-             *
-             * port_start(masterbus, ev->data.addr.client, ev->data.addr.port);
-             * api_port_start (mastermidibus & masterbus, int bus, int port)
-             */
-
-            result = show_event(ev, "Port start");
-            break;
-        }
-        case SND_SEQ_EVENT_PORT_EXIT:
-        {
-            /*
-             * The port_exit() function is defined in mastermidibase and in
-             * businfo.  They seem to cover this functionality.
-             *
-             * port_exit(masterbus, ev->data.addr.client, ev->data.addr.port);
-             */
-
-            result = show_event(ev, "Port exit");
-            break;
-        }
-        case SND_SEQ_EVENT_PORT_CHANGE:
-        {
-            result = show_event(ev, "Port change");
-            break;
-        }
-        case SND_SEQ_EVENT_PORT_SUBSCRIBED:
-
-            result = show_event(ev, "Port subscribed");
-            break;
-
-        case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
-
-            result = show_event(ev, "Port unsubscribed");
-            break;
-
-        case SND_SEQ_EVENT_SYSEX:
-
-            sysex = true;
-            (void) show_event(ev, "SysEx");
-            break;
-
-        default:
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            result = show_event(ev, "Port other");
-#endif
-            break;
-        }
-    }
+        result = handle_seq_event(ev);
 
     /*
      *  If the event was detected above, it is currently a non-actionable
@@ -910,12 +914,15 @@ midi_alsa_info::api_get_midi_event (event * inev)
      */
 
     if (result)
+    {
         return false;
+    }
 
     midibyte midbuf[0x1000];                    /* 4096 buffer for data     */
     snd_midi_event_t * midi_ev { nullptr };     /* make ALSA MIDI parser    */
     int rc { snd_midi_event_new(sizeof midbuf, &midi_ev) };
-    if (rc < 0 || is_nullptr(midi_ev))
+    result = rc == 0 && not_nullptr(midi_ev);
+    if (! result)
     {
         errprint("snd_midi_event_new() failed");
         return false;
@@ -926,91 +933,68 @@ midi_alsa_info::api_get_midi_event (event * inev)
      *  this handling of SysEx data. Apparently one can get only up to ALSA
      *  buffer size (4096) of data.  Also, the snd_seq_event_input() function
      *  is said to block!
+     *
+     *  The actual data payload length is given by ev.data.ext.len, and the
+     *  data pointer is in ev.data.ext.ptr. The call to inev->set_midi_event()
+     *  loads up the byte buffer. If larger than 256, we need to fall back to
+     *  using the internal ALSA buffer pointer and lengt().
+     *
+     * Note:
+     *
+     *      Handling large SysEx is handled now in mastermidibase.
      */
 
-    long byts { snd_midi_event_decode(midi_ev, midbuf, sizeof midbuf, ev) };
-    if (byts > 0)
+    bussbyte b = input_ports().get_port_index
+    (
+        int(ev->source.client), int(ev->source.port)
+    );
+    if (sysex)
     {
-        result = inev->set_midi_event(ev->time.tick, midbuf, byts);
-        if (result)
-        {
-            bussbyte b = input_ports().get_port_index
-            (
-                int(ev->source.client), int(ev->source.port)
-            );
-
-            /*
-             * bool sysex = inev->is_sysex();
-             *
-             * Also done in busarray::get_midi_event():
-             */
-
-            inev->set_input_bus(b);
-
-            /*
-             * The actual data payload length is given by ev.data.ext.len,
-             * and the data pointer is in ev.data.ext.ptr. The call to
-             * inev->set_midi_event() loads up the byte buffer. If
-             * larger than 256, we need to fall back to using the
-             * internal ALSA buffer pointer and lengt().
-             */
-
-            int base { 0 };
-            if (sysex)
-            {
-                int len = int(ev->data.ext.len);
-#if defined SEQ66_PLATFORM_DEBUG
-                printf("sysex length %d\r", len);
+        midibyte * syxbuf { (midibyte *)(ev->data.ext.ptr) };
+        int syxlen = int(ev->data.ext.len);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        fprintf(stderr, "sysex length %d / %d\n", syxlen, sysex_chunk());
 #endif
-                if (len < sysex_chunk())                        /* 256  */
-                    sysex = false;
-                else
-                    inev->reset_sysex();
-            }
-            while (sysex)           /* sysex might be more than one message */
-            {
-                midibyte * syxbuf { (midibyte *)(ev->data.ext.ptr) };
-                int syxlen { int(ev->data.ext.len) };
-                sysex = inev->append_sysex(syxbuf + base, syxlen);
-                base += syxlen;
-
-                int remcount = snd_seq_event_input(m_alsa_seq, &ev);
-                if (remcount == -EAGAIN)
-                {
-                    info_message("no more events");
-                    break;
-                }
-                else if (remcount == -ENOSPC)
-                {
-                    error_message("input FIFO overrun");
-                    result = false; /* input FIFO overrun, cleared          */
-                    break;
-                }
-            }
-        }
-        result = true;
+        inev->set_sysex(syxbuf, syxlen);
+        inev->set_input_bus(b);
     }
     else
     {
-        /*
-         * This happens even at startup, before anything is really happening.
-         */
-
-        if (byts < 0)
+        long byts
         {
-            if (byts == -EINVAL)
+            snd_midi_event_decode(midi_ev, midbuf, sizeof midbuf, ev)
+        };
+        if (byts > 0)
+        {
+            result = inev->set_midi_event(ev->time.tick, midbuf, byts);
+            if (result)
             {
-                errprint("Invalid seq event");
+                inev->set_input_bus(b); /* also busarray::get_midi_event()  */
             }
-            else if (byts == -ENOENT)
+        }
+        else
+        {
+            /*
+             * This happens even at startup, before anything is really
+             * happening.
+             */
+
+            if (byts < 0)
             {
-                errprint("Not a MIDI message");
+                if (byts == -EINVAL)
+                {
+                    errprint("Invalid seq event");
+                }
+                else if (byts == -ENOENT)
+                {
+                    errprint("Not a MIDI message");
+                }
+                else if (byts == -ENOMEM)
+                {
+                    errprint("MIDI message too big");
+                }
+                result = false;
             }
-            else if (byts == -ENOMEM)
-            {
-                errprint("MIDI message too big");
-            }
-            result = false;
         }
     }
 

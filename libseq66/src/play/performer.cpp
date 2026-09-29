@@ -5715,13 +5715,6 @@ performer::midi_sysex (const event & ev)
 {
     if (rc().show_midi())
         ev.print();
-
-#if 0
-    if (rc().pass_sysex())
-    {
-        m_master_bus->handle_sysex(&ev);
-    }
-#endif
 }
 
 /**

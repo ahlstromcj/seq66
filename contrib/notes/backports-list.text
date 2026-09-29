@@ -66,6 +66,7 @@
         libseq66/src/seq66_features.cpp
         libseq66/src/sessions/clinsmanager.cpp
         libseq66/src/sessions/smanager.cpp
+        libseq66/src/util/basic_macros.cpp
         libseq66/src/util/filefunctions.cpp
         libseq66/src/util/strfunctions.cpp
         libsessions/libsessions.pro

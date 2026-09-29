@@ -171,9 +171,6 @@ private:
     void set_plaintext_msg (const std::string & msg);
     void set_plaintext_msg (const tokenization & tokens);
     void set_file_name (const std::string & fname);
-#if 0
-    void set_action_buttons (bool enable);
-#endif
     void set_rpn_guis (bool value_edited, bool other);
     void update_byte_count ();
     void macro_name_changed ();

@@ -1,15 +1,40 @@
-Release Notes for Seq66 v. 0.99.28 2026-09-02 "Unhappy MACNAM"
+Release Notes for Seq66 v. 0.99.28 2026-09-29 "Unhappy MACNAM"
 
-This version ...
+This version introduces better support for RPN/NRPN, macros, and
+System Exclusive.
 
 Also many fixes, tweaks, and minor updates.
 
 - Main window.
+- Session tab.
+  - Added a combo-box to select an output buss for macros.
+    MIDI "Ctrl Out" is the default selection.
 - Pattern editor.
-  - Added a Send button to the RPN dialog.
+  - Changed the color palette setup slightly.
+  - Fixed the text drawing in a pattern slot.
+  - Pattern slot.
+    - Added a Thru toggle to the right-click slot menu.
+    - Added a yellow Thru indicator.
+  - Added showing mouse coordinates in note tooltips.
+  - Improved the selection of notes in the piano roll.
+- RPN/NRPN/Macro dialog. This dialog is accessible in the pattern and
+  event editors and the Edit / Macro menu. It can send full RPN
+  events with coarse and fine settings. It can load and save *.syx
+  and macro files. See NEW for details.
+- Edit / Preferences / MIDI Clock and Input.
+  - Port-mapping.
+    - Added a "Re-enable" button to re-activate missing ports that
+      are now plugged in. A restart is required.
+  - Sleep time added to restart to mitigate port changes not showing
+    up.
 - Event editor.
+  - Added a button to bring up the RPN/NRPN/Macro dialog.
 - Miscellaneous.
-- Port-mapping.
+  - Added show\_filespec\_select\_dialog() to return the
+    full file-specification of the selected file.
+  - Many tiny improvements to various parts of the user-interface.
 - Documentation updated.
+
+See NEWS for more information.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

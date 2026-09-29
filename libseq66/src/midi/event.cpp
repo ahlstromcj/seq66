@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-09-15
+ * \updates       2026-09-28
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1191,6 +1191,7 @@ bool
 event::set_sysex (const midibyte * data, int len)
 {
     reset_sysex();
+    m_status = 0xF0;
     return append_sysex(data, len);
 }
 
@@ -1198,6 +1199,7 @@ bool
 event::set_sysex (const midibytes & data)
 {
     reset_sysex();
+    m_status = 0xF0;
     return append_sysex(data);
 }
 
@@ -1787,4 +1789,3 @@ create_event (midipulse tstamp, const midibytes & dbytes)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

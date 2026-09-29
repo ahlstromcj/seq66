@@ -93,20 +93,10 @@ qchannelpopup::set_midi_channel (int ch, bool userchange)  // qbase::status qs)
         {
             m_edit_channel = channel;
             if (is_null_channel(channel))
-            {
                 channel_combo()->setCurrentIndex(chindex);
-            }
             else
-            {
-#if 0
-                // WHY DOES THIS EVEN COMPILE??????
+                channel_combo()->setCurrentIndex(chindex);
 
-                if (user_change)
-                    set_track_change();             /* to solve issue #90   */
-                else
-#endif
-                    channel_combo()->setCurrentIndex(chindex);
-            }
             emit signal_change_channel(channel, userchange);
         }
     }

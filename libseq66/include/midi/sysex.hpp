@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-09-20
- * \updates       2026-09-25
+ * \updates       2026-09-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -43,12 +43,23 @@ namespace seq66
 
 /**
  *  Defines the value used for sleeping, in microseconds, and the
- *  size of System Exclusive chunks..
+ *  size of System Exclusive chunks.
+ *
+ *  From https://sourceforge.net/projects/sysexxer/:
+ *
+ *  The baud rate of MIDI is 31250 bits/s = 32 microseconds per bit.  Per byte,
+ *  an additional start and one or two stop bits are used.  The following delay
+ *  should avoid data loss in case more data gets sent as fits into the ALSA
+ *  buffers.
+ *
+ *      usleep( chunk.size() * 352 ) = 256 max * 352 = 90112 (!)
+ *
+ *  He also claims ALSAs buffer is limited to 16356 bytes. Hmmm.
  */
 
 #if SEQ66_HAVE_ALSA
 
-const int c_alsa_sysex_sleep_us   { 20000 };            /* 20 to 50 ms      */
+const int c_alsa_sysex_sleep_us   { 90112 };            /* 20 to 50 ms      */
 const int c_alsa_sysex_chunk      {   256 };
 
 inline int
@@ -65,7 +76,7 @@ sysex_chunk ()
 
 #elif SEQ66_HAVE_JACK
 
-const int c_jack_sysex_sleep_us   { 40000 };
+const int c_jack_sysex_sleep_us   { 90112 };
 const int c_jack_sysex_chunk      {   256 };
 
 inline int
@@ -82,7 +93,7 @@ sysex_chunk ()
 
 #else
 
-const int c_other_sysex_sleep_us  { 40000 };
+const int c_other_sysex_sleep_us  { 90112 };
 const int c_other_sysex_chunk     {   256 };
 
 inline int

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-09-13
+% \update      2026-09-29
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2505,6 +2505,9 @@
       \item \textbf{Send Events}.
          Clicking this button sends the RPN/NRPN or "other" events to the
          MIDI Control Out (display) buss or the selected alternate buss.
+         Be aware that sending a long SysEx event from one instance
+         of \textsl{Seq66} to another effectively blocks other inputs
+         until the transmission is complete.
       \item \textbf{Source}.
          When a file is loaded, or when the selected macro refers to
          data in a file, the full file-specification is displayed here.
@@ -2527,6 +2530,11 @@
          (SysEx data file), and the usual "All Files" filter.
          Anything not a \texttt{*.macro} file consider a raw,
          binary file.
+         Note that the file can contain only a single event (e.g.
+         a system-exclusive message), otherwise ALSA will not process
+         it properly.
+         For multiple events in a file, use the 'macro' format
+         or define the macro in the 'ctrl' file.
       \item \textbf{Save}.
          This button allows to save the data in text format or in
          a binary format.

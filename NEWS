@@ -1,12 +1,12 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-09-08
+2015-07-10 to 2026-09-29
 
 # Change Log
 
-## [0.99.28] - 2026-09-08
+## [0.99.28] - 2026-09-29
 
-    "Unhappy MACNAM"
+    "Unhappy MACNAM. Unhappy MACNAM."
 
 ### Added
 
@@ -15,7 +15,8 @@ Chris Ahlstrom
     Access from Edit / Macros for use with 'macro', 'sysex', and
     other binary files.
     -   Added MPE Configuration Message (no. 6) to the RPN set.
-    -   Added a Send (N)RPN button to the RPN dialog.
+    -   Added a Send (N)RPN button to the RPN dialog. It can
+        also send long SysEx messages read from a file.
     -   Added a select output buss combo-box to the dialog.
         The default selection is "Ctrl Out" (MIDI Control Out
         configured buss), but other output ports/devices can be
@@ -24,7 +25,7 @@ Chris Ahlstrom
     -   Added functions to delete and modify MIDI macros. Used
         in the RPN dialog.
     -   Added buttons to load and save macros from arbitrary data
-        files in both text and binary formats..
+        files in both text and binary formats.
 -   Edit / Preferences / MIDI Clock and Input.
     -   Added a "Re-enable" button to re-activate ports that were
         missing but are now plugged in. A restart is required, but

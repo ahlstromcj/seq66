@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2026-05-18
+ * \updates       2026-09-29
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -763,6 +763,54 @@ mastermidibase::api_poll_for_midi ()
 }
 
 /**
+ *  Grab a MIDI event via the currently-selected MIDI API.
+ *
+ * Issue:
+ *
+ *      With long (greater than 256 bytes) SysEx messages, only the last
+ *      packets is stored. The loop is entered but the counter never
+ *      increments, and getting a partial SysEx packet fails. If
+ *      we keep trying, though, the full count of packets (e.g. the
+ *      18555 bytes of data/midi/roland-empty.syx) is obtained.
+ *
+ * \param in
+ *      The event to be set based on the found input event.
+ *
+ * \return
+ *      Returns true if a full event is obtained.
+ */
+
+bool
+mastermidibase::get_midi_event (event * in)
+{
+    bool result { api_get_midi_event(in) };
+    if (result)
+    {
+        bool issysex { in->is_sysex() };
+        if (issysex)
+        {
+            bool terminated { false };
+            while (! terminated)
+            {
+                terminated = in->is_sysex_terminated();
+                if (! terminated)
+                {
+                    event partial;
+                    result = api_get_midi_event(&partial);
+                    if (result)
+                        result = in->append_sysex(partial.get_sysex());
+                }
+
+                /*
+                 * Do not break!  if (! result) break;
+                 */
+            }
+        }
+    }
+    return result;
+}
+
+/**
  *  Test the sequencer to see if any more input is pending.  Calls the
  *  implementation-specific API function.
  *
@@ -993,4 +1041,3 @@ mastermidibase::dump_midi_input (event ev)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

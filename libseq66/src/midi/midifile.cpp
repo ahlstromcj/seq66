@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-08-18
+ * \updates       2026-09-27
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -123,47 +123,51 @@ namespace seq66
  * <Header Chunk> = <chunk type><length><format><ntrks><division>
  *
  * Bytes:                 4   +   4   +   2  +   2   +   2   = 14
+ *
+ * However, we also want to be able read raw/SysEx files, so
+ * we reduce the strictness of the size check to the smallest MIDI
+ * system exclusive message.
  */
 
-static const size_t c_minimum_midi_file_size = 14;
+static const size_t c_minimum_midi_file_size { 3 };         /* 14           */
 
 /**
  *  Magic number for handling mute-group formats.
  */
 
-static const unsigned c_legacy_mute_group = 1024;           /* 0x0400       */
+static const unsigned c_legacy_mute_group { 1024 };         /* 0x0400       */
 
 /**
  *  A manifest constant for controlling the length of the stream buffering
  *  array in a MIDI file.
  */
 
-static const int c_midi_line_max = 1024;
+static const int c_midi_line_max { 1024 };
 
 /**
  *  The maximum length of a Seq24/Seq66 track nam3.
  */
 
-static const int c_trackname_max =  256;
+static const int c_trackname_max {  256 };
 
 /**
  *  The maximum allowed variable length value for a MIDI file, which allows
  *  the length to fit in a 32-bit integer.
  */
 
-static const int c_varlength_max = 0x0FFFFFFF;
+static const int c_varlength_max { 0x0FFFFFFF };
 
 /**
  *  Highlights the MIDI file header value, "MThd".
  */
 
-static const miditag c_mthd_tag  = 0x4D546864;      /* magic number 'MThd'  */
+static const miditag c_mthd_tag  { 0x4D546864 };    /* magic number 'MThd'  */
 
 /**
  *  Highlights the MIDI file track-marker (chunk) value, "MTrk".
  */
 
-static const miditag c_mtrk_tag  = 0x4D54726B;      /* magic number 'MTrk'  */
+static const miditag c_mtrk_tag  { 0x4D54726B };    /* magic number 'MTrk'  */
 
 /**
  *  The chunk header value for the Seq66 proprietary/SeqSpec section.  We
@@ -172,7 +176,7 @@ static const miditag c_mtrk_tag  = 0x4D54726B;      /* magic number 'MTrk'  */
  *  program).  For now, we stick with "MTrk".
  */
 
-static const miditag c_prop_chunk_tag = c_mtrk_tag;
+static const miditag c_prop_chunk_tag { c_mtrk_tag };
 
 /**
  *  Provides the track number for the proprietary/SeqSpec data when using
@@ -181,8 +185,8 @@ static const miditag c_prop_chunk_tag = c_mtrk_tag;
  *  confuses the "SeqSpec" track parser.
  */
 
-static const midishort c_prop_seq_number     = 0x3FFF;
-static const midishort c_prop_seq_number_old = 0x7777;
+static const midishort c_prop_seq_number     { 0x3FFF };
+static const midishort c_prop_seq_number_old { 0x7777 };
 
 /**
  *  Provides the track name for the "proprietary" data when using the new
@@ -192,7 +196,7 @@ static const midishort c_prop_seq_number_old = 0x7777;
  *  that causes needless error messages.
  */
 
-static const std::string c_prop_track_name = "Seq66-S";
+static const std::string c_prop_track_name { "Seq66-S" };
 
 /**
  *  This const is used for detecting SeqSpec data that Seq66 does not handle.
@@ -201,7 +205,7 @@ static const std::string c_prop_track_name = "Seq66-S";
  *  file.
  */
 
-static const miditag c_prop_tag_word = 0x24240000;
+static const miditag c_prop_tag_word { 0x24240000 };
 
 /*
  *  Internal functions.
@@ -693,7 +697,7 @@ midifile::read_gap (size_t sz)
  *
  * \param tag
  *      Basically an informative string to denote what kind of file is being
- *      opened, "MIDI" or "WRK".
+ *      opened, "MIDI", "WRK", "RAW", "SYX", "SYSEX", ...?
  *
  * \return
  *      Returns true if the input stream was successfully opend on a good

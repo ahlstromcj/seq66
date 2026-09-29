@@ -714,14 +714,7 @@ BBT_string_to_pulses
             {
                 meas_values.beats(b);
                 if (valuecount > 2)
-                {
-#if 0
-                    if (d == "$")
-                        meas_values.divisions(seqparms.ppqn() - 1);
-                    else
-#endif
                     meas_values.divisions(d);
-                }
             }
             result = midi_measures_to_pulses(meas_values, seqparms);
         }

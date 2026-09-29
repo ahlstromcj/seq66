@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-24
+ * \updates       2026-09-27
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -587,44 +587,6 @@ qrpnframe::~qrpnframe()
 {
     delete ui;
 }
-
-#if 0
-
-/**
- *  Enables or disables the button according to the parameter.
- *
- * \param enable
- *      Specifies the enable-statuses of the items that can do
- *      something with the event parameters.
- */
-
-void
-qrpnframe::set_action_buttons (bool enable)
-{
-    if (enable)
-    {
-        ui->button_load_file->setEnabled(true);
-        ui->button_rpn_delete->setEnabled(true);
-        ui->button_rpn_insert->setEnabled(true);
-        ui->button_rpn_macro->setEnabled(true);
-        ui->button_rpn_send->setEnabled(true);
-        ui->button_save_file->setEnabled(true);
-    }
-    else
-    {
-        /*
-         * ui->button_load_file->setEnabled(false);
-         * ui->button_save_file->setEnabled(false);
-         */
-
-        ui->button_rpn_delete->setEnabled(false);
-        ui->button_rpn_insert->setEnabled(false);
-        ui->button_rpn_macro->setEnabled(false);
-        ui->button_rpn_send->setEnabled(false);
-    }
-}
-
-#endif
 
 /**
  *  Truth table for certain GUI elements.
@@ -1888,6 +1850,13 @@ qrpnframe::send_other_macro ()
         if (result)
         {
             result = perf().send_macro_bytes(mac, macbuss);
+            if (result)
+            {
+                perf().notify_macro_change
+                (
+                    macro_name(), performer::macro::sent
+                );
+            }
         }
     }
     return result;

@@ -127,6 +127,7 @@ private:
         const std::string & cname,
         snd_seq_port_info_t * pinfo
     ) const;
+    bool handle_seq_event (snd_seq_event_t * ev);
     bool show_event (snd_seq_event_t * ev, const char * tag);
 
 };          // class midi_alsa_info
@@ -140,4 +141,3 @@ private:
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

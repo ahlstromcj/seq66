@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-08-20
+ * \updates       2026-09-26
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -583,8 +583,17 @@ public:
 
     static bool is_sysex_msg (midibyte m)
     {
-        return m == EVENT_MIDI_SYSEX ||
-            m == EVENT_MIDI_SYSEX_CONTINUE;     /* 0xF7 as SysEx Continue   */
+        return m == EVENT_MIDI_SYSEX;
+    }
+
+    static bool is_sysex_end_msg (midibyte m)
+    {
+        return m == EVENT_MIDI_SYSEX_END;       /* 0xF7, SysEx terminator   */
+    }
+
+    static bool is_sysex_continue_msg (midibyte m)
+    {
+        return m == EVENT_MIDI_SYSEX_CONTINUE;  /* 0xF7 as SysEx Continue   */
     }
 
     static bool is_meta_msg (midibyte m)
@@ -1062,7 +1071,7 @@ public:
     bool append_sysex_byte (midibyte data);
     bool append_sysex (const midibyte * data, int len);
     bool append_sysex (const midibytes & data);
-    bool set_sysex (const midibyte * data, int len); // STILL NEEDED?
+    bool set_sysex (const midibyte * data, int len);
     bool set_sysex (const midibytes & data);
     void set_sysex_size (int len);
 
@@ -1438,6 +1447,16 @@ public:
         return m_status < EVENT_MIDI_SYSEX;
     }
 
+    bool is_sysex_continue () const
+    {
+        return is_sysex_continue_msg(m_status);
+    }
+
+    bool is_sysex_terminated () const
+    {
+        return is_sysex() && is_sysex_end_msg(get_sysex().back());
+    }
+
     /**
      *  Indicates if the event is a Sense event or a Reset event.
      *  Currently ignored by Sequencer64.
@@ -1556,4 +1575,3 @@ extern event create_event (midipulse tick, const midibytes & data);
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

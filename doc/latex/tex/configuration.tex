@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2026-09-03
+% \update      2026-09-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2849,6 +2849,9 @@
    For macros with a large amount of data, another format is
    supported.
    This example shows SysEx data contained in a binary file.
+   Note that this binary file can contain only a single event (e.g.
+   a system-exclusive message), otherwise ALSA will not process
+   it properly.
 
    \begin{verbatim}
       [macro-control-out]
