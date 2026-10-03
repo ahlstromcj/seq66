@@ -366,7 +366,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
      </widget>
     </item>
     <item row="1" column="3">
-     <widget class="QPushButton" name="macro_button">
+     <widget class="QPushButton" name="button_calc">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
@@ -374,7 +374,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
        </size>
       </property>
       <property name="text">
-       <string>Macro</string>
+       <string>Calc</string>
       </property>
      </widget>
     </item>
@@ -946,7 +946,7 @@ the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
      <x>480</x>
      <y>241</y>
      <width>311</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">

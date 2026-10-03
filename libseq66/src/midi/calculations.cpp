@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-09-13
+ * \updates       2026-10-03
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1642,8 +1642,8 @@ split_14_bits (unsigned short value14, midibyte & b0, midibyte & b1)
 midilong
 extract_varinum (const midibytes & data, int & index)
 {
-    midilong result = 0;
-    midibyte c = 0;
+    midilong result { 0 };
+    midibyte c { 0 };
     for ( ; index < int(data.size()); ++index)
     {
         c = data[index];
@@ -1666,8 +1666,8 @@ extract_varinum (const midibytes & data, int & index)
 midilong
 extract_varinum (const midibyte * data, int count, int & index)
 {
-    midilong result = 0;
-    midibyte c = 0;
+    midilong result { 0 };
+    midibyte c { 0 };
     for ( ; index < count; ++index)
     {
         c = data[index];
@@ -1684,6 +1684,100 @@ extract_varinum (const midibyte * data, int count, int & index)
     }
     result <<= 7;                                   /* bit was clear       */
     result += c & 0x7F;
+    return result;
+}
+
+/**
+ *  Converts a MIDI Variable-Length Value (VLV), which has a variable number
+ *  of bytes, into a long value.  This function reads the bytes while bit 7 is
+ *  set in each byte.  Bit 7 is a continuation bit.  Similar to
+ *  extract_varinum() or midifile::read_varinum(), but works with the whole
+ *  data string.
+ *
+ * \param data
+ *      Provides a vector of bytes to be converted as base-128 digits.
+ *
+ * \return
+ *      Returns the single long value.
+ */
+
+midilong
+vlv_to_long (const midibytes & data)
+{
+    midilong result { 0 };
+    midibyte b { 0 };
+    for (auto c : data)
+    {
+        if ((c & 0x80) != 0x00)                     /* bit 7 is set         */
+        {
+            result <<= 7;                           /* shift result 7 bits  */
+            result += c & 0x7F;                     /* add bits 0-6         */
+        }
+        b = c;                                      /* save for the end     */
+    }
+    result <<= 7;                                   /* bit was clear        */
+    result += b & 0x7F;
+    return result;
+}
+
+/**
+ *  Creates a MIDI Variable-Length Value (VLV), which has a variable number
+ *  of bytes.
+ *  Each byte has
+ *  two parts: 7 bits of data and 1 continuation bit. The highest-order
+ *  bit is set to 1 if there is another byte of the number to follow. The
+ *  highest-order bit is set to 0 if this byte is the last byte in the
+ *  VLV.
+ *
+ *  To recreate a number represented by a VLV, first you remove the
+ *  continuation bit and then concatenate the leftover bits into a single
+ *  number.
+ *
+ *  To generate a VLV from a given number, break the number up into 7 bit
+ *  units and then apply the correct continuation bit to each byte.
+ *  Basically this is a base-128 system where the digits range from 0 to 7F.
+ *
+ *  In theory, you could have a very long VLV number which was quite
+ *  large; however, in the standard MIDI file specification, the maximum
+ *  length of a VLV value is 5 bytes, and the number it represents can not
+ *  be larger than 4 bytes.
+ *
+ *  Here are some common cases:
+ *
+ *      -   Numbers between 0 and 127 are represented by a single byte:
+ *          0x00 to 7F.
+ *      -   0x80 is represented as 0x81 00.  The first number is
+ *          10000001, with the left bit being the continuation bit.
+ *          The rest of the number is multiplied by 128, and the second byte
+ *          (0) is added to that. So 0x82 would be 0x81 0x01
+ *      -   The largest 2-byte MIDI value (e.g. a sequence number) is
+ *          0xFF 7F, which is 127 * 128 + 127 = 16383 = 0x3FFF.
+ *      -   The largest 3-byte MIDI value is 0xFF FF 7F = 2097151 = 0x1FFFFF.
+ *      -   The largest number, 4 bytes, is 0xFF FF FF 7F = 536870911 =
+ *          0xFFFFFFF.
+ *  Similar to midifile::write_varinum(), but returns the generated data
+ *  bytes.
+ */
+
+midibytes
+long_to_vlv (midilong v)
+{
+    midibytes result;
+    midilong value { v & 0x7f };
+    while ((v >>= 7) > 0)
+    {
+        value <<= 8;
+        value |= 0x80;
+        value += (v & 0x7f);
+    }
+    for (;;)
+    {
+        result.push_back(midibyte(value & 0xff));
+        if (value & 0x80)                           /* continuation bit?    */
+            value >>= 8;                            /* yes, get next MSB    */
+        else
+            break;                                  /* no, we are done      */
+    }
     return result;
 }
 
@@ -2293,6 +2387,70 @@ pitch_data_bytes_scaled (midibyte pitch, midibyte & d0, midibyte & d1)
     int truevalue = int(pitch) >> 7;
     pitch_data_bytes(truevalue, d0, d1);
 }
+
+#if defined SEQ66_USE_QCALCULATEBOX
+
+/**
+ *  Calculates a small subset of expressions related to MIDI.
+ *
+ *      -   "vlv <long integer>" ---> <vlv bytes>
+ *      -   "long <vlv bytes>"   ---> <long integer>
+ */
+
+std::string
+cmd_calculate (const std::string & expression)
+{
+    std::string result;
+    tokenization tokens { tokenize(expression) };
+    std::size_t sz { tokens.size() };
+    if (sz > 0)
+    {
+        std::string cmd { tokens[0] };
+        if (sz >= 2)
+        {
+            if (sz == 2)
+            {
+                if (cmd == "vlv")
+                {
+                    long value { string_to_long(tokens[1]) };
+                    midibytes byts { long_to_vlv(midilong(value)) };
+                    int counter { 0 };
+                    for (auto b : byts)
+                    {
+                        if (counter++ > 0)
+                            result += " ";
+
+                        char tmp[8];
+                        snprintf(tmp, sizeof tmp, "0x%02X", unsigned(b));
+                        result += tmp;
+                    }
+                }
+                else if (cmd == "long")
+                {
+                    midibytes byts;
+                    for (int counter = 1; counter < int(sz); ++counter)
+                    {
+                        midibyte b
+                        {
+                            midibyte(string_to_unsigned(tokens[counter]))
+                        };
+                        byts.push_back(b);
+                    }
+
+                    midilong value { vlv_to_long(byts) };
+                    result = std::to_string(long(value));
+                }
+                else
+                    result = "No such command";
+            }
+        }
+        else if (sz == 1)
+            result = "No such command"; /* Any single token commands yet?   */
+    }
+    return result;
+}
+
+#endif  // defined SEQ66_USE_QCALCULATEBOX
 
 }       // namespace seq66
 

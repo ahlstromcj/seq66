@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2026-06-08
+# \update         2026-10-03
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -68,7 +68,8 @@ TARGET = seq_qt5
 
 UI_DIR = src/gui
 
-FORMS += src/gui/qlearnframe.ui \
+FORMS += src/gui/qcalculatebox.ui \
+ src/gui/qlearnframe.ui \
  src/gui/qlfoframe.ui \
  src/gui/qlearnframe.ui \
  src/gui/qliveframeex.ui \
@@ -91,7 +92,8 @@ FORMS += src/gui/qlearnframe.ui \
  src/gui/qslogview.ui \
  src/gui/qsmainwnd.ui
 
-HEADERS += src/gui/qlearnframe.hpp \
+HEADERS += src/gui/qcalculatebox.hpp \
+ src/gui/qlearnframe.hpp \
  src/gui/qlfoframe.hpp \
  src/gui/qlearnframe.hpp \
  src/gui/qliveframeex.hpp \
@@ -142,7 +144,8 @@ HEADERS += src/gui/qlearnframe.hpp \
  include/qt5_helpers.hpp \
  include/qt5nsmanager.hpp
 
-SOURCES += src/gui/qlearnframe.cpp \
+SOURCES += src/gui/qcalculatebox.cpp \
+ src/gui/qlearnframe.cpp \
  src/gui/qlfoframe.cpp \
  src/gui/qlearnframe.cpp \
  src/gui/qliveframeex.cpp \

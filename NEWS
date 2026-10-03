@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.28
 Chris Ahlstrom
-2015-07-10 to 2026-09-29
+2015-07-10 to 2026-10-03
 
 # Change Log
 
-## [0.99.28] - 2026-09-29
+## [0.99.28] - 2026-10-03
 
     "Unhappy MACNAM. Unhappy MACNAM."
 
@@ -46,6 +46,8 @@ Chris Ahlstrom
     -   Added a yellow Thru indicator, too.
 -   Event editor.
     -   Added a button to bring up the RPN/NRPN/Macro dialog.
+    -   Added a button to bring up a "calculate" dialog to do
+        some calculations for trouble-shooting. Very minimalistic.
 -   Main window Session tab.
     -   Added a select output buss combo-box to the dialog.
         The default selection is "Ctrl Out" (MIDI Control Out);
@@ -65,6 +67,10 @@ Chris Ahlstrom
         full file-specification of the selected file.
     -   Many tiny improvements to various parts of the
         user-interface.
+-   Module calculations:
+    -   Added vlv\_to\_long() function for stand-alone base-128
+        conversions.
+    -   Added long\_to\_vlv() function as well.
 
 ### Changed
 

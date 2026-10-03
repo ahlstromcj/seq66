@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-09-11
+ * \updates       2026-10-03
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -38,6 +38,7 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_midi_bytes()    */
+#include "qcalculatebox.hpp"              /* seq66::qcalculatebox               */
 #include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
@@ -255,7 +256,24 @@ qseqeventframe::qseqeventframe
      */
 
     ui->pulse_time_check_box->hide();
-    ui->macro_button->hide();
+
+#if defined SEQ66_USE_QCALCULATEBOX
+
+    /*
+     * Calc button. Meant for exploration.
+     */
+
+    connect
+    (
+        ui->button_calc, SIGNAL(clicked(bool)),
+        this, SLOT(slot_calculate())
+    );
+
+#else
+
+    ui->button_calc->hide();
+
+#endif
 
     /*
      *  Experimental. Monitor the D0 field for changes via user edit.
@@ -1493,6 +1511,16 @@ qseqeventframe::get_lengths ()
     };
     return result;
 }
+
+#if defined SEQ66_USE_QCALCULATEBOX
+
+void
+qseqeventframe::slot_calculate ()
+{
+    //
+}
+
+#endif  // defined SEQ66_USE_QCALCULATEBOX
 
 /**
  *  Initiates the deletion of the current editable event.  We call both of the

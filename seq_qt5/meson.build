@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2026-04-26
-# \updates     2026-07-31
+# \updates     2026-10-02
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 #  This file is part of the "seq66" library. See the top-level meson.build
@@ -56,6 +56,7 @@ libseq_qt5_library = 'seq_qt5'
 #-----------------------------------------------------------------------------
 
 seq_ui_forms += files(
+   'src/gui/qcalculatebox.ui',
    'src/gui/qlearnframe.ui',
    'src/gui/qlfoframe.ui',
    'src/gui/qliveframeex.ui',
@@ -85,6 +86,7 @@ seq_ui_forms += files(
 #------------------------------------------------------------------
 
 seq_moc_headers += files(
+   'src/gui/qcalculatebox.hpp',
    'src/gui/qlearnframe.hpp',
    'src/gui/qlfoframe.hpp',
    'src/gui/qliveframeex.hpp',
@@ -109,6 +111,7 @@ seq_moc_headers += files(
    )
 
 seq_moc_sources += files(
+   'src/gui/qcalculatebox.cpp',
    'src/gui/qlearnframe.cpp',
    'src/gui/qlfoframe.cpp',
    'src/gui/qliveframeex.cpp',

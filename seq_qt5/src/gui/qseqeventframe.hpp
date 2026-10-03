@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-09-11
+ * \updates       2026-10-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,6 +38,7 @@
 
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 
+#include "midi/calculations.hpp"        /* SEQ66_USE_QCALCULATEBOX        */
 #include "play/performer.hpp"           /* seq66::performer::callbacks base */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 #include "util/basic_macros.hpp"        /* nullptr and related macros       */
@@ -48,7 +49,6 @@
  *
  * #include "qchannelpopup.hpp"         // seq66::qchannelpopup class       //
  */
-
 
 /**
  *  Forward reference.
@@ -247,6 +247,9 @@ private slots:
     void slot_table_click_ex (int row, int column, int prevrow, int prevcol);
     void slot_row_selected ();
     void slot_link_status ();
+#if defined SEQ66_USE_QCALCULATEBOX
+    void slot_calculate ();
+#endif
     void slot_delete ();
     void slot_insert ();
     void slot_modify ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-09-13
+ * \updates       2026-10-03
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -53,6 +53,13 @@
  */
 
 #undef  SEQ66_USE_EXTRA_PULSE_CALCULATIONS
+
+/**
+ *  EXPERIMENTAL>
+ */
+
+// #define SEQ66_USE_QCALCULATEBOX
+#undef SEQ66_USE_QCALCULATEBOX
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.
@@ -336,6 +343,8 @@ extern midilong extract_varinum
     int count,
     int & index
 );
+extern midilong vlv_to_long (const midibytes & data);
+extern midibytes long_to_vlv (midilong v);
 extern midipulse rescale_tick (midipulse tick, int newppqn, int oldppqn);
 
 /**
@@ -886,6 +895,10 @@ extern bool fnotequal (double x, double y);
 extern bool flessthan (double x, double y);
 extern bool fgreaterthan (double x, double y);
 
+#if defined SEQ66_USE_QCALCULATEBOX
+extern std::string cmd_calculate (const std::string & expression);
+#endif
+
 }           // namespace seq66
 
 #endif      // SEQ66_CALCULATIONS_HPP
@@ -895,4 +908,3 @@ extern bool fgreaterthan (double x, double y);
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-

@@ -19,7 +19,8 @@
 /**
  * \file          qrpnframe.cpp
  *
- *  This module declares/defines the base class for the LFO window.
+ *  This module declares/defines the base class for the (N)RPN/NPRN
+ *  window.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom

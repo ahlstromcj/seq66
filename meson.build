@@ -286,7 +286,7 @@ if host_machine.system() == 'macosx'
    os_darwin         = true
    os_osx            = true
    use_portmidi      = true
-   warning('Mac OSX supported has not been built or tested for Seq66.')
+   warning('Mac OSX support has not been built or tested for Seq66.')
    error('We need someone with a Mac to fix portmidi issues.')
 elif host_machine.system() == 'darwin'
    app_build_issue   = 'Mac Darwin'
@@ -295,7 +295,7 @@ elif host_machine.system() == 'darwin'
    os_darwin         = true
    os_osx            = true
    use_portmidi      = true
-   warning('Mac Darwin supported has not been built or tested for Seq66.')
+   warning('Mac Darwin support has not been built or tested for Seq66.')
    error('We need someone with a Mac to fix portmidi issues.')
 elif host_machine.system() == 'windows'
    app_build_issue   = 'Windows'
