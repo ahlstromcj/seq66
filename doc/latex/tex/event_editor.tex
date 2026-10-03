@@ -528,10 +528,13 @@
          See \sectionref{subsec:pattern_editor_rpn_nrpn_dialog}.
       \item \textbf{Clear}.
          Clear all events.
-      \item \textbf{Save}.
+      \item \textbf{Store}.
          Save all the changes back to the pattern.
       \item \textbf{Dump}.
          Dump the events to a file.
+      \item \textbf{Calc}.
+         Brings up a small dialog to use to do certain calculations
+         more conveniently.
    \end{enumber}
 
    Note that
@@ -564,11 +567,11 @@
    As with all edits, does not become official until the \textbf{Save} button
    is clicked.
 
-   \itempar{Save}{event editor!save events}
+   \itempar{Store}{event editor!store events}
    Saves all of the events in the event table into the original sequence.
    There is no way to undo this action.
    This button does not close the dialog; further
-   editing can be performed.  The Save button is enabled only if
+   editing can be performed.  The Store button is enabled only if
    some unsaved changes to the events exist.
    Any sequence/pattern editor that is open should be reflected
    in the pattern editor once this button is pressed.
@@ -588,6 +591,23 @@
    and the pattern is 9, then the resulting dump-file is
 
    \texttt{/home/user/miditunes/The\_Wild\_Bull-pattern-9.text}.
+
+   \itempar{Calc}{event editor!calculator}
+   This button brings up a dialog to facilitate some calculations.
+   This is mostly a convenience for trouble-shooting.
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[scale=0.65]{event-editor/calculations-box.png}
+   \caption{Mini Calculations Box}
+   \label{fig:mini_calculations_box}
+\end{figure}
+
+   There are currently only four operations supported, as shown
+   in the figure.
+
+   Note that hexadecimal values require the "0x" prefix, and
+   that octal values (with the prefix "0") can also be used.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

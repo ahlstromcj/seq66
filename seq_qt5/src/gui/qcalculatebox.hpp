@@ -55,6 +55,7 @@ public:
 private slots:
 
     void slot_command_changed ();
+    void slot_close ();
 
 private:
 

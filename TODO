@@ -1,7 +1,7 @@
 TO DO for Seq66 0.99.28
 
 Chris Ahlstrom
-2019-04-13 to 2026-09-29
+2019-04-13 to 2026-10-03
 
     -   Revisit metronome and count-in testing re issue #147.
     -   Edit / Preferences / MIDI Clock.
@@ -27,6 +27,9 @@ Chris Ahlstrom
         -   Now works for ALSA, next tackle JACK.
         -   Loading contrib/midi/roland-empty.midi yields:
             Performer: Premature end-of-file track 0: at 0x58/0x4a5c
+        -   Although the whole roland-empty.syx file is stored,
+            only the first F0-to-F7 packet is shown. The syx file
+            contains a large number of such packets.
     -   The ":" key is available (as well as some other keys). How
         can we use them? Metronome toggle as noted in "Back burner".
     -   Background recording / Metronome.

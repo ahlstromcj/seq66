@@ -2420,12 +2420,15 @@ cmd_calculate (const std::string & expression)
                         if (counter++ > 0)
                             result += " ";
 
-                        char tmp[8];
+                        char tmp [8];
                         snprintf(tmp, sizeof tmp, "0x%02X", unsigned(b));
                         result += tmp;
                     }
                 }
-                else if (cmd == "long")
+            }
+            else
+            {
+                if (cmd == "long" || cmd == "int")
                 {
                     midibytes byts;
                     for (int counter = 1; counter < int(sz); ++counter)
@@ -2440,12 +2443,37 @@ cmd_calculate (const std::string & expression)
                     midilong value { vlv_to_long(byts) };
                     result = std::to_string(long(value));
                 }
+                else if (cmd == "hex")
+                {
+                    for (int counter = 1; counter < int(sz); ++counter)
+                    {
+                        std::string s { decimal_to_hex(tokens[counter]) };
+                        if (counter > 1)
+                            result += " ";
+
+                        result += s;
+                    }
+                }
+                else if (cmd == "dec")
+                {
+                    for (int counter = 1; counter < int(sz); ++counter)
+                    {
+                        std::string s
+                        {
+                            hex_to_unsigned_decimal(tokens[counter])
+                        };
+                        if (counter > 1)
+                            result += " ";
+
+                        result += s;
+                    }
+                }
                 else
                     result = "No such command";
             }
         }
         else if (sz == 1)
-            result = "No such command"; /* Any single token commands yet?   */
+            result = "Needs arguments"; /* Any single token commands yet?   */
     }
     return result;
 }

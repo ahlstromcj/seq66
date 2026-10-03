@@ -55,11 +55,10 @@
 #undef  SEQ66_USE_EXTRA_PULSE_CALCULATIONS
 
 /**
- *  EXPERIMENTAL>
+ *  EXPERIMENTAL.
  */
 
-// #define SEQ66_USE_QCALCULATEBOX
-#undef SEQ66_USE_QCALCULATEBOX
+#define SEQ66_USE_QCALCULATEBOX
 
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.

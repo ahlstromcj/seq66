@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-09-10
+ * \updates       2026-10-03
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1813,6 +1813,56 @@ tokenization_to_string (const tokenization & tokens)
     for (auto & t : tokens)
     {
         result += t;
+    }
+    return result;
+}
+
+/**
+ *  Converts a number represented by a C hex value (e.g. "0x10") to
+ *  the corresponding string in decimal format.
+ *
+ *  Note that an unsigned value is used as the intermediate result,
+ *  rather than using unsigned long. At least for now.
+ *
+ * \param hexstr
+ *      The number expressed in C/C++'s hex notation ("0x10"). Note that
+ *      this also works with octal notation ("020").
+ *
+ * \return
+ *      Returns the string in decimal format.
+ */
+
+std::string
+hex_to_unsigned_decimal (const std::string & hexstr)
+{
+    unsigned value { string_to_unsigned(hexstr) };
+    return std::to_string(value);
+}
+
+/**
+ *  Sort of the inverse of hex_to_unsigned_decimal(), but it can
+ *  deal with signed decimal as well.
+ */
+
+std::string
+decimal_to_hex (const std::string & decstr)
+{
+    std::string result;
+    try
+    {
+        int value { std::stoi(decstr, nullptr, 10) };
+        const char * fmt { value < 256 ? "0x%02X" : "0x%X" };
+        char tmp [32];
+        (void) snprintf(tmp, sizeof tmp, fmt, value);
+        result = tmp;
+    }
+    catch (std::invalid_argument const &)
+    {
+        result = "invalid decimal argument";
+    }
+    catch (std::out_of_range const &)
+    {
+        result = "out of int range";
     }
     return result;
 }

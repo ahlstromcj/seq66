@@ -38,7 +38,7 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_midi_bytes()    */
-#include "qcalculatebox.hpp"              /* seq66::qcalculatebox               */
+#include "qcalculatebox.hpp"            /* seq66::qcalculatebox             */
 #include "qrpnframe.hpp"                /* seq66::qrpnframe                 */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
 #include "qt5_helpers.hpp"              /* seq66::qt() string conversion    */
@@ -260,13 +260,20 @@ qseqeventframe::qseqeventframe
 #if defined SEQ66_USE_QCALCULATEBOX
 
     /*
-     * Calc button. Meant for exploration.
+     * Calc button. Meant for exploration. We had an inexplicable
+     * warning at runtime using the old style connect().
+     * The new style works. Weird with a beard.
+     *
+     *  connect
+     *  (
+     *      ui->button_calc, SIGNAL(clicked()), this, SLOT(slot_calculate())
+     *  );
      */
 
     connect
     (
-        ui->button_calc, SIGNAL(clicked(bool)),
-        this, SLOT(slot_calculate())
+        ui->button_calc, &QPushButton::clicked,
+        this, &qseqeventframe::slot_calculate
     );
 
 #else
@@ -1517,7 +1524,11 @@ qseqeventframe::get_lengths ()
 void
 qseqeventframe::slot_calculate ()
 {
-    //
+    qcalculatebox * calc { new (std::nothrow) qcalculatebox(this) };
+    if (not_nullptr(calc))
+    {
+        calc->show();                   /* calc->exec() makes it modal      */
+    }
 }
 
 #endif  // defined SEQ66_USE_QCALCULATEBOX

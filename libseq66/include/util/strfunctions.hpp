@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-09-10
+ * \updates       2026-10-03
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -237,6 +237,8 @@ extern std::string hanging_word_wrap
     size_t rightmargin  = 80
 );
 extern std::string tokenization_to_string (const tokenization & tokens);
+extern std::string hex_to_unsigned_decimal (const std::string & hexstr);
+extern std::string decimal_to_hex (const std::string & decstr);
 
 /**
  *  This function comes, slightly modified to avoid throwing an exception,

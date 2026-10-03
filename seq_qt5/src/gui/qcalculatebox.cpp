@@ -57,6 +57,11 @@ qcalculatebox::qcalculatebox (QWidget * parent) :
         this, SLOT(slot_command_changed())
     );
     ui->line_edit_result->setReadOnly(true);    /* any use besides viewing? */
+    connect
+    (
+        ui->button_close, SIGNAL(clicked()),
+        this, SLOT(slot_close())
+    );
 }
 
 qcalculatebox::~qcalculatebox ()
@@ -75,6 +80,12 @@ qcalculatebox::slot_command_changed ()
     ui->line_edit_result->setText(qt(result));
 
 #endif  // defined SEQ66_USE_QCALCULATEBOX
+}
+
+void
+qcalculatebox::slot_close ()
+{
+    close();
 }
 
 }               // namespace seq66

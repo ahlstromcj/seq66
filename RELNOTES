@@ -33,6 +33,8 @@ Also many fixes, tweaks, and minor updates.
 - Miscellaneous.
   - Added show\_filespec\_select\_dialog() to return the
     full file-specification of the selected file.
+  - Added helpful diagnostic functions to the calculations and
+    strfunctions modules.
   - Many tiny improvements to various parts of the user-interface.
 - Documentation updated.
 

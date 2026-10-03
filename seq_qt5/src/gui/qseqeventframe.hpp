@@ -38,7 +38,7 @@
 
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 
-#include "midi/calculations.hpp"        /* SEQ66_USE_QCALCULATEBOX        */
+#include "midi/calculations.hpp"        /* SEQ66_USE_QCALCULATEBOX          */
 #include "play/performer.hpp"           /* seq66::performer::callbacks base */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 #include "util/basic_macros.hpp"        /* nullptr and related macros       */
@@ -71,6 +71,8 @@ class qseqeventframe final :
     public QFrame,
     protected performer::callbacks
 {
+    Q_OBJECT
+
     friend class qseventslots;
 
 private:
@@ -116,8 +118,6 @@ private:
         channel_pressure,
         pitch_wheel
     };
-
-    Q_OBJECT
 
 public:
 
