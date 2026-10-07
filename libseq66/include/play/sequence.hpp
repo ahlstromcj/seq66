@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2026-09-09
+ * \updates       2026-10-07
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -312,8 +312,7 @@ public:
     {
         friend class sequence;
 
-    private:
-
+        sequence::draw ni_draw;
         midipulse ni_tick_start;
         midipulse ni_tick_finish;
         int ni_note;                /* for tempo, the location to paint it  */
@@ -329,54 +328,59 @@ public:
             ni_note         (0),    /* we could initialize this to (-1)     */
             ni_velocity     (0),
             ni_selected     (false),
-            ni_non_note     (false)
+            ni_non_note     (true)
             {
                 // no code
             }
 
-       midipulse start () const
-       {
-           return ni_tick_start;
-       }
+        sequence::draw draw_type () const
+        {
+            return ni_draw;
+        }
 
-       midipulse finish () const
-       {
-           return ni_tick_finish;
-       }
+        midipulse start () const
+        {
+            return ni_tick_start;
+        }
 
-       midipulse length () const
-       {
-           return ni_tick_finish - ni_tick_start;
-       }
+        midipulse finish () const
+        {
+            return ni_tick_finish;
+        }
 
-       int note () const
-       {
-           return ni_note;
-       }
+        midipulse length () const
+        {
+            return ni_tick_finish - ni_tick_start;
+        }
 
-       bool valid () const
-       {
-           return note() >= 0;
-       }
+        int note () const
+        {
+            return ni_note;
+        }
 
-       int velocity () const
-       {
-           return ni_velocity;
-       }
+        bool valid () const
+        {
+            return note() >= 0;
+        }
 
-       bool selected () const
-       {
+        int velocity () const
+        {
+            return ni_velocity;
+        }
+
+        bool selected () const
+        {
            return ni_selected;
-       }
+        }
 
-       bool non_note ()
-       {
-           return ni_non_note;
-       }
+        bool non_note ()
+        {
+            return ni_non_note;
+        }
 
        void show () const;
 
-    };      // nested class note_info
+    };      // sequence nested class note_info
 
 private:
 

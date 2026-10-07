@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-10-02
- * \updates       2026-10-03
+ * \updates       2026-10-05
  * \license       GNU GPLv2 or above
  *
  *  The Command dialog provides a way to make a simple supported calculation
@@ -86,6 +86,22 @@ void
 qcalculatebox::slot_close ()
 {
     close();
+}
+
+/**
+ *  We don't want the Enter key to close the dialog.
+ *  Ignore the event so the dialog doesn't close.
+ */
+
+void
+qcalculatebox::keyPressEvent (QKeyEvent * ev)
+{
+    if (ev->key() == Qt::Key_Enter || ev->key() == Qt::Key_Return)
+    {
+        ev->accept();
+        return;
+    }
+    QDialog::keyPressEvent(ev); // Pass other keys to the base class
 }
 
 }               // namespace seq66

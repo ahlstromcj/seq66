@@ -28,7 +28,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2023-04-03
+ * \updates       2026-10-07
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -163,6 +163,11 @@ extern bool error_message
     const std::string & data = ""
 );
 extern void debug_message
+(
+    const std::string & msg,
+    const std::string & data = ""
+);
+extern void DEBUG_message
 (
     const std::string & msg,
     const std::string & data = ""

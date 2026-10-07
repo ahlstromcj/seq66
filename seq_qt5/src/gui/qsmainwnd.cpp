@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-08
+ * \updates       2026-10-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -1893,7 +1893,7 @@ qsmainwnd::open_list_dialog ()
         result = not_nullptr(m_playlist_frame);
         if (result)
         {
-            cb_perf().playlist_activate(true);      /* ca 2023-07-17    */
+            cb_perf().playlist_activate(true);
             rc().playlist_active(true);             /* ditto            */
             refresh_captions();                     /* ditto            */
             result = m_playlist_frame->load_playlist(fname);
@@ -4971,8 +4971,6 @@ qsmainwnd::update_song_action (int playaction)
     }
 }
 
-#if USE_ON_MACRO_CHANGE
-
 /**
  *  Handles changes to a macro (removed, added, or modified)
  *  by setting the save-ctrl flag.
@@ -4988,12 +4986,11 @@ qsmainwnd::on_macro_change
     bool result { operation != performer::macro::sent };
     if (result)
     {
+        refresh_captions();             /* ca 2026-10-05 */
         rc().auto_ctrl_save(true);
     }
     return result;
 }
-
-#endif
 
 /**
  *  This is called when focus changes in the main window.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2026-10-03
+ * \updates       2026-10-05
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -2424,6 +2424,14 @@ cmd_calculate (const std::string & expression)
                         snprintf(tmp, sizeof tmp, "0x%02X", unsigned(b));
                         result += tmp;
                     }
+                }
+                else if (cmd == "hex")
+                {
+                    result = decimal_to_hex(tokens[1]);
+                }
+                else if (cmd == "dec")
+                {
+                    result = hex_to_unsigned_decimal(tokens[1]);
                 }
             }
             else

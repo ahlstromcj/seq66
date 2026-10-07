@@ -482,6 +482,13 @@ qseqroll::paintEvent (QPaintEvent * qpep)
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + unit_height());
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "D (%d,%d), C (%d,%d), X(%d,%d), W(%d,%d)\n",
+            drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
+        );
+#endif
         pen.setColor(sel_color());
         painter.setPen(pen);
         painter.drawRect(x, y, w, h);
@@ -780,6 +787,12 @@ qseqroll::draw_notes
 
         if (ni.non_note())
             continue;
+
+        if (ni.finish() < 0)
+        {
+            DEBUG_message("note info: negative time-stamp");
+            continue;
+        }
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
@@ -1508,16 +1521,16 @@ qseqroll::get_selected_box ()
     return result;
 }
 
+/*
+ * The key-padding messes with snap_x(), we think. Instead use
+ * the progress-bar's initial location.
+ *
+ *      current_x(int(ev->x()) - m_keypadding_x);
+ */
+
 void
 qseqroll::mouseReleaseEvent (QMouseEvent * ev)
 {
-    /*
-     * The key-padding messes with snap_x(), we think. Instead use
-     * the progress-bar's initial location.
-     *
-     *      current_x(int(ev->x()) - m_keypadding_x);
-     */
-
     current_x(qt_mouse_x(ev) - xoffset(0));
     current_y(qt_mouse_y(ev));
     (void) snap_current_y();
@@ -1540,22 +1553,12 @@ qseqroll::mouseReleaseEvent (QMouseEvent * ev)
             int note_h, note_l;         /* high and low notes in window     */
             int x, y, w, h;             /* window dimensions                */
             eventlist::select selmode = eventlist::select::selecting;
-
             (void) snap_current_x();
-
             rect::xy_to_rect_get        /* copy drop dimensions to xywh     */
             (
                 drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
             );
-
-            /*
-             * We need to adjust for snapping. Still needs work.
-             *
-             * int x2 { x + w - 8 };
-             */
-
             --y;
-
             convert_xy(x, y, tick_s, note_h);
             convert_xy(x + w, y + h, tick_f, note_l);
 

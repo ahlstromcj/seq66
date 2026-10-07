@@ -1223,6 +1223,20 @@
      F0 ID sysex data bytes F7
    \end{verbatim}
 
+   \textbf{Note}:
+      System Exclusive messages in MIDI files start with a
+      \textsl{delta time} (e.g. 0), then the F0 status, and
+      then the \textsl{size} of the data \textsl{payload} after the F0 and
+      before the payload itself.  Unlike the real-time MIDI wire protocol,
+      where a device listens for an 0xF7 status byte to know a message has
+      ended, SysEx messages in a MIDI file rely on the explicit length count
+      immediately following the status byte.
+      This allows software to read the exact length of the proprietary
+      block.
+      See the commentary for
+      \texttt{roland-empty.midi} in
+      \texttt{contrib/midi/README}.
+
    The ID is a manufacturer's ID. Normally a single byte, additional IDs can be
    represented by the sequence \texttt{00 xx yy}, to allow 16384 additional
    manufacturer IDs.  Currently \textsl{Seq66} does not try to interpret the

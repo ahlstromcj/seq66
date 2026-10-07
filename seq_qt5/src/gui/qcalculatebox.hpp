@@ -27,13 +27,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-10-02
- * \updates       2026-10-03
+ * \updates       2026-10-05
  * \license       GNU GPLv2 or above
  *
  *  Provides a way to easily check some calculations.
  */
 
 #include <QDialog>
+#include <QKeyEvent>
 
 namespace Ui
 {
@@ -51,6 +52,10 @@ public:
 
     explicit qcalculatebox (QWidget * parent = nullptr);
     ~qcalculatebox ();
+
+private:
+
+    virtual void keyPressEvent (QKeyEvent * ev) override;
 
 private slots:
 

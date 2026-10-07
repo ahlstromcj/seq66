@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2026-09-09
+2015-09-11 to 2026-10-05
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -29,9 +29,23 @@ test varying PPQN values.
       modulation, which shows that we do not handle two different velocities at
       the same time value.
 
-   24stones.mid and 2stones.mid:
+   24stones.mid:
+
+      Track 1 (second track) contains the obsolete event "MIDI Port".
+      Then it has these NRPN events on channel 1; note the time-stamp
+      increments:
+
+      0 Par ch=1 c=101 v=0    Registered parameter, coarse, pitch-bend
+      1 Par ch=1 c=100 v=0    Registered parameter, fine, pitch-bend
+      2 Par ch=1 c=6 v=24     Data entry slider (coarse), 24 semitones
+      3 Par ch=1 c=38 v=0     Data entry slider, fine, 0 cents
 
       These two files contain NRPN events.
+
+   2stones.mid:
+
+      Contains the same events as 24stones.mid, except that the
+      coarse data entry is 2 semitones (the normal setting).
 
    2Bars.midi:
 
@@ -128,6 +142,11 @@ test varying PPQN values.
       F  -  Enable columns 4 and 5
       V  -  Enable columns 6 and 7
 
+   NR_Route_66.midi:
+
+      An excerpt from the Nelson Riddle version of "Route 66", which
+      inspired me to name "Seq66", and give it a street-sign logo.
+
    nrpn_sort_test.midi:
 
       This file was created by drawing a few notes in a pattern,
@@ -142,10 +161,19 @@ test varying PPQN values.
    
       A file that resets all MIDI channels.
 
-   NR_Route_66.midi:
+   roland-empty.midi:
 
-      An excerpt from the Nelson Riddle version of "Route 66", which
-      inspired me to name "Seq66", and give it a street-sign logo.
+      We created this file by reading the raw file
+      data/midi/roland-empty.syx and inserting the data into
+      a pattern. The size of the SysEx file is 18555 (0x81 0x90 0x7B).
+      The size of this MIDI file is 19036. When stored as an
+      event, the first sub-element is a VLV delta time, followed
+      by F0, followed by the size of the payload (without the F0)
+      as a VLV, with the payload coming last.
+
+      The whole SysEx message consists of smaller SysEx messages,
+      each of the form "F0 <payload> F7"; no delta-time or
+      payload size is present.
 
    route66.midi:
 

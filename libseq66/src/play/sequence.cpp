@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-09-09
+ * \updates       2026-10-07
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -145,11 +145,33 @@ eventlist sequence::sm_clipboard;
 void
 sequence::note_info::show () const
 {
-    printf
+    const char * drawstr { "none" };
+    if (draw_type() == draw::finish)
+        drawstr = "finish";
+    else if (draw_type() == draw::linked)
+        drawstr = "linked";
+    else if (draw_type() == draw::note_on)
+        drawstr = "note on";
+    else if (draw_type() == draw::note_off)
+        drawstr = "note off";
+    else if (draw_type() == draw::tempo)
+        drawstr = "tempo";
+    else if (draw_type() == draw::program)
+        drawstr = "program";
+    else if (draw_type() == draw::controller)
+        drawstr = "controller";
+    else if (draw_type() == draw::pitchbend)
+        drawstr = "pitchbend";
+
+    char tmp [80];
+    (void) snprintf
     (
-        "note_info %d: ticks %ld to %ld, velocity %d\n",
-        ni_note, long(ni_tick_start), long(ni_tick_finish), ni_velocity
+        tmp, sizeof tmp,
+        "%d: '%s', ticks %ld to %ld, velocity %d",
+        ni_note, drawstr, long(ni_tick_start), long(ni_tick_finish),
+        ni_velocity
     );
+    DEBUG_message("Note info", tmp);
 }
 
 /**
@@ -4766,6 +4788,8 @@ sequence::add_sequenced_macro (midipulse tick, const midimacro & macro)
             else
                 break;
         }
+        if (result)
+            result = verify_and_link();                 /* ca 2026-10-07 */
     }
     return result;
 }
@@ -6083,6 +6107,17 @@ sequence::get_next_note
  * \param evi
  *      The current event iterator value.  It is not checked, and is not
  *      iterated after getting the data.
+ *
+ * \return
+ *      Returns a draw value based on conditions:
+ *
+ *      is_note_on(): if is linked, draw::linked, else draw::note_on.
+ *      is_note_off(), not linked: draw:note_off.
+ *      is_tempo(): draw::tempo
+ *      is_program_change(): draw::program.
+ *      is_controller(): draw::controller.
+ *      is_pitchbend(): draw::pitchbend.
+ *      Otherwise, draw::none.
  */
 
 sequence::draw
@@ -6092,9 +6127,10 @@ sequence::get_note_info
     event::buffer::const_iterator & evi
 ) const
 {
-    const event & drawevent = eventlist::cdref(evi);
-    bool isnoteon = drawevent.is_note_on();
-    bool islinked = drawevent.is_linked();
+    sequence::draw result;
+    const event & drawevent { eventlist::cdref(evi) };
+    bool isnoteon { drawevent.is_note_on() };
+    bool islinked { drawevent.is_linked() };
     niout.ni_tick_finish    = 0;
     niout.ni_tick_start     = drawevent.timestamp();
     niout.ni_note           = drawevent.get_note();             /* ie. d0() */
@@ -6102,22 +6138,24 @@ sequence::get_note_info
     niout.ni_velocity       = drawevent.note_velocity();
     if (isnoteon)
     {
+        niout.ni_non_note = false;
         if (islinked)
         {
             niout.ni_tick_finish = drawevent.link()->timestamp();
-            return draw::linked;
+            result = draw::linked;
         }
         else
-            return draw::note_on;
+            result = draw::note_on;
     }
     else if (drawevent.is_note_off() && ! islinked)
     {
-        return draw::note_off;
+        niout.ni_non_note = false;
+        result = draw::note_off;
     }
     else if (drawevent.is_tempo())
     {
-        midibpm bpm = drawevent.tempo();
-        midibyte notebyte = tempo_to_note_value(bpm);
+        midibpm bpm { drawevent.tempo() };
+        midibyte notebyte { tempo_to_note_value(bpm) };
         niout.ni_note = int(notebyte);
         niout.ni_velocity = int(bpm + 0.5);
         niout.ni_non_note = true;
@@ -6139,25 +6177,32 @@ sequence::get_note_info
          * tempo and ending tempo.  Return the latter in velocity?
          */
 
-        return draw::tempo;
+        result = draw::tempo;
     }
     else if (drawevent.is_program_change())
     {
         niout.ni_tick_finish = niout.ni_tick_start;
         niout.ni_non_note = true;
-        return draw::program;
+        result = draw::program;
     }
     else if (drawevent.is_controller())
     {
         niout.ni_non_note = true;
-        return draw::controller;
+        result = draw::controller;
     }
     else if (drawevent.is_pitchbend())
     {
         niout.ni_non_note = true;
-        return draw::pitchbend;
+        result = draw::pitchbend;
     }
-    return draw::none;
+    else
+        result = draw::none;
+
+    niout.ni_draw = result;
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    niout.show();
+#endif
+    return result;
 }
 
 /**

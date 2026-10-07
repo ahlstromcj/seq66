@@ -171,8 +171,6 @@ public:
 
     static const std::string & file_marker ();
 
-    tokenization bytes_to_lines () const;
-
     const std::string & name () const
     {
         return m_name;
@@ -193,9 +191,11 @@ public:
         return m_tokens;
     }
 
+    tokenization bytes_to_lines () const;
     std::string line () const;
-
     midibytes bytes (int index = (-1)) const;
+    int byte_count () const;
+    void file_name (const std::string & s);
 
     bool use_file_storage () const
     {
@@ -207,14 +207,11 @@ public:
         return m_file_name;
     }
 
-    void file_name (const std::string & s);
 
     int event_count () const
     {
         return int(m_event_bytes.size());
     }
-
-    int byte_count () const;
 
     bool is_expanded () const
     {

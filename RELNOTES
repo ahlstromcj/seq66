@@ -1,7 +1,8 @@
-Release Notes for Seq66 v. 0.99.28 2026-10-03 "Unhappy MACNAM"
+Release Notes for Seq66 v. 0.99.28 2026-10-05 "Unhappy MACNAM"
 
 This version introduces better support for RPN/NRPN, macros, and
-System Exclusive.
+System Exclusive. A simple calculation dialog is provided for
+trouble-shooting in the event editor.
 
 Also many fixes, tweaks, and minor updates.
 

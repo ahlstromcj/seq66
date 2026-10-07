@@ -1,27 +1,10 @@
 TO DO for Seq66 0.99.28
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-03
+2019-04-13 to 2026-10-06
 
     -   Revisit metronome and count-in testing re issue #147.
-    -   Edit / Preferences / MIDI Clock.
-        -   On Arch, Clock to VMPK keeps getting disabled.
-            With or without port-mapping. Works on Debian.
-            Works okay if starting with no config files.
-    -   Pattern editor.
-        -   The selection box is a off horizontally and vertically.
-            Individual selection of notes seems fine.
-        -   Horizontal gets better with zoom, vertical gets worse.
-        -   Solo works, but unsoloing does not.
-    -   MIDI Learn.
-        -   In Automation, is starting over really the only
-            option to make corrections?
     -   Follow up on RPN:
-        -   Need to have the save dialog show the types of
-            file extensions: .macro(s), .sys, .raw.
-        -   program-banks.text (issue #138)
-        -   akai-mpk-mini-play.text
-        -   24stones.mid and 2stones.mid
         -   Save not enabled when the data changes.
     -   SysEx.
         -   Now works for ALSA, next tackle JACK.
@@ -29,26 +12,28 @@ Chris Ahlstrom
             Performer: Premature end-of-file track 0: at 0x58/0x4a5c
         -   Although the whole roland-empty.syx file is stored,
             only the first F0-to-F7 packet is shown. The syx file
-            contains a large number of such packets.
-    -   The ":" key is available (as well as some other keys). How
-        can we use them? Metronome toggle as noted in "Back burner".
-    -   Background recording / Metronome.
-        -   Finish testing scratchpad recording.
+            contains a large number of such packets, read as one
+            event, but the rest not pulled out as separate events.
     -   Copy paste:
         -   Can paste a long selection into a short pattern.
             Either warn about it or change the length.
     -   BSD. Boot to it and test out the latest meson build.
-    -   qmake.
-        -   Check for Clang and add -W-no-c++26-extensions.
-        -   For GNU add -W-no-sfinae-incomplete.
     -   Tweak ./work.sh --window --nsis to copy the generated
         qpseq66.exe to release/, and make the 7z pack as well.
 
 Back burner:
 
+    -   Background recording / Metronome.
+        -   Finish testing scratchpad recording.
+    -   Pattern editor.
+        -   The selection box is a off horizontally and vertically.
+            Individual selection of notes seems fine.
+        -   Horizontal gets better with zoom, vertical gets worse.
     -   In midi_alsa_info::api_get_midi_event(), we need to figure
         out how to use the SND_SEQ_EVENT_xxxxx events to improve
         the handling of port changes by Seq66.
+    -   The ":" key is available (as well as some other keys). How
+        can we use them? Metronome toggle as noted in "Back burner".
     -   Edit / Preferences / MIDI Clock.
         -   Consider a dialog to set up port-mapping.
     -   MIDI Learn.
@@ -80,6 +65,9 @@ Back burner:
         suitably named alternative.
     -   Issues #138
     -   Finish off the refactoring of Pt_Time.
+    -   qmake.
+        -   Check for Clang and add -W-no-c++26-extensions.
+        -   For GNU add -W-no-sfinae-incomplete.
     -   MIDNAM? Incorporate the xml66 and midiname projects if practical.
 
 NSM:

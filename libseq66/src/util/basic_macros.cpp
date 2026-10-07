@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2023-04-03
+ * \updates       2026-10-07
  * \license       GNU GPLv2 or above
  *
  *  One of the big new feature of some of these functions is writing the name of
@@ -403,6 +403,30 @@ debug_message (const std::string & msg, const std::string & data)
                 std::cerr << std::endl;
         }
     }
+}
+
+void
+DEBUG_message (const std::string & msg, const std::string & data)
+{
+#if defined SEQ66_PLATFORM_DEBUG
+    std::cerr << seq_client_tag(msglevel::debug) << " ";
+    if (is_a_tty(STDERR_FILENO))
+        std::cerr << s_black;
+
+    std::cerr << msg;
+    if (! data.empty())
+        std::cerr << ": " << data;
+
+    if (! msg.empty())
+    {
+        if (is_a_tty(STDERR_FILENO))
+            std::cerr << s_normal << std::endl;
+        else
+            std::cerr << std::endl;
+    }
+#else
+    (void) msg; (void) data;
+#endif
 }
 
 /**

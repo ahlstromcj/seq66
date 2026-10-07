@@ -62,7 +62,7 @@
    </property>
    <property name="toolTip">
     <string>Enter a simple command and press
-the Tab key</string>
+the Tab or Enter key.</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="line_edit_result">
@@ -75,7 +75,7 @@ the Tab key</string>
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the result of the command</string>
+    <string>Shows the result of the command.</string>
    </property>
   </widget>
   <widget class="QPushButton" name="button_close">

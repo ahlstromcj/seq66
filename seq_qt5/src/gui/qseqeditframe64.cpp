@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-09-23
+ * \updates       2026-10-06
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2841,6 +2841,15 @@ qseqeditframe64::popup_tool_menu ()
             else
                 macrosactive = false;
         }
+        //========================================================
+
+        QAction * rpnbox = new_qaction("(N)RPN/Macros...", m_tools_popup);
+        connect
+        (
+            rpnbox, SIGNAL(triggered(bool)), this, SLOT(slot_rpn_frame())
+        );
+
+        //========================================================
 
         QMenu * menuselect = new_qmenu("&Select notes", m_tools_popup);
         QMenu * menutiming = new_qmenu
@@ -2923,12 +2932,6 @@ qseqeditframe64::popup_tool_menu ()
             lfobox, SIGNAL(triggered(bool)), this, SLOT(slot_lfo_frame())
         );
 
-        QAction * rpnbox = new_qaction("(N)RPN/Macros...", m_tools_popup);
-        connect
-        (
-            rpnbox, SIGNAL(triggered(bool)), this, SLOT(slot_rpn_frame())
-        );
-
         QAction * fixbox = new_qaction("Pattern &fix...", m_tools_popup);
         connect
         (
@@ -2993,6 +2996,7 @@ qseqeditframe64::popup_tool_menu ()
         if (macrosactive)
             m_tools_popup->addMenu(menumacros);
 
+        m_tools_popup->addAction(rpnbox);
         m_tools_popup->addMenu(menuselect);
         m_tools_popup->addMenu(menutiming);
         m_tools_popup->addMenu(menupitch);
@@ -3002,7 +3006,6 @@ qseqeditframe64::popup_tool_menu ()
         m_tools_popup->addMenu(menumore);
 #else
         m_tools_popup->addAction(lfobox);
-        m_tools_popup->addAction(rpnbox);
         m_tools_popup->addAction(fixbox);
 #endif
 

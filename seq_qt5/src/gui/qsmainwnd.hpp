@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-08
+ * \updates       2026-10-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -240,13 +240,11 @@ protected:                              // performer callbacks
         int ppqn, midibpm bp, performer::change ch
     ) override;
     virtual bool on_song_action (bool signal, playlist::action) override;
-#if USE_ON_MACRO_CHANGE
     virtual bool on_macro_change
     (
         const std::string & /* macroname */,
         performer::macro operation
-    );
-#endif
+    ) override;
 
 protected:
 
@@ -262,10 +260,6 @@ private:                                // overrides of event handlers
     virtual void closeEvent (QCloseEvent *) override;
     virtual void changeEvent (QEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
-
-    /* EXPERIMENTAL
-     * virtual void mouseMoveEvent (QMouseEvent *) override;
-     */
 
 private:
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-09-27
+ * \updates       2026-10-06
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -316,7 +316,8 @@ qrpnframe::qrpnframe
 
     /*
      * Populate the channel combo box, and default to the pattern's
-     * current channel selection.
+     * current channel selection. The "false" means "do not add a
+     * 'Free' entry.
      */
 
     int ch { int(track().seq_midi_channel()) }; /* track().midi_channel()   */
@@ -330,6 +331,10 @@ qrpnframe::qrpnframe
          * data in the (N)RPN-related events created.
          */
 
+        if (is_null_channel(ch))
+        {
+            ui->combo_box_channel->setCurrentIndex(0);
+        }
         connect
         (
             ui->combo_box_channel, SIGNAL(currentIndexChanged(int)),
@@ -1754,6 +1759,11 @@ qrpnframe::slot_send ()
     s_show_slot(__FUNCTION__);
 }
 
+/**
+ *  Compare this function to insert_file_macro(). Getting a file macro is
+ *  low overhead. No need to check other_macro_tokens()[1] == file_marker().
+ */
+
 bool
 qrpnframe::send_file_macro ()
 {
@@ -1770,12 +1780,7 @@ qrpnframe::send_file_macro ()
             {
                result = perf().send_macro_bytes(mac, macbuss);
                 if (result)
-                {
-                    perf().notify_macro_change
-                    (
-                        macro_name(), performer::macro::sent
-                    );
-                }
+                    notify_macro_change(performer::macro::sent);
             }
         }
         else
@@ -1946,20 +1951,38 @@ qrpnframe::insert_other_macro ()
     return result;
 }
 
+/**
+ *  Compare this function to send_file_macro(). Getting a file macro is low
+ *  overhead. No need to check other_macro_tokens()[1] == file_marker().
+ *  Some code (the check for file usages and getting the midi data) could
+ *  be moved to midicontrolout.
+ */
+
 bool
 qrpnframe::insert_file_macro ()
 {
     bool result { other_macro_tokens().size() == 2 };
     if (result)
     {
-        midimacro mac(other_macro_tokens());
+        midicontrolout & mco { perf().midi_control_out() };
         midipulse ts { rpn_info().rpn_time_stamp };
-        bool result { track().add_macro(ts, mac) };
-        if (result)
-            notify_macro_change(performer::macro::inserted);
+        midimacro mac(other_macro_tokens());
+        if (mac.use_file_storage())
+        {
+            result = mco.get_midi_data(mac, mac.file_name());
+            if (result)
+            {
+                result = track().add_macro(ts, mac);
+                if (result)
+                    notify_macro_change(performer::macro::inserted);
+            }
+        }
         else
-            set_plaintext_msg("Error inserting file  macro");
+            result = false;
     }
+    if (! result)
+        set_plaintext_msg("Error inserting file macro");
+
     return result;
 }
 
