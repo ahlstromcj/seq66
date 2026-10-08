@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-10-07
+ * \updates       2026-10-08
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4771,6 +4771,11 @@ sequence::add_macro (midipulse tick, const midimacro & macro)
  *
  *  To get the sorting of these events to work, each event is set to one tick
  *  later than the previous one, to guarantee the sort order.
+ *
+ *  Also, we must verify-and-link, otherwise existing note events get
+ *  corrupted, in some cases, by the new controller events. We ignore
+ *  the return value, since it will be false if there are note events
+ *  already in the pattern.
  */
 
 bool
@@ -4789,7 +4794,11 @@ sequence::add_sequenced_macro (midipulse tick, const midimacro & macro)
                 break;
         }
         if (result)
-            result = verify_and_link();                 /* ca 2026-10-07 */
+        {
+            (void) verify_and_link();                   /* ca 2026-10-07 */
+            set_dirty();
+            modify();
+        }
     }
     return result;
 }

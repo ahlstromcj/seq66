@@ -1,13 +1,11 @@
 TO DO for Seq66 0.99.28
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-06
+2019-04-13 to 2026-10-08
 
     -   Revisit metronome and count-in testing re issue #147.
-    -   Follow up on RPN:
-        -   Save not enabled when the data changes.
     -   SysEx.
-        -   Now works for ALSA, next tackle JACK.
+        -   Now works for ALSA, next check JACK.
         -   Loading contrib/midi/roland-empty.midi yields:
             Performer: Premature end-of-file track 0: at 0x58/0x4a5c
         -   Although the whole roland-empty.syx file is stored,
@@ -431,10 +429,18 @@ ISSUES:
     bigger picture: synths/keyboards/grooveboxes emit program change + LSB +
     MSB-events when switching patterns or instruments. Many of them also send
     midi CC snapshots (reverb/chorus/delay send values) when switching
-    instruments. For example, here's my CASIO CTS-1000v synth when switching
+    instruments. For example, here is my CASIO CTS-1000v synth when switching
     an instrument:
 
     Sends CC 0 11 + CC 32 64 + PC 96 + CC 5 20 + CC 65 0
+
+#147 Metronome
+
+    For now, everything I do is step recording. I want to hit a button, hear a
+    count in and then start playing the keyboard to enter a melody.
+
+    But for everything I try, I am not hearing a metronome, nor a count in.
+
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

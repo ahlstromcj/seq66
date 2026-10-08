@@ -356,7 +356,7 @@ qslivegrid::show_grid_mode ()
 }
 
 /**
- *  Sets the name of the play-list.
+ *  Sets the name of the play-list or the currently-loaded file..
  */
 
 void

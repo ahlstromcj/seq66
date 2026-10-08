@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-10-06
+ * \updates       2026-10-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns panel".  It
@@ -2222,7 +2222,7 @@ qsmainwnd::redo_live_frame ()
 void
 qsmainwnd::update_window_title (const std::string & fn)
 {
-    std::string itemname = fn.empty() ? cb_perf().main_window_title(fn) : fn ;
+    std::string itemname = fn.empty() ? cb_perf().main_window_title() : fn ;
     itemname += " [*]";                             /* required by Qt 5     */
 
     QString fname = qt(itemname);
@@ -4986,8 +4986,24 @@ qsmainwnd::on_macro_change
     bool result { operation != performer::macro::sent };
     if (result)
     {
-        refresh_captions();             /* ca 2026-10-05 */
-        rc().auto_ctrl_save(true);
+        bool ctrlchange
+        {
+            operation == performer::macro::removed ||
+            operation == performer::macro::added
+        };
+        if (ctrlchange)
+        {
+            rc().auto_ctrl_save(true);
+        }
+        else
+        {
+            bool seqchange { operation == performer::macro::inserted };
+            if (seqchange)
+            {
+                update_window_title();
+                m_is_title_dirty = true;
+            }
+        }
     }
     return result;
 }
