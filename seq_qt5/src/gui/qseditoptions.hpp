@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-17
+ * \updates       2026-10-08
  * \license       GNU GPLv2 or above
  */
 
@@ -71,7 +71,7 @@ namespace seq66
 
 #if defined SEQ66_ALLOW_PORTMAP_FIX
     class qclocklayout;
-    class qinputcheckbox;;
+    class qinputcheckbox;
 #endif
 
 /**

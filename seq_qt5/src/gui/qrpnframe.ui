@@ -812,7 +812,6 @@ Data  </string>
      <pointsize>9</pointsize>
      <italic>true</italic>
      <bold>true</bold>
-     <hintingpreference>PreferDefaultHinting</hintingpreference>
     </font>
    </property>
    <property name="toolTip">

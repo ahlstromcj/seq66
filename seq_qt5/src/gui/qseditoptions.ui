@@ -2601,7 +2601,7 @@ an event in the new pattern.</string>
        <property name="title">
         <string>Sets Mode</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetSetsMode">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -2696,7 +2696,7 @@ an event in the new pattern.</string>
        <property name="title">
         <string>Song Start Mode</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetSongStartMode">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -3284,7 +3284,7 @@ the beat width.</string>
        <property name="title">
         <string>MIDI Ports</string>
        </property>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetMidiPorts">
         <property name="geometry">
          <rect>
           <x>14</x>
@@ -3961,7 +3961,7 @@ with jitter application.</string>
          <string>Session</string>
         </property>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidgetSession">
         <property name="geometry">
          <rect>
           <x>12</x>
