@@ -1,3 +1,12 @@
+2026-10-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* ChangeLog, NEWS, README.md, RELNOTES, TODO, VERSION,
+	data/license.text, data/readme.text, data/readme.windows,
+	doc/latex/tex/seq66-user-manual.tex,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, meson.build,
+	nsis/build_release_package.bat: Prep for version 0.99.28.
+
 2026-10-08  ahlstromcj <ahlstromcj@gmail.com>
 
 	* seq_qt5/src/gui/qrpnframe.ui, seq_qt5/src/gui/qseditoptions.hpp,
