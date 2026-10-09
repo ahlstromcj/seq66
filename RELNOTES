@@ -1,4 +1,4 @@
-Release Notes for Seq66 v. 0.99.28 2026-10-05 "Unhappy MACNAM"
+Release Notes for Seq66 v. 0.99.28 2026-10-09 "Unhappy MACNAM"
 
 This version introduces better support for RPN/NRPN, macros, and
 System Exclusive. A simple calculation dialog is provided for
@@ -39,6 +39,7 @@ Also many fixes, tweaks, and minor updates.
   - Many tiny improvements to various parts of the user-interface.
 - Documentation updated.
 
-See NEWS for more information.
+See NEWS for more information. Kudos to The Firesign Theatre for
+the name of this release.
 
 # vim: sw=4 ts=4 wm=15 et ft=rc

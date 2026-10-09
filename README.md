@@ -1,4 +1,4 @@
-# README for Seq66 0.99.28 2026-09-29
+# README for Seq66 0.99.28 2026-10-09
 
 __Seq66__ MIDI sequencer/live-looper with a hardware-sampler grid interface;
 pattern banks, triggers, and playlists for song management; scale and chord
@@ -48,7 +48,7 @@ in force. Otherwise Seq66 uses the current Qt theme.
     *   "Pattern fixer" for expansion/compression/alignment of note
         patterns.
     *   "MIDI learn" manager for easily setting up a grid controller.
-    *   "RPN/NRPN" editor for inserting out multiple MIDI device
+    *   "RPN/NRPN" editor for inserting or sending multiple MIDI device
         configuration events and saving them as macros.
     *   Event editor for detailed inspection and editing of events.
     *   Horizontal and vertical zoom in the pattern and song editors.
@@ -60,10 +60,12 @@ in force. Otherwise Seq66 uses the current Qt theme.
 
     *   Supports configuration files: '.rc', '.usr', '.ctrl', '.mutes',
         '.playlist', '.drums' ('.notemap'), '.palette', and Qt '.qss'.
-    *   Separates MIDI control and mute-group setting into their own files.
-    *   Unified keystroke and MIDI controls in the '.ctrl' file; defines MIDI
-        controls for automation/display of Seq66 status in grid controllers
-        (e.g. LaunchPad). Sample '.ctrl' files provided for Launchpad Mini.
+    *   Separates MIDI control and mute-group setting into their own
+        files.
+    *   Unified keystroke and MIDI controls in the '.ctrl' file;
+        defines MIDI controls for automation/display of Seq66 status
+        in grid controllers (e.g. LaunchPad). Sample '.ctrl' files
+        provided for Launchpad Mini.
 
 ##  Non/New Session Manager
 
