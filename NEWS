@@ -1,8 +1,34 @@
-NEWS for Seq66 0.99.28
+NEWS for Seq66 0.99.29
 Chris Ahlstrom
-2015-07-10 to 2026-10-08
+2015-07-10 to 2026-10-11
 
 # Change Log
+
+## [0.99.28] - 2026-10-11
+
+### Added
+
+-   Pattern editor.
+    -   Added an option to nest or unnest some of the right-click menu,
+        a matter of preference.
+    -   Improving the handling and display of track modification.
+
+### Changed
+
+-   Main Session tab.
+    -   Fixed handling the "Macro" check-box.
+
+### Fixed
+
+-   Pattern editor.
+    -   Changes now show an asterisk in the external pattern editor
+        title bar.
+    -   Added a Edit / Preferences / Pattern / Nest more menus
+        option to control the right-click slot menu.
+
+### Removed
+
+-   Nothing removed.
 
 ## [0.99.28] - 2026-10-08
 

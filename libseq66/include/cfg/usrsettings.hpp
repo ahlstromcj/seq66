@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2025-07-19
+ * \updates       2026-10-09
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -547,6 +547,13 @@ private:
      */
 
     bool m_convert_to_smf_1;
+
+    /**
+     *  If true (the default is false) some menus (currently just the pattern
+     *  slot right click menu) are nested to reduce clutter.
+     */
+
+    bool m_nest_more_menus;
 
     /**
      *  Provides the default PPQN for the application.  This PPQN is used when
@@ -1520,6 +1527,16 @@ public:
     void convert_to_smf_1 (bool flag)
     {
         m_convert_to_smf_1 = flag;
+    }
+
+    bool nest_more_menus () const
+    {
+        return m_nest_more_menus;
+    }
+
+    void nest_more_menus (bool flag)
+    {
+        m_nest_more_menus = flag;
     }
 
     void reset_ppqn ();

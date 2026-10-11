@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-09-21
+ * \updates       2026-10-09
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1845,6 +1845,12 @@ qseditoptions::setup_tab_pattern ()
         ui->checkBoxSMF0_to_1, SIGNAL(clicked(bool)),
         this, SLOT(slot_convert_to_smf_1())
     );
+    ui->checkBoxNestMoreMenus->setChecked(usr().nest_more_menus());
+    connect
+    (
+        ui->checkBoxNestMoreMenus, SIGNAL(clicked(bool)),
+        this, SLOT(slot_nest_more_menus())
+    );
 
     /*
      * New-pattern boolean options.
@@ -1954,6 +1960,14 @@ qseditoptions::slot_convert_to_smf_1 ()
 {
     bool enable = ui->checkBoxSMF0_to_1->isChecked();
     usr().convert_to_smf_1(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_nest_more_menus ()
+{
+    bool enable = ui->checkBoxNestMoreMenus->isChecked();
+    usr().nest_more_menus(enable);
     modify_usr();
 }
 

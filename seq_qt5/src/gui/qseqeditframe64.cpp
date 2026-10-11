@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2026-10-06
+ * \updates       2026-10-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1472,26 +1472,27 @@ qseqeditframe64::on_sequence_change
     seq::number seqno, performer::change ctype
 )
 {
-    seq::number trackno = track().seq_number();
-    bool result = seqno == trackno;
+    seq::number trackno { track().seq_number() };
+    bool result { seqno == trackno };
     if (result)
     {
-        bool modification = false;
+        bool modification { false };
         if (ctype == performer::change::yes)
         {
-            int bus = track().seq_midi_bus();
-            int channel = track().midi_channel();
-            int inbus = track().seq_midi_in_bus();
-            bool slotchanged =
+            int bus { track().seq_midi_bus() };
+            int channel { track().midi_channel() };
+            int inbus { track().seq_midi_in_bus() };
+            bool slotchanged
+            {
                 bus != m_edit_bus || channel != m_edit_channel ||
-                inbus != m_edit_in_bus;
-
+                inbus != m_edit_in_bus
+            };
+            modification = true;
             if (slotchanged)
             {
                 m_edit_bus = bus;
                 m_edit_channel = channel;
                 m_edit_in_bus = inbus;
-                modification = true;
                 repopulate_usr_combos(bus, channel);
             }
         }
@@ -2813,43 +2814,38 @@ qseqeditframe64::popup_tool_menu ()
         QMenu * menumacros = nullptr;
         tokenization names = perf().macro_names();
         bool macrosactive = ! names.empty();
-        if (macrosactive)
+        menumacros = new_qmenu("&Insert macro", m_tools_popup);
+        if (not_nullptr(menumacros))
         {
-            menumacros = new_qmenu("&Insert macro", m_tools_popup);
-            if (not_nullptr(menumacros))
+            menumacros->setEnabled(macrosactive);
+            for (const auto & name : names)
             {
-                for (const auto & name : names)
-                {
-                    QAction * tmp = new_qaction(name, m_tools_popup);
-                    midibytes mbytes = perf().macro_bytes(name);
-                    bool enabled = ! mbytes.empty();
-                    if (enabled)
-                        enabled = name != "header" && name != "footer";
+                QAction * tmp = new_qaction(name, m_tools_popup);
+                midibytes mbytes = perf().macro_bytes(name);
+                bool enabled = ! mbytes.empty();
+                if (enabled)
+                    enabled = name != "header" && name != "footer";
 
-                    tmp->setEnabled(enabled);
-                    menumacros->addAction(tmp);
-                }
-                connect
-                (
-                    menumacros, &QMenu::triggered,
-                    [this] (QAction * qact)
-                    {
-                        insert_macro(qact->text().toStdString());
-                    }
-                );
+                tmp->setEnabled(enabled);
+                menumacros->addAction(tmp);
             }
-            else
-                macrosactive = false;
+            connect
+            (
+                menumacros, &QMenu::triggered,
+                [this] (QAction * qact)
+                {
+                    insert_macro(qact->text().toStdString());
+                }
+            );
         }
-        //========================================================
+        else
+            macrosactive = false;
 
         QAction * rpnbox = new_qaction("(N)RPN/Macros...", m_tools_popup);
         connect
         (
             rpnbox, SIGNAL(triggered(bool)), this, SLOT(slot_rpn_frame())
         );
-
-        //========================================================
 
         QMenu * menuselect = new_qmenu("&Select notes", m_tools_popup);
         QMenu * menutiming = new_qmenu
@@ -2993,9 +2989,7 @@ qseqeditframe64::popup_tool_menu ()
                 menuharmonic->addSeparator();
             }
         }
-        if (macrosactive)
-            m_tools_popup->addMenu(menumacros);
-
+        m_tools_popup->addMenu(menumacros);
         m_tools_popup->addAction(rpnbox);
         m_tools_popup->addMenu(menuselect);
         m_tools_popup->addMenu(menutiming);

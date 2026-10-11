@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>618</height>
+    <width>802</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="font">
@@ -56,7 +56,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -670,7 +670,7 @@ This action will update the ports/maps at exit.</string>
           <x>20</x>
           <y>27</y>
           <width>571</width>
-          <height>128</height>
+          <height>142</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
@@ -681,6 +681,11 @@ This action will update the ports/maps at exit.</string>
              <width>48</width>
              <height>16777215</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
            <property name="text">
             <string>8</string>
@@ -704,6 +709,11 @@ This action will update the ports/maps at exit.</string>
              <height>16777215</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Outputs</string>
            </property>
@@ -720,6 +730,11 @@ This action will update the ports/maps at exit.</string>
              <height>16777215</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>4</string>
            </property>
@@ -730,6 +745,11 @@ This action will update the ports/maps at exit.</string>
          </item>
          <item row="4" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBoxAutoEnableVirtual">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Auto-enable virtual ports</string>
            </property>
@@ -737,6 +757,11 @@ This action will update the ports/maps at exit.</string>
          </item>
          <item row="1" column="0" colspan="3">
           <widget class="QCheckBox" name="checkBoxRecordByChannel">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>If checked, incoming data routes to the pattern
 slot by bus/port number. Overrides input by
@@ -749,6 +774,11 @@ channel.</string>
          </item>
          <item row="0" column="0" colspan="3" alignment="Qt::AlignmentFlag::AlignBottom">
           <widget class="QCheckBox" name="checkBoxRecordByBuss">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>If checked, incoming data routes to the pattern
 slot by channel number (0 to 15).</string>
@@ -760,6 +790,11 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="3" column="0">
           <widget class="QCheckBox" name="checkBoxVirtualPorts">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Use virtual (manual) I/O ports</string>
            </property>
@@ -773,6 +808,11 @@ slot by channel number (0 to 15).</string>
              <height>16777215</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Inputs</string>
            </property>
@@ -783,6 +823,11 @@ slot by channel number (0 to 15).</string>
          </item>
          <item row="2" column="0">
           <widget class="QCheckBox" name="checkBoxRecordSysEx">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Record System Exclusive</string>
            </property>
@@ -979,6 +1024,11 @@ slot by channel number (0 to 15).</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>rc: [Seq66] port-naming = long</string>
            </property>
@@ -1004,6 +1054,11 @@ slot by channel number (0 to 15).</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>Shows the status of rc / [Seq66] / verbose.
 Always set to false at exit.</string>
@@ -1027,6 +1082,11 @@ Always set to false at exit.</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>rc: [Seq66] port-naming = pair</string>
            </property>
@@ -1048,6 +1108,11 @@ Always set to false at exit.</string>
              <width>16777215</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
            <property name="toolTip">
             <string>usr: [user-interface-settings] global-seq-feature</string>
@@ -1071,6 +1136,11 @@ Always set to false at exit.</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>rc: [interaction-method] double-click-edit</string>
            </property>
@@ -1092,6 +1162,11 @@ Always set to false at exit.</string>
              <width>16777215</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
            <property name="toolTip">
             <string>Enable to suppress error prompts at startup.
@@ -1117,6 +1192,11 @@ anyway.</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>usr: [user-interface-settings] swap-coordinates</string>
            </property>
@@ -1127,6 +1207,11 @@ anyway.</string>
          </item>
          <item row="5" column="1">
           <widget class="QCheckBox" name="checkBoxDarkTheme">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>usr: [user-interface-settings] dark-theme
 Applies a couple of color tweaks, such as
@@ -1139,6 +1224,11 @@ using inverse font color for slots.</string>
          </item>
          <item row="6" column="1">
           <widget class="QCheckBox" name="checkBoxElliptical">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>usr: [user-interface-settings] progress-box-elliptical
 If set, the grid slot progress boxes are ellipses.</string>
@@ -1162,6 +1252,11 @@ If set, the grid slot progress boxes are ellipses.</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>rc: [recent-files] full-paths</string>
            </property>
@@ -1184,6 +1279,11 @@ If set, the grid slot progress boxes are ellipses.</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>Load most-recent file at startup. Works only if there
 is no active playlist. rc: [recent-files] load-most-recent</string>
@@ -1195,6 +1295,11 @@ is no active playlist. rc: [recent-files] load-most-recent</string>
          </item>
          <item row="7" column="1">
           <widget class="QCheckBox" name="checkBoxFollowProgress">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>usr: [user-interface-settings] follow-progress
 Sets the default setting for the follow-progress
@@ -1218,6 +1323,11 @@ button in the piano rolls.</string>
              <width>16777215</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
            </property>
            <property name="toolTip">
             <string>usr: [user-interface-settings] progress-bar-thick</string>
@@ -1254,6 +1364,11 @@ button in the piano rolls.</string>
              <height>24</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>usr: [user-ui-tweaks] lock-main-window</string>
            </property>
@@ -1281,7 +1396,7 @@ button in the piano rolls.</string>
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>11</pointsize>
              <italic>false</italic>
              <bold>false</bold>
             </font>
@@ -1313,7 +1428,7 @@ button in the piano rolls.</string>
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>11</pointsize>
              <italic>true</italic>
              <bold>false</bold>
             </font>
@@ -1331,7 +1446,7 @@ button in the piano rolls.</string>
         <rect>
          <x>16</x>
          <y>30</y>
-         <width>513</width>
+         <width>551</width>
          <height>183</height>
         </rect>
        </property>
@@ -1340,7 +1455,7 @@ button in the piano rolls.</string>
          <widget class="QCheckBox" name="checkBoxProgressBoxShown">
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1417,7 +1532,7 @@ Range: 4 to 8. Default: 4.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1469,7 +1584,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1491,7 +1606,7 @@ Range: 32 to 128, 0 disables.  Default: 32.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1680,7 +1795,7 @@ zoom vertically.</string>
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -1706,7 +1821,7 @@ zoom vertically.</string>
          <widget class="QLabel" name="labelUiScaling">
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>11</pointsize>
             <bold>false</bold>
            </font>
           </property>
@@ -3562,7 +3677,7 @@ notes as they come in.</string>
          <rect>
           <x>8</x>
           <y>40</y>
-          <width>197</width>
+          <width>198</width>
           <height>344</height>
          </rect>
         </property>
@@ -3574,6 +3689,11 @@ notes as they come in.</string>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternArm">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Armed</string>
              </property>
@@ -3581,6 +3701,11 @@ notes as they come in.</string>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternRecord">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Record</string>
              </property>
@@ -3588,6 +3713,11 @@ notes as they come in.</string>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternTighten">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Tighten record</string>
              </property>
@@ -3595,6 +3725,11 @@ notes as they come in.</string>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternQRecord">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Quantize record</string>
              </property>
@@ -3602,6 +3737,11 @@ notes as they come in.</string>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternNoteMap">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Note-map record</string>
              </property>
@@ -3609,6 +3749,11 @@ notes as they come in.</string>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternWrapAround">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>Wrap-around</string>
              </property>
@@ -3616,6 +3761,11 @@ notes as they come in.</string>
            </item>
            <item>
             <widget class="QCheckBox" name="checkBoxNewPatternThru">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>MIDI Thru</string>
              </property>
@@ -3625,6 +3775,11 @@ notes as they come in.</string>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBoxNewApply">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="toolTip">
             <string>If checked, apply options only when a new
 pattern editor is opened.</string>
@@ -3808,7 +3963,7 @@ with jitter application.</string>
          <x>250</x>
          <y>160</y>
          <width>401</width>
-         <height>111</height>
+         <height>141</height>
         </rect>
        </property>
        <property name="title">
@@ -3875,6 +4030,25 @@ with jitter application.</string>
         </property>
         <property name="text">
          <string>Automatic conversion of SMF 0 to SMF 1</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxNestMoreMenus">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>100</y>
+          <width>371</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Nest more menus (in pattern slot)</string>
         </property>
        </widget>
       </widget>
@@ -3966,13 +4140,18 @@ with jitter application.</string>
          <rect>
           <x>12</x>
           <y>32</y>
-          <width>227</width>
-          <height>74</height>
+          <width>258</width>
+          <height>83</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
           <widget class="QRadioButton" name="radio_session_none">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>None. Normal Se&amp;q66 operation.</string>
            </property>
@@ -3980,6 +4159,11 @@ with jitter application.</string>
          </item>
          <item>
           <widget class="QRadioButton" name="radio_session_nsm">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>NSM. NSM debug mode.</string>
            </property>
@@ -3987,6 +4171,11 @@ with jitter application.</string>
          </item>
          <item>
           <widget class="QRadioButton" name="radio_session_jack">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>JACK. JACK session management.</string>
            </property>

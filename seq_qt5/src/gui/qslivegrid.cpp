@@ -1890,131 +1890,138 @@ qslivegrid::popup_menu ()
         {
             /*
              * This macro is defined in libseq66/include/seq66_features.h.
+             *
+             * #if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
              */
 
-#if defined SEQ66_USE_COLLAPSED_SLOT_POPUP_MENU
-
-            QMenu * menuEdit { new_qmenu("&Edit") };
-            QAction * actionRecord { new_qaction("&Record toggle", m_popup) };
-            m_popup->addAction(actionRecord);
-            connect
-            (
-                actionRecord, SIGNAL(triggered(bool)),
-                this, SLOT(record_sequence())
-            );
-
-            QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
-            m_popup->addAction(actionThru);
-            connect
-            (
-                actionThru, SIGNAL(triggered(bool)),
-                this, SLOT(thru_toggle())
-            );
-
-            QAction * editseqex
+            if (usr().nest_more_menus())
             {
-                new_qaction("Pattern in &window", menuEdit)
-            };
-            menuEdit->addAction(editseqex);
-            connect
-            (
-                editseqex, SIGNAL(triggered(bool)),
-                this, SLOT(edit_sequence_ex())
-            );
-            if (perf().is_seq_active(current_seq()))
-            {
-                QAction * editseq
-                {
-                    new_qaction("Pattern in &tab", menuEdit)
-                };
+                QMenu * menuEdit { new_qmenu("&Edit") };
+                QAction * actionRecord { new_qaction("&Record toggle", m_popup) };
+                m_popup->addAction(actionRecord);
                 connect
                 (
-                    editseq, SIGNAL(triggered(bool)),
-                    this, SLOT(edit_sequence())
+                    actionRecord, SIGNAL(triggered(bool)),
+                    this, SLOT(record_sequence())
                 );
-                menuEdit->addAction(editseq);
-            }
 
-            QAction * editevents
-            {
-                new_qaction("&Events in tab", menuEdit)
-            };
-            menuEdit->addAction(editevents);
+                QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
+                m_popup->addAction(actionThru);
+                connect
+                (
+                    actionThru, SIGNAL(triggered(bool)),
+                    this, SLOT(thru_toggle())
+                );
 
-            if (perf().is_seq_recording(current_seq()))
-            {
-                editevents->setDisabled(true);
+                QAction * editseqex
+                {
+                    new_qaction("Pattern in &window", menuEdit)
+                };
+                menuEdit->addAction(editseqex);
+                connect
+                (
+                    editseqex, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_sequence_ex())
+                );
+                if (perf().is_seq_active(current_seq()))
+                {
+                    QAction * editseq
+                    {
+                        new_qaction("Pattern in &tab", menuEdit)
+                    };
+                    connect
+                    (
+                        editseq, SIGNAL(triggered(bool)),
+                        this, SLOT(edit_sequence())
+                    );
+                    menuEdit->addAction(editseq);
+                }
+
+                QAction * editevents
+                {
+                    new_qaction("&Events in tab", menuEdit)
+                };
+                menuEdit->addAction(editevents);
+
+                if (perf().is_seq_recording(current_seq()))
+                {
+                    editevents->setDisabled(true);
+                }
+                else
+                {
+                    editevents->setEnabled(true);
+                    connect
+                    (
+                        editevents, SIGNAL(triggered(bool)),
+                        this, SLOT(edit_events())
+                    );
+                }
+                m_popup->addMenu(menuEdit);
             }
             else
             {
-                editevents->setEnabled(true);
-                connect
-                (
-                    editevents, SIGNAL(triggered(bool)),
-                    this, SLOT(edit_events())
-                );
-            }
-            m_popup->addMenu(menuEdit);
-#else
-            QAction * actionRecord { new_qaction("&Record toggle", m_popup) };
-            m_popup->addAction(actionRecord);
-            connect
-            (
-                actionRecord, SIGNAL(triggered(bool)),
-                this, SLOT(record_sequence())
-            );
-
-            QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
-            m_popup->addAction(actionThru);
-            connect
-            (
-                actionRecord, SIGNAL(triggered(bool)),
-                this, SLOT(thru_toggle())
-            );
-
-            QAction * editseqex
-            {
-                new_qaction("Edit pattern in &window", m_popup)
-            };
-            m_popup->addAction(editseqex);
-            connect
-            (
-                editseqex, SIGNAL(triggered(bool)),
-                this, SLOT(edit_sequence_ex())
-            );
-            if (perf().is_seq_active(current_seq()))
-            {
-                QAction * editseq
+                QAction * actionRecord
                 {
-                    new_qaction("Edit pattern in &tab", m_popup)
+                    new_qaction("&Record toggle", m_popup)
                 };
-                m_popup->addAction(editseq);
+                m_popup->addAction(actionRecord);
                 connect
                 (
-                    editseq, SIGNAL(triggered(bool)),
-                    this, SLOT(edit_sequence())
+                    actionRecord, SIGNAL(triggered(bool)),
+                    this, SLOT(record_sequence())
                 );
-            }
 
-            QAction * editevents
-            {
-                new_qaction("Edit e&vents in tab", m_popup)
-            };
-            m_popup->addAction(editevents);
-            if (perf().is_seq_recording(current_seq()))
-            {
-                editevents->setDisabled(true);
-            }
-            else
-            {
-                editevents->setEnabled(true);
+                QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
+                m_popup->addAction(actionThru);
                 connect
                 (
-                    editevents, SIGNAL(triggered(bool)),
-                    this, SLOT(edit_events())
+                    actionRecord, SIGNAL(triggered(bool)),
+                    this, SLOT(thru_toggle())
                 );
+
+                QAction * editseqex
+                {
+                    new_qaction("Edit pattern in &window", m_popup)
+                };
+                m_popup->addAction(editseqex);
+                connect
+                (
+                    editseqex, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_sequence_ex())
+                );
+                if (perf().is_seq_active(current_seq()))
+                {
+                    QAction * editseq
+                    {
+                        new_qaction("Edit pattern in &tab", m_popup)
+                    };
+                    m_popup->addAction(editseq);
+                    connect
+                    (
+                        editseq, SIGNAL(triggered(bool)),
+                        this, SLOT(edit_sequence())
+                    );
+                }
+
+                QAction * editevents
+                {
+                    new_qaction("Edit e&vents in tab", m_popup)
+                };
+                m_popup->addAction(editevents);
+                if (perf().is_seq_recording(current_seq()))
+                {
+                    editevents->setDisabled(true);
+                }
+                else
+                {
+                    editevents->setEnabled(true);
+                    connect
+                    (
+                        editevents, SIGNAL(triggered(bool)),
+                        this, SLOT(edit_events())
+                    );
+                }
             }
-#endif
         }
 
         /**

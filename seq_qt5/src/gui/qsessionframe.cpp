@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2026-08-13
+ * \updates       2026-10-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -287,7 +287,7 @@ qsessionframe::populate_macro_combo ()
     if (macrosactive)
         macrosactive = ! names.empty();
 
-    if (! names.empty())
+    if (macrosactive)
     {
         int counter { 0 };
         int firstenabled { -1 };
@@ -296,7 +296,7 @@ qsessionframe::populate_macro_combo ()
         {
             if (name.empty())
             {
-                break;
+                continue;                       /* not break! */
             }
             else
             {
@@ -351,6 +351,16 @@ qsessionframe::populate_macro_combo ()
             }
 
             /*
+             * If midi-control-out is disabled, disable item 0 and select the
+             * first active buss item.
+             */
+
+            midicontrolout & mco { perf().midi_control_out() };
+            bool noctrl { ! mco.is_enabled() };
+            if (noctrl)
+                enable_combobox_item(ui->bussComboBox, 0, false);
+
+            /*
              * Buss combo-box.  If we set a buss, we have to add
              * 1 to it to allow for the "Ctrl Out" entry.
              */
@@ -377,29 +387,34 @@ qsessionframe::populate_macro_combo ()
             this, SLOT(slot_macro_delete())
         );
     }
+
+    ui->checkBoxMacrosActive->setChecked(macrosactive);
+    connect
+    (
+        ui->checkBoxMacrosActive, SIGNAL(clicked(bool)),
+        this, SLOT(slot_macros_active())
+    );
+    ui->bussComboBox->setEnabled(true);
     if (macrosactive)
     {
-        ui->checkBoxMacrosActive->setChecked(true);
-        connect
-        (
-            ui->checkBoxMacrosActive, SIGNAL(clicked(bool)),
-            this, SLOT(slot_macros_active())
-        );
+        // anything?
     }
     else
     {
         ui->checkBoxMacrosActive->setChecked(false);
-        ui->macroComboBox->setEnabled(false);
+//      ui->macroComboBox->setEnabled(false);
         ui->bussComboBox->setEnabled(false);
-        if (names.empty())
-            ui->checkBoxMacrosActive->setEnabled(false);
+//      if (names.empty())
+//          ui->checkBoxMacrosActive->setEnabled(false);
     }
 
     /*
      * The user should not have run-time control over this.
+     *
+     * Why?
+     *
+     * ui->checkBoxMacrosActive->setEnabled(false);
      */
-
-    ui->checkBoxMacrosActive->setEnabled(false);
 }
 
 void
@@ -407,8 +422,11 @@ qsessionframe::slot_macros_active()
 {
     bool active = ui->checkBoxMacrosActive->isChecked();
     perf().macros_active(active);
+    rc().midi_control_active(active);               /* ca 2026-10-09        */
     ui->macroComboBox->setEnabled(active);
+    ui->bussComboBox->setEnabled(active);           /* ca 2026-10-09        */
     rc().auto_ctrl_save(true);
+    rc().auto_rc_save(true);                        /* ca 2026-10-09        */
     ui->pushButtonReload->setEnabled(true);
 }
 

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2025-07-17
+ * \updates       2026-10-09
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -44,9 +44,9 @@
 namespace seq66
 {
 
-static const int s_usr_legacy       =  5;
-static const int s_usr_smf_1        =  8;
-static const int s_usr_file_version = 16;
+static const int s_usr_legacy       {  5 };
+static const int s_usr_smf_1        {  8 };
+static const int s_usr_file_version { 16 };
 
 /**
  *  Principal constructor.
@@ -569,6 +569,8 @@ usrfile::parse ()
         tag = "[new-pattern-editor]";
         rc().auto_usr_save(true);       /* write the shorter tag at exit    */
     }
+    flag = get_boolean(file, tag, "nest-more-menus");
+    usr().nest_more_menus(flag);
     flag = get_boolean(file, tag, "escape-pattern");
     usr().escape_pattern(flag);
     flag = get_boolean(file, tag, "apply-to-new-only");
@@ -1140,6 +1142,7 @@ usrfile::write ()
 "\n[pattern-editor]\n\n"
         ;
     write_boolean(file, "escape-pattern", usr().escape_pattern());
+    write_boolean(file, "nest-more-menus", usr().nest_more_menus());
     write_boolean(file, "apply-to-new-only", usr().pattern_new_only());
     write_boolean(file, "armed", usr().pattern_armed());
     write_boolean(file, "thru", usr().pattern_thru());

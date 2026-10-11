@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2026-09-08
+ * \updates       2026-10-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -354,6 +354,7 @@ usrsettings::usrsettings () :
      */
 
     m_convert_to_smf_1          (true),
+    m_nest_more_menus           (false),
     m_default_ppqn              (c_base_ppqn),
     m_midi_ppqn                 (c_base_ppqn),
     m_use_file_ppqn             (true),
@@ -469,7 +470,8 @@ usrsettings::set_defaults ()
     m_seqchars_x = 15;
     m_seqchars_y =  5;
     m_convert_to_smf_1 = true;
-    m_default_ppqn = m_midi_ppqn = m_file_ppqn = c_base_ppqn; // reset_ppqn()
+    m_nest_more_menus = false;
+    m_default_ppqn = m_midi_ppqn = m_file_ppqn = c_base_ppqn;
     m_use_file_ppqn = true;
     m_midi_beats_per_measure = c_def_beats_per_measure;
     m_midi_bpm_minimum = c_min_beats_per_minute;

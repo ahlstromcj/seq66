@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-10-08
+ * \updates       2026-10-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4795,9 +4795,10 @@ sequence::add_sequenced_macro (midipulse tick, const midimacro & macro)
         }
         if (result)
         {
-            (void) verify_and_link();                   /* ca 2026-10-07 */
+            (void) verify_and_link();                   /* ca 2026-10-07    */
             set_dirty();
             modify();
+            notify_change();                            /* a user change    */
         }
     }
     return result;

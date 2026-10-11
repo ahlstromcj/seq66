@@ -1,10 +1,10 @@
-TO DO for Seq66 0.99.28
+TO DO for Seq66 0.99.29
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-09
+2019-04-13 to 2026-10-11
 
+    -   Session / Macros check-box does not work.
     -   Revisit metronome and count-in testing re issue #147.
-    -   Add '*' to caption of modified pattern editor.
     -   SysEx.
         -   Now works for ALSA, next check JACK.
         -   Loading contrib/midi/roland-empty.midi yields:
