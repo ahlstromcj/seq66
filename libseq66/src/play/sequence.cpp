@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-10-09
+ * \updates       2026-10-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4743,19 +4743,22 @@ sequence::add_event
 bool
 sequence::add_event (midipulse tick, const midibytes & dbytes)
 {
-    event ev = create_event(tick, dbytes);
+    event ev { create_event(tick, dbytes) };
     return add_event(ev);
 }
 
 bool
 sequence::add_macro (midipulse tick, const midimacro & macro)
 {
-    bool result = macro.is_valid();
+    bool result { macro.is_valid() };       /* not the most reliable check  */
+    if (result)
+        result = macro.event_count() > 0;
+
     if (result)
     {
         for (int i = 0; i < macro.event_count(); ++i)
         {
-            const midibytes & dbytes = macro.bytes(i);
+            const midibytes & dbytes { macro.bytes(i) };
             result = add_event(tick, dbytes);
             if (! result)
                 break;

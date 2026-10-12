@@ -84,6 +84,7 @@ midimacro::midimacro (const tokenization & name_and_tokens) :
         m_name = name_and_tokens[0];
         m_is_valid = tokenize(name_and_tokens[1]);
     }
+    // SHOULDN'T WE EXPAND MACRO HERE?
 }
 
 /**

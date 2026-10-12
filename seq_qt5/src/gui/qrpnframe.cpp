@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-10-06
+ * \updates       2026-10-12
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -1483,6 +1483,7 @@ qrpnframe::macro_name_changed ()
         if (found)
         {
             ui->button_rpn_delete->setEnabled(true);
+            ui->button_rpn_insert->setEnabled(true);
             ui->button_rpn_send->setEnabled(true);
             ui->button_rpn_macro->setText("Modify Macro");
         }
@@ -1940,13 +1941,21 @@ qrpnframe::insert_other_macro ()
     bool result { other_macro_tokens().size() == 2 };
     if (result)
     {
-        midimacro mac(other_macro_tokens());
+        std::string macnam { macro_name() };    /* selected macro's name    */
+        midimacro mac(other_macro_tokens());    /* has unexpanded tokens    */
         midipulse ts { rpn_info().rpn_time_stamp };
-        bool result { track().add_macro(ts, mac) };
+        midicontrolout & mco { perf().midi_control_out() };
+        result = mco.find_macro(macnam);
+        if (result)
+        {
+            result = mco.expand_macro(macnam);
+            if (result)
+                result = track().add_macro(ts, mac);
+        }
         if (result)
             notify_macro_change(performer::macro::inserted);
         else
-            set_plaintext_msg("Error inserting other  macro");
+            set_plaintext_msg("Error inserting 'other' macro");
     }
     return result;
 }

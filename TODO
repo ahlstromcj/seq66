@@ -3,7 +3,7 @@ TO DO for Seq66 0.99.29
 Chris Ahlstrom
 2019-04-13 to 2026-10-11
 
-    -   Session / Macros check-box does not work.
+    -   Make sure macro variables can include multiple (|) events.
     -   Revisit metronome and count-in testing re issue #147.
     -   SysEx.
         -   Now works for ALSA, next check JACK.
