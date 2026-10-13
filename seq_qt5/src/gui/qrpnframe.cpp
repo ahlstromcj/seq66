@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-10-12
+ * \updates       2026-10-13
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -1922,7 +1922,7 @@ qrpnframe::insert_rpn_macro ()
     };
     result = name_and_data.size() == 2;
     if (result)
-       result = track().add_sequenced_macro(tick, r);
+        result = track().add_sequenced_macro(tick, r);
 
     if (result)
     {
@@ -1948,9 +1948,10 @@ qrpnframe::insert_other_macro ()
         result = mco.find_macro(macnam);
         if (result)
         {
-            result = mco.expand_macro(macnam);
+            midibytes byts {  mco.expand_midimacro(mac) };
+            result = byts.size() > 0;
             if (result)
-                result = track().add_macro(ts, mac);
+               result = track().add_sequenced_macro(ts, mac); /* add_macro()*/
         }
         if (result)
             notify_macro_change(performer::macro::inserted);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-21
- * \updates       2026-09-14
+ * \updates       2026-10-13
  * \license       GNU GPLv2 or above
  *
  *  The specification for the midimacros is of the following format:
@@ -257,64 +257,87 @@ midimacros::expand (const std::string & macnam)
  *
  *  If a pipe ('|'), then there are multiple events, i.e. multiple sets
  *  of event bytes.
+ *
+ * \param m
+ *      The MIDI macro to analyze. Side-effect: the events stack
+ *      will get modified if not expanded already.
+ *
+ * \return
+ *      Returns the existing bytes if not expanded, or the newly-loaded
+ *      bytes.
  */
 
 midibytes
 midimacros::expand_macro (midimacro & m)
 {
-    midibytes result;                   /* holds all of the bytes found     */
-    midibytes temp;                     /* holds bytes of 1 event if ! N/A  */
     if (m.is_expanded())
     {
         return m.bytes();
     }
     else
     {
-        bool separator_encountered { false };
+        midimacro::events evlist { expand_events(m) };
+        if (evlist.size() > 0)
+        {
+            midimacro::events & evstack { m.event_bytes_list() };
+            evstack = evlist;
+            m.is_expanded(true);
+            return m.bytes();
+        }
+    }
+}
+
+/**
+ *  We need to just fill the event stack.
+ */
+
+midimacro::events
+midimacros::expand_events (midimacro & m)
+{
+    if (m.is_expanded())
+    {
+        return m.event_bytes_list();
+    }
+    else
+    {
+        midimacro::events result;
+        midibytes temp;                         /* holds bytes of 1 event   */
         for (const auto & token : m.tokens())
         {
             if (token[0] == '$')
             {
+                if (! temp.empty())
+                {
+                    result.push_back(temp);     /* push onto events stack   */
+                    temp.clear();
+                }
+
                 std::string macnam { token.substr(1) };
                 const auto cit { m_macros.find(macnam) };
                 if (cit != m_macros.end())
                 {
-                    midimacro & variable { cit->second };
-                    midibytes xpanded { expand_macro(variable) };
-                    result.insert(result.end(), xpanded.begin(), xpanded.end());
-                }
-                else
-                {
-                    result.clear();
-                    temp.clear();
-                    break;
+                    midimacro & v { cit->second };
+                    midimacro::events subevents { expand_events(v) };
+                    for (const auto & byts : subevents)
+                        result.push_back(byts);
                 }
             }
             else if (token[0] == '|')
             {
-                separator_encountered = true;
-                m.push_bytes(temp);     /* push onto events stack/vector    */
-                temp.clear();
+                if (! temp.empty())
+                {
+                    result.push_back(temp);     /* push onto events stack   */
+                    temp.clear();
+                }
             }
             else
             {
                 midibyte b { string_to_midibyte(token) };
-                result.push_back(b);    /* push onto the midibytes vector   */
-                temp.push_back(b);      /* push onto the interim vector     */
+                temp.push_back(b);              /* push to interim vector   */
             }
         }
-        if (separator_encountered)
-        {
-            if (temp.size() > 0)
-                m.push_bytes(temp);     /* push the bytes of last event     */
-        }
-        else
-        {
-            if (result.size() > 0)
-                m.push_bytes(result);
-        }
-        if (result.size() > 0)
-            m.is_expanded(true);
+        if (! temp.empty())
+            result.push_back(temp);             /* push final data bytes    */
 
         return result;
     }

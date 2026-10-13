@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2021-11-22
- * \updates       2026-08-24
+ * \updates       2026-10-12
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -141,6 +141,10 @@ public:
         const midimacro & macro,
         const std::string & fn = ""
     );
+
+private:
+
+    midimacro::events expand_events (midimacro & m);
 
 };          // class midimacros
 
