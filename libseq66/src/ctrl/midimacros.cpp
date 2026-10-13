@@ -284,6 +284,11 @@ midimacros::expand_macro (midimacro & m)
             m.is_expanded(true);
             return m.bytes();
         }
+        else
+        {
+            midibytes result;
+            return result;
+        }
     }
 }
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-07-10
+ * \updates       2026-10-13
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -73,9 +73,18 @@
  *  However, the way control changes are kind of different in
  *  nature (they are "continuous controls") for most types of
  *  control. There are exceptions like Bank Select, of course.
+ *
+ *  From user Harmut Reh 2026-10-12:
+ *
+ *      In the Pattern Editor, the large lower data pane continued to display
+ *      Note-On Velocity after selecting “CC1 Modulation Wheel” in the event
+ *      selector. The small event display updated, but the large data pane did
+ *      not show the selected controller values as bars of varying height.
+ *      Reopening the Pattern Editor also restored “Note On Velocity” as the
+ *      default display.
+ *
+ * #undef SEQ66_SHOW_GM_CONTROL_NAME
  */
-
-#undef SEQ66_SHOW_GM_CONTROL_NAME
 
 /**
  *  In the pattern editor's data pane, we can show the full GM name

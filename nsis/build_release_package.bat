@@ -176,8 +176,8 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.99.28
-set PROJECT_DATE=2026-10-09
+set PROJECT_VERSION=0.99.29
+set PROJECT_DATE=2026-10-13
 set PROJECT_DRIVE=C:
 
 :: Set the bits of the project, either 64 or 32. Also define WIN64 versus

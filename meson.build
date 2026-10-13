@@ -169,7 +169,7 @@ endif
 
 seq66_pkg_description = 'Seq66 build using the Meson build system.'
 seq66_pkg_version = meson.project_version()
-seq66_version = '0.99.28'
+seq66_version = '0.99.29'
 seq66_api_version = '0.99'
 seq66_info_date = '2026-10-09'
 seq66_info_build_type = get_option('buildtype')

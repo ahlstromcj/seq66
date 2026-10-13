@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.29
 Chris Ahlstrom
-2015-07-10 to 2026-10-11
+2015-07-10 to 2026-10-13
 
 # Change Log
 
-## [0.99.28] - 2026-10-11
+## [0.99.29] - 2026-10-13
 
 ### Added
 
@@ -17,6 +17,9 @@ Chris Ahlstrom
 
 -   Main Session tab.
     -   Fixed handling the "Macro" check-box.
+-   (N)RPN editor.
+    -   Fixed the parsing of macros with nested variables.
+    -   Improved the insertion of multiple-event macros into a pattern.
 
 ### Fixed
 
@@ -25,6 +28,10 @@ Chris Ahlstrom
         title bar.
     -   Added a Edit / Preferences / Pattern / Nest more menus
         option to control the right-click slot menu.
+-   User fixes. From Harmut Reh. Reports stored in contrib/reports.
+    -   "Fix for CC Data-Window Display". Pattern editor. More
+        testing using update contrib/midi/controller.midi.
+    -   "Evolution UC-33 Port-Mapping Fix".
 
 ### Removed
 

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-07-10
+ * \updates       2026-10-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -925,11 +925,15 @@ qseqdata::set_data_type (midibyte status, midibyte control)
     }
     else if (event::is_controller_msg(status))
     {
-#if defined SEQ66_SHOW_GM_CONTROL_NAME
+        /*
+         * Harmut Reh 2026-10-13. Show control changes after all.
+         *
+         * #if defined SEQ66_SHOW_GM_CONTROL_NAME
+         */
+
         m_data_type = type::control_change;
         m_status = status;
         m_cc = control;
-#endif
     }
     else if (event::is_program_change_msg(status))
     {

@@ -1,9 +1,12 @@
 TO DO for Seq66 0.99.29
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-11
+2019-04-13 to 2026-10-13
 
-    -   Make sure macro variables can include multiple (|) events.
+    -   Add Pattern option to allow Event Events to bwe enabled
+        and turn off recording.
+    -   Consider adding a Time increment decrement spinbox
+        to the Event Editor.
     -   Revisit metronome and count-in testing re issue #147.
     -   SysEx.
         -   Now works for ALSA, next check JACK.
@@ -19,6 +22,7 @@ Chris Ahlstrom
     -   BSD. Boot to it and test out the latest meson build.
     -   Tweak ./work.sh --window --nsis to copy the generated
         qpseq66.exe to release/, and make the 7z pack as well.
+        Also look into Windows CLI build as well.
 
 Back burner:
 
