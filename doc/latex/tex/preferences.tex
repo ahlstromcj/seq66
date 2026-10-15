@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-08-02
+% \update      2026-10-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1182,7 +1182,7 @@
    but it is only important if randomizing a large number of times.
 
    \textbf{Additional 'usr' Options}.
-   Provides a couple of options.
+   Provides a few minor options relevant to the 'usr' file..
 
    \begin{itemize}
       \item \textbf{Esc key in piano roll closes external editor}.
@@ -1194,6 +1194,17 @@
          If set, when an SMF 0 file is opened, it is split
          across multiple slots on the basis of event channels.
          See \sectionref{subsubsec:midi_export_file_import}.
+      \item \textbf{Nest more menus (in pattern slot)}.
+         Currently applies only the the pattern-slot's right-click
+         menu's "Edit" entries.
+         It moves them into an \textbf{Edit} submenu.
+         (More items may be nestable in the future.)
+      \item \textbf{Enable 'Edit events'}.
+         Normally, when recording is on for a pattern slot,
+         the \textbf{Edit events} entry is disabled,
+         to prevent editing a pattern while recording is going on.
+         If set, then this menu entry is enabled, \textsl{and}
+         clicking it disables recording.
    \end{itemize}
 
 \subsection{Edit / Preferences / Session}

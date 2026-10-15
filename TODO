@@ -1,12 +1,8 @@
 TO DO for Seq66 0.99.29
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-13
+2019-04-13 to 2026-10-14
 
-    -   Add Pattern option to allow Event Events to bwe enabled
-        and turn off recording.
-    -   Consider adding a Time increment decrement spinbox
-        to the Event Editor.
     -   Revisit metronome and count-in testing re issue #147.
     -   SysEx.
         -   Now works for ALSA, next check JACK.

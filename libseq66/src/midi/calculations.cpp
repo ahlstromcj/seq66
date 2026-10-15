@@ -917,7 +917,8 @@ HMS_string_to_pulses (const std::string & timestring, midibpm bp, int ppq)
  *
  * \param tf
  *      Provides the time format to assume when calculating the timestamp.
- *      The default is timeformat::bbt.
+ *      The default is timeformat::bbt. Other formats are timeformat::hms
+ *      and timeformat::ticks.
  *
  * \return
  *      Returns the string as converted to MIDI pulses (or divisions, clocks,

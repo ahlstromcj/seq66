@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2026-10-03
+ * \updates       2026-10-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the "Event Editor".
@@ -92,7 +92,7 @@ qseqeventframe::qseqeventframe
     performer::callbacks    (p),
     ui                      (new Ui::qseqeventframe),
     m_perf                  (p),
-    m_seq                   (s),
+    m_seq                   (s),                                /* track()  */
     m_eventslots            (new qseventslots(p, *this, s)),
     m_linked_selection      (false),
     m_show_data_as_hex      (false),
@@ -251,8 +251,7 @@ qseqeventframe::qseqeventframe
     );
 
     /*
-     * The first one is no longer need due to the BBT button.
-     * Might have a use for the Macro button later.
+     * This one is no longer needed due to the BBT button.
      */
 
     ui->pulse_time_check_box->hide();
@@ -307,6 +306,9 @@ qseqeventframe::qseqeventframe
     );
 
     /*
+     * This is the older version of the time-stamp field.
+     * Still useful.
+     *
      * We need to evaluate the time-stamp to make sure it is within
      * the current length of the pattern.
      *
@@ -319,6 +321,37 @@ qseqeventframe::qseqeventframe
     (
         ui->entry_ev_timestamp, SIGNAL(editingFinished()),
         this, SLOT(slot_timestamp_change())
+    );
+
+    /*
+     * ui->label_incr_decr->hide();
+     * ui->spinbox_ev_timestamp->hide();
+     */
+
+    /*
+     * Need to specify the maximum tick.
+     */
+
+    ui->spinbox_ev_timestamp->setMinimum(0);
+    ui->spinbox_ev_timestamp->setSingleStep(track().snap());
+    ui->spinbox_ev_timestamp->setMaximum(track().get_length());
+    ui->spinbox_ev_timestamp->setValue(0);
+    connect
+    (
+        ui->spinbox_ev_timestamp, SIGNAL(valueChanged(int)),
+        this, SLOT(slot_timestamp_spin(int))
+    );
+
+    /*
+     * For changing the spin-box step-size in ticks.
+     */
+
+    std::string stepsizestr { int_to_string(track().snap()) };
+    ui->entry_spin_step_size->setText(qt(stepsizestr));
+    connect
+    (
+        ui->entry_spin_step_size, SIGNAL(editingFinished()),
+        this, SLOT(slot_spin_step_size())
     );
 
     /*
@@ -1147,7 +1180,7 @@ qseqeventframe::slot_timestamp_change ()
          * midipulse p { track().timestring_to_ticks(ts) };
          */
 
-        const midi_timing & mt = m_eventslots->midi_timing_cref();
+        const midi_timing & mt { m_eventslots->midi_timing_cref() };
         midipulse p { string_to_pulses(ts, mt, m_time_format) };
         if (p >= track().get_length())
             ui->entry_ev_timestamp->setText(qt(m_current_timestamp));
@@ -1155,6 +1188,36 @@ qseqeventframe::slot_timestamp_change ()
             m_current_timestamp = ts;
 
         ui->button_modify->setEnabled(true);
+    }
+}
+
+void
+qseqeventframe::slot_timestamp_spin (int ticks)
+{
+    /*
+     * midipulse ticks { midipulse(ui->spinbox_ev_timestamp->value()) };
+     */
+
+    const midi_timing & mt { m_eventslots->midi_timing_cref() };
+    timeformat tf { m_time_format };
+    std::string tstamp { time_format_string(tf, ticks, mt) };
+    set_event_timestamp(tstamp);
+}
+
+void
+qseqeventframe::slot_spin_step_size()
+{
+    std::string ss { ui->entry_spin_step_size->text().toStdString() };
+    if (ss.empty())
+    {
+        ui->spinbox_ev_timestamp->setSingleStep(track().snap());
+    }
+    else
+    {
+        int stepsize { string_to_int(ss, 1) };
+        midipulse len { track().get_length() };
+        if (stepsize > 0 && stepsize < int(len))
+            ui->spinbox_ev_timestamp->setSingleStep(stepsize);
     }
 }
 
@@ -1898,7 +1961,10 @@ qseqeventframe::slot_grow ()
     int currentm { track().get_measures() };
     int newm { track().increment_measures() };
     if (newm > currentm)
+    {
         set_seq_lengths(get_lengths());
+        ui->spinbox_ev_timestamp->setMaximum(track().get_length());
+    }
 }
 
 /**
@@ -1931,6 +1997,7 @@ qseqeventframe::slot_next_time_format ()
     tf = ev.format_timestamp();
     ui->entry_ev_timestamp->setText(qt(tf));
     (void) initialize_table();
+    ui->spinbox_ev_timestamp->setValue(0);
 }
 
 /**

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-08-15
+ * \updates       2026-10-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1280,6 +1280,12 @@ qslivegrid::edit_sequence_ex ()
 void
 qslivegrid::edit_events ()
 {
+    if (usr().enable_edit_events())
+    {
+        seq::pointer sp { perf().get_sequence(current_seq()) };
+        if (sp)
+            (void) perf().set_recording(*sp, toggler::off);
+    }
     emit signal_call_edit_events(current_seq());
 }
 
@@ -1459,9 +1465,7 @@ qslivegrid::record_sequence ()
         ok = perf().set_recording_flip(*sp);
 
     if (! ok)
-    {
-        // todo?
-    }
+        (void) error_message("record-toggle failed");
 }
 
 /**
@@ -1943,19 +1947,12 @@ qslivegrid::popup_menu ()
                 };
                 menuEdit->addAction(editevents);
 
-                if (perf().is_seq_recording(current_seq()))
-                {
-                    editevents->setDisabled(true);
-                }
-                else
-                {
-                    editevents->setEnabled(true);
-                    connect
-                    (
-                        editevents, SIGNAL(triggered(bool)),
-                        this, SLOT(edit_events())
-                    );
-                }
+                editevents->setEnabled(true);
+                connect
+                (
+                    editevents, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_events())
+                );
                 m_popup->addMenu(menuEdit);
             }
             else
@@ -2008,19 +2005,12 @@ qslivegrid::popup_menu ()
                     new_qaction("Edit e&vents in tab", m_popup)
                 };
                 m_popup->addAction(editevents);
-                if (perf().is_seq_recording(current_seq()))
-                {
-                    editevents->setDisabled(true);
-                }
-                else
-                {
-                    editevents->setEnabled(true);
-                    connect
-                    (
-                        editevents, SIGNAL(triggered(bool)),
-                        this, SLOT(edit_events())
-                    );
-                }
+                editevents->setEnabled(true);
+                connect
+                (
+                    editevents, SIGNAL(triggered(bool)),
+                    this, SLOT(edit_events())
+                );
             }
         }
 

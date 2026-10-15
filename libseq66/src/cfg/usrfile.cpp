@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2026-10-09
+ * \updates       2026-10-14
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -571,6 +571,8 @@ usrfile::parse ()
     }
     flag = get_boolean(file, tag, "nest-more-menus");
     usr().nest_more_menus(flag);
+    flag = get_boolean(file, tag, "enable-edit-events");
+    usr().enable_edit_events(flag);
     flag = get_boolean(file, tag, "escape-pattern");
     usr().escape_pattern(flag);
     flag = get_boolean(file, tag, "apply-to-new-only");
@@ -1131,10 +1133,15 @@ usrfile::write ()
 "# 'escape-pattern' allows the Esc key to close a pattern editor if not\n"
 "# playing or in paint mode. (Esc exits paint mode or stops playback.)\n"
 "#\n"
+"# 'nest-more-menus' simply puts the 'Edit xxx' entries into a sub-menu.\n"
+"#\n"
+"# 'enable-edit-events' enables 'Edit events' even while recording, and\n"
+"# selecting it turns off recording, for safety.\n"
+"#\n"
 "# 'apply-to-new-only' makes the next options work only when opening a new\n"
 "# pattern.  A new pattern is 'Untitled' and has no events.\n"
 "#\n"
-"# These settings for play/record for a pattern editor save time in live\n"
+"# The settings for play/record for a pattern editor save time in live\n"
 "# recording. Valid record-style values: 'merge' or 'overdub', 'overwrite',\n"
 "# 'expand', and 'one-shot'. 'wrap-around' allows recorded notes to wrap\n"
 "# to the pattern beginning. Currently 'notemap' and quantizing are\n"
@@ -1143,6 +1150,7 @@ usrfile::write ()
         ;
     write_boolean(file, "escape-pattern", usr().escape_pattern());
     write_boolean(file, "nest-more-menus", usr().nest_more_menus());
+    write_boolean(file, "enable-edit-events", usr().enable_edit_events());
     write_boolean(file, "apply-to-new-only", usr().pattern_new_only());
     write_boolean(file, "armed", usr().pattern_armed());
     write_boolean(file, "thru", usr().pattern_thru());

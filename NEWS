@@ -1,17 +1,21 @@
 NEWS for Seq66 0.99.29
 Chris Ahlstrom
-2015-07-10 to 2026-10-13
+2015-07-10 to 2026-10-15
 
 # Change Log
 
-## [0.99.29] - 2026-10-13
+## [0.99.29] - 2026-10-15
 
 ### Added
 
 -   Pattern editor.
     -   Added an option to nest or unnest some of the right-click menu,
         a matter of preference.
+    -   Added an option to allow 'Edit events' to be enabled even if
+        recording, and turn off recording if clicked.
     -   Improving the handling and display of track modification.
+-   Event editor.
+    -   Added a Time increment/decrement spin-box to the Event Editor.
 
 ### Changed
 

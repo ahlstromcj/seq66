@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2026-10-09
+ * \updates       2026-10-14
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -554,6 +554,14 @@ private:
      */
 
     bool m_nest_more_menus;
+
+    /**
+     *  If true (the default is false), allow the pattern right-click
+     *  menu's 'Edit events' to be enabled while Recording is toggled on,
+     *  and turn of recording if 'Edit events' is selected.
+     */
+
+    bool m_enable_edit_events;
 
     /**
      *  Provides the default PPQN for the application.  This PPQN is used when
@@ -1537,6 +1545,16 @@ public:
     void nest_more_menus (bool flag)
     {
         m_nest_more_menus = flag;
+    }
+
+    bool enable_edit_events () const
+    {
+        return m_enable_edit_events;
+    }
+
+    void enable_edit_events (bool flag)
+    {
+        m_enable_edit_events = flag;
     }
 
     void reset_ppqn ();

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>436</height>
+    <height>446</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -154,8 +154,8 @@
    <property name="geometry">
     <rect>
      <x>479</x>
-     <y>273</y>
-     <width>331</width>
+     <y>281</y>
+     <width>321</width>
      <height>61</height>
     </rect>
    </property>
@@ -179,7 +179,7 @@
    <property name="geometry">
     <rect>
      <x>475</x>
-     <y>338</y>
+     <y>350</y>
      <width>331</width>
      <height>58</height>
     </rect>
@@ -383,9 +383,9 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="horizLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>479</x>
+     <x>481</x>
      <y>12</y>
-     <width>321</width>
+     <width>311</width>
      <height>32</height>
     </rect>
    </property>
@@ -449,7 +449,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
       <property name="font">
        <font>
         <family>Anonymous Pro</family>
-        <pointsize>12</pointsize>
+        <pointsize>11</pointsize>
        </font>
       </property>
       <property name="text">
@@ -462,7 +462,7 @@ be saved to make the changes permanent.  Tricky, but safer.</string>
   <widget class="QWidget" name="dataLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>478</x>
+     <x>481</x>
      <y>48</y>
      <width>324</width>
      <height>52</height>
@@ -616,7 +616,7 @@ same time.</string>
      <x>481</x>
      <y>104</y>
      <width>311</width>
-     <height>131</height>
+     <height>141</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -626,6 +626,85 @@ same time.</string>
     <property name="verticalSpacing">
      <number>4</number>
     </property>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="combo_ev_category">
+      <property name="minimumSize">
+       <size>
+        <width>160</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>180</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maxVisibleItems">
+       <number>8</number>
+      </property>
+      <property name="maxCount">
+       <number>8</number>
+      </property>
+      <property name="insertPolicy">
+       <enum>QComboBox::InsertPolicy::NoInsert</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="combo_ev_name">
+      <property name="minimumSize">
+       <size>
+        <width>160</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>180</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="maxVisibleItems">
+       <number>12</number>
+      </property>
+      <property name="maxCount">
+       <number>32</number>
+      </property>
+      <property name="insertPolicy">
+       <enum>QComboBox::InsertPolicy::NoInsert</enum>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="select_button">
+      <property name="minimumSize">
+       <size>
+        <width>52</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Select a controller or program change
+by name.</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_category">
       <property name="minimumSize">
@@ -653,8 +732,14 @@ same time.</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QComboBox" name="combo_ev_category">
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="entry_ev_timestamp">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="minimumSize">
        <size>
         <width>160</width>
@@ -664,17 +749,85 @@ same time.</string>
       <property name="maximumSize">
        <size>
         <width>180</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
-      <property name="maxVisibleItems">
-       <number>8</number>
+      <property name="toolTip">
+       <string>Current time in B:B:T. Can be edited, cannot exceed
+pattern length.</string>
       </property>
-      <property name="maxCount">
-       <number>8</number>
+      <property name="text">
+       <string>001:1:000</string>
       </property>
-      <property name="insertPolicy">
-       <enum>QComboBox::InsertPolicy::NoInsert</enum>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="event_label">
+      <property name="minimumSize">
+       <size>
+        <width>72</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>72</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Event</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="reserved_button">
+      <property name="minimumSize">
+       <size>
+        <width>52</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Reserved</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QPushButton" name="time_format_button">
+      <property name="minimumSize">
+       <size>
+        <width>52</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Cycles between time formats of B:B:T, H:M:S,
+and ticks (pulses). For time less than one hour,
+the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
+      </property>
+      <property name="text">
+       <string>BBT</string>
       </property>
      </widget>
     </item>
@@ -702,114 +855,7 @@ same time.</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="entry_ev_timestamp">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>160</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>180</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Current time in B:B:T. Can be edited, cannot exceed
-pattern length.</string>
-      </property>
-      <property name="text">
-       <string>001:1:000</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="event_label">
-      <property name="minimumSize">
-       <size>
-        <width>72</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>72</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Event</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QComboBox" name="combo_ev_name">
-      <property name="minimumSize">
-       <size>
-        <width>160</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>180</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="maxVisibleItems">
-       <number>12</number>
-      </property>
-      <property name="maxCount">
-       <number>32</number>
-      </property>
-      <property name="insertPolicy">
-       <enum>QComboBox::InsertPolicy::NoInsert</enum>
-      </property>
-      <property name="frame">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="select_button">
-      <property name="minimumSize">
-       <size>
-        <width>52</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>52</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Select a controller or program change
-by name.</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
+    <item row="4" column="0">
      <widget class="QLabel" name="channel_label">
       <property name="minimumSize">
        <size>
@@ -833,18 +879,18 @@ by name.</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
+    <item row="4" column="1">
      <widget class="QComboBox" name="channel_combo_box">
       <property name="minimumSize">
        <size>
         <width>160</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>180</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
       <property name="editable">
@@ -875,13 +921,13 @@ by name.</string>
       <property name="minimumSize">
        <size>
         <width>52</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
@@ -892,49 +938,56 @@ by name.</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="time_format_button">
+    <item row="2" column="1">
+     <widget class="QSpinBox" name="spinbox_ev_timestamp">
       <property name="minimumSize">
        <size>
-        <width>52</width>
-        <height>28</height>
+        <width>65</width>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>52</width>
-        <height>28</height>
+        <width>16777215</width>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
-       <string>Cycles between time formats of B:B:T, H:M:S,
-and ticks (pulses). For time less than one hour,
-the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
-      </property>
-      <property name="text">
-       <string>BBT</string>
+       <string>Edit or spin the time up or down</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
-     <widget class="QPushButton" name="reserved_button">
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_incr_decr">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Tick time</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QLineEdit" name="entry_spin_step_size">
       <property name="minimumSize">
        <size>
         <width>52</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>28</height>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
-       <string>Reserved</string>
+       <string>Spin step size in ticks.'</string>
       </property>
       <property name="text">
-       <string/>
+       <string>1</string>
       </property>
      </widget>
     </item>
@@ -944,7 +997,7 @@ the format is &quot;M:S.xxx&quot; (fractional seconds).</string>
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>241</y>
+     <y>248</y>
      <width>311</width>
      <height>29</height>
     </rect>

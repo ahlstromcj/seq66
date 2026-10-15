@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2026-10-09
+ * \updates       2026-10-14
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -1851,6 +1851,12 @@ qseditoptions::setup_tab_pattern ()
         ui->checkBoxNestMoreMenus, SIGNAL(clicked(bool)),
         this, SLOT(slot_nest_more_menus())
     );
+    ui->checkBoxEnableEditEvents->setChecked(usr().enable_edit_events());
+    connect
+    (
+        ui->checkBoxEnableEditEvents, SIGNAL(clicked(bool)),
+        this, SLOT(slot_enable_edit_events())
+    );
 
     /*
      * New-pattern boolean options.
@@ -1968,6 +1974,14 @@ qseditoptions::slot_nest_more_menus ()
 {
     bool enable = ui->checkBoxNestMoreMenus->isChecked();
     usr().nest_more_menus(enable);
+    modify_usr();
+}
+
+void
+qseditoptions::slot_enable_edit_events ()
+{
+    bool enable = ui->checkBoxEnableEditEvents->isChecked();
+    usr().enable_edit_events(enable);
     modify_usr();
 }
 

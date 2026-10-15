@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>802</width>
-    <height>622</height>
+    <width>804</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="font">
@@ -56,7 +56,7 @@
       <string/>
      </property>
      <property name="currentIndex">
-      <number>6</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -307,7 +307,7 @@
          <x>30</x>
          <y>362</y>
          <width>631</width>
-         <height>31</height>
+         <height>32</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="hLayoutMidiOutBuss" stretch="1,8,10">
@@ -625,9 +625,9 @@ This action will update the ports/maps at exit.</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>340</y>
+         <y>320</y>
          <width>611</width>
-         <height>171</height>
+         <height>191</height>
         </rect>
        </property>
        <property name="font">
@@ -670,7 +670,7 @@ This action will update the ports/maps at exit.</string>
           <x>20</x>
           <y>27</y>
           <width>571</width>
-          <height>142</height>
+          <height>158</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_9">
@@ -685,6 +685,7 @@ This action will update the ports/maps at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -712,6 +713,7 @@ This action will update the ports/maps at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -733,6 +735,7 @@ This action will update the ports/maps at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -748,6 +751,7 @@ This action will update the ports/maps at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -760,6 +764,7 @@ This action will update the ports/maps at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -777,6 +782,7 @@ channel.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -793,6 +799,7 @@ slot by channel number (0 to 15).</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -811,6 +818,7 @@ slot by channel number (0 to 15).</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -826,6 +834,7 @@ slot by channel number (0 to 15).</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -861,7 +870,7 @@ slot by channel number (0 to 15).</string>
          <x>6</x>
          <y>30</y>
          <width>691</width>
-         <height>251</height>
+         <height>221</height>
         </rect>
        </property>
        <property name="font">
@@ -891,7 +900,7 @@ slot by channel number (0 to 15).</string>
           <x>0</x>
           <y>0</y>
           <width>691</width>
-          <height>251</height>
+          <height>221</height>
          </rect>
         </property>
        </widget>
@@ -900,7 +909,7 @@ slot by channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>32</x>
-         <y>300</y>
+         <y>270</y>
          <width>585</width>
          <height>31</height>
         </rect>
@@ -957,7 +966,7 @@ slot by channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>290</y>
+         <y>260</y>
          <width>611</width>
          <height>51</height>
         </rect>
@@ -985,7 +994,7 @@ slot by channel number (0 to 15).</string>
          <x>10</x>
          <y>230</y>
          <width>591</width>
-         <height>271</height>
+         <height>281</height>
         </rect>
        </property>
        <property name="font">
@@ -1006,7 +1015,7 @@ slot by channel number (0 to 15).</string>
           <x>8</x>
           <y>4</y>
           <width>570</width>
-          <height>251</height>
+          <height>269</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
@@ -1027,6 +1036,7 @@ slot by channel number (0 to 15).</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1057,6 +1067,7 @@ slot by channel number (0 to 15).</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1085,6 +1096,7 @@ Always set to false at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1112,6 +1124,7 @@ Always set to false at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1139,6 +1152,7 @@ Always set to false at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1166,6 +1180,7 @@ Always set to false at exit.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1195,6 +1210,7 @@ anyway.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1210,6 +1226,7 @@ anyway.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1227,6 +1244,7 @@ using inverse font color for slots.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1255,6 +1273,7 @@ If set, the grid slot progress boxes are ellipses.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1282,6 +1301,7 @@ If set, the grid slot progress boxes are ellipses.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1298,6 +1318,7 @@ is no active playlist. rc: [recent-files] load-most-recent</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1327,6 +1348,7 @@ button in the piano rolls.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -1367,6 +1389,7 @@ button in the piano rolls.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -2311,7 +2334,7 @@ beat, normally PPQN/10.</string>
          <x>30</x>
          <y>40</y>
          <width>339</width>
-         <height>139</height>
+         <height>156</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="vertLayoutJackTransportMidi">
@@ -2461,7 +2484,7 @@ setting of Start mode)</string>
          <x>31</x>
          <y>280</y>
          <width>141</width>
-         <height>55</height>
+         <height>61</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="radio_group_layout">
@@ -2524,7 +2547,7 @@ in the Song Editor.</string>
           <x>20</x>
           <y>10</y>
           <width>211</width>
-          <height>91</height>
+          <height>94</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -2616,7 +2639,7 @@ in the Song Editor.</string>
           <x>19</x>
           <y>32</y>
           <width>441</width>
-          <height>111</height>
+          <height>124</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -2721,8 +2744,8 @@ an event in the new pattern.</string>
          <rect>
           <x>20</x>
           <y>30</y>
-          <width>465</width>
-          <height>111</height>
+          <width>470</width>
+          <height>124</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -2816,8 +2839,8 @@ an event in the new pattern.</string>
          <rect>
           <x>20</x>
           <y>30</y>
-          <width>408</width>
-          <height>83</height>
+          <width>413</width>
+          <height>92</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -3677,7 +3700,7 @@ notes as they come in.</string>
          <rect>
           <x>8</x>
           <y>40</y>
-          <width>198</width>
+          <width>203</width>
           <height>344</height>
          </rect>
         </property>
@@ -3692,6 +3715,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3704,6 +3728,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3716,6 +3741,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3728,6 +3754,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3740,6 +3767,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3752,6 +3780,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3764,6 +3793,7 @@ notes as they come in.</string>
              <property name="font">
               <font>
                <pointsize>11</pointsize>
+               <bold>false</bold>
               </font>
              </property>
              <property name="text">
@@ -3778,6 +3808,7 @@ notes as they come in.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="toolTip">
@@ -3963,7 +3994,7 @@ with jitter application.</string>
          <x>250</x>
          <y>160</y>
          <width>401</width>
-         <height>141</height>
+         <height>181</height>
         </rect>
        </property>
        <property name="title">
@@ -4047,8 +4078,35 @@ with jitter application.</string>
           <bold>false</bold>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Place the pattern right-click &quot;Edit xxx&quot; entries
+in sub-menus of &quot;Edit&quot;.</string>
+        </property>
         <property name="text">
          <string>Nest more menus (in pattern slot)</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxEnableEditEvents">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>130</y>
+          <width>371</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>Enable the 'Edit events' menu when Recording
+is on, and turn off recording if selected.</string>
+        </property>
+        <property name="text">
+         <string>Enable 'Edit events'</string>
         </property>
        </widget>
       </widget>
@@ -4140,8 +4198,8 @@ with jitter application.</string>
          <rect>
           <x>12</x>
           <y>32</y>
-          <width>258</width>
-          <height>83</height>
+          <width>263</width>
+          <height>92</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -4150,6 +4208,7 @@ with jitter application.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -4162,6 +4221,7 @@ with jitter application.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -4174,6 +4234,7 @@ with jitter application.</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">

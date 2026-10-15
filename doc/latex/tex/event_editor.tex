@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2026-09-29
+% \update      2026-10-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -151,8 +151,8 @@
    \index{ppqn!\$ shortcut}
    As a shortcut, one can use the dollar sign ("\$") to represent
    PPQN-1.
-   If the \textbf{Tick Time} box is checked, then the timestamps are
-   shown in units of "ticks" (MIDI pulses, also called "divisions").
+   If the \textbf{} button is clicked, then the time stamp can be shown
+   in other formats (ticks/pulses divisions, or B:B:T, or H:M:S).
 
    \itempar{Event Name}{event editor!event name}
    Displays the name of the event.
@@ -284,6 +284,18 @@
          (i.e. pulses or divisions).
          For times less than an hour, no hour is shown.
          Also shown is the fraction of a second.
+      \item \textbf{Tick time}.
+         This spin-box allows the time to be incremented or decremented
+         by the amount specified in the next field.
+         The time can be edited manually as well.
+         The value is always in ticks.
+         Note that, when the time format
+         changes (thre \textbf{BBT} button is clicked),
+         the event table is reinitialized, and the current time becomes
+         "0".
+      \item \textbf{(tick-time step size)}.
+         This field defaults to the snap size of the pattern, but can
+         be changed.
       \item \textbf{Event}.
          This dropdown shows the event name.
          It can also be used to select an event that is appropriate for
