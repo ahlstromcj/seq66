@@ -186,7 +186,7 @@ midimacros::find (const std::string & macnam) const
  *
  *  If a macro uses one of the macro variables, but that does not exist,
  *  then the macro is skipped, with no error, and showing up as empty in
- *  the Macro Execution dropdow in the main Session tab. To get them back,
+ *  the Macro Execution dropdown in the main Session tab. To get them back,
  *  copy them from data/linux/qseq66.ctrl and restart.
  */
 
@@ -294,6 +294,11 @@ midimacros::expand_macro (midimacro & m)
 
 /**
  *  We need to just fill the event stack.
+ *
+ * Thinking: we would like to be able to substitute a $1 parameter in
+ * the event to be sent. This would be most useful for a data entry slider
+ * parameter value. It might be best to do that scanning at the source.
+ * And if not scanned, use a default value.
  */
 
 midimacro::events

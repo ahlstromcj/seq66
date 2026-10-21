@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2026-07-30
- * \updates       2026-10-13
+ * \updates       2026-10-16
  * \license       GNU GPLv2 or above
  *
  *  The RPN dialog provides a way to enter RPN and NRPN controller events.
@@ -1142,13 +1142,13 @@ qrpnframe::slot_macro_other_changed ()
 #else
     QString m { ui->combo_box_macro_name->currentText() };
 #endif
-
-printf("slot_macro_other_changed()\n");
-
     QString b { ui->line_edit_other->text() };
     std::string macnam { m.toStdString() };     /* current macro name!  */
     std::string byts { b.toStdString() };
     tokenization macpair;
+    if (macnam.empty())
+        macnam = "adhoc";
+
     macpair.push_back(macnam);
     macpair.push_back(byts);
     other_macro_in_force(true);
@@ -1466,12 +1466,20 @@ qrpnframe::macro_name_changed ()
     bool isempty { macnam.empty() };
     if (isempty)
     {
-        ui->button_rpn_macro->setText("Create Macro");
+        /*
+         * We want to handle ad hoc macros. An empty name flags
+         * this. and an internal, modifiable macro named "adhoc"
+         * is assigned when one tabs out of the "other" line-edit.
+         *
+         * ui->button_rpn_macro->setText("Create Macro");
+         */
+
+        ui->button_rpn_macro->setText("Ad Hoc Macro");
         ui->button_rpn_macro->setEnabled(false);
         ui->line_edit_other->clear();
-        ui->line_edit_other->setEnabled(false);
-        macro_name().clear();
-        other_macro_in_force(false);
+        ui->line_edit_other->setEnabled(true);  // false);
+        macro_name("adhoc");                    // .clear();
+        other_macro_in_force(true);             // false);
         other_macro_tokens().clear();
     }
     else

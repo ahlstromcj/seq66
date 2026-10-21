@@ -1,7 +1,7 @@
 TO DO for Seq66 0.99.29
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-14
+2019-04-13 to 2026-10-17
 
     -   Revisit metronome and count-in testing re issue #147.
     -   SysEx.
@@ -33,8 +33,6 @@ Back burner:
         the handling of port changes by Seq66.
     -   The ":" key is available (as well as some other keys). How
         can we use them? Metronome toggle as noted in "Back burner".
-    -   Edit / Preferences / MIDI Clock.
-        -   Consider a dialog to set up port-mapping.
     -   MIDI Learn.
         -   Add a slot::metronome toggle? Only one slot left!
         -   Do not fill in an automation name when loop/mutes
@@ -43,8 +41,6 @@ Back burner:
         -   Adding a Note On should add a Note off of PPQN/16, but
             currently not easily done due to the need to add links.
     -   Patterns.
-        -   In a pattern slot, if another slot has Record on, disable
-            the menu entry. (Or change both at once?)
         -   Replicate the right-click popup in the song editor? No. But
             some entries might be useful in the song editor context:
             -   Pattern in Window (since double-click does that).

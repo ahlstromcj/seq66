@@ -1,10 +1,10 @@
 NEWS for Seq66 0.99.29
 Chris Ahlstrom
-2015-07-10 to 2026-10-15
+2015-07-10 to 2026-10-21
 
 # Change Log
 
-## [0.99.29] - 2026-10-15
+## [0.99.29] - 2026-10-21
 
 ### Added
 
@@ -24,6 +24,9 @@ Chris Ahlstrom
 -   (N)RPN editor.
     -   Fixed the parsing of macros with nested variables.
     -   Improved the insertion of multiple-event macros into a pattern.
+    -   Deleting the macro name in the macro combo-box, and entering
+        bytes in "Other's data", allows "ad hoc" macros to be sent
+        without the need to create or save them..
 
 ### Fixed
 
@@ -35,7 +38,8 @@ Chris Ahlstrom
 -   User fixes. From Harmut Reh. Reports stored in contrib/reports.
     -   "Fix for CC Data-Window Display". Pattern editor. More
         testing using update contrib/midi/controller.midi.
-    -   "Evolution UC-33 Port-Mapping Fix".
+    -   "Evolution UC-33 Port-Mapping Fix". This problem was due
+        to ALSA putting a space at the end of the device name.
 
 ### Removed
 

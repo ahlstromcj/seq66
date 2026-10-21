@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2026-10-14
+ * \updates       2026-10-16
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1901,16 +1901,23 @@ qslivegrid::popup_menu ()
             if (usr().nest_more_menus())
             {
                 QMenu * menuEdit { new_qmenu("&Edit") };
-                QAction * actionRecord { new_qaction("&Record toggle", m_popup) };
-                m_popup->addAction(actionRecord);
+                QMenu * menuToggle { new_qmenu("&Toggle") };
+                QAction * actionRecord
+                {
+                    new_qaction("&Record toggle", menuToggle)
+                };
+                menuToggle->addAction(actionRecord);
                 connect
                 (
                     actionRecord, SIGNAL(triggered(bool)),
                     this, SLOT(record_sequence())
                 );
 
-                QAction * actionThru { new_qaction("&Thru toggle", m_popup) };
-                m_popup->addAction(actionThru);
+                QAction * actionThru
+                {
+                    new_qaction("&Thru toggle", menuToggle)
+                };
+                menuToggle->addAction(actionThru);
                 connect
                 (
                     actionThru, SIGNAL(triggered(bool)),
@@ -1954,6 +1961,7 @@ qslivegrid::popup_menu ()
                     this, SLOT(edit_events())
                 );
                 m_popup->addMenu(menuEdit);
+                m_popup->addMenu(menuToggle);
             }
             else
             {

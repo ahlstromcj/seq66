@@ -12,43 +12,59 @@
 # are macro-names preceded by a '$'.  Some values should always be defined, even
 # if empty: footer, header, reset, startup, and shutdown. If adding multiple
 # event, separate each with a '|' (pipe) character.
+#
+# Example:
+#
+#   Master volume: NRPN 0x3707 (NRPN 0xhilo; NRPN 0x37lo)
+#
+#   - NRPN high  = 0x37: MIDI control 0x63 --> MIDI message = 0xB0 0x63 0x37h
+#   - NRPN low   = 0x7h: midi control 0x62 --> MIDI message = 0xB0 0x62 0x07h
+#   - NRPN value = 0xvv: midi control 0x06 --> Data entry slider = 0xB0 0x06 0xvv
+#
+#   vv being master volume value in range 0 to 127 (0 to 0x7F). $1 is vv.
+#
+# slider = 0xB0 0x06 $1
+# slider-fine = 0xB0 0x26 $1
 
-begin = 0xB0 0x63 0x37 
-end = 0xB0 0x63 0x7F | 0xB0 0x62 0x7F
-eq-low = $begin | 0xB0 0x62 0x00 | $end                  # Equalizer Low band (bass) 0=-12dB, 40h=0dB, 7Fh=+12dB [60h]
-eq-med-low = $begin | 0xB0 0x62 0x01 | $end              # Equalizer Med Low band 0=-12dB, 40h=0dB, 7Fh=+12dB [40h]
-eq-med-hi = $begin | 0xB0 0x62 0x02 | $end               # Equalizer Med High band 0=-12dB, 40h=0dB, 7Fh=+12dB [40h]
-eq-hi = $begin | 0xB0 0x62 0x03 | $end                   # Equalizer High band (treble) 0=-12dB, 40h=0dB, 7Fh=+12dB [60h]
-master-volume = $begin | 0xB0 0x62 0x07 | $end           # Master Volume 0 to 7Fh [7Fh]
-eq-low-cutoff = $begin | 0xB0 0x62 0x08 | $end           # Equalizer Low cutoff freq 0=0Hz, 7Fh=4.7 kHz [0Ch]
-eq-med-low-cutoff = $begin | 0xB0 0x62 0x09 | $end       # Equalizer Med Low cutoff freq  0=0Hz, 7Fh=4.2 kHz [1Bh]
-eq-med-hi-cutoff = $begin | 0xB0 0x62 0x0A | $end        # Equalizer Med High cutoff freq 0=0Hz, 7Fh=4.2 kHz [72h]
-eq-hi-cutoff = $begin | 0xB0 0x62 0x0B | $end            # Equalizer High cutoff freq 0=0Hz, 7Fh=18.75 kHz [40h]
-clip-mode = $begin | 0xB0 0x62 0x13 | $end               # Clipping mode select 0=soft clip, 7Fh=hard clip [00h]
-gm-reverb-send = $begin | 0xB0 0x62 0x15 | $end          # General MIDI reverb send 0=no send,40h=default send,7Fh=max [40h]
-gm-chorus-send = $begin | 0xB0 0x62 0x16 | $end          # General MIDI chorus send 0=no send,40h=default send,7Fh=max [40h]
-post-effects-gm = $begin | 0xB0 0x62 0x18 | $end         # Post effects on GM 0=not applied, 1=applied [7Fh]
-post-effects-mike = $begin | 0xB0 0x62 0x19 | $end       # Post effects on Mike 0=not applied, 1=applied [00h]
-post-effects-revchorus = $begin | 0xB0 0x62 0x1A | $end  # Post effects on Reverb/Chorus 0=not applied, 1=applied [7Fh]
-spacial-effect = $begin | 0xB0 0x62 0x20 | $end          # Spatial Effect volume 0=no effect, 7Fh=maximum effect [00h]
-gm-volume = $begin | 0xB0 0x62 0x22 | $end               # General MIDI volume 0 to 7Fh [7Fh]
-gm-pan = $begin | 0xB0 0x62 0x23 | $end                  # General MIDI pan 0=left, 40h=center, 7Fh=right [40h]
-mike-volume = $begin | 0xB0 0x62 0x24 | $end             # Mike volume 0 to 7Fh [40h]
-mike-pan = $begin | 0xB0 0x62 0x26 | $end                # Mike pan 0=left, 40h=center, 7Fh=right [40h]
-mike-echo-level = $begin | 0xB0 0x62 0x28 | $end         # Mike Echo level 0 to 7Fh [7Fh]
-mike-echo-time = $begin | 0xB0 0x62 0x29 | $end          # Mike Echo time 0=shortest to 7Fh=longest (380ms) [2Bh]
-mike-echo-feedback = $begin | 0xB0 0x62 0x2A | $end      # Mike Echo feedback 0=no feedback to 7Fh=max feedback [42h]
-spatial-effect-delay = $begin | 0xB0 0x62 0x2C | $end    # Spatial Effect delay 0=shortest to 7Fh=longest [1Dh]
-spatial-effect-input = $begin | 0xB0 0x62 0x2D | $end    # Spatial Effect input 0=stereo 7Fh=mono [00h]
-slave1-echo-vol-R = $begin | 0xB0 0x62 0x30 | $end       # Slave1 Echo volume right 0 to7Fh (see appendix) [00h]
-slave1-echo-vol-L = $begin | 0xB0 0x62 0x31 | $end       # Slave1 Echo volume left 0 to7Fh (see appendix) [00h]
-slave2-echo-vol-R = $begin | 0xB0 0x62 0x32 | $end       # Slave2 Echo volume right 0 to7Fh (see appendix) [00h]
-slave2-echo-vol-L = $begin | 0xB0 0x62 0x33 | $end       # Slave2 Echo volume left 0 to7Fh (see appendix) [00h]
-master-echo-vol-R = $begin | 0xB0 0x62 0x34 | $end       # Master Echo volume right 0 to7Fh (see appendix) [7Fh]
-master-echo-vol-L = $begin | 0xB0 0x62 0x35 | $end       # Master Echo volume left 0 to7Fh (see appendix) [7Fh]
-auto-test = $begin | 0xB0 0x62 0x51 | $end               # Auto - test See section 7
-sysex-device-id = $begin | 0xB0 0x62 0x57 | $end         # System Exclusive Device ID 0 to 1Fh, 20h=all accepted [20h]
-effect-onoff-poly-sel = $begin | 0xB0 0x62 0x5F | $end   # Effect ON/OFF–Polyphony Select See section 5
+begin = 0xB0 0x63 0x37                                             # a constant for all Akai MPK NRPN messages
+slider-coarse = 0xB0 0x06 0x40                                     # need a variable for the NRPN value
+slider-fine = 0xB0 0x26 0x40                                       # need a variable for the NRPN value
+slider = 0xB0 0x06 0x40 0xB0 0x26 0x40                             # need a variable for the NRPN value
+end = 0xB0 0x63 0x7F | 0xB0 0x62 0x7F                              # 7F: terminates any NRPN sequence
+eq-low = $begin | 0xB0 0x62 0x00 | $slider | $end                  # 00: Equalizer Low band (bass) 0=-12dB, 40h=0dB, 7Fh=+12dB [60h]
+eq-med-low = $begin | 0xB0 0x62 0x01 | $slider | $end              # 01: Equalizer Med Low band 0=-12dB, 40h=0dB, 7Fh=+12dB [40h]
+eq-med-hi = $begin | 0xB0 0x62 0x02 | $slider | $end               # 02: Equalizer Med High band 0=-12dB, 40h=0dB, 7Fh=+12dB [40h]
+eq-hi = $begin | 0xB0 0x62 0x03 | $slider | $end                   # 03: Equalizer High band (treble) 0=-12dB, 40h=0dB, 7Fh=+12dB [60h]
+master-volume = $begin | 0xB0 0x62 0x07 | $slider | $end           # 07: Master Volume 0 to 7Fh [7Fh]
+eq-low-cutoff = $begin | 0xB0 0x62 0x08 | $slider | $end           # 08: Equalizer Low cutoff freq 0=0Hz, 7Fh=4.7 kHz [0Ch]
+eq-med-low-cutoff = $begin | 0xB0 0x62 0x09 | $slider | $end       # 09: Equalizer Med Low cutoff freq  0=0Hz, 7Fh=4.2 kHz [1Bh]
+eq-med-hi-cutoff = $begin | 0xB0 0x62 0x0A | $slider | $end        # 0A: Equalizer Med High cutoff freq 0=0Hz, 7Fh=4.2 kHz [72h]
+eq-hi-cutoff = $begin | 0xB0 0x62 0x0B | $slider | $end            # 0B: Equalizer High cutoff freq 0=0Hz, 7Fh=18.75 kHz [40h]
+clip-mode = $begin | 0xB0 0x62 0x13 | $slider | $end               # 13: Clipping mode select 0=soft clip, 7Fh=hard clip [00h]
+gm-reverb-send = $begin | 0xB0 0x62 0x15 | $slider | $end          # 15: General MIDI reverb send 0=no send,40h=default send,7Fh=max [40h]
+gm-chorus-send = $begin | 0xB0 0x62 0x16 | $slider | $end          # 16: General MIDI chorus send 0=no send,40h=default send,7Fh=max [40h]
+post-effects-gm = $begin | 0xB0 0x62 0x18 | $slider | $end         # 18: Post effects on GM 0=not applied, 1=applied [7Fh]
+post-effects-mike = $begin | 0xB0 0x62 0x19 | $slider | $end       # 19: Post effects on Mike 0=not applied, 1=applied [00h]
+post-effects-revchorus = $begin | 0xB0 0x62 0x1A | $slider | $end  # 1A: Post effects on Reverb/Chorus 0=not applied, 1=applied [7Fh]
+spacial-effect = $begin | 0xB0 0x62 0x20 | $slider | $end          # 20: Spatial Effect volume 0=no effect, 7Fh=maximum effect [00h]
+gm-volume = $begin | 0xB0 0x62 0x22 | $slider | $end               # 22: General MIDI volume 0 to 7Fh [7Fh]
+gm-pan = $begin | 0xB0 0x62 0x23 | $slider | $end                  # 23: General MIDI pan 0=left, 40h=center, 7Fh=right [40h]
+mike-volume = $begin | 0xB0 0x62 0x24 | $slider | $end             # 24: Mike volume 0 to 7Fh [40h]
+mike-pan = $begin | 0xB0 0x62 0x26 | $slider | $end                # 26: Mike pan 0=left, 40h=center, 7Fh=right [40h]
+mike-echo-level = $begin | 0xB0 0x62 0x28 | $slider | $end         # 28: Mike Echo level 0 to 7Fh [7Fh]
+mike-echo-time = $begin | 0xB0 0x62 0x29 | $slider | $end          # 29: Mike Echo time 0=shortest to 7Fh=longest (380ms) [2Bh]
+mike-echo-feedback = $begin | 0xB0 0x62 0x2A | $slider | $end      # 2A: Mike Echo feedback 0=no feedback to 7Fh=max feedback [42h]
+spatial-effect-delay = $begin | 0xB0 0x62 0x2C | $slider | $end    # 2C: Spatial Effect delay 0=shortest to 7Fh=longest [1Dh]
+spatial-effect-input = $begin | 0xB0 0x62 0x2D | $slider | $end    # 2D: Spatial Effect input 0=stereo 7Fh=mono [00h]
+slave1-echo-vol-R = $begin | 0xB0 0x62 0x30 | $slider | $end       # 30: Slave1 Echo volume right 0 to7Fh (see appendix) [00h]
+slave1-echo-vol-L = $begin | 0xB0 0x62 0x31 | $slider | $end       # 31: Slave1 Echo volume left 0 to7Fh (see appendix) [00h]
+slave2-echo-vol-R = $begin | 0xB0 0x62 0x32 | $slider | $end       # 32: Slave2 Echo volume right 0 to7Fh (see appendix) [00h]
+slave2-echo-vol-L = $begin | 0xB0 0x62 0x33 | $slider | $end       # 33: Slave2 Echo volume left 0 to7Fh (see appendix) [00h]
+master-echo-vol-R = $begin | 0xB0 0x62 0x34 | $slider | $end       # 34: Master Echo volume right 0 to7Fh (see appendix) [7Fh]
+master-echo-vol-L = $begin | 0xB0 0x62 0x35 | $slider | $end       # 35: Master Echo volume left 0 to7Fh (see appendix) [7Fh]
+auto-test = $begin | 0xB0 0x62 0x51 | $slider | $end               # 51: Auto - test See section 7
+sysex-device-id = $begin | 0xB0 0x62 0x57 | $slider | $end         # 57: System Exclusive Device ID 0 to 1Fh, 20h=all accepted [20h]
+effect-onoff-poly-sel = $begin | 0xB0 0x62 0x5F | $slider | $end   # 5F: Effect ON/OFF–Polyphony Select See section 5
 shutdown = 
 startup = 
 

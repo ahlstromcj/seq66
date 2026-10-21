@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2026-09-29
+% \update      2026-10-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -2450,8 +2450,6 @@
          The "fine" controllers are supported by General MIDI version 2.
          This buttons are disabled if \textbf{Other} is
          selected.
-      \item \textbf{macro name}.
-         Simply shows the selected/edited macro name. Not editable.
       \item \textbf{Timestamp (BBT)}.
          This text box displays, in B:B:T format by default,
          the timestamp at which the events will be inserted into the
@@ -2474,6 +2472,10 @@
          Entering a short name into this editable combo-box enables the
          \textbf{Create Macro} button, or, if the macro exists,
          the \textbf{Modify Macro} button.
+         If one deletes the macro-name, and enters the bytes (e.g.
+         "0x90 0x3C 0x40") into \textbf{Other's Data}, this macro
+         is an "ad hoc" macro, which is not created or saved, but
+         can be inserted or sent.
       \item \textbf{RPN/NRPN value}.
          Type the desired value of the current parameter here.
          It can be a single number (e.g. 1583 or 0x0600)

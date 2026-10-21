@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2026-06-06
+ * \updates       2026-10-16
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -98,8 +98,14 @@ static std::string s_package_version = SEQ66_PACKAGE_VERSION;
 static std::string s_session_tag = "Session";
 static std::string s_api_version = SEQ66_API_VERSION;
 static std::string s_version = SEQ66_VERSION;
+
+/*
+ *  static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
+ *      SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n";
+ */
+
 static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
-    SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n";
+    SEQ66_GIT_VERSION " " __DATE__ "\n";
 
 /**
  *  Sets the focus for the current action. This is an arbitrary string
