@@ -143,7 +143,7 @@ static const int c_qn_beats = 4;
  *
  * \param [out] fraction
  *      The destination reference for the fractional part of the time.
- *      It includes the "." character.
+ *      It includes the "." character. Hmmm, it's a string in midi66.
  *
  * \return
  *      Returns the number of parts provided, ranging from 0 to 4.
@@ -668,12 +668,6 @@ trunc_measures (double measures)
  *  Converts a string that represents "measures:beats:division" (also known
  *  as "B:B:T") to a MIDI pulse/ticks/clock value. Note that, here, "division"
  *  is simply a number of pulses less than a beat.
- *
- * NO LONGER TRUE:
- *
- *  If the third value (the MIDI pulses or ticks value) is set to the dollar
- *  sign ("$"), then the pulses are set to PPQN-1, as a handy shortcut to
- *  indicate the end of the beat.
  *
  * \warning
  *      If only one number is provided, it is treated in this function like
@@ -1724,11 +1718,11 @@ vlv_to_long (const midibytes & data)
 /**
  *  Creates a MIDI Variable-Length Value (VLV), which has a variable number
  *  of bytes.
- *  Each byte has
- *  two parts: 7 bits of data and 1 continuation bit. The highest-order
- *  bit is set to 1 if there is another byte of the number to follow. The
- *  highest-order bit is set to 0 if this byte is the last byte in the
- *  VLV.
+ *
+ *  Each byte has two parts: 7 bits of data and 1 continuation bit. The
+ *  highest-order bit is set to 1 if there is another byte of the number to
+ *  follow. The highest-order bit is set to 0 if this byte is the last byte in
+ *  the VLV.
  *
  *  To recreate a number represented by a VLV, first you remove the
  *  continuation bit and then concatenate the leftover bits into a single

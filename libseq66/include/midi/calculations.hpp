@@ -179,7 +179,8 @@ enum class fixeffect
     shrunk          = 0x10,
     expanded        = 0x20,
     time_sig        = 0x40,
-    all             = 0x7F
+    truncated       = 0x80,
+    all             = 0xFF
 };
 
 /**
@@ -311,16 +312,30 @@ extern midipulse string_to_pulses
     const midi_timing & mt,
     timeformat tf = timeformat::bbt         /* bool use_hms_string = false  */
 );
+
+/*
+ * Randomisation of MIDI values like velocity or ticks.
+ */
+
 extern int randomize (int range, int seed = 0);
+
 #if defined SEQ66_USE_UNIFORM_INT_DISTRIBUTION
 extern int randomize_uniformly (int range, int seed = -1);
 #endif
+
 extern bool is_power_of_2 (int value);
 extern int log2_of_power_of_2 (int tsd);
 extern int beat_power_of_2 (int logbase2);
 extern int previous_power_of_2 (int value);
 extern int next_power_of_2 (int value);
 extern int power (int base, int exponent);
+
+#if 0
+extern bool beat_width_is_valid (int bw);       /* TODO: backport to Seq66  */
+extern bool beats_per_bar_is_valid (int bpb);   /* TODO: backport to Seq66  */
+extern bool ppqn_is_valid (midi::pulse ppq);    /* TODO: backport to Seq66  */
+#endif
+
 extern midibyte beat_log2 (int value);
 extern midibpm tempo_us_from_bytes (const midibytes & tt);
 extern bool tempo_us_to_bytes (midibytes & t, midibpm tempo_us);
@@ -334,7 +349,7 @@ extern bool split_14_bits
 (
     unsigned short value14, midibyte & b0, midibyte & b1
 );
-extern midibpm note_value_to_tempo (midibyte note);
+// extern midibpm note_value_to_tempo (midibyte note);
 extern midilong extract_varinum (const midibytes & data, int & index);
 extern midilong extract_varinum
 (

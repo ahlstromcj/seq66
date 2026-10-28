@@ -2,7 +2,7 @@
         implemented in cfg66:
 
         -   partial matching of long options.
-        -   detection of mbiguous options due to no being long enough
+        -   detection of mbiguous options due to not being long enough
 
             option '--h' is ambiguous; possibilities:
             '--help' '--home' '--hide-ports'
@@ -16,10 +16,10 @@
         libseq66/include/ctrl/midicontrolin.hpp
         libseq66/include/ctrl/midicontrolout.hpp
         libseq66/include/ctrl/midilearn.hpp         [NEW]
-        libseq66/include/midi/calculations.hpp      More changes to port!
+    *   libseq66/include/midi/calculations.hpp      More changes to port!
         libseq66/include/midi/controllers.hpp
         libseq66/include/midi/editable_event.hpp
-        libseq66/include/midi/event.hpp
+    *   libseq66/include/midi/event.hpp
         libseq66/include/midi/eventlist.hpp
         libseq66/include/midi/mastermidibus.hpp
         libseq66/include/midi/midibus.hpp
@@ -36,7 +36,7 @@
         libseq66/include/util/basic_macros.h
         libseq66/include/util/basic_macros.hpp
         libseq66/include/util/filefunctions.hpp
-        libseq66/include/util/strfunctions.hpp
+    *   libseq66/include/util/strfunctions.hpp
         libseq66/libseq66.pro
         libseq66/meson.build
         libseq66/src/cfg/configfile.cpp
@@ -50,10 +50,10 @@
         libseq66/src/ctrl/midilearn.cpp             [NEW}
         libseq66/src/midi/busarray.cpp
         libseq66/src/midi/businfo.cpp
-        libseq66/src/midi/calculations.cpp          More changes to port!
+    *   libseq66/src/midi/calculations.cpp          More changes to port!
         libseq66/src/midi/controllers.cpp
         libseq66/src/midi/editable_event.cpp
-        libseq66/src/midi/event.cpp
+    *   libseq66/src/midi/event.cpp
         libseq66/src/midi/eventlist.cpp
         libseq66/src/midi/mastermidibase.cpp
         libseq66/src/midi/midifile.cpp
@@ -68,7 +68,7 @@
         libseq66/src/sessions/smanager.cpp
         libseq66/src/util/basic_macros.cpp
         libseq66/src/util/filefunctions.cpp
-        libseq66/src/util/strfunctions.cpp
+    *   libseq66/src/util/strfunctions.cpp
         libsessions/libsessions.pro
         seq_portmidi/include/midibus_pm.hpp
         seq_portmidi/include/pminternal.h

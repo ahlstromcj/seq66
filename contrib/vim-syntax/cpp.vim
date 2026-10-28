@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2026-08-03
+"  Last Change:   2006-09-04 to 2026-10-26
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -42,10 +42,10 @@ syn keyword XPCC audio buss container ctrl meta seqspec status tag ulong
 syn keyword XPCC ulonglong ushort unavailable pos mod
 syn keyword XPCC alsa api api_list audio bus bus_in bus_out busarray
 syn keyword XPCC cfg cfg66 cli disabled enabled event events eventlist
-syn keyword XPCC functor iothread lib66
-syn keyword XPCC masterbus midi message po port ports ringbuffer
+syn keyword XPCC functor iothread key lib66
+syn keyword XPCC masterbus midi message patches po port ports ringbuffer
 syn keyword XPCC rtl rtaudio rtmidi rtmidi_engine rtmidi_in rtmidi_out rtl66
-syn keyword XPCC seq seq66 session toggle toggler track util xpc xpc66
+syn keyword XPCC seq seq66 session song toggle toggler track util xpc xpc66
 syn keyword XPCC action clock clocking e_clock ignore jack max none
 syn keyword XPCC input output player transport synch
 syn keyword XPCC automutex recmutex
