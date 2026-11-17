@@ -27,7 +27,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-08-23
+ * \updates       2026-11-15
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -253,9 +253,9 @@ extern bool file_list_copy
     const tokenization & filelist
 );
 
-#endif      // SEQ66_FILEFUNCTIONS_HPP
-
 }           // namespace seq66
+
+#endif      // SEQ66_FILEFUNCTIONS_HPP
 
 /*
  * filefunctions.hpp

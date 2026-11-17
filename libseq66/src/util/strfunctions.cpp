@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2026-10-03
+ * \updates       2026-11-16
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -968,16 +968,14 @@ long_to_string (long value)
 unsigned long
 string_to_unsigned_long (const std::string & s, unsigned long defalt)
 {
-    double result = defalt;
     try
     {
-        result = std::stoul(s, nullptr, 0);
+        return std::stoul(s, nullptr, 0);
     }
     catch (std::invalid_argument const &)
     {
-        // no code
+        return defalt;
     }
-    return result;
 }
 
 /**

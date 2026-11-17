@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2026-08-23
+ * \updates       2026-11-02
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -931,8 +931,10 @@ file_read_lines
             size_t maxim { 512 };
             char * destination { new (std::nothrow) char [maxim] };
             if (is_nullptr(destination))
+            {
+                (void) file_close(input, file);
                 return false;
-
+            }
             for (;;)
             {
 #if defined SEQ66_PLATFORM_WIND0WS || defined SEQ66_PLATFORM_MINGW
@@ -1221,9 +1223,11 @@ file_copy_to_path
                     }
                     okoutput = file_close(output, destfilespec);
                 }
-                okinput = file_close(input, sourcefile);
-                result = okinput && okoutput;
+                // okinput = file_close(input, sourcefile);
+                // result = okinput && okoutput;
             }
+            okinput = file_close(input, sourcefile);
+            result = okinput && okoutput;
         }
     }
     return result;
@@ -1531,7 +1535,7 @@ make_directory_path (const std::string & directory_name)
                 {
                     if (! make_directory(std::string(currdir)))
                     {
-                        more = result = false;
+                        /* more = */ result = false;
                         break;
                     }
                 }

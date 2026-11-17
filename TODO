@@ -1,8 +1,10 @@
 TO DO for Seq66 0.99.29
 
 Chris Ahlstrom
-2019-04-13 to 2026-10-17
+2019-04-13 to 2026-11-13
 
+    -   In qrpnframe, we can replace rpn_select_xxx with
+        rpn::parameter values.
     -   Revisit metronome and count-in testing re issue #147.
     -   SysEx.
         -   Now works for ALSA, next check JACK.

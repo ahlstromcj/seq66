@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2026-09-28
+ * \updates       2026-11-16
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -1346,6 +1346,18 @@ event::rescale (int newppqn, int oldppqn)
  * Note:
  *      We could add the channel number as part of the ranking. Sound? No.
  *
+ * Order of events:
+ *
+ *      -   Events not handled below.
+ *      -   Meta events. At time 0, these must come before notes.
+ *      -   Aftertouch, channel pressure, and pitchwheel.
+ *      -   Control and program change.
+ *      -   Note On (note value included).
+ *      -   Note Off (note value included).
+ *      -   Meta events.
+ *      -   SysEx events. Question: should SysEx come right after Meta?
+ *          Give it priority.
+ *
  * \return
  *      Returns the rank of the current m_status byte.
  */
@@ -1356,11 +1368,11 @@ event::get_rank () const
     int result;
     if (is_sysex())
     {
-        result = 0x3000;
+        result = 0x100;                     /* 0x3000 see Question above    */
     }
     else if (is_meta())
     {
-        result = 0x0030;
+        result = 0x150;                     /* not 0x2500; see notes        */
     }
     else
     {
@@ -1383,7 +1395,7 @@ event::get_rank () const
 
         case EVENT_PROGRAM_CHANGE:
         case EVENT_CONTROL_CHANGE:
-            result = 0x0100;                    /* was 0x200                */
+            result = 0x0200;
             break;
 
         default:
